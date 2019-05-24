@@ -7,14 +7,26 @@ except: from pysqlite2 import dbapi2 as database
 from resources.lib.modules import control
 
 
+    # def clearCacheProviders(self):
+        # control.idle()
+        # yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
+        # if not yes: return
+        # from resources.lib.modules import cache
+        # cache.cache_clear_providers()
+        # control.notification(title = 'default', message = 'Provider Cache Successfully Cleared!', icon = 'default', sound = True)
+
 
 def clearViews():
     try:
+        control.idle()
+        yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
+        if not yes: return
         dbcon = database.connect(control.viewsFile)
         dbcur = dbcon.cursor()
         dbcur.execute("DROP TABLE IF EXISTS views;")
         dbcur.execute("CREATE TABLE IF NOT EXISTS views (""skin TEXT, ""view_type TEXT, ""view_id TEXT, ""UNIQUE(skin, view_type)"");")
         dbcon.commit()
+        control.notification(title = 'default', message = 'View Types Successfully Cleared!', icon = 'default', sound = True)
     except:
         pass
 

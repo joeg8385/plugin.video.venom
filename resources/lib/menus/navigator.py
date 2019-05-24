@@ -119,15 +119,24 @@ class navigator:
 
 
     def movies(self, lite=False):
-        self.addDirectoryItem(32022, 'movies&url=theaters', 'imdb.png', 'in-theaters.png')
-        self.addDirectoryItem('Now Playing', 'tmdbmovies&url=tmdb_nowplaying', 'tmdb.png', 'in-theaters.png')
-
-        self.addDirectoryItem('Anticipated', 'movies&url=traktanticipated', 'trakt.png', 'DefaultMovies.png')
-        self.addDirectoryItem('Upcoming', 'tmdbmovies&url=tmdb_upcoming', 'tmdb.png', 'DefaultMovies.png')
-
-        self.addDirectoryItem(32018, 'movies&url=mostpopular', 'imdb.png', 'most-popular.png')
-        self.addDirectoryItem('Popular', 'tmdbmovies&url=tmdb_popular', 'tmdb.png', 'most-popular.png')
-        self.addDirectoryItem('Popular', 'movies&url=traktpopular', 'trakt.png', 'most-popular.png')
+        if self.getMenuEnabled('navi.movie.imdb.intheater') == True:
+            self.addDirectoryItem(32022, 'movies&url=theaters', 'imdb.png', 'in-theaters.png')
+        if self.getMenuEnabled('navi.movie.tmdb.nowplaying') == True:
+            self.addDirectoryItem('Now Playing', 'tmdbmovies&url=tmdb_nowplaying', 'tmdb.png', 'in-theaters.png')
+        if self.getMenuEnabled('navi.movie.trakt.anticipated') == True:
+            self.addDirectoryItem('Anticipated', 'movies&url=traktanticipated', 'trakt.png', 'DefaultMovies.png')
+        if self.getMenuEnabled('navi.movie.tmdb.upcoming') == True:
+            self.addDirectoryItem('Upcoming', 'tmdbmovies&url=tmdb_upcoming', 'tmdb.png', 'DefaultMovies.png')
+        if self.getMenuEnabled('navi.movie.imdb.popular') == True:
+            self.addDirectoryItem(32018, 'movies&url=mostpopular', 'imdb.png', 'most-popular.png')
+        if self.getMenuEnabled('navi.movie.tmdb.popular') == True:
+            self.addDirectoryItem('Popular', 'tmdbmovies&url=tmdb_popular', 'tmdb.png', 'most-popular.png')
+        if self.getMenuEnabled('navi.movie.trakt.popular') == True:
+            self.addDirectoryItem('Popular', 'movies&url=traktpopular', 'trakt.png', 'most-popular.png')
+        if self.getMenuEnabled('navi.movie.imdb.boxoffice') == True:
+            self.addDirectoryItem(32020, 'movies&url=imdbboxoffice', 'imdb.png', 'box-office.png')
+        if self.getMenuEnabled('navi.movie.trakt.boxoffice') == True:
+            self.addDirectoryItem('Box Office', 'movies&url=traktboxoffice', 'trakt.png', 'box-office.png')
 
         self.addDirectoryItem(32019, 'movies&url=mostvoted', 'imdb.png', 'most-voted.png')
         self.addDirectoryItem('Top Rated', 'tmdbmovies&url=tmdb_toprated', 'tmdb.png', 'most-voted.png')
@@ -139,8 +148,7 @@ class navigator:
         if not control.setting('newmovies.widget') == '0':
             self.addDirectoryItem(32005, 'newMovies', 'imdb.png', 'latest-movies.png')
 
-        self.addDirectoryItem(32020, 'movies&url=imdbboxoffice', 'imdb.png', 'box-office.png')
-        # self.addDirectoryItem('Box Office', 'movies&url=traktboxoffice', 'trakt.png', 'box-office.png')
+
 
         self.addDirectoryItem(32000, 'collectionsNavigator', 'boxsets.png', 'boxsets.png')
         self.addDirectoryItem(32021, 'movies&url=oscars', 'imdb.png', 'oscar-winners.png')
@@ -193,11 +201,17 @@ class navigator:
 
 
     def tvshows(self, lite = False):
-        self.addDirectoryItem(32050, 'tvshows&url=popular', 'imdb.png', 'most-popular.png')
-        self.addDirectoryItem(32050, 'tmdbTvshows&url=tmdb_popular', 'tmdb.png', 'most-popular.png')
-        self.addDirectoryItem(32050, 'tvshows&url=traktpopular', 'trakt.png', 'most-popular.png', queue = True)
-        self.addDirectoryItem(32019, 'tvshows&url=views', 'imdb.png', 'most-voted.png')
-        self.addDirectoryItem(32051, 'tmdbTvshows&url=tmdb_toprated', 'tmdb.png', 'most-voted.png')
+        if self.getMenuEnabled('navi.tv.imdb.popular') == True:
+            self.addDirectoryItem(32050, 'tvshows&url=popular', 'imdb.png', 'most-popular.png')
+        if self.getMenuEnabled('navi.tv.tmdb.popular') == True:
+            self.addDirectoryItem(32050, 'tmdbTvshows&url=tmdb_popular', 'tmdb.png', 'most-popular.png')
+        if self.getMenuEnabled('navi.tv.trakt.popular') == True:
+            self.addDirectoryItem(32050, 'tvshows&url=traktpopular', 'trakt.png', 'most-popular.png', queue = True)
+        if self.getMenuEnabled('navi.tv.imdb.mostvoted') == True:
+            self.addDirectoryItem(32019, 'tvshows&url=views', 'imdb.png', 'most-voted.png')
+        if self.getMenuEnabled('navi.tv.tmdb.toprated') == True:
+            self.addDirectoryItem(32051, 'tmdbTvshows&url=tmdb_toprated', 'tmdb.png', 'most-voted.png')
+
         self.addDirectoryItem(32017, 'tvshows&url=trakttrending', 'trakt.png', 'trakt.png')
         self.addDirectoryItem(32023, 'tvshows&url=rating', 'imdb.png', 'highly-rated.png')
         self.addDirectoryItem(33662, 'tvshows&url=traktrecommendations', 'trakt.png', 'trakt.png', queue = True)
@@ -270,16 +284,19 @@ class navigator:
         self.addDirectoryItem(32651, 'openscrapersSettings&query=0.0', 'OpenScrapers.png', 'DefaultAddonProgram.png')
         # General - 0
         self.addDirectoryItem(32043, 'openSettings&query=0.1', 'tools.png', 'DefaultAddonProgram.png')
-        # Playback - 2
-        self.addDirectoryItem(32045, 'openSettings&query=2.0', 'tools.png', 'DefaultAddonProgram.png')
-        # Api-keys - 7
-        self.addDirectoryItem(32044, 'openSettings&query=7.0', 'tools.png', 'DefaultAddonProgram.png')
-        # Downloads - 9
-        self.addDirectoryItem(32048, 'openSettings&query=9.0', 'tools.png', 'DefaultAddonProgram.png')
-        # Subtitles - 10
-        self.addDirectoryItem(32046, 'openSettings&query=10.0', 'tools.png', 'DefaultAddonProgram.png')
+        # Navigation - 1
+        self.addDirectoryItem(32362, 'openSettings&query=1.0', 'tools.png', 'DefaultAddonProgram.png')
+        # Playback - 3
+        self.addDirectoryItem(32045, 'openSettings&query=3.0', 'tools.png', 'DefaultAddonProgram.png')
+        # Api-keys - 8
+        self.addDirectoryItem(32044, 'openSettings&query=8.0', 'tools.png', 'DefaultAddonProgram.png')
+        # Downloads - 10
+        self.addDirectoryItem(32048, 'openSettings&query=10.0', 'tools.png', 'DefaultAddonProgram.png')
+        # Subtitles - 11
+        self.addDirectoryItem(32046, 'openSettings&query=11.0', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32361, 'resetViewTypes', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32073, 'authTrakt&opensettings=false', 'trakt.png', 'DefaultAddonProgram.png')
         self.endDirectory()
 

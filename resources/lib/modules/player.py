@@ -45,10 +45,9 @@ class player(xbmc.Player):
             self.ids = {'imdb': self.imdb, 'tvdb': self.tvdb}
             self.ids = dict((k, v) for k, v in self.ids.iteritems() if not v == '0')
             self.offset = bookmarks().get(self.name, self.year)
-            self.meta = meta
-            poster, thumb, fanart, clearart, clearlogo, meta = self.getMeta(meta)
-            item = control.item(path = url)
-            item.setArt({'clearart': clearart, 'clearlogo': clearlogo, 'thumb': thumb, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
+            poster, thumb, fanart, clearart, clearlogo, discart, meta = self.getMeta(meta)
+            item = control.item(path=url)
+            item.setArt({'clearart': clearart, 'clearlogo': clearlogo, 'discart': discart, 'thumb': thumb, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
             item.setInfo(type = 'Video', infoLabels = control.metadataClean(meta))
             if 'plugin' in control.infoLabel('Container.PluginName'):
                 control.player.play(url, item)
@@ -66,25 +65,33 @@ class player(xbmc.Player):
             if 'poster3' in meta: poster = meta['poster3']
             elif 'poster2' in meta: poster = meta['poster2']
             elif 'poster' in meta: poster = meta['poster']
+
             thumb = '0'
             if 'thumb3' in meta: thumb = meta['thumb3']
             elif 'thumb2' in meta: thumb = meta['thumb2']
             elif 'thumb' in meta: thumb = meta['thumb']
+
             fanart = '0'
             if 'fanart3' in meta: fanart = meta['fanart3']
             elif 'fanart2' in meta: fanart = meta['fanart2']
             elif 'fanart' in meta: fanart = meta['fanart']
+
             clearart = '0'
             if 'clearart' in meta: clearart = meta['clearart']
-            # xbmc.log('clearart = %s' % clearart, 2)
+
             clearlogo = '0'
             if 'clearlogo' in meta: clearlogo = meta['clearlogo']
+
+            discart = '0'
+            if 'discart' in meta: discart = meta['discart']
+
             if poster == '0': poster = control.addonPoster()
             if thumb == '0': thumb = control.addonThumb()
             if fanart == '0': fanart = control.addonFanart()
             if clearart == '0': clearlart = control.addonThumb()
             if clearlogo == '0': clearlogo = control.addonThumb()
-            return (poster, thumb, fanart, clearart, clearlogo, meta)
+
+            return (poster, thumb, fanart, clearart, clearlogo, discart, meta)
         except:
             pass
         try:
@@ -103,8 +110,8 @@ class player(xbmc.Player):
                     except: meta[k] = str(v)
             if 'plugin' not in control.infoLabel('Container.PluginName'):
                 self.DBID = meta['movieid']
-            thumb = meta['thumbnail']
-            return (poster, thumb, fanart, clearart, clearlogo, meta)
+            poster = thumb = meta['thumbnail']
+            return (poster, thumb, meta)
         except:
             pass
 
@@ -115,8 +122,7 @@ class player(xbmc.Player):
             meta = json.loads(meta)['result']['tvshows']
             t = cleantitle.get(self.title)
             meta = [i for i in meta if self.year == str(i['year']) and t == cleantitle.get(i['title'])][0]
-            tvshowid = meta['tvshowid']
-#            poster = meta['thumbnail']
+            tvshowid = meta['tvshowid'] ; poster = meta['thumbnail']
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params":{ "tvshowid": %d, "filter":{"and": [{"field": "season", "operator": "is", "value": "%s"}, {"field": "episode", "operator": "is", "value": "%s"}]}, "properties": ["title", "season", "episode", "showtitle", "firstaired", "runtime", "rating", "director", "writer", "plot", "thumbnail", "file"]}, "id": 1}' % (tvshowid, self.season, self.episode))
             meta = unicode(meta, 'utf-8', errors = 'ignore')
             meta = json.loads(meta)['result']['episodes'][0]
@@ -130,11 +136,13 @@ class player(xbmc.Player):
             if 'plugin' not in control.infoLabel('Container.PluginName'):
                 self.DBID = meta['episodeid']
             thumb = meta['thumbnail']
-            return (poster, thumb, fanart, clearart, clearlogo, meta)
+            return (poster, thumb, meta)
         except:
             pass
-        # return (poster, thumb, fanart, clearart, clearlogo, meta)
-        # poster, thumb, fanart, meta = '', '', '', {'title': self.name}
+
+        poster, thumb, meta = '', '', {'title': self.name}
+        return (poster, thumb, meta)
+
 
 
     def keepPlaybackAlive(self):
@@ -147,11 +155,13 @@ class player(xbmc.Player):
         else:
             overlay = '6'
         for i in range(0, 240):
-            if self.isPlayingVideo():
+            # if self.isPlayingVideo():
+            if self.isPlayback():
                 break
             xbmc.sleep(1000)
         if overlay == '7':
-            while self.isPlayingVideo():
+            # while self.isPlayingVideo():
+            while self.isPlayback():
                 try:
                     self.totalTime = self.getTotalTime()
                     self.currentTime = self.getTime()
@@ -159,7 +169,8 @@ class player(xbmc.Player):
                     pass
                 xbmc.sleep(2000)
         elif self.content == 'movie':
-            while self.isPlayingVideo():
+            # while self.isPlayingVideo():
+            while self.isPlayback():
                 try:
                     self.totalTime = self.getTotalTime()
                     self.currentTime = self.getTime()
@@ -175,7 +186,8 @@ class player(xbmc.Player):
                     pass
                 xbmc.sleep(2000)
         elif self.content == 'episode':
-            while self.isPlayingVideo():
+            # while self.isPlayingVideo():
+            while self.isPlayback():
                 try:
                     self.totalTime = self.getTotalTime()
                     self.currentTime = self.getTime()
@@ -205,28 +217,60 @@ class player(xbmc.Player):
             pass
 
 
+
     def idleForPlayback(self):
         for i in range(0, 200):
-            if control.condVisibility('Window.IsActive(busydialog)') == 1: control.idle()
+            if control.visible(): control.idle()
+            # if control.condVisibility('Window.IsActive(busydialog)') == 1: control.idle()  ##--Doesn't cover Leia
             else: break
             control.sleep(100)
 
 
+    def isPlayback(self):
+        # Kodi often starts playback where isPlaying() is true and isPlayingVideo() is false, since the video loading is still in progress, whereas the play is already started.
+        try: return self.isPlaying() and self.isPlayingVideo() and self.getTime() >= 0
+        except: False
+
+
+    # def onAVStarted(self):
+        # try:
+            # if int(control.getKodiVersion()) >= 18:
+                # control.execute('Dialog.Close(all,true)')
+                # if not self.offset == '0': self.seekTime(float(self.offset))
+                # subtitles().get(self.name, self.imdb, self.season, self.episode)
+                # self.idleForPlayback()
+        # except:
+            # pass
+
+
     def onAVStarted(self):
-        try:
-            if int(control.getKodiVersion()) >= 18:
-                control.execute('Dialog.Close(all,true)')
-                if not self.offset == '0': self.seekTime(float(self.offset))
-                subtitles().get(self.name, self.imdb, self.season, self.episode)
-                self.idleForPlayback()
-        except:
-            pass
+        for i in range(0, 600):
+            if self.isPlayback(): break
+            control.sleep(100)
+        control.closeAll()
+            # if not self.isPlayingVideo(): control.sleep(100)
+        if not self.offset == '0':
+            self.seekTime(float(self.offset))
+        subtitles().get(self.name, self.imdb, self.season, self.episode)
+        self.idleForPlayback()
+
+
+    # def onPlayBackStarted(self):
+        # control.execute('Dialog.Close(all,true)')
+        # control.hide()
+        # if not self.offset == '0': self.seekTime(float(self.offset))
+        # subtitles().get(self.name, self.imdb, self.season, self.episode)
+        # self.idleForPlayback()
 
 
     def onPlayBackStarted(self):
-        control.execute('Dialog.Close(all,true)')
-        # control.hide()
-        if not self.offset == '0': self.seekTime(float(self.offset))
+        for i in range(0, 600):
+            if self.isPlayback(): break
+            control.sleep(100)
+        control.closeAll()
+            # if not self.isPlayingVideo(): control.sleep(100)
+        if not self.offset == '0':
+            self.seekTime(float(self.offset))
         subtitles().get(self.name, self.imdb, self.season, self.episode)
         self.idleForPlayback()
 
@@ -247,6 +291,10 @@ class player(xbmc.Player):
         self.onPlayBackStopped()
         if control.setting('crefresh') == 'true':
             xbmc.executebuiltin('Container.Refresh')
+
+
+    def onPlayBackError(self):
+        sys.exit(1)
 
 
 class subtitles:

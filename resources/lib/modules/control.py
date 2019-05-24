@@ -207,7 +207,6 @@ def metadataClean(metadata):
 ####################################################
 # --- Dialogs
 ####################################################
-
 def infoDialog(message, heading=addonInfo('name'), icon='', time=3000, sound=False):
     if icon == '':
         icon = addonIcon()
@@ -277,6 +276,10 @@ def hide():
         xbmc.executebuiltin('Dialog.Close(busydialognocancel)')
     else:
         xbmc.executebuiltin('Dialog.Close(busydialog)')
+
+
+def closeAll():
+    return execute('Dialog.Close(all,true)')
 
 
 def visible(self):

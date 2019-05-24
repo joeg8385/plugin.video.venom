@@ -33,7 +33,7 @@ msgstr ""
 
 msgctxt "#32000"
 msgid "Collections"
-msgstr "Collections"
+msgstr ""
 
 msgctxt "#32001"
 msgid "Movies"
@@ -572,11 +572,11 @@ msgid "Providers Language"
 msgstr ""
 
 msgctxt "#32361"
-msgid ""
+msgid "[B]VENOM[/B] : Reset View Types"
 msgstr ""
 
 msgctxt "#32362"
-msgid ""
+msgid "[B]SETTINGS[/B] : Navigation"
 msgstr ""
 
 msgctxt "#32363"
@@ -694,9 +694,45 @@ msgctxt "#32390"
 msgid ""
 msgstr ""
 
+msgctxt "#32391"
+msgid ""
+msgstr ""
 
+msgctxt "#32392"
+msgid ""
+msgstr ""
 
+msgctxt "#32393"
+msgid ""
+msgstr ""
 
+msgctxt "#32394"
+msgid ""
+msgstr ""
+
+msgctxt "#32395"
+msgid ""
+msgstr ""
+
+msgctxt "#32396"
+msgid ""
+msgstr ""
+
+msgctxt "#32397"
+msgid ""
+msgstr ""
+
+msgctxt "#32398"
+msgid ""
+msgstr ""
+
+msgctxt "#32399"
+msgid ""
+msgstr ""
+
+msgctxt "#32400"
+msgid ""
+msgstr ""
 
 msgctxt "#32401"
 msgid "No stream available"
@@ -729,6 +765,84 @@ msgstr ""
 msgctxt "#32408"
 msgid "Process Complete"
 msgstr ""
+
+msgctxt "#32409"
+msgid "IMDb In Theaters"
+msgstr ""
+
+msgctxt "#32410"
+msgid "TMDb Now Playing"
+msgstr ""
+
+msgctxt "#32411"
+msgid "Trakt Anticipated"
+msgstr ""
+
+msgctxt "#32412"
+msgid "TMDb Upcoming"
+msgstr ""
+
+msgctxt "#32413"
+msgid "IMDb Popular"
+msgstr ""
+
+msgctxt "#32414"
+msgid "TMDb Popular"
+msgstr ""
+
+msgctxt "#32415"
+msgid "Trakt Popular"
+msgstr ""
+
+msgctxt "#32416"
+msgid "IMDb Box Office"
+msgstr ""
+
+msgctxt "#32417"
+msgid "Trakt Box Office"
+msgstr ""
+
+msgctxt "#32418"
+msgid "IMDb Most Voted"
+msgstr ""
+
+msgctxt "#32419"
+msgid "TMDb Top Rated"
+msgstr ""
+
+msgctxt "#32420"
+msgid ""
+msgstr ""
+
+msgctxt "#32421"
+msgid ""
+msgstr ""
+
+msgctxt "#32422"
+msgid ""
+msgstr ""
+
+
+msgctxt "#32423"
+msgid ""
+msgstr ""
+
+msgctxt "#32424"
+msgid ""
+msgstr ""
+
+msgctxt "#32425"
+msgid ""
+msgstr ""
+
+msgctxt "#32426"
+msgid ""
+msgstr ""
+
+
+
+
+
 
 
 

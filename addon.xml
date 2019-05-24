@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="2.9.1" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="2.9.2" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -34,9 +34,15 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v2.9.1 - May 19, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Switched startup notice from news to changelog. Should
-   have been done in 2.9.0 but missed it.[/I]
+[B][COLOR red]Update - v2.9.2 - May 22, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] added check for valid debrid account to sources.py. Code
+    to remove duplicate links broke if no debrid account.[/I]
+[COLOR yellow]--[/COLOR][I] added discart to movies from fanart.tv[/I]
+[COLOR yellow]--[/COLOR][I] added Trakt "Box Office" to movies.[/I]
+[COLOR yellow]--[/COLOR][I] added Navigation controls to settings page to
+    turn off dupliacte movie and tv shows from IMDb, TMDb, and Trakt.  May
+    add more.[/I]
+[COLOR yellow]--[/COLOR][I] added option to Tools menu to reset View Types to default.[/I]
 		</news>
 	</extension>
 

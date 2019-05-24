@@ -40,7 +40,6 @@ class episodes:
             self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
         self.user = self.fanart_tv_user + str('')
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
-        self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
 
         #        self.tvdb_key = control.setting('tvdb.user')
         #        if self.tvdb_key == '' or self.tvdb_key == None:

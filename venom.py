@@ -368,6 +368,17 @@ elif action == 'viewsNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().views()
 
+elif action == 'resetViewTypes':
+    from resources.lib.modules import views
+    views.clearViews()
+
+elif action == 'addView':
+    from resources.lib.modules import views
+    views.addView(content)
+
+
+
+
 elif action == 'refresh':
     from resources.lib.modules import control
     control.refresh()
@@ -388,9 +399,7 @@ elif action == 'artwork':
     from resources.lib.modules import control
     control.artwork()
 
-elif action == 'addView':
-    from resources.lib.modules import views
-    views.addView(content)
+
 
 
 

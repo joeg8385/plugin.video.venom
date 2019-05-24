@@ -40,7 +40,6 @@ class tvshows:
             self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
         self.user = self.fanart_tv_user + str('')
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
-        self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
 
         # self.tvdb_key = control.setting('tvdb.user')
         # if self.tvdb_key == '' or self.tvdb_key == None:
@@ -127,7 +126,7 @@ class tvshows:
                     try:
                         if not '/users/me/' in url: raise Exception()
                         if trakt.getActivity() > cache.timeout(self.trakt_list, u, self.trakt_user): raise Exception()
-                        result = cache.get(self.trakt_list, 720, u, self.trakt_user)
+                        result = cache.get(self.trakt_list, 0, u, self.trakt_user)
                         if result: lists += result
                     except:
                         result = cache.get(self.trakt_list, 0, u, self.trakt_user)
@@ -141,7 +140,7 @@ class tvshows:
                 if idx == True: self.worker(level = 0)
 
             elif u in self.trakt_link:
-                self.list = cache.get(self.trakt_list, 48, url, self.trakt_user)
+                self.list = cache.get(self.trakt_list, 24, url, self.trakt_user)
                 if idx == True: self.worker()
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
@@ -205,7 +204,7 @@ class tvshows:
             except: pass
 
             self.list = cache.get(tvmaze.tvshows().tvmaze_list, 168, url)
-            if idx == True: self.worker()
+            # if idx == True: self.worker()
 
             if self.list == None:
                 self.list = []
@@ -499,9 +498,9 @@ class tvshows:
                 year = re.sub('[^0-9]', '', str(year))
                 year = year.encode('utf-8')
 
-                try:
-                    if int(year) > int((self.datetime).strftime('%Y')): continue
-                except: pass
+                # try:
+                    # if int(year) > int((self.datetime).strftime('%Y')): continue
+                # except: pass
 
                 try:
                     imdb = item['ids']['imdb']
@@ -567,7 +566,7 @@ class tvshows:
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': '0', 'next': next})
+                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': '0', 'fanart': '0', 'next': next})
             except:
                 pass
 
@@ -824,8 +823,8 @@ class tvshows:
             if self.list == None or self.list == []: return
             self.meta = []
             total = len(self.list)
-            maximum = 50
-            # maximum = total + 10
+            # maximum = 50
+            maximum = total + 10
 
             self.fanart_tv_headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
             if not self.fanart_tv_user == '': self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
@@ -898,21 +897,35 @@ class tvshows:
                 if dupe: tvdb = str(dupe[0])
                 if tvdb == '': tvdb = '0'
 
-            if tvdb == '0':
+            # if tvdb == '0':
+                # url = self.tvdb_by_query % (urllib.quote_plus(self.list[i]['title']))
+
+                # years = [str(self.list[i]['year']), str(int(self.list[i]['year'])+1), str(int(self.list[i]['year'])-1)]
+
+                # tvdb = client.request(url, timeout='20')
+                # tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
+                # tvdb = client.replaceHTMLCodes(tvdb)
+                # tvdb = client.parseDOM(tvdb, 'Series')
+                # tvdb = [(x, client.parseDOM(x, 'SeriesName'), client.parseDOM(x, 'FirstAired')) for x in tvdb]
+                # tvdb = [(x, x[1][0], x[2][0]) for x in tvdb if len(x[1]) > 0 and len(x[2]) > 0]
+                # tvdb = [x for x in tvdb if cleantitle.get(self.list[i]['title']) == cleantitle.get(x[1])]
+                # tvdb = [x[0][0] for x in tvdb if any(y in x[2] for y in years)][0]
+                # tvdb = client.parseDOM(tvdb, 'seriesid')[0]
+                # if tvdb == '': tvdb = '0'
+
+###--Check TVDb for missing info
+            if tvdb == '0' or imdb == '0':
                 url = self.tvdb_by_query % (urllib.quote_plus(self.list[i]['title']))
-
-                years = [str(self.list[i]['year']), str(int(self.list[i]['year'])+1), str(int(self.list[i]['year'])-1)]
-
-                tvdb = client.request(url, timeout='20')
-                tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
-                tvdb = client.replaceHTMLCodes(tvdb)
-                tvdb = client.parseDOM(tvdb, 'Series')
-                tvdb = [(x, client.parseDOM(x, 'SeriesName'), client.parseDOM(x, 'FirstAired')) for x in tvdb]
-                tvdb = [(x, x[1][0], x[2][0]) for x in tvdb if len(x[1]) > 0 and len(x[2]) > 0]
-                tvdb = [x for x in tvdb if cleantitle.get(self.list[i]['title']) == cleantitle.get(x[1])]
-                tvdb = [x[0][0] for x in tvdb if any(y in x[2] for y in years)][0]
-                tvdb = client.parseDOM(tvdb, 'seriesid')[0]
-                if tvdb == '': tvdb = '0'
+                item2 = client.request(url, timeout='20')
+                item2 = re.sub(r'[^\x00-\x7F]+', '', item2)
+                item2 = client.replaceHTMLCodes(item2)
+                item2 = client.parseDOM(item2, 'Series')
+                if tvdb == '0':
+                    try: tvdb = client.parseDOM(item2, 'seriesid')[0]
+                    except: tvdb = '0'
+                if imdb == '0':
+                    try: imdb = client.parseDOM(item2, 'IMDB_ID')[0]
+                    except: imdb = '0'
 
             url = self.tvdb_info_link % tvdb
             item = client.request(url, timeout = '20', error = True)
@@ -994,7 +1007,7 @@ class tvshows:
             try: cast = [(x.encode('utf-8'), '') for x in cast]
             except: cast = []
             if cast == []: cast = '0'
-
+            # xbmc.log('line 996 from tvshows cast = %s' % cast, 2)
             try: plot = client.parseDOM(item, 'Overview')[0]
             except: plot = ''
             if plot == '': plot = '0'
@@ -1209,28 +1222,28 @@ class tvshows:
 ####################################
 
                 poster = '0'
-                if poster == '0' and 'poster3' in i: poster = i['poster3']
+                # if poster == '0' and 'poster3' in i: poster = i['poster3']
                 if poster == '0' and 'poster2' in i: poster = i['poster2']
                 if poster == '0' and 'poster' in i: poster = i['poster']
 
                 icon = '0'
-                if icon == '0' and 'icon3' in i: icon = i['icon3']
+                # if icon == '0' and 'icon3' in i: icon = i['icon3']
                 if icon == '0' and 'icon2' in i: icon = i['icon2']
                 if icon == '0' and 'icon' in i: icon = i['icon']
 
                 thumb = '0'
-                if thumb == '0' and 'thumb3' in i: thumb = i['thumb3']
+                # if thumb == '0' and 'thumb3' in i: thumb = i['thumb3']
                 if thumb == '0' and 'thumb2' in i: thumb = i['thumb2']
                 if thumb == '0' and 'thumb' in i: thumb = i['thumb']
 
                 banner = '0'
-                if banner == '0' and 'banner3' in i: banner = i['banner3']
+                # if banner == '0' and 'banner3' in i: banner = i['banner3']
                 if banner == '0' and 'banner2' in i: banner = i['banner2']
                 if banner == '0' and 'banner' in i: banner = i['banner']
 
                 fanart = '0'
                 if settingFanart:
-                    if fanart == '0' and 'fanart3' in i: fanart = i['fanart3']
+                    # if fanart == '0' and 'fanart3' in i: fanart = i['fanart3']
                     if fanart == '0' and 'fanart2' in i: fanart = i['fanart2']
                     if fanart == '0' and 'fanart' in i: fanart = i['fanart']
 
@@ -1268,12 +1281,12 @@ class tvshows:
             except:
                 pass
 
-        if not next == '0':
+        if next:
             try:
                 url = items[0]['next']
                 if url == '': raise Exception()
 
-                if self.imdb_link in url:
+                if self.imdb_link in url or self.trakt_link in url:
                     url = '%s?action=tvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
                 elif self.tmdb_link in url:

@@ -616,12 +616,14 @@ class sources:
         captcha = control.setting('hosts.captcha')
         if captcha == '': captcha = 'true'
         HEVC = control.setting('HEVC')
+
+###---Remove dupes
         filter = []
         for i in self.sources:
             a = i['url'].lower()
             for sublist in filter:
                 b = sublist['url'].lower()
-                if 'magnet:' in a:
+                if 'magnet:' in a and debrid.status() == True:
                     info_hash = re.search('magnet:.+?urn:\w+:([a-z0-9]+)', a)
                     if info_hash:
                         if info_hash.group(1) in b:
@@ -635,6 +637,8 @@ class sources:
             filter.append(i)
         log_utils.log('Removed %s duplicate sources from list' % (len(self.sources) - len(filter)), log_utils.LOGDEBUG)
         self.sources = filter
+###---
+
         random.shuffle(self.sources)
         if provider == 'true':
             self.sources = sorted(self.sources, key=lambda k: k['provider'])

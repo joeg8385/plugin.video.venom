@@ -367,6 +367,8 @@ class movies:
             except:
                 pass
 
+
+###--Fanart.tv artwork
             try:
                 artmeta = True
                 art = client.request(self.fanart_tv_art_link % imdb, headers = self.fanart_tv_headers, timeout = '10', error = True)
@@ -377,49 +379,82 @@ class movies:
 
             try:
                 poster2 = art['movieposter']
-                poster2 = [x for x in poster2 if x.get('lang') == self.lang][::-1] + [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') in ['00', '']][::-1]
-                poster2 = poster2[0]['url'].encode('utf-8')
+                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '']
+                poster2 = [(x[0], x[1]) for x in poster2]
+                poster2 = sorted(poster2, key=lambda x: int(x[1]), reverse=True)
+                poster2 = [x[0] for x in poster2][0]
+                poster2 = poster2.encode('utf-8')
             except:
                 poster2 = '0'
 
             try:
                 if 'moviebackground' in art: fanart = art['moviebackground']
                 else: fanart = art['moviethumb']
-                fanart = [x for x in fanart if x.get('lang') == self.lang][::-1] + [x for x in fanart if x.get('lang') == 'en'][::-1] + [x for x in fanart if x.get('lang') in ['00', '']][::-1]
-                fanart = fanart[0]['url'].encode('utf-8')
+                fanart = [(x['url'], x['likes']) for x in fanart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in fanart if x.get('lang') == '']
+                fanart = [(x[0], x[1]) for x in fanart]
+                fanart = sorted(fanart, key=lambda x: int(x[1]), reverse=True)
+                fanart = [x[0] for x in fanart][0]
+                fanart = fanart.encode('utf-8')
             except:
                 fanart = '0'
 
             try:
                 banner = art['moviebanner']
-                banner = [x for x in banner if x.get('lang') == self.lang][::-1] + [x for x in banner if x.get('lang') == 'en'][::-1] + [x for x in banner if x.get('lang') in ['00', '']][::-1]
-                banner = banner[0]['url'].encode('utf-8')
+                banner = [(x['url'], x['likes']) for x in banner if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in banner if x.get('lang') == '']
+                banner = [(x[0], x[1]) for x in banner]
+                banner = sorted(banner, key=lambda x: int(x[1]), reverse=True)
+                banner = [x[0] for x in banner][0]
+                banner = banner.encode('utf-8')
             except:
                 banner = '0'
 
             try:
                 if 'hdmovielogo' in art: clearlogo = art['hdmovielogo']
-                else: clearlogo = art['clearlogo']
-                clearlogo = [x for x in clearlogo if x.get('lang') == self.lang][::-1] + [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') in ['00', '']][::-1]
-                clearlogo = clearlogo[0]['url'].encode('utf-8')
+                else: clearlogo = art['movielogo']
+                clearlogo = [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == '']
+                clearlogo = [(x[0], x[1]) for x in clearlogo]
+                clearlogo = sorted(clearlogo, key=lambda x: int(x[1]), reverse=True)
+                clearlogo = [x[0] for x in clearlogo][0]
+                clearlogo = clearlogo.encode('utf-8')
             except:
                 clearlogo = '0'
 
             try:
                 if 'hdmovieclearart' in art: clearart = art['hdmovieclearart']
-                else: clearart = art['clearart']
-                clearart = [x for x in clearart if x.get('lang') == self.lang][::-1] + [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') in ['00', '']][::-1]
-                clearart = clearart[0]['url'].encode('utf-8')
+                else: clearart = art['movieart']
+                clearart = [(x['url'], x['likes']) for x in clearart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in clearart if x.get('lang') == '']
+                clearart = [(x[0], x[1]) for x in clearart]
+                clearart = sorted(clearart, key=lambda x: int(x[1]), reverse=True)
+                clearart = [x[0] for x in clearart][0]
+                clearart = clearart.encode('utf-8')
             except:
                 clearart = '0'
 
             try:
+                discart = art['moviedisc']
+                discart = [(x['url'], x['likes']) for x in discart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in discart if x.get('lang') == '']
+                discart = [(x[0], x[1]) for x in discart]
+                discart = sorted(discart, key=lambda x: int(x[1]), reverse=True)
+                discart = [x[0] for x in discart][0]
+                discart = discart.encode('utf-8')
+            except:
+                discart = '0'
+
+            try:
                 if 'moviethumb' in art: landscape = art['moviethumb']
                 else: landscape = art['moviebackground']
-                landscape = [x for x in landscape if x.get('lang') == 'en'][::-1] + [x for x in landscape if x.get('lang') == '00'][::-1]
-                landscape = landscape[0]['url'].encode('utf-8')
+                landscape = [(x['url'], x['likes']) for x in landscape if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in landscape if x.get('lang') == '']
+                landscape = [(x[0], x[1]) for x in landscape]
+                landscape = sorted(landscape, key=lambda x: int(x[1]), reverse=True)
+                landscape = [x[0] for x in landscape][0]
+                landscape = landscape.encode('utf-8')
             except:
                 landscape = '0'
+
+
+
+
+
 
             try:
                 if self.tmdb_key == '': raise Exception()

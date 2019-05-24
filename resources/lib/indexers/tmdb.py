@@ -970,7 +970,7 @@ class tvshows:
                 fanart2 = [x[0] for x in fanart2][0]
                 fanart2 = fanart2.encode('utf-8')
             except:
-                fanart = '0'
+                fanart2 = '0'
 
             try:
                 banner2 = art['tvbanner']
@@ -980,7 +980,7 @@ class tvshows:
                 banner2 = [x[0] for x in banner2][0]
                 banner2 = banner2.encode('utf-8')
             except:
-                banner = '0'
+                banner2 = '0'
 
             try:
                 if 'hdtvlogo' in art: clearlogo = art['hdtvlogo']

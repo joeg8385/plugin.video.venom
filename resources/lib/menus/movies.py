@@ -62,7 +62,6 @@ class movies:
             self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
         self.user = str(self.fanart_tv_user) + str(self.tmdb_key)
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/movies/%s'
-        self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
 
         self.hidecinema = control.setting('hidecinema')
         self.hidecinema_rollback = int(control.setting('hidecinema.rollback'))
@@ -119,38 +118,6 @@ class movies:
         self.traktpopular_link = 'http://api.trakt.tv/movies/popular?limit=40&page=1'
 
 
-    def sort(self):
-        try:
-            attribute = int(control.setting('sort.movies.type'))
-            reverse = int(control.setting('sort.movies.order')) == 1
-            if attribute == 0: reverse = False
-            if attribute > 0:
-                if attribute == 1:
-                    try:
-                        self.list = sorted(self.list, key = lambda k: re.sub('(^the |^a |^an )', '', k['title'].lower()), reverse = reverse)
-                    except: self.list = sorted(self.list, key = lambda k: k['title'].lower(), reverse = reverse)
-                elif attribute == 2:
-                    self.list = sorted(self.list, key = lambda k: float(k['rating']), reverse = reverse)
-                elif attribute == 3:
-                    self.list = sorted(self.list, key = lambda k: int(k['votes'].replace(',', '')), reverse = reverse)
-                elif attribute == 4:
-                    for i in range(len(self.list)):
-                        if not 'premiered' in self.list[i]: self.list[i]['premiered'] = ''
-                    self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
-                elif attribute == 5:
-                    for i in range(len(self.list)):
-                        if not 'added' in self.list[i]: self.list[i]['added'] = ''
-                    self.list = sorted(self.list, key = lambda k: k['added'], reverse = reverse)
-                elif attribute == 6:
-                    for i in range(len(self.list)):
-                        if not 'watched' in self.list[i]: self.list[i]['watched'] = ''
-                    self.list = sorted(self.list, key = lambda k: k['watched'], reverse = reverse)
-            elif reverse:
-                self.list = reversed(self.list)
-        except:
-            tools.Logger.error()
-
-
     def get(self, url, idx=True):
         try:
             try: url = getattr(self, url + '_link')
@@ -183,7 +150,7 @@ class movies:
                 if idx == True: self.worker(level=0)
 
             elif u in self.trakt_link:
-                self.list = cache.get(self.trakt_list, 3, url, self.trakt_user)
+                self.list = cache.get(self.trakt_list, 24, url, self.trakt_user)
                 if idx == True: self.worker()
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
@@ -248,6 +215,38 @@ class movies:
             self.get(self.added_link)
         else:
             self.get(self.featured_link)
+
+
+    def sort(self):
+        try:
+            attribute = int(control.setting('sort.movies.type'))
+            reverse = int(control.setting('sort.movies.order')) == 1
+            if attribute == 0: reverse = False
+            if attribute > 0:
+                if attribute == 1:
+                    try:
+                        self.list = sorted(self.list, key = lambda k: re.sub('(^the |^a |^an )', '', k['title'].lower()), reverse = reverse)
+                    except: self.list = sorted(self.list, key = lambda k: k['title'].lower(), reverse = reverse)
+                elif attribute == 2:
+                    self.list = sorted(self.list, key = lambda k: float(k['rating']), reverse = reverse)
+                elif attribute == 3:
+                    self.list = sorted(self.list, key = lambda k: int(k['votes'].replace(',', '')), reverse = reverse)
+                elif attribute == 4:
+                    for i in range(len(self.list)):
+                        if not 'premiered' in self.list[i]: self.list[i]['premiered'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
+                elif attribute == 5:
+                    for i in range(len(self.list)):
+                        if not 'added' in self.list[i]: self.list[i]['added'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['added'], reverse = reverse)
+                elif attribute == 6:
+                    for i in range(len(self.list)):
+                        if not 'watched' in self.list[i]: self.list[i]['watched'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['watched'], reverse = reverse)
+            elif reverse:
+                self.list = reversed(self.list)
+        except:
+            tools.Logger.error()
 
 
     def search(self):
@@ -482,7 +481,7 @@ class movies:
             try:
                 title = item['title']
                 title = client.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
+                # title = title.encode('utf-8')
 
                 year = item['year']
                 year = re.sub('[^0-9]', '', str(year))
@@ -497,62 +496,58 @@ class movies:
 
                 try:
                     imdb = item['ids']['imdb']
-                   # if imdb == None or imdb == '': raise Exception()
                     imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
                     imdb = imdb.encode('utf-8')
-                except:
-                    imdb = '0'
+                except: imdb = '0'
 
                 tmdb = str(item.get('ids', {}).get('tmdb', 0))
 
-                try: premiered = item['released']
+                try:
+                    premiered = item['released']
+                    premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
+                    premiered = premiered.encode('utf-8')
                 except: premiered = '0'
-                try: premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                except: premiered = '0'
-                premiered = premiered.encode('utf-8')
 
-                try: genre = item['genres']
-                except: genre = '0'
-                genre = [i.title() for i in genre]
-                if genre == []: genre = '0'
-                genre = ' / '.join(genre)
-                genre = genre.encode('utf-8')
+                try:
+                    genre = item['genres']
+                    genre = [i.title() for i in genre]
+                    genre = ' / '.join(genre)
+                    genre = genre.encode('utf-8')
+                except: genre = 'NA'
 
-                try: duration = str(item['runtime'])
+                try:
+                    duration = str(item['runtime'])
+                    duration = duration.encode('utf-8')
                 except: duration = '0'
-                if duration == None: duration = '0'
-                duration = duration.encode('utf-8')
 
-                try: rating = str(item['rating'])
+                try:
+                    rating = str(item['rating'])
+                    rating = rating.encode('utf-8')
                 except: rating = '0'
-                if rating == None or rating == '0.0': rating = '0'
-                rating = rating.encode('utf-8')
 
-                try: votes = str(item['votes'])
+                try:
+                    votes = str(item['votes'])
+                    votes = str(format(int(votes),',d'))
+                    votes = votes.encode('utf-8')
                 except: votes = '0'
-                try: votes = str(format(int(votes),',d'))
-                except: pass
-                if votes == None: votes = '0'
-                votes = votes.encode('utf-8')
 
-                try: mpaa = item['certification']
+                try:
+                    mpaa = item['certification']
+                    mpaa = mpaa.encode('utf-8')
                 except: mpaa = '0'
-                if mpaa == None: mpaa = '0'
-                mpaa = mpaa.encode('utf-8')
 
-                try: plot = item['overview'].encode('utf-8')
+                try:
+                    plot = item['overview'].encode('utf-8')
+                    plot = client.replaceHTMLCodes(plot)
+                    plot = plot.encode('utf-8')
                 except: plot = '0'
-                if plot == None: plot = '0'
-                plot = client.replaceHTMLCodes(plot)
-                plot = plot.encode('utf-8')
 
-                try: tagline = item['tagline']
+                try:
+                    tagline = item['tagline']
+                    tagline = client.replaceHTMLCodes(tagline)
                 except: tagline = '0'
-                if tagline == None: tagline = '0'
-                tagline = client.replaceHTMLCodes(tagline)
-                tagline = tagline.encode('utf-8')
 
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': '0', 'fanart': '0', 'next': next, 'progress' : progress})
+                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': '0', 'fanart': '0', 'next': next, 'progress': progress})
             except:
                 pass
         return self.list
@@ -1152,8 +1147,6 @@ class movies:
                             if 'poster2' in i: poster = i['poster2']
                 except: pass
 
-
-
                 icon = '0'
                 if icon == '0' and 'icon3' in i: icon = i['icon3']
                 if icon == '0' and 'icon2' in i: icon = i['icon2']
@@ -1184,6 +1177,9 @@ class movies:
                 landscape = '0'
                 if landscape == '0' and 'landscape' in i: landscape = i['landscape']
 
+                discart = '0'
+                if discart == '0' and 'discart' in i: discart = i['discart']
+
                 if poster == '0': poster = addonPoster
                 if icon == '0': icon = poster
                 if thumb == '0': thumb = poster
@@ -1198,6 +1194,7 @@ class movies:
                 if not clearlogo == '0' and not clearlogo == None: art.update({'clearlogo' : clearlogo})
                 if not clearart == '0' and not clearart == None: art.update({'clearart' : clearart})
                 if not landscape == '0' and not landscape == None: art.update({'landscape' : landscape})
+                if not discart == '0' and not discart == None: art.update({'discart' : discart})
 
                 item = control.item(label = labelProgress)
                 if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
