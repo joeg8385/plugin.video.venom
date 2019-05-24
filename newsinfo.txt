@@ -1,0 +1,170 @@
+[B][COLOR red]Update - v2.8.1 - May 3, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Now using Openscrapers for source providers!
+   Torrent min seeder option now part of Openscraper settings.[/I]
+[COLOR yellow]--[/COLOR][I] Some accounts moved to Openscrapers,
+   remaining unused accounts have been removed[/I]
+[COLOR yellow]--[/COLOR][I] Renamed settings page category "Accounts" to
+   "API Keys" to follow what stricly now resides there[/I]
+
+[B][COLOR red]Update - v2.8.0 - April 30, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] New Notification function for additional info.
+   Default InfoDialog() reported Addon Name as heading/Title, and now
+   reports Movie, Show, or Episode info if added to Trakt etc.  Also turned off
+   annoying sounds for anything other than errors.[/I]
+
+[B][COLOR red]Update - v2.7.9 - April 29, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added new options to Trakt Manager, Watched, Unwatched, Rate,
+   and Unrate.  Main function of List items now in Bold and Color to stand out[/I]
+[COLOR yellow]--[/COLOR][I] Renamed context menu "Play" options.  Now when set to "Auto Play". Then
+  context menu will have option called "Source Select" to override "AutoPlay",
+  formerly "Play using..", made little sense what the function did.  Works in reverse
+  if default play action is "Directory" you'll see "Auto Play"  as usual[/I]
+[COLOR yellow]--[/COLOR][I] Renamed context menu "Queue Item" to "Add to Playlist" to better follow suit
+  with new Playlist options coming soon[/I]
+
+[B][COLOR red]Update - v2.7.8 - April 26, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Scaper fix, 3 Torrents fixed.  Due to number of links being pulled default
+   is now set to premeptive termination and forced HD quality, scrape and play is very fastest in this method[/I]
+
+[B][COLOR red]Update - v2.7.7 - April 25, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Scraper cleanup.  Fixed broken scraper terminating scrape early, losing a
+   number of Debrid sources![/I]
+[COLOR yellow]--[/COLOR][I] cfscrape update[/I]
+
+[B][COLOR red]Update - v2.7.6 - April 22, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added clearart and clearlogo to metadata for vosd controls logo show in
+    movies and episodes.[/I]
+[COLOR yellow]--[/COLOR][I] code cleanup, and partial work on UpNext implementation, coming soon![/I]
+
+[B][COLOR red]Update - v2.7.5 - April 20, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed random Trakt/IMDB lists missing from user lists[/I]
+[COLOR yellow]--[/COLOR][I] changed user list icon from book to either Trakt or IMDB to be more descriptive
+    of where list came from[/I]
+[COLOR yellow]--[/COLOR][I] Fixed random Shows Plot from being dropped[/I]
+
+[B][COLOR red]Update - v2.7.4 - April 19, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fix TV Show Calendar[/I]
+[COLOR yellow]--[/COLOR][I] few more artwork adjustments to "MY Lists"[/I]
+
+[B][COLOR red]Update - v2.7.3 - April 15, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added "Anticipated" to Movies menu-EXPERIMENTAL![/I]
+[COLOR yellow]--[/COLOR][I] fixed sorting options in "My List"[/I]
+[COLOR yellow]--[/COLOR][I] Added TV Shows Air date labeling options to My List-TV Shows[/I]
+
+[B][COLOR red]Update - v2.7.2 - April 14, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Scraper Cleanup[/I]
+[COLOR yellow]--[/COLOR][I] Duplicate Torrent removal from source list[/I]
+
+[B][COLOR red]Update - v2.7.1 - April 13, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added "Unfinished" to "My List" for Movies and TV Shows[/I]
+[COLOR yellow]--[/COLOR][I] Fixes to labels in "My Lists", added new % watched to Unfinished[/I]
+[COLOR yellow]--[/COLOR][I] TVdb api key now hard coded and noted in Account settings[/I]
+[COLOR yellow]--[/COLOR][I] Added Movie sort option for "My List" Trakt lists[/I]
+
+[B][COLOR red]Update - v2.7.0 - April 9, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixes and changes to the new Trakt cache system and overlays[/I]
+
+[B][COLOR red]Update - v2.6.7 - April 7, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] New Trakt management system cache driven with new overlays, more to come[/I]
+
+[B][COLOR red]Update - v2.6.6 - April 5, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added new enable/disable all providers utilizing new list management system[/I]
+[COLOR yellow]--[/COLOR][I] few new Torrents added[/I]
+
+[B][COLOR red]Update - v2.6.5 - April 3, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] new list driven system for provider management, a dev thing to make life easier[/I]
+[COLOR yellow]--[/COLOR][I] few new hosters added[/I]
+[COLOR yellow]--[/COLOR][I] fixed "Tools"-"Clear Sources" from opening addon settings menu[/I]
+
+[B][COLOR red]Update - v2.6.4 - March 30, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Missed removing an old Lamda setting in 2.6.3[/I]
+[COLOR yellow]--[/COLOR][I] rigorously tested and removed non working Hosters, added a few new ones[/I]
+
+[B][COLOR red]Update - v2.6.3 - March 29, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed a few scraper defaults[/I]
+[COLOR yellow]--[/COLOR][I] Renamed SD setting under filter option for clearer understnading of it's purpose [/I]
+
+[B][COLOR red]Update - v2.6.2 - March 28, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Lambda Scraper module is now a thing of the past.  All scrapers are now in
+       addon settings[/I]
+
+[B][COLOR red]Update - v2.6.1 - March 27, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed remaining missing artwork in Trakt History and OnDeck[/I]
+[COLOR yellow]--[/COLOR][I] removed interface option for "Unknown video info key", not needed[/I]
+[COLOR yellow]--[/COLOR][I] swap out old Fanart.tv dev API key for good working one, does not impact
+   Persoanl API key[/I]
+
+[B][COLOR red]Update - v2.6.0 - March 25, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Updated modules[/I]
+[COLOR yellow]--[/COLOR][I] fix "My List" Broke Progress and Episodes list in last update[/I]
+[COLOR yellow]--[/COLOR][I] Solved query broken under Leia.  Can now jump to specific sections in other settings
+   again[/I]
+[COLOR yellow]--[/COLOR][I] added new setting to fix the "Unknown video info key" log errors for Leia[/I]
+[COLOR yellow]--[/COLOR][I] partially solved missing artwork in Trakt OnDeck and Hisotry, soon will be fixed[/I]
+
+[B][COLOR red]Update - v2.5.0 - March 22, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed My Lists, New Movie and Episodes infrequent response to being turned on
+   and off[/I]
+
+[B][COLOR red]Update - v2.4.9 - March 20, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed broken def that effected most of the Trakt links in My Lists[/I]
+
+[B][COLOR red]Update - v2.4.8 - March 19, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed Hide in Cinema option and added new slider to set how many months back
+   you wish to go.[/I]
+[COLOR yellow]--[/COLOR][I] 6 works perfect imo and removes movies playing in theaters[/I]
+
+[B][COLOR red]Update - v2.4.7 - March 17, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed up "My List" Section.  Few broken links fixed.  Also grouped the list to keep
+   Trakt and IMdb together[/I]
+
+[B][COLOR red]Update - v2.4.6 - March 16, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added Christmas collection with option to enable/disable in settings[/I]
+
+[B][COLOR red]Update - v2.4.5 - March 15 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Conlidation of Addons![/I]
+[COLOR yellow]--[/COLOR][I] Moved script.module.venom to plugin[/I]
+[COLOR yellow]--[/COLOR][I] Moved script.venom.artwork to plugin[/I]
+[COLOR yellow]--[/COLOR][I] Deleted script.venom.metada, purely uses just the meta.db cache file in
+   userdata now[/I]
+[COLOR yellow]--[/COLOR][I] The above 3 scripts will now be listed under dependencies as "orphaned"
+   so uninstall them![/I]
+
+[B][COLOR red]Update - v2.4.4 - March 13, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added color option for unaired episodes[/I]
+[COLOR yellow]--[/COLOR][I] Removed Alluc account[/I]
+[COLOR yellow]--[/COLOR][I] Removed Segos account[/I]
+[COLOR yellow]--[/COLOR][I] Added Gostream account settings[/I]
+
+[B][COLOR red]Update - v2.4.3 - March 7, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Few fixes to Collections movie section[/I]
+
+[B][COLOR red]Update - 2.4.2 - March 4, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed Certificates section for IMDB adress change[/I]
+
+[B][COLOR red]Update - 2.4.0 - March 1, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] One more settings page change to address Leia bugs[/I]
+
+[B][COLOR red]Update - 2.3.9 - Feb. 27, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Restructured settings page to address Leia bugs[/I]
+
+[B][COLOR red]Update - 2.3.8 - Feb. 26, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Account settings fixes[/I]
+
+[B][COLOR red]Update - 2.3.7 - Feb. 25, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added hidden Trakt username to settings[/I]
+[COLOR yellow]--[/COLOR][I] for visual confirmation of Authentication[/I]
+
+[B][COLOR red]Update - 2.3.6 - Feb. 23, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Setting page fixes for Leia changes[/I]
+[COLOR yellow]--[/COLOR][I] Takt fixes - [/I]
+[COLOR yellow]--[/COLOR][I] Resume playback fix (Eggman)[/I]
+
+[B][COLOR red]Update - 2.3.5 - Feb. 21, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] updated lang ID's[/I]
+
+[B][COLOR red]Update - 2.2 - Feb. 20, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Play trailer fix under Leia-Eggman![/I]
+
+[B][COLOR red]Update - 2.1 - Feb. 19, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I]  Reorganized settings menu[/I]

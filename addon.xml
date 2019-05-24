@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.venom" version="2.8.1" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+
+	<requires>
+		<import addon="xbmc.python" version="2.19.0" />
+		<import addon="script.module.requests" />
+		<import addon="script.module.beautifulsoup4" />
+		<import addon="script.module.metahandler" />
+		<import addon="script.module.resolveurl" />
+		<import addon="script.module.openscrapers" />
+	</requires>
+
+	<extension point="xbmc.python.pluginsource" library="venom.py">
+		<provides>video</provides>
+	</extension>
+
+	<extension point="xbmc.service" library="service.py" start="startup" />
+	<extension point="xbmc.python.module" library="resources/lib/"/>
+
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">[B][COLOR red]Venom[/COLOR][/B] We do not host any of the contents streamed</summary>
+		<description lang="en">[B]Venom[/B][CR] This addon does not form part of the Kodi Media Centre. Please do not seek assistance with this addon from any of the Official Kodi Support Channels.[CR]The author does not host any of the content in this addon and takes no responsibility for content found.</description>
+		<platform>all</platform>
+		<license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
+		<forum></forum>
+		<website></website>
+		<source></source>
+		<disclaimer lang="en">The author of this addon do not host any of the content which is found and have no affiliation with any of the content providers. This addon simply searches websites for content. Use at your own risk!</disclaimer>
+		<assets>
+			<icon>icon.png</icon>
+			<fanart>fanart.jpg</fanart>
+			<screenshot>resources/screenshots/screenshot01a.jpg</screenshot>
+			<screenshot>resources/screenshots/screenshot02a.jpg</screenshot>
+			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
+		</assets>
+		<news>
+[B][COLOR red]Update - v2.8.1 - May 3, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Now using Openscrapers for source providers!
+   Torrent min seeder option now part of Openscraper settings.[/I]
+[COLOR yellow]--[/COLOR][I] Some accounts moved to Openscrapers,
+   remaining unused accounts have been removed[/I]
+[COLOR yellow]--[/COLOR][I] Renamed settings page category "Accounts" to
+   "API Keys" to follow what stricly now resides there[/I]
+		</news>
+	</extension>
+
+</addon>

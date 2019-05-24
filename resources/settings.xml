@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+<!-- General - 0 -->
+	<category label="32310">
+<!-- 		<setting id="appearance.alt" type="action" label="32311" default="-" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=artwork)" visible="!System.HasAddon(script.venom.artwork)" /> -->
+<!-- 		<setting id="appearance.1" type="select" label="32311" values="Venom|Covenant|Incursion|Stealth|Exuary" default="Venom" visible="System.HasAddon(script.venom.artwork)" /> -->
+		<setting id="appearance.alt" type="action" label="32311" default="-" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=artwork)" visible="hidden" />
+		<setting id="appearance.1" type="select" label="32311" values="Venom|Exodus|Exuary" default="Venom" visible="true" />
+		<setting id="api.language" type="select" label="32316" values="English|German" default="English" />
+		<setting type="lsep" label="32319" />
+		<setting id="fanart" type="bool" label="32318" default="true" />
+		<setting id="hidecinema" type="bool" label="32571" default="false" />
+		<setting id="hidecinema.rollback" type="slider" label="Months to Rollback for Hide in Cinema" enable="eq(-1,true)" default="6" range="1,12" option="int" />
+		<setting id="navi.xmascollections" type="bool" label="Enable Christmas Collections" default="false" />
+		<setting id="newmovies.widget" type="enum" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="5" />
+		<setting id="mylists.widget" type="bool" label="32329" default="true" />
+		<setting label="My Movies" type="lsep" />
+		<setting id="sort.movies.type" type="enum" label="35190" lvalues="33564|33039|35187|35188|35391|35392|35393" default="0" />
+		<setting id="sort.movies.order" type="enum" label="33679" lvalues="33649|33650" default="0" subsetting="true" enable="!eq(-1,0)" />
+	</category>
+
+
+<!-- TV Shows - 1 -->
+	<category label="32641">
+		<setting id="flatten.tvshows" type="bool" label="32317" default="false" />
+		<setting id="trakt.userHidden" type="text" default="" visible="hidden" />
+		<setting id="tv.widget" type="enum" label="32325" lvalues="32302|32326" default="1" visible="eq(-1,true)" />
+		<setting id="tv.widget.alt" type="enum" label="32325" lvalues="32302|32326|32327|32328" default="2" visible="!eq(-2,true)" />
+		<setting id="tv.specials" type="bool" label="32649" default="true" />
+		<setting id="showunaired" type="bool" label="32570" default="true" />
+		<setting id="unaired.identify" type="enum" label="32608" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="8" />
+<!-- 		<setting type="bool" id="enable.upnext" default="false" label="Enable UpNext Integration" visible="System.HasAddon(service.upnext)" />
+		<setting type="slider" id="upnext.time" enable="eq(-1,true)" visible="eq(-1,true)" default="30" label="UpNext Notification time" option="int" range="10,60" /> -->
+		<!-- <setting id="tvshows.unwatched.enabled" type="bool" label="33891" default="true" /> -->
+		<!-- <setting id="tvshows.unwatched.limit" type="bool" label="33892" default="true" subsetting="false" visible="eq(-1,true)" /> -->
+		<setting label="My TV Shows" type="lsep" />
+		<setting id="sort.shows.type" type="enum" label="35191" lvalues="33564|33039|35187|35188|35391|35392|35393" default="0" />
+		<setting id="sort.shows.order" type="enum" label="33679" lvalues="33649|33650" default="0" subsetting="true" enable="!eq(-1,0)"/>
+		<setting id="sort.shows.date" type="enum" label="35194" lvalues="32302|33649|33650" default="2" subsetting="true" />
+		<setting id="tvshows.air.enabled" type="bool" label="35017" default="true" subsetting="false" />
+		<setting id="tvshows.air.zone" type="enum" label="35018" lvalues="32314|35022|35023" default="0" subsetting="true" visible="eq(-1,true)" />
+		<setting id="tvshows.air.location" type="enum" label="35019" lvalues="35024|35025|35026|35027" default="0" subsetting="true" visible="eq(-2,true)" />
+		<setting id="tvshows.air.format" type="enum" label="35020" lvalues="35029|35028|35030" default="2" subsetting="true" visible="eq(-3,true)" />
+		<setting id="tvshows.air.day" type="enum" label="35031" lvalues="35049|35050" default="1" subsetting="true" visible="eq(-4,true) + !eq(-1,0)" />
+		<setting id="tvshows.air.time" type="enum" label="35048" lvalues="35051|35052|35053" default="0" subsetting="true" visible="eq(-5,true) + !eq(-2,1)" />
+		<setting id="tvshows.air.bold" type="bool" label="35021" default="false" subsetting="true" visible="eq(-6,true)" />
+	</category>
+
+
+<!-- Playback - 2 -->
+	<category label="32330">
+		<setting type="lsep" label="32343" />
+		<setting id="bookmarks" type="bool" label="32344" default="true" />
+		<setting id="bookmarks.auto" type="bool" label="32657" default="false" enable="eq(-1,true)" />
+		<setting type="lsep" label="32372" />
+		<setting id="crefresh" type="bool" label="32373" default="false" />
+	</category>
+
+
+<!-- Providers - 3 -->
+	<category label="32345">
+		<setting id="module.provider" type="text" label="32650" default="Openscrapers Scrapers" visible="true" enable="false" />
+        <setting id="open.settings" type="action" label="32651" option="close" action="RunPlugin(plugin://script.module.openscrapers/?mode=OpenscrapersSettings&opensettings=true&query=3.1)" />
+        <setting type="lsep" label="Clear Providers Cache After Changing Scraper Provider" />
+		<setting id="clear.sources" type="action" label="32652" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearSources&opensettings=true&query=3.2)" />
+<!-- 		<setting label="Set All Default Providers" type="action" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=toggleDefaults&query=3.1)" />
+		<setting label="Enable Paid Debrid-w/Torrents" type="action" action="RunPlugin(plugin://plugin.video.venom/?action=toggleAllPaid&setting=true&query=3.2)" option="close" /> -->
+	</category>
+
+
+<!-- Source Filters - 4 -->
+	<category label="Source Filters">
+		<setting id="providers.lang" type="select" label="32360" values="English|German" default="English" />
+		<setting id="scrapers.timeout.1" type="slider" label="32312" default="30" range="10,60" option="int" />
+		<setting id="debrid.only" type="bool" label="32653" default="false" enable="true" />
+		<setting id="hosts.mode" type="enum" label="32331" lvalues="32332|32333|32334" default="2" />
+		<setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="0" />
+		<setting type="lsep" label="32338" />
+		<setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="0" />
+		<setting id="preemptive.termination" type="bool" label="32654" default="true" />
+		<setting id="preemptive.limit" type="slider" label="32655" default="10" range="1,50" option="int" enable="eq(-1,true)" />
+		<setting id="prem.identify" type="enum" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="6" />
+		<setting id="autoplay.sd" type="bool" label="Enable SD quality in Autoplay" default="false" />
+		<setting id="sources.extrainfo" type="bool" label="32587" default="true" />
+		<setting id="HEVC" type="bool" label="32363" default="true" />
+		<setting id="hosts.captcha" type="bool" label="32341" default="true" />
+		<setting id="hosts.sort.provider" type="bool" label="32342" default="true" />
+	</category>
+
+
+<!-- Torrent Settings - 5 -->
+	<category label="Torrent Settings">
+		<setting id="torrent.enabled" type="bool" label="32636" default="true" visible = "false" />
+		<setting id="torrent.identify" type="enum" label="32634" enable="eq(-1,true)" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="8" />
+		<setting id="torrent.min.seeders" type="slider" label="32638" enable="eq(-2,true)" default="1" range="1,100" option="int" visible = "false" />
+		<setting id="torrent.sort.them.up" type="bool" label="32639" enable="eq(-3,true)"  default="false" />
+		<setting id="torrent.resolveurl2" type="action" label="32640" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolverRDTorrent&query=1.30)" />
+		<setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-5,true)" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolverRDTorrent&query=1.40)" />
+	</category>
+
+
+<!-- Trakt-6 -->
+	<category label ="32315">
+		<setting type="lsep" label="32315" />
+		<setting id="trakt.auth" type="text" default="" visible="hidden"/>
+		<setting type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=authTrakt&opensettings=tru&query=6.2)" />
+		<setting id="trakt.user" type="text" default="" label="40062" enable="false" visible="true" />
+		<setting id="trakt.token" type="text" visible="hidden" label="" default="" />
+		<setting id="trakt.refresh" type="text" visible="hidden" label="" default="" />
+		<setting id="trakt.notifications" type="bool" label="33050" default="true" visible="!eq(-3,true)" />
+		<setting id="trakt.rating" type="enum" label="35187" lvalues="33564|35547" default="0" visible="!eq(-4,true)" />
+		<setting id="indicators.alt" type="enum" label="32313" lvalues="32314|32315" default="1" visible="!eq(-5,true)" />
+		<setting id="indicators" type="enum" label="32313" lvalues="32314" default="0" visible="eq(-6,true)" />
+		<setting id="bookmarks.trakt" type="bool" label="32644" default="false" enable="!eq(-7,true)"/>
+<!-- 		<setting id="prgr.sortorder" type="enum" label="32584" lvalues="32585|32586" default="1" enable="!eq(-8,true)" /> -->
+		<setting type="lsep" label="32645" />
+		<setting id="autoTraktOnStart" type="bool" label="32646" default="False" enable="!eq(-9,true)" />
+		<setting id="schedTraktTime" type="slider" label="32647" default="0" range="0,24" option="int" enable="eq(-1,true)" />
+		<setting id="schedTraktTime.message" type="text" label="32648" default="" enable="false" />
+	</category>
+
+
+<!-- API Keys - 7 -->
+	<category label="API Keys">
+		<setting type="lsep" label="FANART.TV" />
+		<setting id="fanart.tv.user" type="text" label="Fanart API" default="" />
+
+		<setting type="lsep" label="TMDb" />
+		<setting id="tm.user" type="text" option="hidden" label="TMDb API" default="" />
+
+		<setting type="lsep" label="TVDb" />
+		<setting id="tvdb.user" type="text" label="TVDb API" default="HARD CODED" enable="false" />
+
+		<setting type="lsep" label="IMDb" />
+		<setting id="imdb.user" type="text" label="32303" default="" />
+	</category>
+
+
+<!-- Library - 8 -->
+	<category label="32541">
+		<setting id="library.movie" type="folder" label="32543" default="special://userdata/addon_data/plugin.video.venom/Movies" />
+		<setting id="library.tv" type="folder" label="32544" default="special://userdata/addon_data/plugin.video.venom/TVShows" />
+		<setting type="lsep" label="32542" />
+
+		<setting type="sep" />
+		<setting id="library.service.update" type="bool" label="32545" default="true" />
+		<setting id="library.service.notification" type="bool" label="32546" default="true" />
+
+		<setting type="sep" />
+		<setting id="library.update" type="bool" label="32547" default="true" />
+		<setting id="library.check" type="bool" label="32548" default="true" />
+
+		<setting type="sep" />
+		<setting id="library.importdelay" type="bool" label="$NUMBER[24]HR delay before import" default="true" />
+		<setting id="library.check_movie" type="bool" label="32549" default="false" />
+		<setting id="library.check_episode" type="bool" label="32550" default="false" />
+		<setting id="library.include_unknown" type="bool" label="32565" default="true" />
+	</category>
+
+
+<!-- Downloads - 9 -->
+	<category label="32347">
+		<setting id="downloads" type="bool" label="32348" default="false" />
+		<setting type="sep" />
+		<setting id="movie.download.path" type="folder" label="32349" enable="eq(-2,true)" default="" />
+		<setting id="tv.download.path" type="folder" label="32350" enable="eq(-3,true)" default="" />
+		<setting type="sep" />
+		<setting id="message1" type="text" label="32351" default="" enable="false" />
+		<setting id="message2" type="text" label="32352" default="" enable="false" />
+	</category>
+
+
+<!-- Subtitles - 10 -->
+	<category label="32353">
+		<setting id="subtitles" type="bool" label="32354" default="false" />
+		<setting type="sep" />
+		<setting id="subtitles.utf" type="bool" label="32355" enable="eq(-2,true)" default="false" />
+		<setting id="subtitles.lang.1" type="select" label="32356" values="Afrikaans|Albanian|Arabic|Armenian|Basque|Bengali|Bosnian|Breton|Bulgarian|Burmese|Catalan|Chinese|Croatian|Czech|Danish|Dutch|English|Esperanto|Estonian|Finnish|French|Galician|Georgian|German|Greek|Hebrew|Hindi|Hungarian|Icelandic|Indonesian|Italian|Japanese|Kazakh|Khmer|Korean|Latvian|Lithuanian|Luxembourgish|Macedonian|Malay|Malayalam|Manipuri|Mongolian|Montenegrin|Norwegian|Occitan|Persian|Polish|Portuguese|Portuguese(Brazil)|Romanian|Russian|Serbian|Sinhalese|Slovak|Slovenian|Spanish|Swahili|Swedish|Syriac|Tagalog|Tamil|Telugu|Thai|Turkish|Ukrainian|Urdu" enable="eq(-3,true)" default="English" />
+		<setting id="subtitles.lang.2" type="select" label="32357" values="Afrikaans|Albanian|Arabic|Armenian|Basque|Bengali|Bosnian|Breton|Bulgarian|Burmese|Catalan|Chinese|Croatian|Czech|Danish|Dutch|English|Esperanto|Estonian|Finnish|French|Galician|Georgian|German|Greek|Hebrew|Hindi|Hungarian|Icelandic|Indonesian|Italian|Japanese|Kazakh|Khmer|Korean|Latvian|Lithuanian|Luxembourgish|Macedonian|Malay|Malayalam|Manipuri|Mongolian|Montenegrin|Norwegian|Occitan|Persian|Polish|Portuguese|Portuguese(Brazil)|Romanian|Russian|Serbian|Sinhalese|Slovak|Slovenian|Spanish|Swahili|Swedish|Syriac|Tagalog|Tamil|Telugu|Thai|Turkish|Ukrainian|Urdu" enable="eq(-4,true)" default="English" />
+		<setting type="sep" />
+		<setting id="message3" type="text" label="32358" default="" enable="false" />
+		<setting id="message4" type="text" label="32359" default="" enable="false" />
+	</category>
+
+
+<!-- Debugging - 11 -->
+	<category label="32616">
+		<setting id="first.info" label="Enable startup notice" type="bool" default="" />
+		<setting id="addon_debug" type="bool" label="Enable Debug" default="false" />
+		<setting id="debug.location" type="enum" label="32617" lvalues="32618|32619" default="0" enable="eq(-1,true)" />
+	</category>
+</settings>
