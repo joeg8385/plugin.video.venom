@@ -628,7 +628,71 @@ msgid "Enable Debug"
 msgstr ""
 
 
+msgctxt "#32375"
+msgid "TV "Networks" menu options"
+msgstr ""
 
+
+msgctxt "#32376"
+msgid "List Mode"
+msgstr ""
+
+
+msgctxt "#32377"
+msgid "This Season's Shows"
+msgstr ""
+
+msgctxt "#32378"
+msgid "View All Shows"
+msgstr ""
+
+msgctxt "#32379"
+msgid "Allowed Shows"
+msgstr ""
+
+msgctxt "#32380"
+msgid "Airing"
+msgstr ""
+
+msgctxt "#32381"
+msgid "Ended"
+msgstr ""
+
+msgctxt "#32382"
+msgid "Documentary"
+msgstr ""
+
+msgctxt "#32383"
+msgid "Talk-Show"
+msgstr ""
+
+msgctxt "#32384"
+msgid "Airing/Ended"
+msgstr ""
+
+msgctxt "#32385"
+msgid "All"
+msgstr ""
+
+msgctxt "#32386"
+msgid ""
+msgstr ""
+
+msgctxt "#32387"
+msgid ""
+msgstr ""
+
+msgctxt "#32388"
+msgid ""
+msgstr ""
+
+msgctxt "#32389"
+msgid ""
+msgstr ""
+
+msgctxt "#32390"
+msgid ""
+msgstr ""
 
 
 

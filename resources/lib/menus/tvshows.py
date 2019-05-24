@@ -21,7 +21,7 @@ from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
-control.moderator()
+
 
 class tvshows:
     def __init__(self, type = 'show', notifications = True):
@@ -89,7 +89,7 @@ class tvshows:
         self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/shows?limit=%d' % self.count
 
         self.tvmaze_link = 'http://www.tvmaze.com'
-        self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s'
+        # self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s'
 
         self.tmdb_key = control.setting('tm.user')
         if self.tmdb_key == '' or self.tmdb_key == None:
@@ -101,38 +101,6 @@ class tvshows:
         self.tmdb_toprated_link = 'http://api.themoviedb.org/3/tv/top_rated?api_key=%s&language=en-US&region=US&page=1'
         self.tmdb_ontheair_link = 'http://api.themoviedb.org/3/tv/on_the_air?api_key=%s&language=en-US&region=US&page=1'
         self.tmdb_airingtoday_link = 'http://api.themoviedb.org/3/tv/airing_today?api_key=%s&language=en-US&region=US&page=1'
-
-
-    def sort(self):
-        try:
-            attribute = int(control.setting('sort.shows.type'))
-            reverse = int(control.setting('sort.shows.order')) == 1
-            if attribute == 0: reverse = False
-            if attribute > 0:
-                if attribute == 1:
-                    try:
-                        self.list = sorted(self.list, key = lambda k: k['tvshowtitle'].lower(), reverse = reverse)
-                    except: self.list = sorted(self.list, key = lambda k: k['title'].lower(), reverse = reverse)
-                elif attribute == 2:
-                    self.list = sorted(self.list, key = lambda k: float(k['rating']), reverse = reverse)
-                elif attribute == 3:
-                    self.list = sorted(self.list, key = lambda k: int(k['votes'].replace(',', '')), reverse = reverse)
-                elif attribute == 4:
-                    for i in range(len(self.list)):
-                        if not 'premiered' in self.list[i]: self.list[i]['premiered'] = ''
-                    self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
-                elif attribute == 5:
-                    for i in range(len(self.list)):
-                        if not 'added' in self.list[i]: self.list[i]['added'] = ''
-                    self.list = sorted(self.list, key = lambda k: k['added'], reverse = reverse)
-                elif attribute == 6:
-                    for i in range(len(self.list)):
-                        if not 'watched' in self.list[i]: self.list[i]['watched'] = ''
-                    self.list = sorted(self.list, key = lambda k: k['watched'], reverse = reverse)
-            elif reverse:
-                self.list = reversed(self.list)
-        except:
-            tools.Logger.error()
 
 
     def get(self, url, idx=True):
@@ -174,7 +142,7 @@ class tvshows:
                 if idx == True: self.worker(level = 0)
 
             elif u in self.trakt_link:
-                self.list = cache.get(self.trakt_list, 24, url, self.trakt_user)
+                self.list = cache.get(self.trakt_list, 168, url, self.trakt_user)
                 if idx == True: self.worker()
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
@@ -183,11 +151,7 @@ class tvshows:
                 if idx == True: self.worker()
 
             elif u in self.imdb_link:
-                self.list = cache.get(self.imdb_list, 24, url)
-                if idx == True: self.worker()
-
-            elif u in self.tvmaze_link:
-                self.list = cache.get(self.tvmaze_list, 168, url)
+                self.list = cache.get(self.imdb_list, 168, url)
                 if idx == True: self.worker()
 
             if self.list == None: self.list = []
@@ -233,6 +197,60 @@ class tvshows:
             if invalid:
                 control.idle()
                 if self.notifications: control.notification(title = 32002, message = 33049, icon = 'INFO')
+
+
+    def getTVmaze(self, url, idx=True):
+        from resources.lib.indexers import tvmaze
+        try:
+            try: url = getattr(self, url + '_link')
+            except: pass
+
+            self.list = cache.get(tvmaze.tvshows().tvmaze_list, 168, url)
+            if idx == True: self.worker()
+
+            if self.list == None:
+                self.list = []
+                raise Exception()
+            if idx == True: self.tvshowDirectory(self.list)
+            return self.list
+        except:
+            try: invalid = self.list == None or len(self.list) == 0
+            except: invalid = True
+            if invalid:
+                control.idle()
+                if self.notifications: control.notification(title = 32002, message = 33049, icon = 'INFO')
+
+
+    def sort(self):
+        try:
+            attribute = int(control.setting('sort.shows.type'))
+            reverse = int(control.setting('sort.shows.order')) == 1
+            if attribute == 0: reverse = False
+            if attribute > 0:
+                if attribute == 1:
+                    try:
+                        self.list = sorted(self.list, key = lambda k: k['tvshowtitle'].lower(), reverse = reverse)
+                    except: self.list = sorted(self.list, key = lambda k: k['title'].lower(), reverse = reverse)
+                elif attribute == 2:
+                    self.list = sorted(self.list, key = lambda k: float(k['rating']), reverse = reverse)
+                elif attribute == 3:
+                    self.list = sorted(self.list, key = lambda k: int(k['votes'].replace(',', '')), reverse = reverse)
+                elif attribute == 4:
+                    for i in range(len(self.list)):
+                        if not 'premiered' in self.list[i]: self.list[i]['premiered'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
+                elif attribute == 5:
+                    for i in range(len(self.list)):
+                        if not 'added' in self.list[i]: self.list[i]['added'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['added'], reverse = reverse)
+                elif attribute == 6:
+                    for i in range(len(self.list)):
+                        if not 'watched' in self.list[i]: self.list[i]['watched'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['watched'], reverse = reverse)
+            elif reverse:
+                self.list = reversed(self.list)
+        except:
+            tools.Logger.error()
 
 
     def search(self):
@@ -317,88 +335,16 @@ class tvshows:
 
 
     def networks(self):
-        networks = [
-            ('A&E', '/networks/29/ae', 'https://i.imgur.com/xLDfHjH.png'),
-            ('ABC', '/networks/3/abc', 'https://i.imgur.com/qePLxos.png'),
-            ('Acorn TV', '/webchannels/129/acorn-tv', 'http://static.tvmaze.com/uploads/images/medium_landscape/74/185171.jpg'),
-            ('Adult Swim', '/networks/10/adult-swim', 'https://i.imgur.com/jCqbRcS.png'),
-            ('Amazon', '/webchannels/3/amazon', 'https://i.imgur.com/ru9DDlL.png'),
-            ('AMC', '/networks/20/amc', 'https://i.imgur.com/ndorJxi.png'),
-            ('Animal Planet', '/networks/92/animal-planet', 'https://i.imgur.com/olKc4RP.png'),
-            ('Apple TV+', '/webchannels/310/apple-tv', 'http://static.tvmaze.com/uploads/images/medium_landscape/189/474058.jpg'),
-            ('AT-X', '/networks/167/at-x', 'https://i.imgur.com/JshJYGN.png'),
-            ('Audience', '/networks/31/audience-network', 'https://i.imgur.com/5Q3mo5A.png'),
-            ('BBC America', '/networks/15/bbc-america', 'https://i.imgur.com/TUHDjfl.png'),
-            ('BBC One', '/networks/12/bbc-one', 'https://i.imgur.com/u8x26te.png'),
-            ('BBC Two', '/networks/37/bbc-two', 'https://i.imgur.com/SKeGH1a.png'),
-            ('BBC Three', '/webchannels/71/bbc-three', 'https://i.imgur.com/SDLeLcn.png'),
-            ('BBC Four', '/networks/51/bbc-four', 'https://i.imgur.com/PNDalgw.png'),
-            ('BET', '/networks/56/bet', 'https://i.imgur.com/ZpGJ5UQ.png'),
-            ('Blackpills', '/webchannels/186/blackpills', 'http://static.tvmaze.com/uploads/images/medium_landscape/108/270401.jpg'),
-            ('Brat', '/webchannels/274/brat', 'http://static.tvmaze.com/uploads/images/medium_landscape/161/403172.jpg'),
-            ('Bravo', '/networks/52/bravo', 'https://i.imgur.com/TmEO3Tn.png'),
-            ('Cartoon Network', '/networks/11/cartoon-network', 'https://i.imgur.com/zmOLbbI.png'),
-            ('CBC', '/networks/36/cbc', 'https://i.imgur.com/unQ7WCZ.png'),
-            ('CBS', '/networks/2/cbs', 'https://i.imgur.com/8OT8igR.png'),
-            ('Channel 4', '/networks/45/channel-4', 'https://i.imgur.com/6ZA9UHR.png'),
-            ('Channel 5', '/networks/135/channel-5', 'https://i.imgur.com/5ubnvOh.png'),
-            ('Cinemax', '/networks/19/cinemax', 'https://i.imgur.com/zWypFNI.png'),
-            ('Comedy Central', '/networks/23/comedy-central', 'https://i.imgur.com/ko6XN77.png'),
-            ('Crackle', '/webchannels/4/crackle', 'https://i.imgur.com/53kqZSY.png'),
-            ('CTV', '/networks/48/ctv', 'https://i.imgur.com/qUlyVHz.png'),
-            ('CuriosityStream', '/webchannels/188/curiositystream', 'http://static.tvmaze.com/uploads/images/medium_landscape/108/272041.jpg'),
-            ('CW', '/networks/5/the-cw', 'https://i.imgur.com/Q8tooeM.png'),
-            ('CW Seed', '/webchannels/13/cw-seed', 'https://i.imgur.com/nOdKoEy.png'),
-            ('DC Universe', '/webchannels/187/dc-universe', 'http://static.tvmaze.com/uploads/images/medium_landscape/155/388605.jpg'),
-            ('Discovery Channel', '/networks/66/discovery-channel', 'https://i.imgur.com/8UrXnAB.png'),
-            ('Discovery ID', '/networks/89/investigation-discovery', 'https://i.imgur.com/07w7BER.png'),
-            ('Disney Channel', '/networks/78/disney-channel', 'https://i.imgur.com/ZCgEkp6.png'),
-            ('Disney Junior', '/networks/1039/disney-junior', 'https://static.tvmaze.com/uploads/images/medium_landscape/46/116712.jpg'),
-            ('Disney XD', '/networks/25/disney-xd', 'https://i.imgur.com/PAJJoqQ.png'),
-            ('E! Entertainment', '/networks/43/e', 'https://i.imgur.com/3Delf9f.png'),
-            ('E4', '/networks/41/e4', 'https://i.imgur.com/frpunK8.png'),
-            # ('Fearnet', '/networks/466/fearnet', 'https://static.tvmaze.com/uploads/images/large_landscape/25/64861.jpg'),
-            ('FOX', '/networks/4/fox', 'https://i.imgur.com/6vc0Iov.png'),
-            ('Freeform', '/networks/26/freeform', 'https://i.imgur.com/f9AqoHE.png'),
-            ('Fusion', '/networks/187/fusion', 'https://static.tvmaze.com/uploads/images/medium_untouched/11/29630.jpg'),
-            ('FX', '/networks/13/fx', 'https://i.imgur.com/aQc1AIZ.png'),
-            ('Hallmark', '/networks/50/hallmark-channel', 'https://i.imgur.com/zXS64I8.png'),
-            # ('Hallmark Movies & Mysteries', '/networks/252/hallmark-movies-mysteries', 'https://static.tvmaze.com/uploads/images/original_untouched/13/34664.jpg'),
-            ('HBO', '/networks/8/hbo', 'https://i.imgur.com/Hyu8ZGq.png'),
-            ('HGTV', '/networks/192/hgtv', 'https://i.imgur.com/INnmgLT.png'),
-            ('History Channel', '/networks/53/history', 'https://i.imgur.com/LEMgy6n.png'),
-            # ('H2', '/networks/74/h2', 'https://static.tvmaze.com/uploads/images/medium_landscape/3/9115.jpg'),
-            ('Hulu', '/webchannels/2/hulu', 'https://i.imgur.com/Tf81i9O.png'),
-            ('ITV', '/networks/35/itv', 'https://i.imgur.com/5Hxp5eA.png'),
-            ('Lifetime', '/networks/18/lifetime', 'https://i.imgur.com/tvYbhen.png'),
-            ('MTV', '/networks/22/mtv', 'https://i.imgur.com/QM6DpNW.png'),
-            ('National Geographic', '/networks/42/national-geographic-channel', 'https://i.imgur.com/XCGNKVQ.png'),
-            ('NBC', '/networks/1/nbc', 'https://i.imgur.com/yPRirQZ.png'),
-            ('Netflix', '/webchannels/1/netflix', 'https://i.imgur.com/jI5c3bw.png'),
-            ('Nickelodeon', '/networks/27/nickelodeon', 'https://i.imgur.com/OUVoqYc.png'),
-            ('Nicktoons', '/networks/73/nicktoons', 'https://static.tvmaze.com/uploads/images/medium_untouched/25/63394.jpg'),
-            ('Oxygen', '/networks/79/oxygen', 'https://static.tvmaze.com/uploads/images/medium_untouched/116/290882.jpg'),
-            ('PBS', '/networks/85/pbs', 'https://i.imgur.com/r9qeDJY.png'),
-            # ('Playboy TV', '/networks/1035/playboy-tv', 'https://static.tvmaze.com/uploads/images/original_untouched/46/115366.jpg'),
-            ('Showtime', '/networks/9/showtime', 'https://i.imgur.com/SawAYkO.png'),
-            ('Sky1', '/networks/63/sky-1', 'https://i.imgur.com/xbgzhPU.png'),
-            ('Starz', '/networks/17/starz', 'https://i.imgur.com/Z0ep2Ru.png'),
-            ('Sundance', '/networks/33/sundance-tv', 'https://i.imgur.com/qldG5p2.png'),
-            ('Syfy', '/networks/16/syfy', 'https://i.imgur.com/9yCq37i.png'),
-            ('TBS', '/networks/32/tbs', 'https://i.imgur.com/RVCtt4Z.png'),
-            ('TLC', '/networks/80/tlc', 'https://i.imgur.com/c24MxaB.png'),
-            ('TNT', '/networks/14/tnt', 'https://i.imgur.com/WnzpAGj.png'),
-            ('Travel Channel', '/networks/82/travel-channel', 'https://i.imgur.com/mWXv7SF.png'),
-            ('TruTV', '/networks/84/trutv', 'https://i.imgur.com/HnB3zfc.png'),
-            ('TV Land', '/networks/57/tvland', 'https://i.imgur.com/1nIeDA5.png'),
-            ('USA', '/networks/30/usa-network', 'https://i.imgur.com/Doccw9E.png'),
-            ('VH1', '/networks/55/vh1', 'https://i.imgur.com/IUtHYzA.png'),
-            ('WGN', '/networks/28/wgn-america', 'https://i.imgur.com/TL6MzgO.png')
-            # ('YouTube', '/webchannels/21/youtube', 'https://i.imgur.com/ZfewP1Y.png'),
-            # ('YouTube Premium', '/webchannels/43/youtube-premium', 'https://static.tvmaze.com/uploads/images/medium_landscape/160/401362.jpg')
-        ]
+        if control.setting('tvshows.networks.view') == '0':
+            from resources.lib.indexers.tvmaze import networks_this_season as networks
+
+        if control.setting('tvshows.networks.view') == '1':
+            from resources.lib.indexers.tvmaze import networks_view_all as networks
+
+        networks = sorted(networks, key=lambda x: x[0])
+
         for i in networks:
-            self.list.append({'name': i[0], 'url': self.tvmaze_link + i[1], 'image': i[2], 'action': 'tvshows'})
+            self.list.append({'name': i[0], 'url': self.tvmaze_link + i[1], 'image': i[2], 'action': 'tvmazeTvshows'})
         self.addDirectory(self.list)
         return self.list
 
@@ -874,114 +820,6 @@ class tvshows:
         return self.list
 
 
-    def tvmaze_list(self, url):
-        try:
-            result = client.request(url)
-            result = client.parseDOM(result, 'section', attrs = {'id': 'this-seasons-shows'})
-
-            items = client.parseDOM(result, 'div', attrs = {'class': 'content auto cell'})
-            items = [client.parseDOM(i, 'a', ret='href') for i in items]
-            items = [i[0] for i in items if len(i) > 0]
-            items = [re.findall('/(\d+)/', i) for i in items]
-            items = [i[0] for i in items if len(i) > 0]
-            items = items[:50]
-        except:
-            return
-
-        def items_list(i):
-            try:
-                url = self.tvmaze_info_link % i
-
-                item = client.request(url)
-                item = json.loads(item)
-
-                title = item['name']
-                title = re.sub('\s(|[(])(UK|US|AU|\d{4})(|[)])$', '', title)
-                title = client.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
-
-                year = item['premiered']
-                year = re.findall('(\d{4})', year)[0]
-                year = year.encode('utf-8')
-
-                if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
-
-                imdb = item['externals']['imdb']
-                if imdb == None or imdb == '': imdb = '0'
-                else: imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
-                imdb = imdb.encode('utf-8')
-
-                tvdb = item['externals']['thetvdb']
-                tvdb = re.sub('[^0-9]', '', str(tvdb))
-                tvdb = tvdb.encode('utf-8')
-
-                if tvdb == None or tvdb == '': raise Exception()
-
-                try: poster = item['image']['original']
-                except: poster = '0'
-                if poster == None or poster == '': poster = '0'
-                poster = poster.encode('utf-8')
-
-                premiered = item['premiered']
-                try: premiered = re.findall('(\d{4}-\d{2}-\d{2})', premiered)[0]
-                except: premiered = '0'
-                premiered = premiered.encode('utf-8')
-
-                try: studio = item['network']['name']
-                except: studio = '0'
-                if studio == None: studio = '0'
-                studio = studio.encode('utf-8')
-
-                try: genre = item['genres']
-                except: genre = 'NA'
-                genre = [i.title() for i in genre]
-                if genre == []: genre = 'NA'
-                genre = ' / '.join(genre)
-                genre = genre.encode('utf-8')
-
-                try: duration = item['runtime']
-                except: duration = '0'
-                if duration == None: duration = '0'
-                duration = str(duration)
-                duration = duration.encode('utf-8')
-
-                try: rating = item['rating']['average']
-                except: rating = '0'
-                if rating == None or rating == '0.0': rating = '0'
-                rating = str(rating)
-                rating = rating.encode('utf-8')
-
-                try: plot = item['summary']
-                except: plot = '0'
-                if plot == None: plot = '0'
-                plot = re.sub('<.+?>|</.+?>|\n', '', plot)
-                plot = client.replaceHTMLCodes(plot)
-                plot = plot.encode('utf-8')
-
-                try: content = item['type'].lower()
-                except: content = '0'
-                if content == None or content == '': content = '0'
-                content = content.encode('utf-8')
-
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'content': content})
-            except:
-                pass
-
-        try:
-            threads = []
-            for i in items: threads.append(workers.Thread(items_list, i))
-            [i.start() for i in threads]
-            [i.join() for i in threads]
-
-            filter = [i for i in self.list if i['content'] == 'scripted']
-            filter += [i for i in self.list if not i['content'] == 'scripted']
-            self.list = filter
-
-            return self.list
-        except:
-            return
-
-
     def worker(self, level = 1):
         try:
             if self.list == None or self.list == []: return
@@ -1182,6 +1020,7 @@ class tvshows:
             fanart = client.replaceHTMLCodes(fanart)
             fanart = fanart.encode('utf-8')
 
+###--Fanart.tv artwork
             try:
                 artmeta = True
                 art = client.request(self.fanart_tv_art_link % tvdb, headers=self.fanart_tv_headers, timeout ='20', error=True)
@@ -1192,46 +1031,64 @@ class tvshows:
 
             try:
                 poster2 = art['tvposter']
-                poster2 = [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') == '00'][::-1]
-                poster2 = poster2[0]['url'].encode('utf-8')
+                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '']
+                poster2 = [(x[0], x[1]) for x in poster2]
+                poster2 = sorted(poster2, key=lambda x: int(x[1]), reverse=True)
+                poster2 = [x[0] for x in poster2][0]
+                poster2 = poster2.encode('utf-8')
             except:
                 poster2 = '0'
 
             try:
                 fanart2 = art['showbackground']
-                fanart2 = [x for x in fanart2 if x.get('lang') == 'en'][::-1] + [x for x in fanart2 if x.get('lang') == '00'][::-1]
-                fanart2 = fanart2[0]['url'].encode('utf-8')
+                fanart2 = [(x['url'], x['likes']) for x in fanart2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in fanart2 if x.get('lang') == '']
+                fanart2 = [(x[0], x[1]) for x in fanart2]
+                fanart2 = sorted(fanart2, key=lambda x: int(x[1]), reverse=True)
+                fanart2 = [x[0] for x in fanart2][0]
+                fanart2 = fanart2.encode('utf-8')
             except:
-                fanart2 = '0'
+                fanart = '0'
 
             try:
                 banner2 = art['tvbanner']
-                banner2 = [x for x in banner2 if x.get('lang') == 'en'][::-1] + [x for x in banner2 if x.get('lang') == '00'][::-1]
-                banner2 = banner2[0]['url'].encode('utf-8')
+                banner2 = [(x['url'], x['likes']) for x in banner2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in banner2 if x.get('lang') == '']
+                banner2 = [(x[0], x[1]) for x in banner2]
+                banner2 = sorted(banner2, key=lambda x: int(x[1]), reverse=True)
+                banner2 = [x[0] for x in banner2][0]
+                banner2 = banner2.encode('utf-8')
             except:
-                banner2 = '0'
+                banner = '0'
 
             try:
                 if 'hdtvlogo' in art: clearlogo = art['hdtvlogo']
                 else: clearlogo = art['clearlogo']
-                clearlogo = [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') == '00'][::-1]
-                clearlogo = clearlogo[0]['url'].encode('utf-8')
+                clearlogo = [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == '']
+                clearlogo = [(x[0], x[1]) for x in clearlogo]
+                clearlogo = sorted(clearlogo, key=lambda x: int(x[1]), reverse=True)
+                clearlogo = [x[0] for x in clearlogo][0]
+                clearlogo = clearlogo.encode('utf-8')
             except:
                 clearlogo = '0'
 
             try:
                 if 'hdclearart' in art: clearart = art['hdclearart']
                 else: clearart = art['clearart']
-                clearart = [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') == '00'][::-1]
-                clearart = clearart[0]['url'].encode('utf-8')
+                clearart = [(x['url'], x['likes']) for x in clearart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in clearart if x.get('lang') == '']
+                clearart = [(x[0], x[1]) for x in clearart]
+                clearart = sorted(clearart, key=lambda x: int(x[1]), reverse=True)
+                clearart = [x[0] for x in clearart][0]
+                clearart = clearart.encode('utf-8')
             except:
                 clearart = '0'
 
             try:
                 if 'tvthumb' in art: landscape = art['tvthumb']
                 else: landscape = art['showbackground']
-                landscape = [x for x in landscape if x.get('lang') == 'en'][::-1] + [x for x in landscape if x.get('lang') == '00'][::-1]
-                landscape = landscape[0]['url'].encode('utf-8')
+                landscape = [(x['url'], x['likes']) for x in landscape if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in landscape if x.get('lang') == '']
+                landscape = [(x[0], x[1]) for x in landscape]
+                landscape = sorted(landscape, key=lambda x: int(x[1]), reverse=True)
+                landscape = [x[0] for x in landscape][0]
+                landscape = landscape.encode('utf-8')
             except:
                 landscape = '0'
 
@@ -1408,16 +1265,19 @@ class tvshows:
             except:
                 pass
 
-        if next:
+        if not next == '0':
             try:
                 url = items[0]['next']
                 if url == '': raise Exception()
 
-                if not self.tmdb_link in url:
+                if self.imdb_link in url:
                     url = '%s?action=tvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
                 elif self.tmdb_link in url:
                     url = '%s?action=tmdbTvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
+
+                elif self.tvmaze_link in url:
+                    url = '%s?action=tvmazeTvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
                 item = control.item(label=nextMenu)
                 icon = control.addonNext()

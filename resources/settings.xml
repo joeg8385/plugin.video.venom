@@ -6,7 +6,7 @@
 <!-- 		<setting id="appearance.1" type="select" label="32311" values="Venom|Covenant|Incursion|Stealth|Exuary" default="Venom" visible="System.HasAddon(script.venom.artwork)" /> -->
 		<setting id="appearance.alt" type="action" label="32311" default="-" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=artwork)" visible="hidden" />
 		<setting id="appearance.1" type="select" label="32311" values="Venom|Exodus|Exuary" default="Venom" visible="true" />
-		<setting id="api.language" type="select" label="32316" values="Dutch|English|German|Polish" default="English" />
+		<setting id="api.language" type="select" label="32316" values="Dutch|English|German|Polish|Spanish|Swedish|Turkish" default="English" />
 		<setting type="lsep" label="32319" />
 		<setting id="fanart" type="bool" label="32318" default="true" />
 		<setting id="hidecinema" type="bool" label="32571" default="false" />
@@ -28,14 +28,19 @@
 		<setting id="tv.widget.alt" type="enum" label="32325" lvalues="32302|32326|32327|32328" default="2" visible="!eq(-2,true)" />
 		<setting id="tv.specials" type="bool" label="32649" default="true" />
 		<setting id="showunaired" type="bool" label="32570" default="true" />
-		<setting id="unaired.identify" type="enum" label="32608" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="8" enable="eq(-1,true)" />/>
+		<setting id="unaired.identify" type="enum" label="32608" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="8" enable="eq(-1,true)" />
+
 <!-- 		<setting type="bool" id="enable.upnext" default="false" label="40065" visible="System.HasAddon(service.upnext)" />
 		<setting type="slider" id="upnext.time" enable="eq(-1,true)" visible="eq(-1,true)" default="30" label="40066" option="int" range="10,60" /> -->
 		<!-- <setting id="tvshows.unwatched.enabled" type="bool" label="33891" default="true" /> -->
 		<!-- <setting id="tvshows.unwatched.limit" type="bool" label="33892" default="true" subsetting="false" visible="eq(-1,true)" /> -->
+
+		<setting type="lsep" label="32375" />
+		<setting id="tvshows.networks.view" type="enum" label="32376" lvalues="32377|32378" default="1" />
+<!-- 		<setting id="tvshows.networks.filter" type="enum" label="32379" lvalues="32380|32381|32382|32383|32384|32385" default="4" enable="eq(-1, 1)" /> -->
 		<setting label="32004" type="lsep" />
 		<setting id="sort.shows.type" type="enum" label="35191" lvalues="33564|33039|35187|35188|35391|35392|35393" default="0" />
-		<setting id="sort.shows.order" type="enum" label="33679" lvalues="33649|33650" default="0" subsetting="true" enable="!eq(-1,0)"/>
+		<setting id="sort.shows.order" type="enum" label="33679" lvalues="33649|33650" default="0" subsetting="true" enable="!eq(-1,0)" />
 		<setting id="sort.shows.date" type="enum" label="35194" lvalues="32302|33649|33650" default="2" subsetting="true" />
 		<setting id="tvshows.air.enabled" type="bool" label="35017" default="true" subsetting="false" />
 		<setting id="tvshows.air.zone" type="enum" label="35018" lvalues="32314|35022|35023" default="0" subsetting="true" visible="eq(-1,true)" />

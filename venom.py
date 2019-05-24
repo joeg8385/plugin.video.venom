@@ -263,24 +263,31 @@ elif action == 'channels':
     channels.channels().get()
 
 
+
 elif action == 'tvshows':
     from resources.lib.menus import tvshows
     tvshows.tvshows().get(url)
-
 
 elif action == 'tvshowPage':
     from resources.lib.menus import tvshows
     tvshows.tvshows().get(url)
 
-
 elif action == 'tmdbTvshows':
     from resources.lib.menus import tvshows
     tvshows.tvshows().getTMDb(url)
 
-
 elif action == 'tmdbTvshowPage':
     from resources.lib.menus import tvshows
     tvshows.tvshows().getTMDb(url)
+
+elif action == 'tvmazeTvshows':
+    from resources.lib.menus import tvshows
+    tvshows.tvshows().getTVmaze(url)
+
+elif action == 'tvmazeTvshowPage':
+    from resources.lib.menus import tvshows
+    tvshows.tvshows().getTVmaze(url)
+
 
 
 elif action == 'tvSearch':
