@@ -1,3 +1,7 @@
+[B][COLOR red]Update - v2.9.1 - May 19, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Switched startup notice from news to changelog. Should
+   have been done in 2.9.0 but missed it.[/I]
+
 [B][COLOR red]Update - v2.9.0 - May 19, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed typo from adding 4k artwork and killed off low res, fixed.[/I]
 [COLOR yellow]--[/COLOR][I] Changed changelog file to be local and now using newsinfo

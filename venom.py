@@ -43,7 +43,8 @@ if action == None:
     if run == '': run = 'true' #clean install scenerio
     if cache._find_cache_version(): run = 'true'  #check whether plugin.video.venom has been updated-use to be for script.module.venom
     if run == 'true':
-        navigator.navigator().news()
+        from resources.lib.modules import changelog
+        changelog.get()
         control.setSetting(id='first.info', value='false')
     cache.cache_version_check()
     navigator.navigator().root()
