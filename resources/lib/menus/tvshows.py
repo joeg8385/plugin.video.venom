@@ -46,10 +46,10 @@ class tvshows:
         # if self.tvdb_key == '' or self.tvdb_key == None:
             # self.tvdb_key = '1D62F2F90030C444'
         self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
-        self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-        self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
-        self.tvdb_image = 'https://thetvdb.com/banners/'
+        self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
+        self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
+        self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
+        self.tvdb_image = 'http://thetvdb.com/banners/'
 
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.imdb_link = 'http://www.imdb.com'
@@ -141,11 +141,11 @@ class tvshows:
                 if idx == True: self.worker(level = 0)
 
             elif u in self.trakt_link:
-                self.list = cache.get(self.trakt_list, 168, url, self.trakt_user)
+                self.list = cache.get(self.trakt_list, 48, url, self.trakt_user)
                 if idx == True: self.worker()
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
-                self.list = cache.get(self.imdb_list, 0, url)
+                self.list = cache.get(self.imdb_list, 1, url)
                 self.sort()
                 if idx == True: self.worker()
 
@@ -204,7 +204,7 @@ class tvshows:
             try: url = getattr(self, url + '_link')
             except: pass
 
-            self.list = cache.get(tvmaze.tvshows().tvmaze_list, 0, url)
+            self.list = cache.get(tvmaze.tvshows().tvmaze_list, 168, url)
             if idx == True: self.worker()
 
             if self.list == None:
@@ -824,8 +824,8 @@ class tvshows:
             if self.list == None or self.list == []: return
             self.meta = []
             total = len(self.list)
-            # maximum = 50
-            maximum = total + 10
+            maximum = 50
+            # maximum = total + 10
 
             self.fanart_tv_headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
             if not self.fanart_tv_user == '': self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
@@ -833,27 +833,28 @@ class tvshows:
             for i in range(0, total): self.list[i].update({'metacache': False})
             self.list = metacache.fetch(self.list, self.lang, self.user)
 
-            imdb = []
-            threads = []
+            # imdb = []
+            # threads = []
 
-            for i in range(total):
-                threads = [x for x in threads if x.is_alive()]
-                while len(threads) >= maximum:
-                    control.sleep(0.5)
-                    threads = [x for x in threads if x.is_alive()]
-                if not self.list[i]['imdb'] in imdb: # Otherwise data is retrieved multiple times if different episodes of the same show are in the list.
-                    imdb.append(self.list[i]['imdb'])
-                    thread = workers.Thread(self.super_info, i)
-                    thread.start()
-                    threads.append(thread)
-            [x.join() for x in threads]
+            # for i in range(total):
 
-            # for r in range(0, total, 40):
-                # threads = []
-                # for i in range(r, r+40):
-                    # if i <= total: threads.append(workers.Thread(self.super_info, i))
-                # [i.start() for i in threads]
-                # [i.join() for i in threads]
+                # threads = [x for x in threads if x.is_alive()]
+                # while len(threads) >= maximum:
+                    # control.sleep(0.5)
+                    # threads = [x for x in threads if x.is_alive()]
+                # if not self.list[i]['imdb'] in imdb: # Otherwise data is retrieved multiple times if different episodes of the same show are in the list.
+                    # imdb.append(self.list[i]['imdb'])
+                    # thread = workers.Thread(self.super_info, i)
+                    # thread.start()
+                    # threads.append(thread)
+            # [x.join() for x in threads]
+
+            for r in range(0, total, 40):
+                threads = []
+                for i in range(r, r+40):
+                    if i <= total: threads.append(workers.Thread(self.super_info, i))
+                [i.start() for i in threads]
+                [i.join() for i in threads]
 
             if self.meta: metacache.insert(self.meta)
             self.list = [i for i in self.list if not i['tvdb'] == '0']
@@ -1025,7 +1026,7 @@ class tvshows:
 ###--Fanart.tv artwork
             try:
                 artmeta = True
-                art = client.request(self.fanart_tv_art_link % tvdb, headers=self.fanart_tv_headers, timeout ='20', error=True)
+                art = client.request(self.fanart_tv_art_link % tvdb, headers=self.fanart_tv_headers, timeout ='10', error=True)
                 try: art = json.loads(art)
                 except: artmeta = False
             except:
@@ -1049,7 +1050,7 @@ class tvshows:
                 fanart2 = [x[0] for x in fanart2][0]
                 fanart2 = fanart2.encode('utf-8')
             except:
-                fanart = '0'
+                fanart2 = '0'
 
             try:
                 banner2 = art['tvbanner']
@@ -1059,7 +1060,7 @@ class tvshows:
                 banner2 = [x[0] for x in banner2][0]
                 banner2 = banner2.encode('utf-8')
             except:
-                banner = '0'
+                banner2 = '0'
 
             try:
                 if 'hdtvlogo' in art: clearlogo = art['hdtvlogo']

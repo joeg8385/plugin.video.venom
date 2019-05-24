@@ -51,15 +51,19 @@ if action == None:
 
 
 ####################################################
-#---News
+#---News and Updates
 ####################################################
+elif action == 'infoCheck':
+    from resources.lib.menus import navigator
+    navigator.navigator().infoCheck('')
+
 elif action == 'newsNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().news()
 
-elif action == 'infoCheck':
-    from resources.lib.menus import navigator
-    navigator.navigator().infoCheck('')
+elif action == 'ShowChangelog':
+    from resources.lib.modules import changelog
+    changelog.get()
 
 
 

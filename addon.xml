@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="2.8.9" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="2.9.0" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -34,13 +34,10 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v2.8.9 - May 19, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed some broken artwork and studio info for
-   TV Shows "Networks".[/I]
-[COLOR yellow]--[/COLOR][I] Added clearart and clearlogo to "Networks". Will
-   display in player.[/I]
-[COLOR yellow]--[/COLOR][I] Added Trakt watched sync as startup service if valid
-   account.[/I]
+[B][COLOR red]Update - v2.9.0 - May 19, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed typo from adding 4k artwork and killed off low res, fixed.[/I]
+[COLOR yellow]--[/COLOR][I] Changed changelog file to be local and now using newsinfo
+    file remotely to pass update info of what's in the works.[/I]
 		</news>
 	</extension>
 
