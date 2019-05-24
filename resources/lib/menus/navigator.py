@@ -122,7 +122,7 @@ class navigator:
         self.addDirectoryItem('Now Playing', 'tmdbmovies&url=tmdb_nowplaying', 'tmdb.png', 'in-theaters.png')
 
         self.addDirectoryItem('Anticipated', 'movies&url=traktanticipated', 'trakt.png', 'DefaultMovies.png')
-        # self.addDirectoryItem('Upcoming', 'tmdbmovies&url=tmdb_upcoming', 'tmdb.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Upcoming', 'tmdbmovies&url=tmdb_upcoming', 'tmdb.png', 'DefaultMovies.png')
 
         self.addDirectoryItem(32018, 'movies&url=mostpopular', 'imdb.png', 'most-popular.png')
         self.addDirectoryItem('Popular', 'tmdbmovies&url=tmdb_popular', 'tmdb.png', 'most-popular.png')

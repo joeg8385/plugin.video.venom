@@ -4,7 +4,7 @@
 Venom
 '''
 
-import os,sys,re,json,urllib,urlparse,datetime,base64
+import os,sys,re,json,urllib,urlparse,datetime,base64,xbmc
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleangenre
@@ -346,7 +346,7 @@ class collections:
         self.xmen_link = 'https://api.themoviedb.org/3/list/33137?api_key=%s' % (self.tmdb_key)
 
 
-    def collectionsNavigator(self, lite = False):
+    def collectionsNavigator(self, lite=False):
         self.addDirectoryItem('Movies', 'collectionBoxset', 'boxsets.png', 'boxsets.png')
         if self.getMenuEnabled('navi.xmascollections') == True:
             self.addDirectoryItem('Christmas Collections', 'collections&url=xmasmovies', 'boxsets.png', 'boxsets.png')
@@ -636,20 +636,21 @@ class collections:
         return True
 
 
-    def get(self, url, idx = True):
+    def get(self, url, idx=True):
         try:
             try: url = getattr(self, url + '_link')
             except: pass
             try: u = urlparse.urlparse(url).netloc.lower()
-            except: pass
+            except:
+                pass
 
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
-                self.list = self.tmdb_collections_list(url)
-                self.worker()
+                from resources.lib.indexers import tmdb
+                self.list = cache.get(tmdb.movies().tmdb_collections_list, 720, url)
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
-                self.list = cache.get(self.tmdb_list, 24, url)
-                self.worker()
+                from resources.lib.indexers import tmdb
+                self.list = cache.get(tmdb.movies().tmdb_list, 24, url)
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
                 self.list = cache.get(self.imdb_list, 24, url)
@@ -801,164 +802,6 @@ class collections:
             except:
                 pass
 
-        return self.list
-
-
-    def tmdb_list(self, url):
-        next = url
-        for i in re.findall('date\[(\d+)\]', url):
-            url = url.replace('date[%s]' % i, (self.datetime - datetime.timedelta(days = int(i))).strftime('%Y-%m-%d'))
-        try:
-            result = client.request(url % self.tmdb_key)
-            result = json.loads(result)
-            items = result['results']
-        except:
-            return
-        try:
-            page = int(result['page'])
-            total = int(result['total_pages'])
-            if page >= total: raise Exception()
-            url2 = '%s&page=%s' % (url.split('&page=', 1)[0], str(page+1))
-            result = client.request(url2 % self.tmdb_key)
-            result = json.loads(result)
-            items += result['results']
-        except:
-            pass
-        try:
-            page = int(result['page'])
-            total = int(result['total_pages'])
-            if page >= total: raise Exception()
-            if not 'page=' in url: raise Exception()
-            next = '%s&page=%s' % (next.split('&page=', 1)[0], str(page+1))
-            next = next.encode('utf-8')
-        except:
-            next = ''
-        for item in items:
-            try:
-                title = item['title']
-                title = client.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
-
-                year = item['release_date']
-                year = re.compile('(\d{4})').findall(year)[-1]
-                year = year.encode('utf-8')
-
-#                year = client.parseDOM(item, 'span', attrs = {'class': 'lister-item-year.+?'})
-#                year = re.findall('(\d{4})', year[0])[0]
-#                year = year.encode('utf-8')
-
-                tmdb = item['id']
-                tmdb = re.sub('[^0-9]', '', str(tmdb))
-                tmdb = tmdb.encode('utf-8')
-
-                poster = item['poster_path']
-                if poster == '' or poster == None:
-                    raise Exception()
-                else:
-                    poster = '%s%s' % (self.tmdb_poster, poster)
-                poster = poster.encode('utf-8')
-
-                fanart = item['backdrop_path']
-                if fanart == '' or fanart == None: fanart = '0'
-                if not fanart == '0': fanart = '%s%s' % (self.tmdb_image, fanart)
-                fanart = fanart.encode('utf-8')
-
-                premiered = item['release_date']
-                try:
-                    premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                except: premiered = '0'
-                premiered = premiered.encode('utf-8')
-
-                rating = str(item['vote_average'])
-                if rating == '' or rating == None: rating = '0'
-                rating = rating.encode('utf-8')
-
-                votes = str(item['vote_count'])
-                try: 
-                    votes = str(format(int(votes),',d'))
-                except: pass
-                if votes == '' or votes == None: votes = '0'
-                votes = votes.encode('utf-8')
-
-                plot = item['overview']
-                if plot == '' or plot == None: plot = '0'
-                plot = client.replaceHTMLCodes(plot)
-                plot = plot.encode('utf-8')
-
-                tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-                try:
-                    tagline = tagline.encode('utf-8')
-                except: pass
-
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': '0', 'duration': '0', 'rating': rating, 'votes': votes, 'mpaa': '0', 'director': '0', 'writer': '0', 'cast': '0', 'plot': plot, 'tagline': tagline, 'code': '0', 'imdb': '0', 'tmdb': tmdb, 'tvdb': '0', 'poster': poster, 'banner': '0', 'fanart': fanart, 'next': next})
-            except:
-                pass
-        return self.list
-
-
-    def tmdb_collections_list(self, url):
-        try:
-            result = client.request(url)
-            result = json.loads(result)
-            items = result['items']
-        except:
-            return
-        next = ''
-        for item in items:
-            try:
-                media_type = item['media_type']
-                title = item['title']
-                if not media_type == 'movie': title = item['name']
-                title = client.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
-
-                year = item['release_date']
-                try: year = re.compile('(\d{4})').findall(year)[0]
-                except: year = '0'
-                if year == '' or year == None: year = '0'
-                year = year.encode('utf-8')
-
-                tmdb = item['id']
-                tmdb = re.sub('[^0-9]', '', str(tmdb))
-                tmdb = tmdb.encode('utf-8')
-
-                poster = item['poster_path']
-                if poster == '' or poster == None: raise Exception()
-                else: poster = '%s%s' % (self.tmdb_poster, poster)
-                poster = poster.encode('utf-8')
-
-                fanart = item['backdrop_path']
-                if fanart == '' or fanart == None: fanart = '0'
-                if not fanart == '0': fanart = '%s%s' % (self.tmdb_image, fanart)
-                fanart = fanart.encode('utf-8')
-
-                premiered = item['release_date']
-                try: premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                except: premiered = '0'
-                premiered = premiered.encode('utf-8')
-
-                rating = str(item['vote_average'])
-                if rating == '' or rating == None: rating = '0'
-                rating = rating.encode('utf-8')
-
-                votes = str(item['vote_count'])
-                try: votes = str(format(int(votes),',d'))
-                except: pass
-                if votes == '' or votes == None: votes = '0'
-                votes = votes.encode('utf-8')
-
-                plot = item['overview']
-                if plot == '' or plot == None: plot = '0'
-                plot = client.replaceHTMLCodes(plot)
-                plot = plot.encode('utf-8')
-
-                tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-                try: tagline = tagline.encode('utf-8')
-                except: pass
-
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': '0', 'duration': '0', 'rating': rating, 'votes': votes, 'mpaa': '0', 'director': '0', 'writer': '0', 'cast': '0', 'plot': plot, 'tagline': tagline, 'code': '0', 'imdb': '0', 'tmdb': tmdb, 'tvdb': '0', 'poster': poster, 'banner': '0', 'fanart': fanart, 'next': next})
-            except:
-                pass
         return self.list
 
 
@@ -1156,239 +999,6 @@ class collections:
             pass
 
 
-    def super_tmdb_info(self, i):
-        try:
-            if self.list[i]['metacache'] == True: raise Exception()
-
-            try: tmdb = self.list[i]['tmdb']
-            except: tmdb = '0'
-            if not tmdb == '0': url = self.tmdb_info_link % tmdb
-            else: raise Exception()
-
-            item = client.request(url, timeout='10')
-            item = json.loads(item)
-
-            title = item['title']
-            title = client.replaceHTMLCodes(title)
-
-            originaltitle = title
-
-            year = item['release_date']
-            try: year = re.compile('(\d{4})').findall(year)[0]
-            except: year = '0'
-            if year == '' or year == None: year = '0'
-            year = year.encode('utf-8')
-
-            tmdb = item['id']
-            if tmdb == '' or tmdb == None: tmdb = '0'
-            tmdb = re.sub('[^0-9]', '', str(tmdb))
-            tmdb = tmdb.encode('utf-8')
-
-            imdb = item['imdb_id']
-            if imdb == '' or imdb == None: imdb = '0'
-            imdb = imdb.encode('utf-8')
-
-            poster = item['poster_path']
-            if poster == '' or poster == None: poster = '0'
-            if not poster == '0': poster = '%s%s' % (self.tmdb_poster, poster)
-            poster = poster.encode('utf-8')
-
-            fanart = item['backdrop_path']
-            if fanart == '' or fanart == None: fanart = '0'
-            if not fanart == '0': fanart = '%s%s' % (self.tmdb_image, fanart)
-            fanart = fanart.encode('utf-8')
-
-            premiered = item['release_date']
-            try: premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-            except: premiered = '0'
-            if premiered == '' or premiered == None: premiered = '0'
-            premiered = premiered.encode('utf-8')
-
-            # studio = item['production_companies']
-            # try: studio = [x['name'] for x in studio][0]
-            # except: studio = '0'
-            # if studio == '' or studio == None: studio = '0'
-            # studio = studio.encode('utf-8')
-            # if not studio == '0': self.list[i].update({'studio': studio})
-
-            genre = item['genres']
-            try: genre = [x['name'] for x in genre]
-            except: genre = '0'
-            if genre == '' or genre == None or genre == []: genre = '0'
-            genre = ' / '.join(genre)
-            genre = genre.encode('utf-8')
-
-            try: duration = str(item['runtime'])
-            except: duration = '0'
-            if duration == '' or duration == None: duration = '0'
-            duration = duration.encode('utf-8')
-
-            rating = str(item['vote_average'])
-            if rating == '' or rating == None: rating = '0'
-            rating = rating.encode('utf-8')
-
-            votes = str(item['vote_count'])
-            try: votes = str(format(int(votes),',d'))
-            except: pass
-            if votes == '' or votes == None: votes = '0'
-            votes = votes.encode('utf-8')
-
-            mpaa = item['releases']['countries']
-            try: mpaa = [x for x in mpaa if not x['certification'] == '']
-            except: mpaa = '0'
-            try: mpaa = ([x for x in mpaa if x['iso_3166_1'].encode('utf-8') == 'US'] + [x for x in mpaa if not x['iso_3166_1'].encode('utf-8') == 'US'])[0]['certification']
-            except: mpaa = '0'
-            mpaa = mpaa.encode('utf-8')
-
-            director = item['credits']['crew']
-            try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
-            except: director = '0'
-            if director == '' or director == None or director == []: director = '0'
-            director = ' / '.join(director)
-            director = director.encode('utf-8')
-
-            writer = item['credits']['crew']
-            try: writer = [x['name'] for x in writer if x['job'].encode('utf-8') in ['Writer', 'Screenplay']]
-            except: writer = '0'
-            try: writer = [x for n,x in enumerate(writer) if x not in writer[:n]]
-            except: writer = '0'
-            if writer == '' or writer == None or writer == []: writer = '0'
-            writer = ' / '.join(writer)
-            writer = writer.encode('utf-8')
-
-            cast = item['credits']['cast']
-            try: cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
-            except: cast = []
-
-            plot = item['overview']
-            if plot == '' or plot == None: plot = '0'
-            plot = plot.encode('utf-8')
-
-            tagline = item['tagline']
-            if (tagline == '' or tagline == None) and not plot == '0': tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-            elif tagline == '' or tagline == None: tagline = '0'
-            try: tagline = tagline.encode('utf-8')
-            except: pass
-
-            try:
-                if not imdb == None or imdb == '0':
-                    url = self.imdbinfo % imdb
-                    item = client.request(url, timeout='10')
-                    item = json.loads(item)
-
-                    plot2 = item['Plot']
-                    if plot2 == '' or plot2 == None: plot = plot
-                    plot = plot.encode('utf-8')
-
-                    rating2 = str(item['imdbRating'])
-                    if rating2 == '' or rating2 == None: rating = rating2
-                    rating = rating.encode('utf-8')
-
-                    votes2 = str(item['imdbVotes'])
-                    try: votes2 = str(votes2)
-                    except: pass
-                    if votes2 == '' or votes2 == None: votes = votes2
-                    votes = votes.encode('utf-8')
-
-            except:
-                pass
-
-            try:
-                artmeta = True
-                art = client.request(self.fanart_tv_art_link % imdb, headers=self.fanart_tv_headers, timeout='10', error=True)
-                try: art = json.loads(art)
-                except: artmeta = False
-            except:
-                pass
-
-            try:
-                poster2 = art['movieposter']
-                poster2 = [x for x in poster2 if x.get('lang') == self.lang][::-1] + [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') in ['00', '']][::-1]
-                poster2 = poster2[0]['url'].encode('utf-8')
-            except:
-                poster2 = '0'
-
-            try:
-                if 'moviebackground' in art: fanart = art['moviebackground']
-                else: fanart = art['moviethumb']
-                fanart = [x for x in fanart if x.get('lang') == self.lang][::-1] + [x for x in fanart if x.get('lang') == 'en'][::-1] + [x for x in fanart if x.get('lang') in ['00', '']][::-1]
-                fanart = fanart[0]['url'].encode('utf-8')
-            except:
-                fanart = '0'
-
-            try:
-                banner = art['moviebanner']
-                banner = [x for x in banner if x.get('lang') == self.lang][::-1] + [x for x in banner if x.get('lang') == 'en'][::-1] + [x for x in banner if x.get('lang') in ['00', '']][::-1]
-                banner = banner[0]['url'].encode('utf-8')
-            except:
-                banner = '0'
-
-            try:
-                if 'hdmovielogo' in art: clearlogo = art['hdmovielogo']
-                else: clearlogo = art['clearlogo']
-                clearlogo = [x for x in clearlogo if x.get('lang') == self.lang][::-1] + [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') in ['00', '']][::-1]
-                clearlogo = clearlogo[0]['url'].encode('utf-8')
-            except:
-                clearlogo = '0'
-
-            try:
-                if 'hdmovieclearart' in art: clearart = art['hdmovieclearart']
-                else: clearart = art['clearart']
-                clearart = [x for x in clearart if x.get('lang') == self.lang][::-1] + [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') in ['00', '']][::-1]
-                clearart = clearart[0]['url'].encode('utf-8')
-            except:
-                clearart = '0'
-
-            try:
-                if 'moviethumb' in art: landscape = art['moviethumb']
-                else: landscape = art['moviebackground']
-                landscape = [x for x in landscape if x.get('lang') == 'en'][::-1] + [x for x in landscape if x.get('lang') == '00'][::-1]
-                landscape = landscape[0]['url'].encode('utf-8')
-            except:
-                landscape = '0'
-
-            try:
-                if self.tmdb_key == '': raise Exception()
-                art2 = client.request(self.tm_art_link % imdb, timeout='10', error=True)
-                art2 = json.loads(art2)
-            except:
-                pass
-
-            try:
-                poster3 = art2['posters']
-                poster3 = [x for x in poster3 if x.get('iso_639_1') == self.lang] + [x for x in poster3 if x.get('iso_639_1') == 'en'] + [x for x in poster3 if x.get('iso_639_1') not in [self.lang, 'en']]
-                poster3 = [(x['width'], x['file_path']) for x in poster3]
-                poster3 = [(x[0], x[1]) if x[0] < 300 else ('300', x[1]) for x in poster3]
-                poster3 = self.tm_img_link % poster3[0]
-                poster3 = poster3.encode('utf-8')
-            except:
-                poster3 = '0'
-
-            try:
-                fanart2 = art2['backdrops']
-                fanart2 = [x for x in fanart2 if x.get('iso_639_1') == self.lang] + [x for x in fanart2 if x.get('iso_639_1') == 'en'] + [x for x in fanart2 if x.get('iso_639_1') not in [self.lang, 'en']]
-                fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920]
-                fanart2 = [(x['width'], x['file_path']) for x in fanart2]
-                fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
-                fanart2 = self.tm_img_link % fanart2[0]
-                fanart2 = fanart2.encode('utf-8')
-            except:
-                fanart2 = '0'
-
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
-            item = dict((k,v) for k, v in item.iteritems() if not v == '0')
-            self.list[i].update(item)
-
-            if artmeta == False: raise Exception()
-
-            meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
-            self.meta.append(meta)
-
-#            self.meta.append({'tmdb': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.tmdb_lang, 'item': {'title': title, 'year': year, 'code': imdb, 'imdb': imdb, 'tmdb': tmdb, 'poster': poster, 'fanart': fanart, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}})
-        except:
-            pass
-
-
     def movieDirectory(self, items):
         if items == None or len(items) == 0: 
             control.idle()
@@ -1566,7 +1176,7 @@ class collections:
         views.setView('movies', {'skin.estuary': 55, 'skin.confluence': 500})
 
 
-    def addDirectory(self, items, queue = False):
+    def addDirectory(self, items, queue=False):
         if items == None or len(items) == 0: control.idle() ; sys.exit()
 
         addonFanart, addonThumb, artPath = control.addonFanart(), control.addonThumb(), control.artPath()

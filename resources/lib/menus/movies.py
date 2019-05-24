@@ -4,7 +4,7 @@
     Venom Add-on
 '''
 
-import os,sys,re,json,urllib,urlparse,datetime,xbmc
+import os,sys,re,json,urllib,urlparse,datetime
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleangenre
@@ -52,10 +52,10 @@ class movies:
         self.tm_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=' + self.tmdb_key
         self.tm_img_link = 'http://image.tmdb.org/t/p/w%s%s'
 
-        self.tmdb_popular_link = 'http://api.themoviedb.org/3/movie/popular?api_key=%s&page=1'
+        self.tmdb_popular_link = 'http://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&page=1'
         self.tmdb_toprated_link = 'http://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
-        self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&&page=1'
-        self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&page=1'
+        self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
+        self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&language=en-US&region=US&page=1'
 
         self.fanart_tv_user = control.setting('fanart.tv.user')
         if self.fanart_tv_user == '' or self.fanart_tv_user == None:
@@ -213,13 +213,11 @@ class movies:
 
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = cache.get(tmdb.movies().tmdb_collections_list, 0, url)
-                # self.list = tmdb.movies().tmdb_collections_list(url)
-                if idx == True: tmdb.movies().worker(self.list)
+                self.list = cache.get(tmdb.movies().tmdb_collections_list, 720, url)
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = cache.get(tmdb.movies().tmdb_list, 6, url)
+                self.list = cache.get(tmdb.movies().tmdb_list, 24, url)
 
             if self.list == None: 
                 self.list = []
@@ -231,7 +229,7 @@ class movies:
             except: invalid = True
             if invalid:
                 control.idle()
-                if self.notifications: control.notification(title = 32001, message = 'Rate limit reached - Please wait', icon = 'INFO')
+                if self.notifications: control.notification(title = 32001, message = 33049, icon = 'INFO')
 
 
     def newMovies(self):
@@ -1020,7 +1018,6 @@ class movies:
                 art2 = json.loads(art2)
             except:
                 pass
-            # xbmc.log('art2 from line 1027 in movies = %s' % art2, 2)
 
             try:
                 poster3 = art2['posters']

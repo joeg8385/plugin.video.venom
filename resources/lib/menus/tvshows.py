@@ -96,10 +96,11 @@ class tvshows:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
         self.tmdb_link = 'http://api.themoviedb.org'
 
-        self.tmdb_popular_link = 'http://api.themoviedb.org/3/tv/popular?api_key=%s&page=1'
-        self.tmdb_toprated_link = 'http://api.themoviedb.org/3/tv/top_rated?api_key=%s&page=1'
-        self.tmdb_ontheair_link = 'http://api.themoviedb.org/3/tv/on_the_air?api_key=%s&page=1'
-        self.tmdb_airingtoday_link = 'http://api.themoviedb.org/3/tv/airing_today?api_key=%s&page=1'
+        self.tmdb_lang = 'en-US'
+        self.tmdb_popular_link = 'http://api.themoviedb.org/3/tv/popular?api_key=%s&language=en-US&region=US&page=1'
+        self.tmdb_toprated_link = 'http://api.themoviedb.org/3/tv/top_rated?api_key=%s&language=en-US&region=US&page=1'
+        self.tmdb_ontheair_link = 'http://api.themoviedb.org/3/tv/on_the_air?api_key=%s&language=en-US&region=US&page=1'
+        self.tmdb_airingtoday_link = 'http://api.themoviedb.org/3/tv/airing_today?api_key=%s&language=en-US&region=US&page=1'
 
 
     def sort(self):
@@ -215,17 +216,11 @@ class tvshows:
 
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-#--Possible sleep and retry here for rate limiter issue
-                self.list = cache.get(tmdb.tvshows().tmdb_collections_list, 0, url)
-                # self.list = tmdb.tvshows().tmdb_collections_list(url)
-                if idx == True: tmdb.tvshows().worker(self.list)
+                self.list = cache.get(tmdb.tvshows().tmdb_collections_list, 720, url)
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-#--Possible sleep and retry here for rate limiter issue
-                self.list = cache.get(tmdb.tvshows().tmdb_list, 1, url)
-                # self.list = tmdb.tvshows().tmdb_list(url)
-                if idx == True: tmdb.tvshows().worker(self.list)
+                self.list = cache.get(tmdb.tvshows().tmdb_list, 24, url)
 
             if self.list == None:
                 self.list = []
@@ -237,7 +232,7 @@ class tvshows:
             except: invalid = True
             if invalid:
                 control.idle()
-                if self.notifications: control.notification(title = 32001, message = 'Rate limit reached - Please wait', icon = 'INFO')
+                if self.notifications: control.notification(title = 32002, message = 33049, icon = 'INFO')
 
 
     def search(self):
