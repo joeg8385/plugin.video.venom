@@ -33,12 +33,14 @@ def get(function, duration, *args):
 
     try:
         key = _hash_function(function, args)
+        # xbmc.log('key = %s' % key, 2)
         cache_result = cache_get(key)
         if cache_result:
             if _is_cache_valid(cache_result['date'], duration):
                 return ast.literal_eval(cache_result['value'].encode('utf-8'))
 
         fresh_result = repr(function(*args))
+        # xbmc.log('fresh_result = %s' % fresh_result, 2)
         cache_insert(key, fresh_result)
 
 #       Sometimes None is returned as a string instead of the special value None.

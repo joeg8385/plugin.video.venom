@@ -15,9 +15,9 @@ from resources.lib.modules import trakt
 
 
 
-class index:
+class movies:
     def __init__(self):
-        self.count = 60
+        self.count = 40
         self.list = []
 
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))

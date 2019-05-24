@@ -213,17 +213,13 @@ class movies:
 
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-#--Possible sleep and retry here for rate limiter issue
                 self.list = cache.get(tmdb.movies().tmdb_collections_list, 0, url)
                 # self.list = tmdb.movies().tmdb_collections_list(url)
                 if idx == True: tmdb.movies().worker(self.list)
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-#--Possible sleep and retry here for rate limiter issue
-                self.list = cache.get(tmdb.movies().tmdb_list, 0, url)
-                # self.list = tmdb.movies().tmdb_list(url)
-                if idx == True: tmdb.movies().worker(self.list)
+                self.list = cache.get(tmdb.movies().tmdb_list, 6, url)
 
             if self.list == None: 
                 self.list = []
@@ -966,7 +962,7 @@ class movies:
 
             try:
                 artmeta = True
-                art = client.request(self.fanart_tv_art_link % imdb, headers = self.fanart_tv_headers, timeout = '10', error = True)
+                art = client.request(self.fanart_tv_art_link % imdb, headers = self.fanart_tv_headers, timeout = '20', error = True)
                 try: art = json.loads(art)
                 except: artmeta = False
             except:
@@ -1020,7 +1016,7 @@ class movies:
 
             try:
                 if self.tmdb_key == '': raise Exception()
-                art2 = client.request(self.tm_art_link % imdb, timeout='10', error=True)
+                art2 = client.request(self.tm_art_link % imdb, timeout='20', error=True)
                 art2 = json.loads(art2)
             except:
                 pass

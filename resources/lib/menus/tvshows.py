@@ -1085,7 +1085,7 @@ class tvshows:
 
             if tvdb == '0' and not imdb == '0':
                 url = self.tvdb_by_imdb % imdb
-                result = client.request(url, timeout = '10')
+                result = client.request(url, timeout = '20')
                 try: tvdb = client.parseDOM(result, 'seriesid')[0]
                 except: tvdb = '0'
                 try: name = client.parseDOM(result, 'SeriesName')[0]
@@ -1099,7 +1099,7 @@ class tvshows:
 
                 years = [str(self.list[i]['year']), str(int(self.list[i]['year'])+1), str(int(self.list[i]['year'])-1)]
 
-                tvdb = client.request(url, timeout='10')
+                tvdb = client.request(url, timeout='20')
                 tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
                 tvdb = client.replaceHTMLCodes(tvdb)
                 tvdb = client.parseDOM(tvdb, 'Series')
@@ -1111,7 +1111,7 @@ class tvshows:
                 if tvdb == '': tvdb = '0'
 
             url = self.tvdb_info_link % tvdb
-            item = client.request(url, timeout = '10', error = True)
+            item = client.request(url, timeout = '20', error = True)
             if item == None: raise Exception()
 
             if imdb == '0':
@@ -1218,7 +1218,7 @@ class tvshows:
 
             try:
                 artmeta = True
-                art = client.request(self.fanart_tv_art_link % tvdb, headers = self.fanart_tv_headers, timeout = '10', error = True)
+                art = client.request(self.fanart_tv_art_link % tvdb, headers=self.fanart_tv_headers, timeout ='20', error=True)
                 try: art = json.loads(art)
                 except: artmeta = False
             except:
