@@ -604,23 +604,6 @@ class sources:
             pass
 
 
-    def clearSources(self):
-        try:
-            control.idle()
-            yes = control.yesnoDialog(control.lang(32407).encode('utf-8'), '', '')
-            if not yes: return
-            control.makeFile(control.dataPath)
-            dbcon = database.connect(control.providercacheFile)
-            dbcur = dbcon.cursor()
-            dbcur.execute("DROP TABLE IF EXISTS rel_src")
-            dbcur.execute("DROP TABLE IF EXISTS rel_url")
-            dbcur.execute("VACUUM")
-            dbcon.commit()
-            control.notification(title = 'default', message = 'Provider Cache Successfully Cleared!', icon = 'default', sound = True)
-        except:
-            pass
-
-
     def sourcesFilter(self):
         provider = control.setting('hosts.sort.provider')
         if provider == '': provider = 'false'

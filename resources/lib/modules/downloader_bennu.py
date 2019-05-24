@@ -62,7 +62,7 @@ def addDownload(name, url, image, provider=None):
             return control.infoDialog('Item Already In Your Queue', name)
     except:
         pass
-    from resources.lib.indexers import bennustreams
+    from resources.lib.menus import bennustreams
     url = bennustreams.resolver().link(url)
     if url == None: return
     try:

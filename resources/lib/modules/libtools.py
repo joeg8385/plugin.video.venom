@@ -148,7 +148,7 @@ class libmovies:
             control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
             self.infoDialog = True
             self.silentDialog = True
-        from resources.lib.indexers import movies
+        from resources.lib.menus import movies
         items = movies.movies().get(url, idx = False)
         if items == None: items = []
         for i in items:
@@ -168,7 +168,7 @@ class libmovies:
         if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
             control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
             self.infoDialog = True
-        from resources.lib.indexers import movies
+        from resources.lib.menus import movies
         items = movies.movies().get(url, idx = False)
         if items == None: items = []
         for i in items:
@@ -220,7 +220,7 @@ class libtvshows:
                 and self.silentDialog is False:
             control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
             self.infoDialog = True
-        from resources.lib.indexers import episodes
+        from resources.lib.menus import episodes
         items = episodes.episodes().get(tvshowtitle, year, imdb, tvdb, idx = False)
         try: items = [{'title': i['title'], 'year': i['year'], 'imdb': i['imdb'], 'tvdb': i['tvdb'], 'season': i['season'], 'episode': i['episode'], 'tvshowtitle': i['tvshowtitle'], 'premiered': i['premiered']} for i in items]
         except: items = []
@@ -269,7 +269,7 @@ class libtvshows:
             control.notification(title = 'default', message = 32608, icon = 'default', time = 10000000, sound = False)
             self.infoDialog = True
             self.silentDialog = True
-        from resources.lib.indexers import tvshows
+        from resources.lib.menus import tvshows
         items = tvshows.tvshows().get(url, idx = False)
         if items == None: items = []
         for i in items:
@@ -290,7 +290,7 @@ class libtvshows:
         if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
             control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
             self.infoDialog = True
-        from resources.lib.indexers import tvshows
+        from resources.lib.menus import tvshows
         items = tvshows.tvshows().get(url, idx = False)
         if items == None: items = []
         for i in items:
@@ -390,7 +390,7 @@ class libepisodes:
         except:
             return
         try:
-            from resources.lib.indexers import episodes
+            from resources.lib.menus import episodes
         except:
             return
         files_added = 0

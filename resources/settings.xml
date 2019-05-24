@@ -42,8 +42,8 @@
 		<setting id="tvshows.air.location" type="enum" label="35019" lvalues="35024|35025|35026|35027" default="0" subsetting="true" visible="eq(-2,true)" />
 		<setting id="tvshows.air.format" type="enum" label="35020" lvalues="35029|35028|35030" default="2" subsetting="true" visible="eq(-3,true)" />
 		<setting id="tvshows.air.day" type="enum" label="35031" lvalues="35049|35050" default="1" subsetting="true" visible="eq(-4,true) + !eq(-1,0)" />
-		<setting id="tvshows.air.time" type="enum" label="35048" lvalues="35051|35052|35053" default="0" subsetting="true" visible="eq(-5,true) + !eq(-2,1)" />
-		<setting id="tvshows.air.bold" type="bool" label="35021" default="false" subsetting="true" visible="eq(-6,true)" />
+		<setting id="tvshows.air.time" type="enum" label="35048" lvalues="35051|35052|35053" default="1" subsetting="true" visible="eq(-5,true) + !eq(-2,1)" />
+		<setting id="tvshows.air.bold" type="bool" label="35021" default="true" subsetting="true" visible="eq(-6,true)" />
 	</category>
 
 
@@ -91,9 +91,9 @@
 <!-- Torrent Settings - 5 -->
 	<category label="Torrent Settings">
 		<setting id="torrent.enabled" type="bool" label="32636" default="true" visible = "false" />
-		<setting id="torrent.identify" type="enum" label="32634" enable="eq(-1,true)" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="8" />
+		<setting id="torrent.identify" type="enum" label="32634" enable="eq(-1,true)" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="8" visible = "true" />
 		<setting id="torrent.min.seeders" type="slider" label="32638" enable="eq(-2,true)" default="1" range="1,100" option="int" visible = "false" />
-		<setting id="torrent.sort.them.up" type="bool" label="32639" enable="eq(-3,true)"  default="false" />
+		<setting id="torrent.sort.them.up" type="bool" label="32639" enable="eq(-3,true)"  default="true" visible = "true" />
 		<setting id="torrent.resolveurl2" type="action" label="32640" enable="eq(-4,true)" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolverRDTorrent&query=1.30)" />
 		<setting id="torrent.resolveurl" type="action" label="32637" enable="eq(-5,true)" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=urlResolverRDTorrent&query=1.40)" />
 	</category>

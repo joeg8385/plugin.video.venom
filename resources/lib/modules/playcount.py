@@ -239,7 +239,7 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
     try:
         import sys,xbmc
         from metahandler import metahandlers
-        from resources.lib.indexers import episodes
+        from resources.lib.menus import episodes
         if not trakt.getTraktIndicatorsInfo() == False: raise Exception()
         name = control.addonInfo('name')
         dialog = control.progressDialogBG
@@ -282,7 +282,7 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
 def tvshowsUpdate(imdb, tvdb):
     try:
         from metahandler import metahandlers
-        from resources.lib.indexers import episodes
+        from resources.lib.menus import episodes
 
         if not trakt.getTraktIndicatorsInfo() == False: raise Exception()
 

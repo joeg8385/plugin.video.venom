@@ -286,12 +286,15 @@ def parseDOM(html, name='', attrs=None, ret=False):
 
 
 def replaceHTMLCodes(txt):
-    # txt = re.sub("(&#[0-9]+)([^;^0-9]+)", "\\1;\\2", txt)
+    # Some HTML entities are encoded twice. Decode double.
+    return _replaceHTMLCodes(_replaceHTMLCodes(txt))
+
+
+def _replaceHTMLCodes(txt):
+    txt = re.sub("(&#[0-9]+)([^;^0-9]+)", "\\1;\\2", txt)
     txt = HTMLParser.HTMLParser().unescape(txt)
     txt = txt.replace("&quot;", "\"")
     txt = txt.replace("&amp;", "&")
-    txt = txt.replace("&lt;", "<")
-    txt = txt.replace("&gt;", ">")
     txt = txt.strip()
     return txt
 

@@ -208,7 +208,7 @@ msgid "[B]SETTINGS[/B] : General"
 msgstr ""
 
 msgctxt "#32044"
-msgid "[B]SETTINGS[/B] : Accounts"
+msgid "[B]SETTINGS[/B] : Api Keys"
 msgstr ""
 
 msgctxt "#32045"
@@ -232,15 +232,15 @@ msgid "[B]VENOM[/B] : Viewtypes"
 msgstr ""
 
 msgctxt "#32050"
-msgid "[B]VENOM[/B] : Clear providers..."
+msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Providers...[/COLOR]"
 msgstr ""
 
 msgctxt "#32051"
-msgid "[B]VENOM[/B] : Clear metadata..."
+msgid "[B]VENOM[/B] : Clear Metadata..."
 msgstr ""
 
 msgctxt "#32052"
-msgid "[B]VENOM[/B] : Clear cache..."
+msgid "[B]VENOM[/B] : Clear Cache..."
 msgstr ""
 
 msgctxt "#32053"

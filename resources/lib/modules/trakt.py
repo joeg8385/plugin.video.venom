@@ -856,7 +856,8 @@ def getMovieSummary(id, full=True):
    try:
        url = '/movies/%s' % id
        if full: url += '?extended=full'
-       return getTraktAsJson(url)
+       # return getTraktAsJson(url)
+       return cache.get(getTraktAsJson, 48, url)
    except:
        return
 

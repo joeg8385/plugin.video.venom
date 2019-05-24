@@ -23,7 +23,6 @@ cache_table = 'cache'
 
 
 def get(function, duration, *args):
-
     # type: (function, int, object) -> object or None
     """
     Gets cached value for provided function with optional arguments, or executes and stores the result
@@ -81,6 +80,8 @@ def timeout(function, *args):
     except Exception:
         return None
 
+
+
 def cache_existing(function, *args):
     try:
         cache_result = cache_get(_hash_function(function, args))
@@ -110,18 +111,7 @@ def cache_insert(key, value):
     cursor.connection.commit()
 
 
-def cache_clear():
-    try:
-        cursor = _get_connection_cursor()
-        for t in [cache_table, 'rel_list', 'rel_lib']:
-            try:
-                cursor.execute("DROP TABLE IF EXISTS %s" % t)
-                cursor.execute("VACUUM")
-                cursor.commit()
-            except:
-                pass
-    except:
-        pass
+
 
 # Remove very old entries to reduce the file size.
 # The cache DB can grow very larger with advanced caching.
@@ -132,6 +122,36 @@ def cache_clean(duration = 1209600):
         cursor.execute("DELETE FROM %s WHERE date < %d" % (cache_table, now - duration))
         cursor.execute("VACUUM")
         cursor.commit()
+    except:
+        pass
+
+
+
+#######################################
+def cache_version_check():
+    if _find_cache_version():
+        cache_clear_all()
+        control.notification(title = 'default', message = 32057, icon = 'INFO', sound = True)
+
+
+def cache_clear_all():
+    cache_clear_providers()
+    cache_clear_meta()
+    cache_clear()
+    cache_clear_search()
+
+
+
+def cache_clear_providers():
+    try:
+        cursor = _get_connection_cursor_providers()
+        for t in ['rel_src', 'rel_url']:
+            try:
+                cursor.execute("DROP TABLE IF EXISTS %s" % t)
+                cursor.execute("VACUUM")
+                cursor.commit()
+            except:
+                pass
     except:
         pass
 
@@ -150,10 +170,10 @@ def cache_clear_meta():
         pass
 
 
-def cache_clear_providers():
+def cache_clear():
     try:
-        cursor = _get_connection_cursor_providers()
-        for t in ['rel_src', 'rel_url']:
+        cursor = _get_connection_cursor()
+        for t in [cache_table, 'rel_list', 'rel_lib']:
             try:
                 cursor.execute("DROP TABLE IF EXISTS %s" % t)
                 cursor.execute("VACUUM")
@@ -176,13 +196,6 @@ def cache_clear_search():
                 pass
     except:
         pass
-
-
-def cache_clear_all():
-    cache_clear()
-    cache_clear_meta()
-    cache_clear_providers()
-    cache_clear_search()
 
 
 def _get_connection_cursor():
@@ -258,12 +271,6 @@ def _is_cache_valid(cached_time, cache_timeout):
     now = int(time.time())
     diff = now - cached_time
     return (cache_timeout * 3600) > diff
-
-
-def cache_version_check():
-    if _find_cache_version():
-        cache_clear();cache_clear_meta();cache_clear_providers()
-        control.notification(title = 'default', message = 32057, icon = 'INFO', sound = True)
 
 
 def _find_cache_version():
