@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="2.8.2" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="2.8.3" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -34,18 +34,18 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v2.8.2 - May 3, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Added TMDb api lists to movies.  Please note
-   TMDb's api is rate limited to 40 list itmes per 10 seconds.  I've added a notification if you hit this
+[B][COLOR red]Update - v2.8.3 - May 8, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added TMDb api lists to TV Shows.  Please note
+   TMDb's api is rate limited to 40 list items per 10 seconds.  I've added a notification if you hit this
     limit and to please wait! Other wise next page load is not possible till timer expires.  Not my rules!
-[COLOR yellow]--[/COLOR][I] Changed all icons in movies list to indicate IMDb, Trakt, or TMDb
-   for better knowlege where list is coming from.[/I]
-[COLOR yellow]--[/COLOR][I] I may scrap all efforts on future TMDb developement as I'm not
-   impressed with the rate limiter issue and honestly the lists are near identical to IMDb so what's
-   the freakin point other than a cluttered interface?! Opionions welcome!  So it's not yieleding
-   brownie points thus far with me, I had TVShows modded for TMDb list but said fuck this,
-   as I felt all I was succeeding in doing was cluttering a clean interface with near identical lists
-   sorry not what I was after and exo forks were not built around it so functionality sucks[/I]
+[COLOR yellow]--[/COLOR][I] Changed all icons in TV Show lists to indicate IMDb, Trakt, or TMDb
+   for better knowledge where list is coming from.[/I]
+[COLOR yellow]--[/COLOR][I] Added Dutch language choice to api[/I]
+[COLOR yellow]--[/COLOR][I] Fixed thread issue with large User/Watch lists[/I]
+[COLOR yellow]--[/COLOR][I] TMDb now has it's own py file and as I move towards separate files for
+    indexing TMDb, Trakt, IMDb, and TVDb I have chosen to store these files in the "Indexers" folder.
+   As a result all menu/navigation py files have been moved to a new "Menu" folder. Some old files were
+   not removed in last update and this has now been corrected.[/I]
 		</news>
 	</extension>
 

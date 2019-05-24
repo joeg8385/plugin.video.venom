@@ -92,10 +92,8 @@ class movies:
                 tmdb = tmdb.encode('utf-8')
 
                 poster = item['poster_path']
-                if poster == '' or poster == None:
-                    raise Exception()
-                else:
-                    poster = '%s%s' % (self.tmdb_poster, poster)
+                if poster == '' or poster == None: poster = '0'
+                if not poster == '0': poster = '%s%s' % (self.tmdb_poster, poster)
                 poster = poster.encode('utf-8')
 
                 fanart = item['backdrop_path']
@@ -257,8 +255,8 @@ class movies:
             tmdb = re.sub('[^0-9]', '', str(tmdb))
             tmdb = tmdb.encode('utf-8')
 
-            # imdb = item['external_ids']['imdb_id']
-            imdb = item['imdb_id']
+            imdb = item['external_ids']['imdb_id']
+            # imdb = item['imdb_id']
             if imdb == '' or imdb == None: imdb = '0'
             imdb = imdb.encode('utf-8')
 
@@ -449,7 +447,7 @@ class movies:
             except:
                 fanart2 = '0'
 
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'banner': banner, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
+            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'banner': banner, 'poster2': '0', 'poster3': '0', 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
             item = dict((k,v) for k, v in item.iteritems() if not v == '0')
             self.list[i].update(item)
 
@@ -486,8 +484,8 @@ class tvshows:
         # self.tvdb_key = control.setting('tvdb.user')
         # if self.tvdb_key == '' or self.tvdb_key == None:
             # self.tvdb_key = '1D62F2F90030C444'
-        self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
-        self.tvdb_image = 'http://thetvdb.com/banners/'
+        # self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+        # self.tvdb_image = 'http://thetvdb.com/banners/'
 
         self.omdb_key = control.setting('omdb.key')
         if self.omdb_key == '' or self.omdb_key == None:
@@ -533,7 +531,7 @@ class tvshows:
                 year = year.encode('utf-8')
 
                 tmdb = item['id']
-                if tmdb == '' or tmdb == None: tmdb = '0'
+                # if tmdb == '' or tmdb == None: tmdb = '0'
                 tmdb = re.sub('[^0-9]', '', str(tmdb))
                 tmdb = tmdb.encode('utf-8')
 
@@ -541,7 +539,7 @@ class tvshows:
                 tvdb = '0'
                 poster = item['poster_path']
                 if poster == '' or poster == None: poster = '0'
-                else: poster = self.tmdb_poster + poster
+                if not poster == '0': poster = '%s%s' % (self.tmdb_poster, poster)
                 poster = poster.encode('utf-8')
 
                 fanart = item['backdrop_path']
@@ -586,7 +584,7 @@ class tvshows:
             if self.list == None or self.list == []: return
             self.meta = []
             total = len(self.list)
-            maximum = 50
+            maximum = total + 10
 
             self.fanart_tv_headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
             if not self.fanart_tv_user == '': self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
@@ -597,17 +595,25 @@ class tvshows:
             imdb = []
             threads = []
 
-            for i in range(total):
-                threads = [x for x in threads if x.is_alive()]
-                while len(threads) >= maximum:
-                    control.sleep(0.5)
-                    threads = [x for x in threads if x.is_alive()]
-                if not self.list[i]['imdb'] in imdb: # Otherwise data is retrieved multiple times if different episodes of the same show are in the list.
-                    imdb.append(self.list[i]['imdb'])
-                    thread = workers.Thread(self.super_info, i)
-                    thread.start()
-                    threads.append(thread)
-            [x.join() for x in threads]
+            # for i in range(total):
+                # threads = [x for x in threads if x.is_alive()]
+                # while len(threads) >= maximum:
+                    # control.sleep(0.5)
+                    # threads = [x for x in threads if x.is_alive()]
+                # if not self.list[i]['imdb'] in imdb: # Otherwise data is retrieved multiple times if different episodes of the same show are in the list.
+                    # imdb.append(self.list[i]['imdb'])
+                    # thread = workers.Thread(self.super_info, i)
+                    # thread.start()
+                    # threads.append(thread)
+            # [x.join() for x in threads]
+
+            for r in range(0, total, 40):
+                threads = []
+                for i in range(r, r+40):
+                    if i <= total: threads.append(workers.Thread(self.super_info, i))
+                [i.start() for i in threads]
+                [i.join() for i in threads]
+
             if self.meta: metacache.insert(self.meta)
             self.list = [i for i in self.list if not i['tvdb'] == '0']
             if self.fanart_tv_user == '':
@@ -617,7 +623,7 @@ class tvshows:
 
 
     def super_info(self, i):
-        xbmc.log('line 619 in tmdb', 2)
+        # xbmc.log('line 626 in tmdb', 2)
         try:
             if self.list[i]['metacache'] == True: raise Exception()
 
@@ -625,10 +631,12 @@ class tvshows:
             except: tmdb = '0'
             if not tmdb == '0': url = self.tmdb_info_link % tmdb
             else: raise Exception()
-            xbmc.log('url from line 627 in tmdb = %s' % url, 2)
+            # xbmc.log('url from line 634 in tmdb = %s' % url, 2)
+
             item = client.request(url, timeout='20')
             item = json.loads(item)
-            # xbmc.log('item from line 630 in tmdb = %s' % item, 2)
+            # xbmc.log('item from line 638 in tmdb = %s' % item, 2)
+
             title = item['name']
             title = client.replaceHTMLCodes(title)
 
@@ -637,35 +645,35 @@ class tvshows:
             except: year = '0'
             if year == '' or year == None: year = '0'
             year = year.encode('utf-8')
-            xbmc.log('year from line 640 in tmdb = %s' % year, 2)
-
+            # xbmc.log('year from line 648 in tmdb = %s' % year, 2)
 
             tmdb = item['id']
             if tmdb == '' or tmdb == None: tmdb = '0'
             tmdb = re.sub('[^0-9]', '', str(tmdb))
             tmdb = tmdb.encode('utf-8')
-            xbmc.log('tmdb from line 647 in tmdb = %s' % tmdb, 2)
+            # xbmc.log('tmdb from line 654 in tmdb = %s' % tmdb, 2)
 
             tvdb = item['external_ids']['tvdb_id']
             if tvdb == '' or tvdb == None: tvdb = '0'
             tvdb = re.sub('[^0-9]', '', str(tvdb))
             tvdb = tvdb.encode('utf-8')
-            xbmc.log('tvdb from line 653 in tmdb = %s' % tvdb, 2)
+            # xbmc.log('tvdb from line 660 in tmdb = %s' % tvdb, 2)
 
             imdb = item['external_ids']['imdb_id']
             if imdb == '' or imdb == None: imdb = '0'
             imdb = imdb.encode('utf-8')
             if not imdb == '0': url = self.imdb_by_query % imdb
+            # xbmc.log('imdb from line 666 in tmdb = %s' % imdb, 2)
 
             item2 = client.request(url, timeout='10')
             item2 = json.loads(item2)
-            xbmc.log('imdb from line 662 in tmdb = %s' % imdb, 2)
+            # xbmc.log('item2 from line 670 in tmdb = %s' % item2, 2)
 
             try: duration = str(item['episode_run_time'])
             except: duration = '0'
             if duration == '' or duration == None: duration = '0'
-            # duration = duration.encode('utf-8')
-            xbmc.log('duration from line 668 in tmdb = %s' % duration, 2)
+            duration = duration.encode('utf-8')
+            # xbmc.log('duration from line 676 in tmdb = %s' % duration, 2)
 
             premiered = item2['Released']
             if premiered == None or premiered == '' or premiered == 'N/A': premiered = '0'
@@ -673,43 +681,42 @@ class tvshows:
             try: premiered = '%s-%s-%s' % (premiered[0][2], {'Jan':'01', 'Feb':'02', 'Mar':'03', 'Apr':'04', 'May':'05', 'Jun':'06', 'Jul':'07', 'Aug':'08', 'Sep':'09', 'Oct':'10', 'Nov':'11', 'Dec':'12'}[premiered[0][1]], premiered[0][0])
             except: premiered = '0'
             premiered = premiered.encode('utf-8')
-            xbmc.log('premiered from line 676 in tmdb = %s' % premiered, 2)
+            # xbmc.log('premiered from line 684 in tmdb = %s' % premiered, 2)
 
-            rating = item2['imdbRating']
+            rating = str(item2['imdbRating'])
             if rating == None or rating == '' or rating == 'N/A' or rating == '0.0': rating = '0'
             rating = rating.encode('utf-8')
-            xbmc.log('rating from line line 681 in tmdb = %s' % rating, 2)
+            # xbmc.log('rating from line line 689 in tmdb = %s' % rating, 2)
 
-            votes = item2['imdbVotes']
+            votes = str(item2['imdbVotes'])
             try: votes = str(format(int(votes),',d'))
             except: pass
             if votes == None or votes == '' or votes == 'N/A': votes = '0'
             votes = votes.encode('utf-8')
-            xbmc.log('votes from line line 688 in tmdb = %s' % votes, 2)
+            # xbmc.log('votes from line line 696 in tmdb = %s' % votes, 2)
 
             mpaa = item2['Rated']
             if mpaa == None or mpaa == '' or mpaa == 'N/A': mpaa = '0'
             mpaa = mpaa.encode('utf-8')
-            xbmc.log('mpaa from line line 681 in tmdb = %s' % mpaa, 2)
+            # xbmc.log('mpaa from line line 701 in tmdb = %s' % mpaa, 2)
 
+            # director = '0'
+            director = item2['Director']
+            if director == None or director == '' or director == 'N/A': director = '0'
+            director = director.replace(', ', ' / ')
+            director = re.sub(r'\(.*?\)', '', director)
+            director = ' '.join(director.split())
+            director = director.encode('utf-8')
+            # xbmc.log('director from line 710 in tmdb = %s' % director, 2)
 
-            director = '0'
-            # director = item2['Director']
-            # if director == None or director == '' or director == 'N/A': director = '0'
-            # director = director.replace(', ', ' / ')
-            # director = re.sub(r'\(.*?\)', '', director)
-            # director = ' '.join(director.split())
-            # director = director.encode('utf-8')
-            xbmc.log('director from line 703 in tmdb = %s' % director, 2)
-
-            writer = '0'
-            # writer = item2['Writer']
-            # if writer == None or writer == '' or writer == 'N/A': writer = '0'
-            # writer = writer.replace(', ', ' / ')
-            # writer = re.sub(r'\(.*?\)', '', writer)
-            # writer = ' '.join(writer.split())
-            # writer = writer.encode('utf-8')
-            xbmc.log('writer from line line 709 in tmdb = %s' % writer, 2)
+            # writer = '0'
+            writer = item2['Writer']
+            if writer == None or writer == '' or writer == 'N/A': writer = '0'
+            writer = writer.replace(', ', ' / ')
+            writer = re.sub(r'\(.*?\)', '', writer)
+            writer = ' '.join(writer.split())
+            writer = writer.encode('utf-8')
+            # xbmc.log('writer from line line 719 in tmdb = %s' % writer, 2)
 
             cast = item2['Actors']
             if cast == None or cast == '' or cast == 'N/A': cast = '0'
@@ -717,40 +724,38 @@ class tvshows:
             try: cast = [(x.encode('utf-8'), '') for x in cast]
             except: cast = []
             if cast == []: cast = '0'
-            xbmc.log('cast from line line 720 in tmdb = %s' % cast, 2)
+            # xbmc.log('cast from line line 727 in tmdb = %s' % cast, 2)
 
-            plot = item['overview']
-            # plot = item2['Plot']
+            # plot = item['overview']
+            plot = item2['Plot']
             if plot == None or plot == '' or plot == 'N/A': plot = '0'
             plot = client.replaceHTMLCodes(plot)
             plot = plot.encode('utf-8')
-            xbmc.log('plot from line line 727 in tmdb = %s' % plot, 2)
+            # xbmc.log('plot from line line 734 in tmdb = %s' % plot, 2)
 
             poster = item['poster_path']
             if poster == '' or poster == None: poster = '0'
             if not poster == '0': poster = '%s%s' % (self.tmdb_poster, poster)
             poster = poster.encode('utf-8')
-            xbmc.log('poster from line line 733 in tmdb = %s' % poster, 2)
+            # xbmc.log('poster from line line 740 in tmdb = %s' % poster, 2)
 
             fanart = item['backdrop_path']
             if fanart == '' or fanart == None: fanart = '0'
             if not fanart == '0': fanart = self.tmdb_image + fanart
             fanart = fanart.encode('utf-8')
-            xbmc.log('fanart from line line 739 in tmdb = %s' % fanart, 2)
+            # xbmc.log('fanart from line line 746 in tmdb = %s' % fanart, 2)
 
-            bannner = item['banner_path']
-            if banner == '' or banner == None: banner = '0'
-            if not banner == '0': banner = self.tmdb_image + banner
-            banner = banner.encode('utf-8')
-
+            # bannner = item['banner_path']
+            # if banner == '' or banner == None: banner = '0'
+            # if not banner == '0': banner = self.tmdb_image + banner
+            # banner = banner.encode('utf-8')
 
             studio = item['networks']
             try: studio = [x['name'] for x in studio][0]
             except: studio = '0'
             if studio == '' or studio == None: studio = '0'
             studio = studio.encode('utf-8')
-            xbmc.log('studio from line 749 in genre = %s' % studio, 2)
-
+            # xbmc.log('studio from line 758 in tmdb = %s' % studio, 2)
 
             genre = item['genres']
             try: genre = [x['name'] for x in genre]
@@ -758,7 +763,7 @@ class tvshows:
             if genre == '' or genre == None or genre == []: genre = '0'
             genre = ' / '.join(genre)
             genre = genre.encode('utf-8')
-            xbmc.log('genre from line 739 in genre = %s' % genre, 2)
+            # xbmc.log('genre from line 766 in tmdb = %s' % genre, 2)
 
 
             try:
@@ -773,6 +778,7 @@ class tvshows:
                 poster2 = art['tvposter']
                 poster2 = [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') == '00'][::-1]
                 poster2 = poster2[0]['url'].encode('utf-8')
+                xbmc.log('poster2 from line 778 in tmdb = %s' % poster2, 2)
             except:
                 poster2 = '0'
 
@@ -780,6 +786,7 @@ class tvshows:
                 fanart2 = art['showbackground']
                 fanart2 = [x for x in fanart2 if x.get('lang') == 'en'][::-1] + [x for x in fanart2 if x.get('lang') == '00'][::-1]
                 fanart2 = fanart2[0]['url'].encode('utf-8')
+                xbmc.log('fanart2 from line 786 in tmdb = %s' % fanart2, 2)
             except:
                 fanart2 = '0'
 
@@ -787,6 +794,7 @@ class tvshows:
                 banner2 = art['tvbanner']
                 banner2 = [x for x in banner2 if x.get('lang') == 'en'][::-1] + [x for x in banner2 if x.get('lang') == '00'][::-1]
                 banner2 = banner2[0]['url'].encode('utf-8')
+                xbmc.log('banner2 from line 794 in tmdb = %s' % banner2, 2)
             except:
                 banner2 = '0'
 
@@ -795,6 +803,7 @@ class tvshows:
                 else: clearlogo = art['clearlogo']
                 clearlogo = [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') == '00'][::-1]
                 clearlogo = clearlogo[0]['url'].encode('utf-8')
+                xbmc.log('clearlogo from line 803 in tmdb = %s' % clearlogo, 2)
             except:
                 clearlogo = '0'
 
@@ -803,6 +812,7 @@ class tvshows:
                 else: clearart = art['clearart']
                 clearart = [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') == '00'][::-1]
                 clearart = clearart[0]['url'].encode('utf-8')
+                xbmc.log('clearart from line 812 in tmdb = %s' % clearart, 2)
             except:
                 clearart = '0'
 
@@ -811,6 +821,7 @@ class tvshows:
                 else: landscape = art['showbackground']
                 landscape = [x for x in landscape if x.get('lang') == 'en'][::-1] + [x for x in landscape if x.get('lang') == '00'][::-1]
                 landscape = landscape[0]['url'].encode('utf-8')
+                xbmc.log('landscape from line 821 in tmdb = %s' % landscape, 2)
             except:
                 landscape = '0'
 

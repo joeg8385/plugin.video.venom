@@ -236,7 +236,6 @@ def authTrakt():
 
 def getTraktCredentialsInfo():
     user = control.setting('trakt.user').strip()
-#    userHidden = control.setting('trakt.userHidden').strip()
     token = control.setting('trakt.token')
     refresh = control.setting('trakt.refresh')
     if (user == '' or token == '' or refresh == ''): return False
@@ -843,23 +842,24 @@ def getTVShowTranslation(id, lang, season=None, episode=None, full=False):
     # return cache.get(getTraktAsJson, 48, '/shows/%s' % id)
 
 
-def getTVShowSummary(id, full=True):
-   try:
-       url = '/shows/%s' % id
-       if full: url += '?extended=full'
-       return cache.get(getTraktAsJson, 48, url)
-   except:
-       return
-
-
 def getMovieSummary(id, full=True):
-   try:
-       url = '/movies/%s' % id
-       if full: url += '?extended=full'
-       # return getTraktAsJson(url)
-       return cache.get(getTraktAsJson, 48, url)
-   except:
-       return
+    try:
+        url = '/movies/%s' % id
+        if full: url += '?extended=full'
+        return cache.get(getTraktAsJson, 48, url)
+        # return getTraktAsJson(url)
+    except:
+        return
+
+
+def getTVShowSummary(id, full=True):
+    try:
+        url = '/shows/%s' % id
+        if full: url += '?extended=full'
+        return cache.get(getTraktAsJson, 48, url)
+        # return getTraktAsJson(url)
+    except:
+        return
 
 
 def sort_list(sort_key, sort_direction, list_data):

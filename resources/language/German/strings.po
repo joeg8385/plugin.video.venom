@@ -1089,7 +1089,7 @@ msgid "Powered by Lambda"
 msgstr "Angetrieben durch Lambda"
 
 msgctxt "#32651"
-msgid "Open Lambda Scrapers Settings"
+msgid "Open Scrapers Settings"
 msgstr "Öffnen Sie die Einstellungen für Lambda Scrapers"
 
 msgctxt "#32652"
@@ -1115,6 +1115,539 @@ msgstr "Nur SD-Qualität automatisch abspielen"
 msgctxt "#32657"
 msgid "Auto Resume"
 msgstr "Auto Resume"
+
+msgctxt "#32658"
+msgid "Your Online List is Empty!"
+msgstr ""
+
+msgctxt "#32659"
+msgid "Oscar Nominees"
+msgstr ""
+
+
+
+msgctxt "#33000"
+msgid "Favourites"
+msgstr ""
+
+msgctxt "#33001"
+msgid "Categories"
+msgstr ""
+
+msgctxt "#33002"
+msgid "Lists"
+msgstr ""
+
+msgctxt "#33003"
+msgid "Browse"
+msgstr ""
+
+msgctxt "#33004"
+msgid "New Releases"
+msgstr ""
+
+
+
+
+
+msgctxt "#33028"
+msgid "Episode"
+msgstr ""
+
+msgctxt "#33029"
+msgid "All"
+
+
+
+
+
+msgctxt "#33035"
+msgid "item"
+msgstr ""
+
+msgctxt "#33036"
+msgid "link"
+msgstr ""
+
+msgctxt "#33037"
+msgid "Splash"
+msgstr ""
+
+msgctxt "#33038"
+msgid "Recent"
+msgstr ""
+
+msgctxt "#33039"
+msgid "Title"
+msgstr ""
+
+msgctxt "#33040"
+msgid "Description"
+msgstr ""
+
+msgctxt "#33041"
+msgid "Searches"
+msgstr ""
+
+
+
+
+msgctxt "#33048"
+msgid "Local Content"
+msgstr ""
+
+msgctxt "#33049"
+msgid "Nothing Was Found"
+msgstr ""
+
+msgctxt "#33050"
+msgid "Notifications"
+msgstr ""
+
+
+
+
+msgctxt "#33486"
+msgid "Close"
+msgstr ""
+
+
+
+
+msgctxt "#35500"
+msgid "Watch"
+msgstr ""
+
+
+
+
+msgctxt "#35547"
+msgid "Force"
+msgstr ""
+
+
+
+
+
+msgctxt "#33564"
+msgid "Default"
+msgstr ""
+
+
+
+
+
+msgctxt "#33575"
+msgid "Add item to your [COLOR red][B]Collection[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#33576"
+msgid "Remove item from your [COLOR red][B]Collection[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#33577"
+msgid "Add item to your [COLOR red][B]Watchlist[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#33578"
+msgid "Remove item from your [COLOR red][B]Watchlist[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#33579"
+msgid "Add item to a new list"
+msgstr ""
+
+msgctxt "#33580"
+msgid "Add item to your [COLOR red][B]%s[/B][/COLOR] list"
+msgstr ""
+
+msgctxt "#33581"
+msgid "Remove item from your [COLOR red][B]%s[/B][/COLOR] list"
+msgstr ""
+
+msgctxt "#33582"
+msgid "Item Added To Trakt"
+msgstr ""
+
+msgctxt "#33583"
+msgid "Item Removed From Trakt"
+msgstr ""
+
+msgctxt "#33584"
+msgid "Trakt List Addition Failed"
+msgstr ""
+
+msgctxt "#33585"
+msgid "Download Manager"
+msgstr ""
+
+
+
+
+msgctxt "#33648"
+msgid "Date Sorting"
+msgstr ""
+
+msgctxt "#33649"
+msgid "Ascending"
+msgstr ""
+
+msgctxt "#33650"
+msgid "Descending"
+msgstr ""
+
+msgctxt "#33651"
+msgid "Mark As [COLOR red][B]Watched[/B][/COLOR] Item"
+msgstr ""
+
+msgctxt "#33652"
+msgid "Mark As [COLOR red][B]Unwatched[/B][/COLOR] Item"
+msgstr ""
+
+msgctxt "#33653"
+msgid "[COLOR red][B]Rate[/B][/COLOR] Item"
+msgstr ""
+
+msgctxt "#33654"
+msgid "[COLOR red][B]Unrate[/B][/COLOR] Item"
+msgstr ""
+
+msgctxt "#33655"
+msgid "Mark the item as [COLOR red][B]Watched[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#33656"
+msgid "Mark the item as [COLOR red][B]Unwatched[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#33657"
+msgid "Provide a rating for the item"
+msgstr ""
+
+msgctxt "#33658"
+msgid "Remove the rating from the item"
+msgstr ""
+
+msgctxt "#33659"
+msgid "This action requires the Trakt addon to be installed."
+msgstr ""
+
+msgctxt "#33660"
+msgid "IMDb Charts"
+msgstr ""
+
+msgctxt "#33661"
+msgid "Trakt List Addition Succeeded"
+msgstr ""
+
+msgctxt "#33662"
+msgid "Recommended"
+msgstr ""
+
+
+
+
+
+
+msgctxt "#33676"
+msgid "Temporary Trakt Server Problems"
+msgstr ""
+
+msgctxt "#33677"
+msgid "Reauthenticate Trakt Access"
+msgstr ""
+
+msgctxt "#33678"
+msgid "Sorting Filters"
+msgstr ""
+
+msgctxt "#33679"
+msgid "Sorting Order"
+msgstr ""
+
+
+
+
+
+
+msgctxt "#33891"
+msgid "Unwatched Count"
+msgstr ""
+
+msgctxt "#33892"
+msgid "Unwatched Limit"
+msgstr ""
+
+
+
+
+
+
+msgctxt "#35187"
+msgid "Rating"
+msgstr ""
+
+msgctxt "#35188"
+msgid "Votes"
+msgstr ""
+
+msgctxt "#35189"
+msgid "Favourites Sorting"
+msgstr ""
+
+msgctxt "#35190"
+msgid "Movie Sorting"
+msgstr ""
+
+msgctxt "#35191"
+msgid "Show Sorting"
+msgstr ""
+
+msgctxt "#35192"
+msgid "Documentary Sorting"
+msgstr ""
+
+msgctxt "#35193"
+msgid "Short Sorting"
+msgstr ""
+
+msgctxt "#35194"
+msgid "Date Order"
+msgstr ""
+
+msgctxt "#35195"
+msgid "Ignore Articles"
+msgstr ""
+
+msgctxt "#35196"
+msgid "Failed To Add To Local Library"
+msgstr ""
+
+
+
+
+msgctxt "#35308"
+msgid "Unfinished"
+msgstr ""
+
+
+
+
+msgctxt "#35017"
+msgid "Air Information"
+msgstr ""
+
+msgctxt "#35018"
+msgid "Air Label Zone"
+msgstr ""
+
+msgctxt "#35019"
+msgid "Air Label Location"
+msgstr ""
+
+msgctxt "#35020"
+msgid "Air Label Format"
+msgstr ""
+
+msgctxt "#35021"
+msgid "Air Label Bold"
+msgstr ""
+
+msgctxt "#35022"
+msgid "Native"
+msgstr ""
+
+msgctxt "#35023"
+msgid "UTC"
+msgstr ""
+
+msgctxt "#35024"
+msgid "Before Title"
+msgstr ""
+
+msgctxt "#35025"
+msgid "After Title"
+msgstr ""
+
+msgctxt "#35026"
+msgid "Before Plot"
+msgstr ""
+
+msgctxt "#35027"
+msgid "After Plot"
+msgstr ""
+
+msgctxt "#35028"
+msgid "Day"
+msgstr ""
+
+msgctxt "#35029"
+msgid "Time"
+msgstr ""
+
+msgctxt "#35030"
+msgid "Day and Time"
+msgstr ""
+
+msgctxt "#35031"
+msgid "Air Label Day"
+msgstr ""
+
+msgctxt "#35032"
+msgid "Airs"
+msgstr ""
+
+
+
+
+msgctxt "#35048"
+msgid "Air Label Time"
+msgstr ""
+
+msgctxt "#35049"
+msgid "Full"
+msgstr ""
+
+msgctxt "#35050"
+msgid "Abbreviated"
+msgstr ""
+
+msgctxt "#35051"
+msgid "24-Hour"
+msgstr ""
+
+msgctxt "#35052"
+msgid "12-Hour"
+msgstr ""
+
+msgctxt "#35053"
+msgid "Period"
+msgstr ""
+
+
+
+
+
+msgctxt "#35391"
+msgid "Date Premiered"
+msgstr ""
+
+msgctxt "#35392"
+msgid "Date Added"
+msgstr ""
+
+msgctxt "#35393"
+msgid "Date Watched"
+msgstr ""
+
+
+
+
+
+msgctxt "#35493"
+msgid "Update Library"
+msgstr ""
+
+msgctxt "#35494"
+msgid "The stream cannot be found in the library. This can be caused by corrupted or deleted files, or if files or folders are renamed in the library location."
+msgstr ""
+
+msgctxt "#35495"
+msgid "Add %s To Library"
+msgstr ""
+
+
+
+
+
+
+msgctxt "#35500"
+msgid "Watch"
+msgstr ""
+
+msgctxt "#35501"
+msgid "Rate"
+msgstr ""
+
+msgctxt "#35502"
+msgid "Marked As Watched On Trakt"
+msgstr ""
+
+msgctxt "#35503"
+msgid "Marked As Unwatched On Trakt"
+msgstr ""
+
+
+
+
+msgctxt "#35506"
+msgid "Movie Information"
+msgstr ""
+
+msgctxt "#35507"
+msgid "Show Information"
+msgstr ""
+
+msgctxt "#35508"
+msgid "Season Information"
+msgstr ""
+
+msgctxt "#35509"
+msgid "Episode Information"
+msgstr ""
+
+msgctxt "#35510"
+msgid "Marked As Watched"
+msgstr ""
+
+msgctxt "#35511"
+msgid "Marked As Unwatched"
+msgstr ""
+
+msgctxt "#35512"
+msgid "Mark"
+msgstr ""
+
+msgctxt "#35513"
+msgid "Marked"
+msgstr ""
+
+msgctxt "#35514"
+msgid "Scrape"
+msgstr ""
+
+msgctxt "#35515"
+msgid "Playlist"
+msgstr ""
+
+msgctxt "#35516"
+msgid "Clear Playlist"
+msgstr ""
+
+msgctxt "#35517"
+msgid "Show Playlist"
+msgstr ""
+
+msgctxt "#35518"
+msgid "Remove From Playlist"
+msgstr ""
+
+msgctxt "#35519"
+msgid "Added To Playlist"
+msgstr ""
+
+msgctxt "#35520"
+msgid "Removed From Playlist"
+msgstr ""
+
+msgctxt "#35521"
+msgid "Playlist Cleared"
+msgstr ""
+
+
+
+
+
 
 msgctxt "#40062"
 msgid "Trakt Username"

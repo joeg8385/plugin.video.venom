@@ -4,7 +4,7 @@
     Venom Add-on
 '''
 
-import os,sys,re,json,urllib,urlparse,datetime
+import os,sys,re,json,urllib,urlparse,datetime,xbmc
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleantitle
@@ -66,7 +66,7 @@ class tvshows:
         self.keyword_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&keywords=%s&sort=moviemeter,asc&count=40&start=1'
         self.language_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&count=40&start=1'
         self.certification_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&certificates=%s&sort=moviemeter,asc&count=40&start=1'
-        self.trending_link = 'http://api.trakt.tv/shows/trending?limit=40&page=1'
+
 
         self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
         self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=tvSeries,tvMiniSeries&start=1'
@@ -78,6 +78,8 @@ class tvshows:
         self.trakt_link = 'http://api.trakt.tv'
         self.search_link = 'http://api.trakt.tv/search/show?limit=20&page=1&query='
 
+        self.trakttrending_link = 'http://api.trakt.tv/shows/trending?limit=40&page=1'
+        self.traktpopular_link = 'http://api.trakt.tv/shows/popular?limit=40&page=1'
         self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
         self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
         self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/'
@@ -92,7 +94,11 @@ class tvshows:
         if self.tmdb_key == '' or self.tmdb_key == None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
         self.tmdb_link = 'http://api.themoviedb.org'
+
         self.tmdb_popular_link = 'http://api.themoviedb.org/3/tv/popular?api_key=%s&page=1'
+        self.tmdb_toprated_link = 'http://api.themoviedb.org/3/tv/top_rated?api_key=%s&page=1'
+        self.tmdb_ontheair_link = 'http://api.themoviedb.org/3/tv/on_the_air?api_key=%s&page=1'
+        self.tmdb_airingtoday_link = 'http://api.themoviedb.org/3/tv/airing_today?api_key=%s&page=1'
 
 
     def sort(self):
@@ -127,7 +133,7 @@ class tvshows:
             tools.Logger.error()
 
 
-    def get(self, url, idx = True):
+    def get(self, url, idx=True):
         try:
             try: url = getattr(self, url + '_link')
             except: pass
@@ -152,7 +158,7 @@ class tvshows:
                     try:
                         if not '/users/me/' in url: raise Exception()
                         if trakt.getActivity() > cache.timeout(self.trakt_list, u, self.trakt_user): raise Exception()
-                        result = cache.get(self.trakt_list, 0, u, self.trakt_user)
+                        result = cache.get(self.trakt_list, 720, u, self.trakt_user)
                         if result: lists += result
                     except:
                         result = cache.get(self.trakt_list, 0, u, self.trakt_user)
@@ -198,8 +204,7 @@ class tvshows:
                 if self.notifications: control.notification(title = 32002, message = 33049, icon = 'INFO')
 
 
-
-    def getTMDb(self, url, idx = True):
+    def getTMDb(self, url, idx=True):
         try:
             try: url = getattr(self, url + '_link')
             except: pass
@@ -229,7 +234,6 @@ class tvshows:
             if invalid:
                 control.idle()
                 if self.notifications: control.notification(title = 32001, message = 'Rate limit reached - Please wait', icon = 'INFO')
-
 
 
     def search(self):
@@ -1013,7 +1017,9 @@ class tvshows:
             if self.list == None or self.list == []: return
             self.meta = []
             total = len(self.list)
-            maximum = 50
+            xbmc.log('total = %s' % total, 2)
+            # maximum = 50
+            maximum = total + 10
 
             self.fanart_tv_headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
             if not self.fanart_tv_user == '': self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
@@ -1035,6 +1041,14 @@ class tvshows:
                     thread.start()
                     threads.append(thread)
             [x.join() for x in threads]
+
+            # for r in range(0, total, 40):
+                # threads = []
+                # for i in range(r, r+40):
+                    # if i <= total: threads.append(workers.Thread(self.super_info, i))
+                # [i.start() for i in threads]
+                # [i.join() for i in threads]
+
             if self.meta: metacache.insert(self.meta)
             self.list = [i for i in self.list if not i['tvdb'] == '0']
             if self.fanart_tv_user == '':
@@ -1265,7 +1279,7 @@ class tvshows:
             pass
 
 
-    def tvshowDirectory(self, items):
+    def tvshowDirectory(self, items, next=True):
         if items == None or len(items) == 0:
             control.idle()
             control.notification(title = 32002, message = 33049, icon = 'INFO')
@@ -1425,23 +1439,24 @@ class tvshows:
             except:
                 pass
 
-        try:
-            url = items[0]['next']
-            if url == '': raise Exception()
-            icon = control.addonNext()
+        if next:
+            try:
+                url = items[0]['next']
+                if url == '': raise Exception()
+                icon = control.addonNext()
 
-            if self.imdb_link in url:
-                url = '%s?action=tvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
+                if not self.tmdb_link in url:
+                    url = '%s?action=tvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
-            if self.tmdb_link in url:
-                url = '%s?action=tmdbTvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
+                if self.tmdb_link in url:
+                    url = '%s?action=tmdbTvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
-            item = control.item(label=nextMenu)
-            item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-            if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
-            control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
-        except:
-            pass
+                item = control.item(label=nextMenu)
+                item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
+                if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+                control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
+            except:
+                pass
 
         control.content(syshandle, 'tvshows')
         control.directory(syshandle, cacheToDisc=True)

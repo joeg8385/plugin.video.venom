@@ -52,11 +52,10 @@ class movies:
         self.tm_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=' + self.tmdb_key
         self.tm_img_link = 'http://image.tmdb.org/t/p/w%s%s'
 
-        self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&page=1'
         self.tmdb_popular_link = 'http://api.themoviedb.org/3/movie/popular?api_key=%s&page=1'
         self.tmdb_toprated_link = 'http://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
         self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&&page=1'
-
+        self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&page=1'
 
         self.fanart_tv_user = control.setting('fanart.tv.user')
         if self.fanart_tv_user == '' or self.fanart_tv_user == None:
@@ -205,7 +204,6 @@ class movies:
 
 
     def getTMDb(self, url, idx=True):
-
         try:
             try: url = getattr(self, url + '_link')
             except: pass
@@ -220,7 +218,7 @@ class movies:
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                # self.list = cache.get(tmdb.movies().tmdb_list, 3, url)
+                # self.list = cache.get(tmdb.movies().tmdb_list, 0.3, url)
                 self.list = tmdb.movies().tmdb_list(url)
                 if idx == True: tmdb.movies().worker(self.list)
 
@@ -872,9 +870,9 @@ class movies:
 
         self.list = metacache.fetch(self.list, self.lang, self.user)
 
-        for r in range(0, total, 100):
+        for r in range(0, total, 40):
             threads = []
-            for i in range(r, r+100):
+            for i in range(r, r+40):
                 if i <= total: threads.append(workers.Thread(self.super_info, i))
             [i.start() for i in threads]
             [i.join() for i in threads]
@@ -1038,6 +1036,7 @@ class movies:
             try:
                 fanart2 = art2['backdrops']
                 fanart2 = [x for x in fanart2 if x.get('iso_639_1') == 'en'] + [x for x in fanart2 if not x.get('iso_639_1') == 'en']
+                # fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920]
                 fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920] + [x for x in fanart2 if x.get('width') <= 3840]
                 fanart2 = [(x['width'], x['file_path']) for x in fanart2]
                 fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
@@ -1223,10 +1222,10 @@ class movies:
                 url = items[0]['next']
                 if url == '': raise Exception()
 
-                if self.imdb_link in url:
+                if not self.tmdb_link in url:
                     url = '%s?action=moviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
-                if self.tmdb_link in url:
+                elif self.tmdb_link in url:
                     url = '%s?action=tmdbmoviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
                 item = control.item(label=nextMenu)

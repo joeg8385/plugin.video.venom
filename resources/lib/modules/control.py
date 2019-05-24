@@ -335,12 +335,9 @@ def apiLanguage(ret_name=None):
     if name[-1].isupper():
         try:
             name = xbmc.getLanguage(xbmc.ENGLISH_NAME).split(' ')[0]
-        except:
-            pass
-    try:
-        name = langDict[name]
-    except:
-        name = 'en'
+        except: pass
+    try: name = langDict[name]
+    except: name = 'en'
     lang = {'trakt': name} if name in trakt else {'trakt': 'en'}
     lang['tvdb'] = name if name in tvdb else 'en'
     lang['youtube'] = name if name in youtube else 'en'

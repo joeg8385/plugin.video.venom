@@ -232,15 +232,15 @@ msgid "[B]VENOM[/B] : Viewtypes"
 msgstr ""
 
 msgctxt "#32050"
-msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Providers...[/COLOR]"
+msgid "Popular"
 msgstr ""
 
 msgctxt "#32051"
-msgid "[B]VENOM[/B] : Clear Metadata..."
+msgid "Top Rated"
 msgstr ""
 
 msgctxt "#32052"
-msgid "[B]VENOM[/B] : Clear Cache..."
+msgid "On TV"
 msgstr ""
 
 msgctxt "#32053"
@@ -571,8 +571,48 @@ msgctxt "#32360"
 msgid "Providers Language"
 msgstr ""
 
+msgctxt "#32361"
+msgid ""
+msgstr ""
+
+msgctxt "#32362"
+msgid ""
+msgstr ""
+
 msgctxt "#32363"
 msgid "HEVC"
+msgstr ""
+
+msgctxt "#32364"
+msgid "Airing Today"
+msgstr ""
+
+msgctxt "#32365"
+msgid ""
+msgstr ""
+
+msgctxt "#32366"
+msgid ""
+msgstr ""
+
+msgctxt "#32367"
+msgid ""
+msgstr ""
+
+msgctxt "#32368"
+msgid ""
+msgstr ""
+
+msgctxt "#32369"
+msgid ""
+msgstr ""
+
+msgctxt "#32370"
+msgid ""
+msgstr ""
+
+msgctxt "#32371"
+msgid ""
 msgstr ""
 
 msgctxt "#32372"
@@ -586,6 +626,13 @@ msgstr ""
 msgctxt "#32374"
 msgid "Enable Debug"
 msgstr ""
+
+
+
+
+
+
+
 
 msgctxt "#32401"
 msgid "No stream available"
@@ -619,6 +666,11 @@ msgctxt "#32408"
 msgid "Process Complete"
 msgstr ""
 
+
+
+
+
+
 msgctxt "#32501"
 msgid "Start from beginning"
 msgstr ""
@@ -629,6 +681,34 @@ msgstr ""
 
 msgctxt "#32503"
 msgid "Resume"
+msgstr ""
+
+msgctxt "#32504"
+msgid ""
+msgstr ""
+
+msgctxt "#32505"
+msgid ""
+msgstr ""
+
+msgctxt "#32506"
+msgid ""
+msgstr ""
+
+msgctxt "#32507"
+msgid ""
+msgstr ""
+
+msgctxt "#32508"
+msgid ""
+msgstr ""
+
+msgctxt "#32509"
+msgid ""
+msgstr ""
+
+msgctxt "#32510"
+msgid ""
 msgstr ""
 
 msgctxt "#32511"
@@ -951,12 +1031,24 @@ msgctxt "#32609"
 msgid "[B][COLOR red]ResolveURL[/COLOR][/B] Settings"
 msgstr ""
 
+msgctxt "#32610"
+msgid "[B]VENOM[/B] : Clear [COLOR=yellow]All [/COLOR]Cache..."
+msgstr ""
+
+msgctxt "#32611"
+msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Providers [/COLOR]Cache..."
+msgstr ""
+
+msgctxt "#32612"
+msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Metadata [/COLOR]Cache..."
+msgstr ""
+
 msgctxt "#32613"
-msgid "[B]VENOM[/B] : Clear All Cache..."
+msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Cache [/COLOR]..."
 msgstr ""
 
 msgctxt "#32614"
-msgid "[B]VENOM[/B] : Clear Meta Cache..."
+msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Search[/COLOR] Cache..."
 msgstr ""
 
 msgctxt "#32615"
@@ -1154,9 +1246,97 @@ msgctxt "#33004"
 msgid "New Releases"
 msgstr ""
 
+msgctxt "#33005"
+msgid "Enable startup notice"
+msgstr ""
 
+msgctxt "#33006"
+msgid ""
+msgstr ""
 
+msgctxt "#33007"
+msgid ""
+msgstr ""
 
+msgctxt "#33008"
+msgid ""
+msgstr ""
+
+msgctxt "#33009"
+msgid ""
+msgstr ""
+
+msgctxt "#33010"
+msgid ""
+msgstr ""
+
+msgctxt "#33011"
+msgid ""
+msgstr ""
+
+msgctxt "#33012"
+msgid ""
+msgstr ""
+
+msgctxt "#33013"
+msgid ""
+msgstr ""
+
+msgctxt "#33014"
+msgid ""
+msgstr ""
+
+msgctxt "#33015"
+msgid ""
+msgstr ""
+
+msgctxt "#33016"
+msgid ""
+msgstr ""
+
+msgctxt "#33017"
+msgid ""
+msgstr ""
+
+msgctxt "#33018"
+msgid ""
+msgstr ""
+
+msgctxt "#33019"
+msgid ""
+msgstr ""
+
+msgctxt "#33020"
+msgid ""
+msgstr ""
+
+msgctxt "#33021"
+msgid ""
+msgstr ""
+
+msgctxt "#33022"
+msgid ""
+msgstr ""
+
+msgctxt "#33023"
+msgid ""
+msgstr ""
+
+msgctxt "#33024"
+msgid ""
+msgstr ""
+
+msgctxt "#33025"
+msgid ""
+msgstr ""
+
+msgctxt "#33026"
+msgid ""
+msgstr ""
+
+msgctxt "#33027"
+msgid ""
+msgstr ""
 
 msgctxt "#33028"
 msgid "Episode"
@@ -1164,10 +1344,27 @@ msgstr ""
 
 msgctxt "#33029"
 msgid "All"
+msgstr ""
 
+msgctxt "#33030"
+msgid ""
+msgstr ""
 
+msgctxt "#33031"
+msgid ""
+msgstr ""
 
+msgctxt "#33032"
+msgid ""
+msgstr ""
 
+msgctxt "#33033"
+msgid ""
+msgstr ""
+
+msgctxt "#33034"
+msgid ""
+msgstr ""
 
 msgctxt "#33035"
 msgid "item"
@@ -1197,8 +1394,29 @@ msgctxt "#33041"
 msgid "Searches"
 msgstr ""
 
+msgctxt "#33042"
+msgid ""
+msgstr ""
 
+msgctxt "#33043"
+msgid ""
+msgstr ""
 
+msgctxt "#33044"
+msgid ""
+msgstr ""
+
+msgctxt "#33045"
+msgid ""
+msgstr ""
+
+msgctxt "#33046"
+msgid ""
+msgstr ""
+
+msgctxt "#33047"
+msgid ""
+msgstr ""
 
 msgctxt "#33048"
 msgid "Local Content"
@@ -1229,21 +1447,119 @@ msgstr ""
 
 
 
+
+
 msgctxt "#35547"
 msgid "Force"
 msgstr ""
 
+msgctxt "#35548"
+msgid ""
+msgstr ""
 
+msgctxt "#35549"
+msgid ""
+msgstr ""
 
+msgctxt "#35550"
+msgid ""
+msgstr ""
 
+msgctxt "#35551"
+msgid ""
+msgstr ""
+
+msgctxt "#35552"
+msgid ""
+msgstr ""
+
+msgctxt "#35553"
+msgid ""
+msgstr ""
+
+msgctxt "#35554"
+msgid ""
+msgstr ""
+
+msgctxt "#35555"
+msgid ""
+msgstr ""
+
+msgctxt "#35556"
+msgid ""
+msgstr ""
+
+msgctxt "#35557"
+msgid ""
+msgstr ""
+
+msgctxt "#35558"
+msgid ""
+msgstr ""
+
+msgctxt "#35559"
+msgid ""
+msgstr ""
+
+msgctxt "#35560"
+msgid ""
+msgstr ""
+
+msgctxt "#35561"
+msgid ""
+msgstr ""
+
+msgctxt "#35562"
+msgid ""
+msgstr ""
+
+msgctxt "#35563"
+msgid ""
+msgstr ""
 
 msgctxt "#33564"
 msgid "Default"
 msgstr ""
 
+msgctxt "#33565"
+msgid "Default"
+msgstr ""
 
+msgctxt "#33566"
+msgid "Default"
+msgstr ""
 
+msgctxt "#33567"
+msgid "Default"
+msgstr ""
 
+msgctxt "#33568"
+msgid "Default"
+msgstr ""
+
+msgctxt "#33569"
+msgid "Default"
+msgstr ""
+
+msgctxt "#33570"
+msgid "Default"
+msgstr ""
+
+msgctxt "#33571"
+msgid "Default"
+msgstr ""
+
+msgctxt "#33572"
+msgid "Default"
+msgstr ""
+
+msgctxt "#33573"
+msgid "Default"
+msgstr ""
+
+msgctxt "#33574"
+msgid "Default"
+msgstr ""
 
 msgctxt "#33575"
 msgid "Add item to your [COLOR red][B]Collection[/B][/COLOR]"
@@ -1288,6 +1604,9 @@ msgstr ""
 msgctxt "#33585"
 msgid "Download Manager"
 msgstr ""
+
+
+
 
 
 
@@ -1352,10 +1671,57 @@ msgctxt "#33662"
 msgid "Recommended"
 msgstr ""
 
+msgctxt "#33663"
+msgid ""
+msgstr ""
 
+msgctxt "#33664"
+msgid ""
+msgstr ""
 
+msgctxt "#33665"
+msgid ""
+msgstr ""
 
+msgctxt "#33666"
+msgid ""
+msgstr ""
 
+msgctxt "#33667"
+msgid ""
+msgstr ""
+
+msgctxt "#33668"
+msgid ""
+msgstr ""
+
+msgctxt "#33669"
+msgid ""
+msgstr ""
+
+msgctxt "#33670"
+msgid ""
+msgstr ""
+
+msgctxt "#33671"
+msgid ""
+msgstr ""
+
+msgctxt "#33672"
+msgid ""
+msgstr ""
+
+msgctxt "#33673"
+msgid ""
+msgstr ""
+
+msgctxt "#33674"
+msgid ""
+msgstr ""
+
+msgctxt "#33675"
+msgid ""
+msgstr ""
 
 msgctxt "#33676"
 msgid "Temporary Trakt Server Problems"
@@ -1388,55 +1754,6 @@ msgstr ""
 
 
 
-
-
-
-msgctxt "#35187"
-msgid "Rating"
-msgstr ""
-
-msgctxt "#35188"
-msgid "Votes"
-msgstr ""
-
-msgctxt "#35189"
-msgid "Favourites Sorting"
-msgstr ""
-
-msgctxt "#35190"
-msgid "Movie Sorting"
-msgstr ""
-
-msgctxt "#35191"
-msgid "Show Sorting"
-msgstr ""
-
-msgctxt "#35192"
-msgid "Documentary Sorting"
-msgstr ""
-
-msgctxt "#35193"
-msgid "Short Sorting"
-msgstr ""
-
-msgctxt "#35194"
-msgid "Date Order"
-msgstr ""
-
-msgctxt "#35195"
-msgid "Ignore Articles"
-msgstr ""
-
-msgctxt "#35196"
-msgid "Failed To Add To Local Library"
-msgstr ""
-
-
-
-
-msgctxt "#35308"
-msgid "Unfinished"
-msgstr ""
 
 
 
@@ -1505,8 +1822,65 @@ msgctxt "#35032"
 msgid "Airs"
 msgstr ""
 
+msgctxt "#35033"
+msgid ""
+msgstr ""
 
+msgctxt "#35034"
+msgid ""
+msgstr ""
 
+msgctxt "#35035"
+msgid ""
+msgstr ""
+
+msgctxt "#35036"
+msgid ""
+msgstr ""
+
+msgctxt "#35037"
+msgid ""
+msgstr ""
+
+msgctxt "#35038"
+msgid ""
+msgstr ""
+
+msgctxt "#35039"
+msgid ""
+msgstr ""
+
+msgctxt "#35040"
+msgid ""
+msgstr ""
+
+msgctxt "#35041"
+msgid ""
+msgstr ""
+
+msgctxt "#35042"
+msgid ""
+msgstr ""
+
+msgctxt "#35043"
+msgid ""
+msgstr ""
+
+msgctxt "#35044"
+msgid ""
+msgstr ""
+
+msgctxt "#35045"
+msgid ""
+msgstr ""
+
+msgctxt "#35046"
+msgid ""
+msgstr ""
+
+msgctxt "#35047"
+msgid ""
+msgstr ""
 
 msgctxt "#35048"
 msgid "Air Label Time"
@@ -1536,6 +1910,67 @@ msgstr ""
 
 
 
+
+msgctxt "#35187"
+msgid "Rating"
+msgstr ""
+
+msgctxt "#35188"
+msgid "Votes"
+msgstr ""
+
+msgctxt "#35189"
+msgid "Favourites Sorting"
+msgstr ""
+
+msgctxt "#35190"
+msgid "Movie Sorting"
+msgstr ""
+
+msgctxt "#35191"
+msgid "Show Sorting"
+msgstr ""
+
+msgctxt "#35192"
+msgid "Documentary Sorting"
+msgstr ""
+
+msgctxt "#35193"
+msgid "Short Sorting"
+msgstr ""
+
+msgctxt "#35194"
+msgid "Date Order"
+msgstr ""
+
+msgctxt "#35195"
+msgid "Ignore Articles"
+msgstr ""
+
+msgctxt "#35196"
+msgid "Failed To Add To Local Library"
+msgstr ""
+
+
+
+
+
+
+
+
+
+
+
+
+msgctxt "#35308"
+msgid "Unfinished"
+msgstr ""
+
+
+
+
+
+
 msgctxt "#35391"
 msgid "Date Premiered"
 msgstr ""
@@ -1547,6 +1982,27 @@ msgstr ""
 msgctxt "#35393"
 msgid "Date Watched"
 msgstr ""
+
+msgctxt "#35394"
+msgid ""
+msgstr ""
+
+msgctxt "#35395"
+msgid ""
+msgstr ""
+
+msgctxt "#35396"
+msgid ""
+msgstr ""
+
+msgctxt "#35397"
+msgid ""
+msgstr ""
+
+
+
+
+
 
 
 
@@ -1564,10 +2020,21 @@ msgctxt "#35495"
 msgid "Add %s To Library"
 msgstr ""
 
+msgctxt "#35496"
+msgid ""
+msgstr ""
 
+msgctxt "#35497"
+msgid ""
+msgstr ""
 
+msgctxt "#35498"
+msgid ""
+msgstr ""
 
-
+msgctxt "#35499"
+msgid ""
+msgstr ""
 
 msgctxt "#35500"
 msgid "Watch"
@@ -1585,8 +2052,13 @@ msgctxt "#35503"
 msgid "Marked As Unwatched On Trakt"
 msgstr ""
 
+msgctxt "#35504"
+msgid ""
+msgstr ""
 
-
+msgctxt "#35505"
+msgid ""
+msgstr ""
 
 msgctxt "#35506"
 msgid "Movie Information"
@@ -1652,6 +2124,22 @@ msgctxt "#35521"
 msgid "Playlist Cleared"
 msgstr ""
 
+msgctxt "#35522"
+msgid ""
+msgstr ""
+
+msgctxt "#35523"
+msgid ""
+msgstr ""
+
+msgctxt "#35524"
+msgid ""
+msgstr ""
+
+
+
+
+
 
 
 
@@ -1659,6 +2147,55 @@ msgstr ""
 msgctxt "#40062"
 msgid "Trakt Username"
 msgstr ""
+
+msgctxt "#40063"
+msgid "Months to Rollback for Hide in Cinema"
+msgstr ""
+
+msgctxt "#40064"
+msgid "Enable Christmas Collections"
+msgstr ""
+
+msgctxt "#40065"
+msgid "Enable UpNext Integration"
+msgstr ""
+
+msgctxt "#40066"
+msgid "UpNext Notification time"
+msgstr ""
+
+msgctxt "#40067"
+msgid "Clear Providers Cache After Changing Scraper Provider"
+msgstr ""
+
+msgctxt "#40068"
+msgid ""
+msgstr ""
+
+msgctxt "#40069"
+msgid ""
+msgstr ""
+
+msgctxt "#40070"
+msgid ""
+msgstr ""
+
+msgctxt "#40071"
+msgid ""
+msgstr ""
+
+msgctxt "#40072"
+msgid ""
+msgstr ""
+
+
+
+
+
+
+
+
+
 
 
 
