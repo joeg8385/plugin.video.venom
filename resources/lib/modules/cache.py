@@ -57,6 +57,7 @@ def get(function, duration, *args):
         if invalid:
             if cache_result: return ast.literal_eval(cache_result['value'].encode('utf-8'))
             else: return None
+
         return ast.literal_eval(fresh_result.encode('utf-8'))
     except Exception:
         return None
@@ -79,7 +80,6 @@ def timeout(function, *args):
         return int(result['date'])
     except Exception:
         return None
-
 
 
 def cache_existing(function, *args):
@@ -111,8 +111,6 @@ def cache_insert(key, value):
     cursor.connection.commit()
 
 
-
-
 # Remove very old entries to reduce the file size.
 # The cache DB can grow very larger with advanced caching.
 def cache_clean(duration = 1209600):
@@ -139,7 +137,6 @@ def cache_clear_all():
     cache_clear_meta()
     cache_clear()
     cache_clear_search()
-
 
 
 def cache_clear_providers():

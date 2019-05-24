@@ -1584,7 +1584,7 @@ class episodes:
 
                 item = control.item(label=labelProgress)
 
-                ####-Context Menu and Overlays-####
+####-Context Menu and Counters-####
                 cm = []
                 if traktCredentials == True:
                     cm.append((traktManagerMenu,
@@ -1609,8 +1609,8 @@ class episodes:
                             item.setProperty('TotalEpisodes', str(count['total']))
                             item.setProperty('WatchedEpisodes', str(count['watched']))
                             item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
-                except:
-                    pass
+                except: pass
+
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
                 if multi == True:
                     cm.append((tvshowBrowserMenu,
@@ -1626,7 +1626,7 @@ class episodes:
                                sysaddon, systvshowtitle, year, imdb, tvdb)))
                 cm.append(
                     ('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
-                ################################
+####################################
 
                 poster = '0'
                 if poster == '0' and 'poster3' in i: poster = i['poster3']

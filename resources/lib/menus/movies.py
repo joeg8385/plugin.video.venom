@@ -213,13 +213,16 @@ class movies:
 
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = tmdb.movies().tmdb_collections_list(url)
+#--Possible sleep and retry here for rate limiter issue
+                self.list = cache.get(tmdb.movies().tmdb_collections_list, 0, url)
+                # self.list = tmdb.movies().tmdb_collections_list(url)
                 if idx == True: tmdb.movies().worker(self.list)
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                # self.list = cache.get(tmdb.movies().tmdb_list, 0.3, url)
-                self.list = tmdb.movies().tmdb_list(url)
+#--Possible sleep and retry here for rate limiter issue
+                self.list = cache.get(tmdb.movies().tmdb_list, 0, url)
+                # self.list = tmdb.movies().tmdb_list(url)
                 if idx == True: tmdb.movies().worker(self.list)
 
             if self.list == None: 
@@ -920,7 +923,7 @@ class movies:
             genre = item.get('genres', [])
             genre = [x.title() for x in genre]
             genre = ' / '.join(genre).strip()
-            if not genre: genre = '0'
+            if not genre: genre = 'NA'
 
             duration = str(item.get('runtime', 0))
 
@@ -1044,7 +1047,6 @@ class movies:
                 fanart2 = fanart2.encode('utf-8')
             except:
                 fanart2 = '0'
-                xbmc.log('fanart2 from line 1049 in movies = %s' % fanart2, 2)
 
             item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
             item = dict((k,v) for k, v in item.iteritems() if not v == '0')
@@ -1132,7 +1134,7 @@ class movies:
                 sysurl = urllib.quote_plus(url)
 #                path = '%s?action=play&title=%s&year=%s&imdb=%s' % (sysaddon, systitle, year, imdb)
 
-####-Context Menu and Overlays-####
+####-Context Menu and Counters-####
                 cm = []
                 if traktCredentials == True:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
@@ -1144,8 +1146,8 @@ class movies:
                     else:
                         cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
                         meta.update({'playcount': 0, 'overlay': 6})
-                except:
-                    pass
+                except: pass
+
                 cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=http://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
                 cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
@@ -1207,6 +1209,7 @@ class movies:
 
                 item = control.item(label = labelProgress)
                 if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
+
                 item.setArt(art)
                 item.setProperty('IsPlayable', isPlayable)
                 item.setInfo(type='Video', infoLabels = control.metadataClean(meta))

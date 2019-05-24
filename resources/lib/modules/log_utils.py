@@ -3,12 +3,14 @@
 import os, time, cProfile, StringIO, pstats, json, xbmc
 from datetime import date, datetime, timedelta
 from resources.lib.modules import control
+
 from xbmc import LOGDEBUG, LOGERROR, LOGFATAL, LOGINFO, LOGNONE, LOGNOTICE, LOGSEVERE, LOGWARNING  # @UnusedImport
 
 name = control.addonInfo('name')
 DEBUGPREFIX = '[COLOR red][ Venom DEBUG ][/COLOR]'
 LOGPATH = xbmc.translatePath('special://logpath/')
 
+addonName = "Venom"
 
 def log(msg, level = LOGNOTICE):
     debug_enabled = control.setting('addon_debug')
@@ -33,6 +35,30 @@ def log(msg, level = LOGNOTICE):
             xbmc.log('Logging Failure: %s' % (e), level)
         except Exception:
             pass
+
+
+def log2(msg, level='info'):
+    msg = safeStr(msg)
+    msg = addonName.upper() + ': ' + msg
+    if level == 'error':
+        xbmc.log(msg, level=xbmc.LOGERROR)
+    elif level == 'info':
+        xbmc.log(msg, level=xbmc.LOGINFO)
+    elif level == 'notice':
+        xbmc.log(msg, level=xbmc.LOGNOTICE)
+    elif level == 'warning':
+        xbmc.log(msg, level=xbmc.LOGWARNING)
+    else:
+        xbmc.log(msg)
+
+
+def safeStr(obj):
+    try:
+        return str(obj)
+    except UnicodeEncodeError:
+        return obj.encode('utf-8', 'ignore').decode('ascii', 'ignore')
+    except:
+        return ""
 
 
 class Profiler(object):

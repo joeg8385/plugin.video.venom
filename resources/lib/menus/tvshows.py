@@ -4,7 +4,7 @@
     Venom Add-on
 '''
 
-import os,sys,re,json,urllib,urlparse,datetime,xbmc
+import os,sys,re,json,urllib,urlparse,datetime
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleantitle
@@ -27,6 +27,7 @@ class tvshows:
     def __init__(self, type = 'show', notifications = True):
         self.count = 40
         self.list = []
+        self.meta = []
         self.threads = []
         self.type = type
         self.lang = control.apiLanguage()['tvdb']
@@ -214,13 +215,16 @@ class tvshows:
 
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = tmdb.tvshows().tmdb_collections_list(url)
+#--Possible sleep and retry here for rate limiter issue
+                self.list = cache.get(tmdb.tvshows().tmdb_collections_list, 0, url)
+                # self.list = tmdb.tvshows().tmdb_collections_list(url)
                 if idx == True: tmdb.tvshows().worker(self.list)
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                # self.list = cache.get(tmdb.tvshows().tmdb_list, 0.3, url)
-                self.list = tmdb.tvshows().tmdb_list(url)
+#--Possible sleep and retry here for rate limiter issue
+                self.list = cache.get(tmdb.tvshows().tmdb_list, 1, url)
+                # self.list = tmdb.tvshows().tmdb_list(url)
                 if idx == True: tmdb.tvshows().worker(self.list)
 
             if self.list == None:
@@ -1017,7 +1021,6 @@ class tvshows:
             if self.list == None or self.list == []: return
             self.meta = []
             total = len(self.list)
-            xbmc.log('total = %s' % total, 2)
             # maximum = 50
             maximum = total + 10
 
@@ -1348,7 +1351,7 @@ class tvshows:
                 else:
                     url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
 
-####-Context Menu and Overlays-####
+####-Context Menu and Counters-####
                 cm = []
                 if traktCredentials == True:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, sysname, imdb, tvdb)))
@@ -1431,10 +1434,10 @@ class tvshows:
                 if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
 
                 item.setArt(art)
-                item.addContextMenuItems(cm)
-                item.setInfo(type = 'Video', infoLabels = control.metadataClean(meta))
+                item.setInfo(type = 'Video', infoLabels=control.metadataClean(meta))
                 video_streaminfo = {'codec': 'h264'}
                 item.addStreamInfo('video', video_streaminfo)
+                item.addContextMenuItems(cm)
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:
                 pass
@@ -1443,15 +1446,15 @@ class tvshows:
             try:
                 url = items[0]['next']
                 if url == '': raise Exception()
-                icon = control.addonNext()
 
                 if not self.tmdb_link in url:
                     url = '%s?action=tvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
-                if self.tmdb_link in url:
+                elif self.tmdb_link in url:
                     url = '%s?action=tmdbTvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
                 item = control.item(label=nextMenu)
+                icon = control.addonNext()
                 item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
                 if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
