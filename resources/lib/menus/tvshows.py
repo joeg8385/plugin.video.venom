@@ -46,10 +46,10 @@ class tvshows:
         # if self.tvdb_key == '' or self.tvdb_key == None:
             # self.tvdb_key = '1D62F2F90030C444'
         self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
-        self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
-        self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-        self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
-        self.tvdb_image = 'http://thetvdb.com/banners/'
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
+        self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
+        self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
+        self.tvdb_image = 'https://thetvdb.com/banners/'
 
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.imdb_link = 'http://www.imdb.com'
@@ -67,7 +67,6 @@ class tvshows:
         self.keyword_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&keywords=%s&sort=moviemeter,asc&count=40&start=1'
         self.language_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&count=40&start=1'
         self.certification_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&certificates=%s&sort=moviemeter,asc&count=40&start=1'
-
 
         self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
         self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=tvSeries,tvMiniSeries&start=1'
@@ -205,7 +204,7 @@ class tvshows:
             try: url = getattr(self, url + '_link')
             except: pass
 
-            self.list = cache.get(tvmaze.tvshows().tvmaze_list, 168, url)
+            self.list = cache.get(tvmaze.tvshows().tvmaze_list, 0, url)
             if idx == True: self.worker()
 
             if self.list == None:
@@ -872,7 +871,7 @@ class tvshows:
 
     def super_info(self, i):
         try:
-            if self.list[i]['metacache'] == True: raise Exception()
+            # if self.list[i]['metacache'] == True: raise Exception()
 
             imdb = self.list[i]['imdb'] if 'imdb' in self.list[i] else '0'
             tvdb = self.list[i]['tvdb'] if 'tvdb' in self.list[i] else '0'
@@ -889,7 +888,7 @@ class tvshows:
 
             if tvdb == '0' and not imdb == '0':
                 url = self.tvdb_by_imdb % imdb
-                result = client.request(url, timeout = '20')
+                result = client.request(url, timeout = '10')
                 try: tvdb = client.parseDOM(result, 'seriesid')[0]
                 except: tvdb = '0'
                 try: name = client.parseDOM(result, 'SeriesName')[0]
@@ -943,11 +942,12 @@ class tvshows:
             premiered = client.replaceHTMLCodes(premiered)
             premiered = premiered.encode('utf-8')
 
-            try: studio = client.parseDOM(item, 'Network')[0]
-            except: studio = ''
-            if studio == '': studio = '0'
-            studio = client.replaceHTMLCodes(studio)
-            studio = studio.encode('utf-8')
+            if not 'studio' in self.list[i] or self.list[i]['studio'] == '0':
+                try: studio = client.parseDOM(item, 'Network')[0]
+                except: studio = '0'
+                studio = client.replaceHTMLCodes(studio)
+                studio = studio.encode('utf-8')
+            else: studio = self.list[i]['studio']
 
             try: genre = client.parseDOM(item, 'Genre')[0]
             except: genre = ''
@@ -957,11 +957,13 @@ class tvshows:
             genre = client.replaceHTMLCodes(genre)
             genre = genre.encode('utf-8')
 
-            try: duration = client.parseDOM(item, 'Runtime')[0]
-            except: duration = ''
-            if duration == '': duration = '0'
-            duration = client.replaceHTMLCodes(duration)
-            duration = duration.encode('utf-8')
+            if not 'duration' in self.list[i] or self.list[i]['duration'] == '0':
+                try: duration = client.parseDOM(item, 'Runtime')[0]
+                except: duration = ''
+                if duration == '': duration = '0'
+                duration = client.replaceHTMLCodes(duration)
+                duration = duration.encode('utf-8')
+            else: duration = self.list[i]['duration']
 
             try: rating = client.parseDOM(item, 'Rating')[0]
             except: rating = ''

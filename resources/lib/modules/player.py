@@ -76,7 +76,7 @@ class player(xbmc.Player):
             elif 'fanart' in meta: fanart = meta['fanart']
             clearart = '0'
             if 'clearart' in meta: clearart = meta['clearart']
-            xbmc.log('clearart = %s' % clearart, 2)
+            # xbmc.log('clearart = %s' % clearart, 2)
             clearlogo = '0'
             if 'clearlogo' in meta: clearlogo = meta['clearlogo']
             if poster == '0': poster = control.addonPoster()

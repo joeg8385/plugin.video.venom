@@ -53,11 +53,9 @@ if action == None:
 ####################################################
 #---News
 ####################################################
-
 elif action == 'newsNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().news()
-
 
 elif action == 'infoCheck':
     from resources.lib.menus import navigator
@@ -68,96 +66,77 @@ elif action == 'infoCheck':
 ####################################################
 #---MOVIE
 ####################################################
-
 elif action == 'movieNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().movies()
-
 
 elif action == 'movieliteNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().movies(lite=True)
 
-
 elif action == 'mymovieNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().mymovies()
-
 
 elif action == 'mymovieliteNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().mymovies(lite=True)
 
-
 elif action == 'movies':
     from resources.lib.menus import movies
     movies.movies().get(url)
-
 
 elif action == 'moviePage':
     from resources.lib.menus import movies
     movies.movies().get(url)
 
-
 elif action == 'tmdbmovies':
     from resources.lib.menus import movies
     movies.movies().getTMDb(url)
-
 
 elif action == 'tmdbmoviePage':
     from resources.lib.menus import movies
     movies.movies().getTMDb(url)
 
-
 elif action == 'newMovies':
     from resources.lib.menus import movies
     movies.movies().newMovies()
-
 
 elif action == 'movieSearch':
     from resources.lib.menus import movies
     movies.movies().search()
 
-
 elif action == 'movieSearchnew':
     from resources.lib.menus import movies
     movies.movies().search_new()
-
 
 elif action == 'movieSearchterm':
     from resources.lib.menus import movies
     movies.movies().search_term(name)
 
-
 elif action == 'moviePerson':
     from resources.lib.menus import movies
     movies.movies().person()
-
 
 elif action == 'movieGenres':
     from resources.lib.menus import movies
     movies.movies().genres()
 
-
 elif action == 'movieLanguages':
     from resources.lib.menus import movies
     movies.movies().languages()
-
 
 elif action == 'movieCertificates':
     from resources.lib.menus import movies
     movies.movies().certifications()
 
-
 elif action == 'movieYears':
     from resources.lib.menus import movies
     movies.movies().years()
 
-
 elif action == 'moviePersons':
     from resources.lib.menus import movies
     movies.movies().persons(url)
-
 
 elif action == 'movieUserlists':
     from resources.lib.menus import movies
@@ -168,7 +147,6 @@ elif action == 'movieUserlists':
 ####################################################
 #---Collections
 ####################################################
-
 elif action == 'collectionsNavigator':
     from resources.lib.menus import collections
     # navigator.navigator().collections()
@@ -178,7 +156,6 @@ elif action == 'collectionActors':
     from resources.lib.menus import collections
     collections.collectionsr().collectionActors()
 
-
 elif action == 'collectionBoxset':
     from resources.lib.menus import collections
     collections.collections().collectionBoxset()
@@ -187,16 +164,13 @@ elif action == 'collectionKids':
     from resources.lib.menus import collections
     collections.collections().collectionKids()
 
-
 elif action == 'collectionBoxsetKids':
     from resources.lib.menus import collections
     collections.collections().collectionBoxsetKids()
 
-
 elif action == 'collectionSuperhero':
     from resources.lib.menus import collections
     collections.collections().collectionSuperhero()
-
 
 elif action == 'collections':
     from resources.lib.menus import collections
@@ -207,26 +181,21 @@ elif action == 'collections':
 ####################################################
 #---Furk
 ####################################################
-
 elif action == "furkNavigator":
     from resources.lib.menus import navigator
     navigator.navigator().furk()
-
 
 elif action == "furkMetaSearch":
     from resources.lib.menus import furk
     furk.furk().furk_meta_search(url)
 
-
 elif action == "furkSearch":
     from resources.lib.menus import furk
     furk.furk().search()
 
-
 elif action == "furkUserFiles":
     from resources.lib.menus import furk
     furk.furk().user_files()
-
 
 elif action == "furkSearchNew":
     from resources.lib.menus import furk
@@ -242,21 +211,17 @@ elif action == 'tvNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().tvshows()
 
-
 elif action == 'tvliteNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().tvshows(lite=True)
-
 
 elif action == 'mytvNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().mytvshows()
 
-
 elif action == 'mytvliteNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().mytvshows(lite=True)
-
 
 elif action == 'channels':
     from resources.lib.menus import channels
@@ -288,52 +253,41 @@ elif action == 'tvmazeTvshowPage':
     from resources.lib.menus import tvshows
     tvshows.tvshows().getTVmaze(url)
 
-
-
 elif action == 'tvSearch':
     from resources.lib.menus import tvshows
     tvshows.tvshows().search()
-
 
 elif action == 'tvSearchnew':
     from resources.lib.menus import tvshows
     tvshows.tvshows().search_new()
 
-
 elif action == 'tvSearchterm':
     from resources.lib.menus import tvshows
     tvshows.tvshows().search_term(name)
-    
 
 elif action == 'tvPerson':
     from resources.lib.menus import tvshows
     tvshows.tvshows().person()
 
-
 elif action == 'tvGenres':
     from resources.lib.menus import tvshows
     tvshows.tvshows().genres()
-
 
 elif action == 'tvNetworks':
     from resources.lib.menus import tvshows
     tvshows.tvshows().networks()
 
-
 elif action == 'tvLanguages':
     from resources.lib.menus import tvshows
     tvshows.tvshows().languages()
-
 
 elif action == 'tvCertificates':
     from resources.lib.menus import tvshows
     tvshows.tvshows().certifications()
 
-
 elif action == 'tvPersons':
     from resources.lib.menus import tvshows
     tvshows.tvshows().persons(url)
-
 
 elif action == 'tvUserlists':
     from resources.lib.menus import tvshows
@@ -344,7 +298,6 @@ elif action == 'tvUserlists':
 ####################################################
 # SEASON
 ####################################################
-
 elif action == 'seasons':
     from resources.lib.menus import seasons
     seasons.seasons().get(tvshowtitle, year, imdb, tvdb)
@@ -354,31 +307,25 @@ elif action == 'seasons':
 ####################################################
 # EPISODES
 ####################################################
-
 elif action == 'episodes':
     from resources.lib.menus import episodes
     episodes.episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
-
 
 elif action == 'tvWidget':
     from resources.lib.menus import episodes
     episodes.episodes().widget()
 
-
 elif action == 'calendar':
     from resources.lib.menus import episodes
     episodes.episodes().calendar(url)
-
 
 elif action == 'calendars':
     from resources.lib.menus import episodes
     episodes.episodes().calendars()
 
-
 elif action == 'episodesUnfinished':
     from resources.lib.menus import episodes
     episodes.episodes().unfinished()
-
 
 elif action == 'episodesUserlists':
     from resources.lib.menus import episodes
@@ -389,7 +336,6 @@ elif action == 'episodesUserlists':
 ####################################################
 #---Tools
 ####################################################
-
 elif action == 'download':
     import json
     from resources.lib.modules import sources
@@ -397,56 +343,45 @@ elif action == 'download':
     try: downloader.download(name, image, sources.sources().sourcesResolve(json.loads(source)[0], True))
     except: pass
 
-
 elif action == 'downloadNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().downloads()
-
 
 elif action == 'libraryNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().library()
 
-
 elif action == 'toolNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().tools()
-
 
 elif action == 'searchNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().search()
 
-
 elif action == 'viewsNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().views()
-
 
 elif action == 'refresh':
     from resources.lib.modules import control
     control.refresh()
 
-
 elif action == 'queueItem':
     from resources.lib.modules import control
     control.queueItem()
-
 
 elif action == 'openSettings':
     from resources.lib.modules import control
     control.openSettings(query)
 
-
 elif action == 'open.Settings.CacheProviders':
     from resources.lib.modules import control
     control.openSettings(query)
 
-
 elif action == 'artwork':
     from resources.lib.modules import control
     control.artwork()
-
 
 elif action == 'addView':
     from resources.lib.modules import views
@@ -457,7 +392,6 @@ elif action == 'addView':
 ####################################################
 #---Playcount
 ####################################################
-
 elif action == 'moviePlaycount':
     from resources.lib.modules import playcount
     playcount.movies(imdb, query)
@@ -477,7 +411,6 @@ elif action == 'tvPlaycount':
 ####################################################
 #---Trakt
 ####################################################
-
 elif action == 'traktManager':
     from resources.lib.modules import trakt
     trakt.manager(name, imdb, tvdb, season, episode)
@@ -489,36 +422,38 @@ elif action == 'authTrakt':
     if params['opensettings'] == 'true':
         control.openSettings(query, "plugin.video.venom")
 
+elif action == 'cachesyncMovies':
+    from resources.lib.modules import trakt
+    trakt.cachesyncMovies()
+
+elif action == 'cachesyncTVShows':
+    from resources.lib.modules import trakt
+    trakt.cachesyncTVShows()
+
 
 
 ####################################################
 #---Player
 ####################################################
-
 elif action == 'play':
     from resources.lib.modules import sources
     sources.sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select)
-
 
 elif action == 'playItem':
     from resources.lib.modules import sources
     sources.sources().playItem(title, source)
 
-
 elif action == 'trailer':
     from resources.lib.modules import trailer
     trailer.trailer().play(name, url, windowedtrailer)
-
 
 elif action == 'addItem':
     from resources.lib.modules import sources
     sources.sources().addItem(title)
 
-
 elif action == 'alterSources':
     from resources.lib.modules import sources
     sources.sources().alterSources(url, meta)
-
 
 elif action == 'random':
     rtype = params.get('rtype')
@@ -567,41 +502,33 @@ elif action == 'random':
 ####################################################
 #----Library Actions
 ####################################################
-
 elif action == 'movieToLibrary':
     from resources.lib.modules import libtools
     libtools.libmovies().add(name, title, year, imdb, tmdb)
-
 
 elif action == 'moviesToLibrary':
     from resources.lib.modules import libtools
     libtools.libmovies().range(url)
 
-
 elif action == 'moviesToLibrarySilent':
     from resources.lib.modules import libtools
     libtools.libmovies().silent(url)
-
 
 elif action == 'tvshowToLibrary':
     from resources.lib.modules import libtools
     libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
 
-
 elif action == 'tvshowsToLibrary':
     from resources.lib.modules import libtools
     libtools.libtvshows().range(url)
-
 
 elif action == 'tvshowsToLibrarySilent':
     from resources.lib.modules import libtools
     libtools.libtvshows().silent(url)
 
-
 elif action == 'updateLibrary':
     from resources.lib.modules import libtools
     libtools.libepisodes().update(query)
-
 
 elif action == 'service':
     from resources.lib.modules import libtools
@@ -612,16 +539,13 @@ elif action == 'service':
 ####################################################
 #---Clear Cache actions
 ####################################################
-
 elif action == 'cfNavigator':
     from resources.lib.menus import navigator
     navigator.navigator().cf()
 
-
 elif action == 'clearAllCache':
     from resources.lib.menus import navigator
     navigator.navigator().clearCacheAll()
-
 
 elif action == 'clearSources':
     from resources.lib.menus import navigator
@@ -629,16 +553,13 @@ elif action == 'clearSources':
     if params['opensettings'] == 'true':
         control.openSettings(query, 'plugin.video.venom')
 
-
 elif action == 'clearMetaCache':
     from resources.lib.menus import navigator
     navigator.navigator().clearCacheMeta()
 
-
 elif action == 'clearCache':
     from resources.lib.menus import navigator
     navigator.navigator().clearCache()
-
 
 elif action == 'clearCacheSearch':
     from resources.lib.menus import navigator
@@ -649,24 +570,20 @@ elif action == 'clearCacheSearch':
 ####################################################
 #---Provider Source actions
 ####################################################
-
 elif action == 'openscrapersSettings':
     from resources.lib.modules import control
     control.openSettings('0.0', 'script.module.openscrapers')
     # if params['opensettings'] == 'true':
         # control.openSettings(query, "plugin.video.venom")
 
-
 elif action == 'urlResolver':
     try: import resolveurl
     except: pass
     resolveurl.display_settings()
 
-
 elif action == 'urlResolverRDTorrent':
     from resources.lib.modules import control
     control.openSettings(query, "script.module.resolveurl")
-
 
 elif action == "toggleAll":
     sourcelist = []
@@ -678,7 +595,6 @@ elif action == "toggleAll":
 #    xbmc.log('All providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
 
-
 elif action == "toggleAllHosters":
     sourcelist = []
     from resources.lib import sources
@@ -688,7 +604,6 @@ elif action == "toggleAllHosters":
         control.setSetting(source_setting, params['setting'])
 #    xbmc.log('All Hoster providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
-
 
 elif action == "toggleAllForeign":
     sourcelist = []
@@ -700,7 +615,6 @@ elif action == "toggleAllForeign":
 #    xbmc.log('All Foregin providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
 
-
 elif action == "toggleAllSpanish":
     sourcelist = []
     from resources.lib import sources
@@ -710,7 +624,6 @@ elif action == "toggleAllSpanish":
         control.setSetting(source_setting, params['setting'])
 #    xbmc.log('All Spanish providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
-
 
 elif action == "toggleAllGerman":
     sourcelist = []
@@ -722,7 +635,6 @@ elif action == "toggleAllGerman":
 #    xbmc.log('All German providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
 
-
 elif action == "toggleAllGreek":
     sourcelist = []
     from resources.lib import sources
@@ -732,7 +644,6 @@ elif action == "toggleAllGreek":
         control.setSetting(source_setting, params['setting'])
 #    xbmc.log('All Greek providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
-
 
 elif action == "toggleAllPolish":
     sourcelist = []
@@ -744,7 +655,6 @@ elif action == "toggleAllPolish":
 #    xbmc.log('All Polish providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
 
-
 elif action == "toggleAllPaid":
     sourcelist = []
     from resources.lib import sources
@@ -754,7 +664,6 @@ elif action == "toggleAllPaid":
         control.setSetting(source_setting, params['setting'])
 #    xbmc.log('All Paid providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
-
 
 elif action == "toggleAllDebrid":
     sourcelist = []
@@ -766,7 +675,6 @@ elif action == "toggleAllDebrid":
 #    xbmc.log('All Debrid providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
 
-
 elif action == "toggleAllTorrent":
     sourceList = []
     from resources.lib import sources
@@ -776,7 +684,6 @@ elif action == "toggleAllTorrent":
         control.setSetting(source_setting, params['setting'])
 #    xbmc.log('All Torrent providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
-
 
 if action == "toggleDefaults":
     sourcelist = []
@@ -788,4 +695,3 @@ if action == "toggleDefaults":
         control.setSetting(source_setting, default)
 #    xbmc.log('All providers = %s' % sourceList,2)
     control.openSettings(query, "plugin.video.venom")
-

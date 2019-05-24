@@ -689,7 +689,6 @@ class tvshows:
                 url = self.tmdb_info_link % tmdb
                 item = self.get_request(url)
 
-
                 tvdb = item['external_ids']['tvdb_id']
                 if tvdb == '' or tvdb == None or tvdb == 'N/A' or tvdb == 'NA': tvdb = '0'
                 tvdb = re.sub('[^0-9]', '', str(tvdb))

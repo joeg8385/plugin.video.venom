@@ -1,24 +1,32 @@
+[B][COLOR red]Update - v2.8.9 - May 19, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed some broken artwork and studio info for
+   TV Shows "Networks".[/I]
+[COLOR yellow]--[/COLOR][I] Added clearart and clearlogo to "Networks". Will
+   display in player.[/I]
+[COLOR yellow]--[/COLOR][I] Added Trakt watched sync as startup service if valid
+   account.[/I]
+
 [B][COLOR red]Update - v2.8.8 - May 18, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Reworked TV Show Networks. I discovered that all exo forks
    parse the tvmaze web page titles "This seasons Shows".  If your expecting to find a show
-   like HBBO's Boardwalk Empire you won't because it's ended, or discontinued.  I've modified
+   like HBO's Boardwalk Empire you won't because it's ended, or discontinued.  I've modified
    this to parse not only that web page but also the page for "All shows".  There is now a settings
-   page option to control which method you'd like.  The new "All shows" brings in allot more now.
+   page option to control which method you'd like.  The new "All shows" brings in allot more now.[/I]
 [COLOR yellow]--[/COLOR][I] Previous update I adjusted the artwork retrieved to be based on
-   like count but only tackled movies at the time.  TV Shows is now included.
+   like count but only tackled movies at the time.  TV Shows is now included.[/I]
 
 [B][COLOR red]Update - v2.8.7 - May 16, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Few more cache duration tweaks.
-[COLOR yellow]--[/COLOR][I] Added a few new TV Networks, Hulu long overdue.
+[COLOR yellow]--[/COLOR][I] Few more cache duration tweaks.[/I]
+[COLOR yellow]--[/COLOR][I] Added a few new TV Networks, Hulu long overdue.[/I]
 [COLOR yellow]--[/COLOR][I] A big redo of Fanart.tv retrieved artwork.  Artwork is now
    retrieved based on number of likes received as priority throughout.  This mean artwork
-   could occasionally change.
+   could occasionally change.[/I]
 [COLOR yellow]--[/COLOR][I] updated TMDb's api for soon to be phased out "releases"
-  query parameter, replaced by "release_dates".  This updated a good deal of titles
-  certificate/ratings[/I]
+   query parameter, replaced by "release_dates".  This updated a good deal of titles
+   certificate/ratings[/I]
 
 [B][COLOR red]Update - v2.8.6 - May 14, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] More TMDb api tweaks for TV shows this time.
+[COLOR yellow]--[/COLOR][I] More TMDb api tweaks for TV shows this time.[/I]
 [COLOR yellow]--[/COLOR][I] Done away with worker() and super_info() for TMDb TV Shows
    and the results are more trustworthy. This allowed me to tweak the cache duration
    time to 24hrs without issue[/I]

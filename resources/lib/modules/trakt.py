@@ -434,7 +434,6 @@ def manager(name, imdb = None, tvdb = None, season = None, episode = None, refre
         control.hide()
 
 
-
 def manager2(name, imdb = None, tvdb = None, season = None, episode = None, refresh = True):
     try:
         control.busy()

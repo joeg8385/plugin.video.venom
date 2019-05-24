@@ -6,11 +6,11 @@ Venom
 
 
 import threading
-from resources.lib.modules import control,log_utils
+from resources.lib.modules import control,log_utils,trakt
 
 
 control.execute('RunPlugin(plugin://%s)' % control.get_plugin_url({'action': 'service'}))
-
+traktCredentials = trakt.getTraktCredentialsInfo()
 
 try:
     AddonVersion = control.addon('plugin.video.venom').getAddonInfo('version')
@@ -30,13 +30,22 @@ except:
 
 def syncTraktLibrary():
     control.execute('RunPlugin(plugin://%s)' % 'plugin.video.venom/?action=tvshowsToLibrarySilent&url=traktcollection')
-#    control.execute('RunPlugin(plugin://%s)' % 'plugin.video.venom/?action=syncWatchedTVvshows&url=traktWatchedTVshows')
     control.execute('RunPlugin(plugin://%s)' % 'plugin.video.venom/?action=moviesToLibrarySilent&url=traktcollection')
-#    control.execute('RunPlugin(plugin://%s)' % 'plugin.video.venom/?action=synWatchedMovies&url=traktWatchedMovies')
+
+
+def syncTraktWatched():
+    control.execute('RunPlugin(plugin://%s)' % 'plugin.video.venom/?action=cachesyncTVShows')
+    control.execute('RunPlugin(plugin://%s)' % 'plugin.video.venom/?action=cachesyncMovies')
+    control.notification(title = 'default', message = 'Trakt Watched Status Sync Complete', icon='default', time=1, sound=False)
+
+
+if traktCredentials == True:
+    syncTraktWatched()
 
 
 if control.setting('autoTraktOnStart') == 'true':
     syncTraktLibrary()
+
 
 
 if int(control.setting('schedTraktTime')) > 0:
