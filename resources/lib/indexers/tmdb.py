@@ -5,7 +5,7 @@ Venom
 '''
 
 import os,sys,re,datetime
-import json,urlparse,requests
+import json,urlparse,requests,xbmc
 
 from resources.lib.modules import control
 from resources.lib.modules import client
@@ -35,10 +35,10 @@ class movies:
         self.tmdb_image = 'http://image.tmdb.org/t/p/original'
         self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
         # self.tmdb_api_link = 'http://api.themoviedb.org/3/list/%s?api_key=%s' % ('%s', '%s')
-        self.tmdb_info_link = 'http://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,releases,external_ids' % ('%s', self.tmdb_key, self.tmdb_lang)
+        self.tmdb_info_link = 'http://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,external_ids' % ('%s', self.tmdb_key, self.tmdb_lang)
 ###                                                                                  other "append_to_response" options                                           alternative_titles,videos,images
         self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=' + self.tmdb_key
-        self.tmdb_img_link = 'http://image.tmdb.org/t/p/w%s%s'
+        # self.tmdb_img_link = 'http://image.tmdb.org/t/p/w%s%s'
 
         self.fanart_tv_user = control.setting('fanart.tv.user')
         if self.fanart_tv_user == '' or self.fanart_tv_user == None:
@@ -83,10 +83,7 @@ class movies:
 
         try:
             result = self.get_request(url % self.tmdb_key)
-            # result = client.request(url % self.tmdb_key)
-            # result = json.loads(result)
             items = result['results']
-
         except:
             return
 
@@ -167,8 +164,6 @@ class movies:
 ##--TMDb additional info
                 url = self.tmdb_info_link % tmdb
                 item = self.get_request(url)
-                # item = client.request(url, timeout='30')
-                # item = json.loads(item)
 
                 imdb = item['external_ids']['imdb_id']
                 if imdb == '' or imdb == None: imdb = '0'
@@ -192,13 +187,16 @@ class movies:
                 if duration == '' or duration == None or duration == 'N/A': duration = '0'
                 duration = duration.encode('utf-8')
 
-###------['releases'] is old and may eventually stop working use "release_dates" to extract mpaa in future
-                mpaa = item['releases']['countries']
-                try: mpaa = [x for x in mpaa if not x['certification'] == '']
+                mpaa = item['release_dates']['results']
+                mpaa = [i for i in mpaa if i['iso_3166_1'] == 'US']
+                try:
+                    mpaa = mpaa[0].get('release_dates')[-1].get('certification')
+                    if not mpaa:
+                        mpaa = mpaa[0].get('release_dates')[0].get('certification')
+                        if not mpaa:
+                            mpaa = mpaa[0].get('release_dates')[1].get('certification')
+                    mpaa = str(mpaa).encode('utf-8')
                 except: mpaa = '0'
-                try: mpaa = ([x for x in mpaa if x['iso_3166_1'].encode('utf-8') == 'US'] + [x for x in mpaa if not x['iso_3166_1'].encode('utf-8') == 'US'])[0]['certification']
-                except: mpaa = '0'
-                mpaa = mpaa.encode('utf-8')
 
                 director = item['credits']['crew']
                 try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
@@ -264,8 +262,6 @@ class movies:
     def tmdb_collections_list(self, url):
         try:
             result = self.get_request(url)
-            # result = client.request(url)
-            # result = json.loads(result)
             items = result['items']
         except:
             return
@@ -328,13 +324,6 @@ class movies:
 ##--TMDb additional info
                 url = self.tmdb_info_link % tmdb
                 item = self.get_request(url)
-                # item = client.request(url, timeout='30')
-                # item = json.loads(item)
-
-                tmdb = item['id']
-                if tmdb == '' or tmdb == None: tmdb = '0'
-                tmdb = re.sub('[^0-9]', '', str(tmdb))
-                tmdb = tmdb.encode('utf-8')
 
                 imdb = item['external_ids']['imdb_id']
                 if imdb == '' or imdb == None: imdb = '0'
@@ -358,13 +347,16 @@ class movies:
                 if duration == '' or duration == None or duration == 'N/A': duration = '0'
                 duration = duration.encode('utf-8')
 
-###------['releases'] is old and may eventually stop working use "release_dates" to extract mpaa in future
-                mpaa = item['releases']['countries']
-                try: mpaa = [x for x in mpaa if not x['certification'] == '']
+                mpaa = item['release_dates']['results']
+                mpaa = [i for i in mpaa if i['iso_3166_1'] == 'US']
+                try:
+                    mpaa = mpaa[0].get('release_dates')[-1].get('certification')
+                    if not mpaa:
+                        mpaa = mpaa[0].get('release_dates')[0].get('certification')
+                        if not mpaa:
+                            mpaa = mpaa[0].get('release_dates')[1].get('certification')
+                    mpaa = str(mpaa).encode('utf-8')
                 except: mpaa = '0'
-                try: mpaa = ([x for x in mpaa if x['iso_3166_1'].encode('utf-8') == 'US'] + [x for x in mpaa if not x['iso_3166_1'].encode('utf-8') == 'US'])[0]['certification']
-                except: mpaa = '0'
-                mpaa = mpaa.encode('utf-8')
 
                 director = item['credits']['crew']
                 try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
@@ -387,7 +379,7 @@ class movies:
                 except: cast = []
 
                 try:
-                    if not imdb == None or imdb == '0':
+                    if not imdb == None or not imdb == '0':
                         url = self.imdbinfo % imdb
                         item = client.request(url, timeout='30')
                         item = json.loads(item)
@@ -430,7 +422,7 @@ class movies:
     def extended_art(self, imdb):
         self.fanart_tv_headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
         if not self.fanart_tv_user == '': self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
-
+###--Fanart.tv artwork
         try:
             try:
                 artmeta = True
@@ -443,80 +435,109 @@ class movies:
 
             try:
                 poster2 = art['movieposter']
-                poster2 = [x for x in poster2 if x.get('lang') == self.lang][::-1] + [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') in ['00', '']][::-1]
-                poster2 = poster2[0]['url'].encode('utf-8')
+                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '']
+                poster2 = [(x[0], x[1]) for x in poster2]
+                poster2 = sorted(poster2, key=lambda x: int(x[1]), reverse=True)
+                poster2 = [x[0] for x in poster2][0]
+                poster2 = poster2.encode('utf-8')
             except:
                 poster2 = '0'
 
             try:
                 if 'moviebackground' in art: fanart2 = art['moviebackground']
                 else: fanart2 = art['moviethumb']
-                fanart2 = [x for x in fanart if x.get('lang') == self.lang][::-1] + [x for x in fanart2 if x.get('lang') == 'en'][::-1] + [x for x in fanart2 if x.get('lang') in ['00', '']][::-1]
-                fanart2 = fanart2[0]['url'].encode('utf-8')
+                fanart2 = [(x['url'], x['likes']) for x in fanart2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in fanart2 if x.get('lang') == '']
+                fanart2 = [(x[0], x[1]) for x in fanart2]
+                fanart2 = sorted(fanart2, key=lambda x: int(x[1]), reverse=True)
+                fanart2 = [x[0] for x in fanart2][0]
+                fanart2 = fanart2.encode('utf-8')
             except:
                 fanart2 = '0'
 
             try:
                 banner = art['moviebanner']
-                banner = [x for x in banner if x.get('lang') == self.lang][::-1] + [x for x in banner if x.get('lang') == 'en'][::-1] + [x for x in banner if x.get('lang') in ['00', '']][::-1]
-                banner = banner[0]['url'].encode('utf-8')
+                banner = [(x['url'], x['likes']) for x in banner if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in banner if x.get('lang') == '']
+                banner = [(x[0], x[1]) for x in banner]
+                banner = sorted(banner, key=lambda x: int(x[1]), reverse=True)
+                banner = [x[0] for x in banner][0]
+                banner = banner.encode('utf-8')
             except:
                 banner = '0'
 
             try:
                 if 'hdmovielogo' in art: clearlogo = art['hdmovielogo']
-                else: clearlogo = art['clearlogo']
-                clearlogo = [x for x in clearlogo if x.get('lang') == self.lang][::-1] + [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') in ['00', '']][::-1]
-                clearlogo = clearlogo[0]['url'].encode('utf-8')
+                else: clearlogo = art['movielogo']
+                clearlogo = [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == '']
+                clearlogo = [(x[0], x[1]) for x in clearlogo]
+                clearlogo = sorted(clearlogo, key=lambda x: int(x[1]), reverse=True)
+                clearlogo = [x[0] for x in clearlogo][0]
+                clearlogo = clearlogo.encode('utf-8')
             except:
                 clearlogo = '0'
 
             try:
                 if 'hdmovieclearart' in art: clearart = art['hdmovieclearart']
-                else: clearart = art['clearart']
-                clearart = [x for x in clearart if x.get('lang') == self.lang][::-1] + [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') in ['00', '']][::-1]
-                clearart = clearart[0]['url'].encode('utf-8')
+                else: clearart = art['movieart']
+                clearart = [(x['url'], x['likes']) for x in clearart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in clearart if x.get('lang') == '']
+                clearart = [(x[0], x[1]) for x in clearart]
+                clearart = sorted(clearart, key=lambda x: int(x[1]), reverse=True)
+                clearart = [x[0] for x in clearart][0]
+                clearart = clearart.encode('utf-8')
             except:
                 clearart = '0'
 
             try:
+                discart = art['moviedisc']
+                discart = [(x['url'], x['likes']) for x in discart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in discart if x.get('lang') == '']
+                discart = [(x[0], x[1]) for x in discart]
+                discart = sorted(discart, key=lambda x: int(x[1]), reverse=True)
+                discart = [x[0] for x in discart][0]
+                discart = discart.encode('utf-8')
+            except:
+                discart = '0'
+
+            try:
                 if 'moviethumb' in art: landscape = art['moviethumb']
                 else: landscape = art['moviebackground']
-                landscape = [x for x in landscape if x.get('lang') == 'en'][::-1] + [x for x in landscape if x.get('lang') == '00'][::-1]
-                landscape = landscape[0]['url'].encode('utf-8')
+                landscape = [(x['url'], x['likes']) for x in landscape if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in landscape if x.get('lang') == '']
+                landscape = [(x[0], x[1]) for x in landscape]
+                landscape = sorted(landscape, key=lambda x: int(x[1]), reverse=True)
+                landscape = [x[0] for x in landscape][0]
+                landscape = landscape.encode('utf-8')
             except:
                 landscape = '0'
 
-            extended_art = {'extended': True, 'banner': banner, 'poster2': poster2, 'poster3': '0', 'fanart2': fanart2, 'fanart3': '0', 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape}
-            try:
-                if self.tmdb_key == '': raise Exception()
-                art2 = client.request(self.tmdb_art_link % imdb, timeout='30', error=True)
-                art2 = json.loads(art2)
-            except: return extended_art
+            extended_art = {'extended': True, 'banner': banner, 'poster2': poster2, 'poster3': '0', 'fanart2': fanart2, 'fanart3': '0', 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape}
 
-            try:
-                poster3 = '0'
-                poster3 = art2['posters']
-                poster3 = [x for x in poster3 if x.get('iso_639_1') == 'en'] + [x for x in poster3 if not x.get('iso_639_1') == 'en']
-                poster3 = [(x['width'], x['file_path']) for x in poster3]
-                poster3 = [(x[0], x[1]) if x[0] < 300 else ('300', x[1]) for x in poster3]
-                poster3 = self.tmdb_img_link % poster3[0]
-                poster3 = poster3.encode('utf-8')
-            except: return extended_art
+# ###--TMDb artwork
+            # try:
+                # if self.tmdb_key == '': raise Exception()
+                # art2 = client.request(self.tmdb_art_link % imdb, timeout='30', error=True)
+                # art2 = json.loads(art2)
+            # except: return extended_art
 
-            extended_art = {'extended': True, 'banner': banner, 'poster2': poster2, 'poster3': poster3, 'fanart2': fanart2, 'fanart3': '0', 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape}
-            try:
-                fanart3 = '0'
-                fanart3 = art2['backdrops']
-                fanart3 = [x for x in fanart3 if x.get('iso_639_1') == 'en'] + [x for x in fanart3 if not x.get('iso_639_1') == 'en']
-                fanart3 = [x for x in fanart3 if x.get('width') == 1920] + [x for x in fanart3 if x.get('width') < 1920] + [x for x in fanart3 if x.get('width') <= 3840]
-                fanart3 = [(x['width'], x['file_path']) for x in fanart3]
-                fanart3 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart3]
-                fanart3 = self.tmdb_img_link % fanart3[0]
-                fanart3 = fanart3.encode('utf-8')
-            except: return extended_art
+            # try:
+                # poster3 = '0'
+                # poster3 = art2['posters']
+                # poster3 = [x for x in poster3 if x.get('iso_639_1') == 'en'] + [x for x in poster3 if not x.get('iso_639_1') == 'en']
+                # poster3 = [(x['width'], x['file_path']) for x in poster3]
+                # poster3 = [(x[0], x[1]) if x[0] <= 500 else ('500', x[1]) for x in poster3]
+                # poster3 = self.tmdb_img_link % poster3[0]
+                # poster3 = poster3.encode('utf-8')
+            # except: return extended_art
 
-            extended_art = {'extended': True, 'banner': banner, 'poster2': poster2, 'poster3': poster3, 'fanart2': fanart2, 'fanart3': fanart3, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape}
+            # extended_art = {'extended': True, 'banner': banner, 'poster2': poster2, 'poster3': poster3, 'fanart2': fanart2, 'fanart3': '0', 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape}
+            # try:
+                # fanart3 = '0'
+                # fanart3 = art2['backdrops']
+                # fanart3 = [x for x in fanart3 if x.get('iso_639_1') == 'en'] + [x for x in fanart3 if not x.get('iso_639_1') == 'en']
+                # fanart3 = [x for x in fanart3 if x.get('width') == 1920] + [x for x in fanart3 if x.get('width') < 1920] + [x for x in fanart3 if x.get('width') <= 3840]
+                # fanart3 = [(x['width'], x['file_path']) for x in fanart3]
+                # fanart3 = [(x[0], x[1]) if x[0] <= 1280 else ('1280', x[1]) for x in fanart3]
+                # fanart3 = self.tmdb_img_link % fanart3[0]
+                # fanart3 = fanart3.encode('utf-8')
+            # except: return extended_art
+            # extended_art = {'extended': True, 'banner': banner, 'poster2': poster2, 'poster3': poster3, 'fanart2': fanart2, 'fanart3': fanart3, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape}
 
             return extended_art
         except:
@@ -588,8 +609,6 @@ class tvshows:
         next = url
         try:
             result = self.get_request(url % self.tmdb_key)
-            # result = client.request(url % self.tmdb_key)
-            # result = json.loads(result)
             items = result['results']
         except:
             return
@@ -669,8 +688,7 @@ class tvshows:
 ##--TMDb additional info
                 url = self.tmdb_info_link % tmdb
                 item = self.get_request(url)
-                # item = client.request(url, timeout='30')
-                # item = json.loads(item)
+
 
                 tvdb = item['external_ids']['tvdb_id']
                 if tvdb == '' or tvdb == None or tvdb == 'N/A' or tvdb == 'NA': tvdb = '0'
@@ -763,8 +781,6 @@ class tvshows:
 
     def tmdb_collections_list(self, url):
         result = self.get_request(url)
-        # result = client.request(url)
-        # result = json.loads(result)
         items = result['items']
         next = ''
         for item in items:
@@ -825,8 +841,6 @@ class tvshows:
 ##--TMDb additional info
                 url = self.tmdb_info_link % tmdb
                 item = self.get_request(url)
-                # item = client.request(url, timeout='30')
-                # item = json.loads(item)
 
                 tvdb = item['external_ids']['tvdb_id']
                 if tvdb == '' or tvdb == None or tvdb == 'N/A' or tvdb == 'NA': tvdb = '0'

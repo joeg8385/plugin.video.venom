@@ -126,6 +126,7 @@ class navigator:
 
         self.addDirectoryItem(32018, 'movies&url=mostpopular', 'imdb.png', 'most-popular.png')
         self.addDirectoryItem('Popular', 'tmdbmovies&url=tmdb_popular', 'tmdb.png', 'most-popular.png')
+        self.addDirectoryItem('Popular', 'movies&url=traktpopular', 'trakt.png', 'most-popular.png')
 
         self.addDirectoryItem(32019, 'movies&url=mostvoted', 'imdb.png', 'most-voted.png')
         self.addDirectoryItem('Top Rated', 'tmdbmovies&url=tmdb_toprated', 'tmdb.png', 'most-voted.png')
@@ -137,7 +138,9 @@ class navigator:
         if not control.setting('newmovies.widget') == '0':
             self.addDirectoryItem(32005, 'newMovies', 'imdb.png', 'latest-movies.png')
 
-        self.addDirectoryItem(32020, 'movies&url=boxoffice', 'imdb.png', 'box-office.png')
+        self.addDirectoryItem(32020, 'movies&url=imdbboxoffice', 'imdb.png', 'box-office.png')
+        # self.addDirectoryItem('Box Office', 'movies&url=traktboxoffice', 'trakt.png', 'box-office.png')
+
         self.addDirectoryItem(32000, 'collectionsNavigator', 'boxsets.png', 'boxsets.png')
         self.addDirectoryItem(32021, 'movies&url=oscars', 'imdb.png', 'oscar-winners.png')
         self.addDirectoryItem(32659, 'movies&url=oscarsnominees', 'imdb.png', 'oscar-winners.png')
@@ -203,6 +206,7 @@ class navigator:
         self.addDirectoryItem(32016, 'tvNetworks', 'networks.png', 'networks.png')
         self.addDirectoryItem(32014, 'tvLanguages', 'languages.png', 'languages.png')
         self.addDirectoryItem(32015, 'tvCertificates', 'certificates.png', 'certificates.png')
+        self.addDirectoryItem("Trakt On Deck", 'calendar&url=onDeck', 'trakt.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32364, 'tmdbTvshows&url=tmdb_airingtoday', 'tmdb.png', 'airing-today.png')
         self.addDirectoryItem(32024, 'tvshows&url=airing', 'imdb.png', 'airing-today.png')
         self.addDirectoryItem(32052, 'tmdbTvshows&url=tmdb_ontheair', 'tmdb.png', 'returning-tvshows.png')
@@ -226,7 +230,6 @@ class navigator:
         self.accountCheck()
         self.addDirectoryItem(32040, 'tvUserlists', 'userlists.png', 'DefaultTVShows.png')
         if traktCredentials == True and imdbCredentials == True:
-            self.addDirectoryItem("Trakt On Deck", 'calendar&url=onDeck', 'trakt.png', 'DefaultTVShows.png')
             self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
             self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
             self.addDirectoryItem(32041, 'episodesUserlists', 'userlists.png', 'DefaultTVShows.png')

@@ -1,3 +1,13 @@
+[B][COLOR red]Update - v2.8.7 - May 16, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Few more cache duration tweaks.
+[COLOR yellow]--[/COLOR][I] Added a few new TV Networks, Hulu long overdue.
+[COLOR yellow]--[/COLOR][I] A big redo of Fanart.tv retrieved artwork.  Artwork is now
+   retrieved based on number of likes received as priority throughout.  This mean artwork
+   could occasionally change.
+[COLOR yellow]--[/COLOR][I] updated TMDb's api for soon to be phased out "releases"
+  query parameter, replaced by "release_dates".  This updated a good deal of titles
+  certificate/ratings[/I]
+
 [B][COLOR red]Update - v2.8.6 - May 14, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] More TMDb api tweaks for TV shows this time.
 [COLOR yellow]--[/COLOR][I] Done away with worker() and super_info() for TMDb TV Shows

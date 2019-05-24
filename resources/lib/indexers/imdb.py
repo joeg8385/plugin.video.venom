@@ -441,6 +441,7 @@ class movies:
             try:
                 fanart2 = art2['backdrops']
                 fanart2 = [x for x in fanart2 if x.get('iso_639_1') == 'en'] + [x for x in fanart2 if not x.get('iso_639_1') == 'en']
+                # fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920]
                 fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920] + [x for x in fanart2 if x.get('width') <= 3840]
                 fanart2 = [(x['width'], x['file_path']) for x in fanart2]
                 fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
@@ -460,3 +461,33 @@ class movies:
         except:
             pass
 
+
+class tvshows:
+    def __init__(self, type = 'show', notifications = True):
+        self.count = 40
+        self.list = []
+        self.meta = []
+        self.threads = []
+        self.type = type
+        self.lang = control.apiLanguage()['tvdb']
+        self.notifications = notifications
+
+        self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
+
+        self.fanart_tv_user = control.setting('fanart.tv.user')
+        if self.fanart_tv_user == '' or self.fanart_tv_user == None:
+            self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
+        self.user = self.fanart_tv_user + str('')
+        self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
+        self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
+
+        # self.tvdb_key = control.setting('tvdb.user')
+        # if self.tvdb_key == '' or self.tvdb_key == None:
+            # self.tvdb_key = '1D62F2F90030C444'
+        self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+        self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
+        self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
+        self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
+        self.tvdb_image = 'http://thetvdb.com/banners/'
+        self.imdb_user = control.setting('imdb.user').replace('ur', '')
+        self.imdb_link = 'http://www.imdb.com'

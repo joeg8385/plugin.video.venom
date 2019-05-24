@@ -21,7 +21,7 @@ from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
-
+control.moderator()
 
 class tvshows:
     def __init__(self, type = 'show', notifications = True):
@@ -216,11 +216,11 @@ class tvshows:
 
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = cache.get(tmdb.tvshows().tmdb_collections_list, 720, url)
+                self.list = cache.get(tmdb.tvshows().tmdb_collections_list, 24, url)
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = cache.get(tmdb.tvshows().tmdb_list, 24, url)
+                self.list = cache.get(tmdb.tvshows().tmdb_list, 168, url)
 
             if self.list == None:
                 self.list = []
@@ -300,39 +300,18 @@ class tvshows:
 
     def genres(self):
         genres = [
-            ('Action', 'action', True),
-            ('Adventure', 'adventure', True),
-            ('Animation', 'animation', True),
-            ('Anime', 'anime', False),
-            ('Biography', 'biography', True),
-            ('Comedy', 'comedy', True),
-            ('Crime', 'crime', True),
-            ('Drama', 'drama', True),
-            ('Family', 'family', True),
-            ('Fantasy', 'fantasy', True),
-            ('Game-Show', 'game_show', True),
-            ('History', 'history', True),
-            ('Horror', 'horror', True),
-            ('Music ', 'music', True),
-            ('Musical', 'musical', True),
-            ('Mystery', 'mystery', True),
-            ('News', 'news', True),
-            ('Reality-TV', 'reality_tv', True),
-            ('Romance', 'romance', True),
-            ('Science Fiction', 'sci_fi', True),
-            ('Sport', 'sport', True),
-            ('Talk-Show', 'talk_show', True),
-            ('Thriller', 'thriller', True),
-            ('War', 'war', True),
-            ('Western', 'western', True)
+            ('Action', 'action', True), ('Adventure', 'adventure', True), ('Animation', 'animation', True),
+            ('Anime', 'anime', False), ('Biography', 'biography', True), ('Comedy', 'comedy', True),
+            ('Crime', 'crime', True), ('Drama', 'drama', True), ('Family', 'family', True),
+            ('Fantasy', 'fantasy', True), ('Game-Show', 'game_show', True),
+            ('History', 'history', True), ('Horror', 'horror', True), ('Music ', 'music', True),
+            ('Musical', 'musical', True), ('Mystery', 'mystery', True), ('News', 'news', True),
+            ('Reality-TV', 'reality_tv', True), ('Romance', 'romance', True), ('Science Fiction', 'sci_fi', True),
+            ('Sport', 'sport', True), ('Talk-Show', 'talk_show', True), ('Thriller', 'thriller', True),
+            ('War', 'war', True), ('Western', 'western', True)
         ]
-        for i in genres: self.list.append(
-            {
-                'name': cleangenre.lang(i[0], self.lang),
-                'url': self.genre_link % i[1] if i[2] else self.keyword_link % i[1],
-                'image': 'genres.png',
-                'action': 'tvshows'
-            })
+        for i in genres:
+            self.list.append({'name': cleangenre.lang(i[0], self.lang), 'url': self.genre_link % i[1] if i[2] else self.keyword_link % i[1], 'image': 'genres.png', 'action': 'tvshows'})
         self.addDirectory(self.list)
         return self.list
 
@@ -341,51 +320,66 @@ class tvshows:
         networks = [
             ('A&E', '/networks/29/ae', 'https://i.imgur.com/xLDfHjH.png'),
             ('ABC', '/networks/3/abc', 'https://i.imgur.com/qePLxos.png'),
-            ('AMC', '/networks/20/amc', 'https://i.imgur.com/ndorJxi.png'),
-            ('AT-X', '/networks/167/at-x', 'https://i.imgur.com/JshJYGN.png'),
+            ('Acorn TV', '/webchannels/129/acorn-tv', 'http://static.tvmaze.com/uploads/images/medium_landscape/74/185171.jpg'),
             ('Adult Swim', '/networks/10/adult-swim', 'https://i.imgur.com/jCqbRcS.png'),
             ('Amazon', '/webchannels/3/amazon', 'https://i.imgur.com/ru9DDlL.png'),
+            ('AMC', '/networks/20/amc', 'https://i.imgur.com/ndorJxi.png'),
             ('Animal Planet', '/networks/92/animal-planet', 'https://i.imgur.com/olKc4RP.png'),
+            ('Apple TV+', '/webchannels/310/apple-tv', 'http://static.tvmaze.com/uploads/images/medium_landscape/189/474058.jpg'),
+            ('AT-X', '/networks/167/at-x', 'https://i.imgur.com/JshJYGN.png'),
             ('Audience', '/networks/31/audience-network', 'https://i.imgur.com/5Q3mo5A.png'),
             ('BBC America', '/networks/15/bbc-america', 'https://i.imgur.com/TUHDjfl.png'),
-            ('BBC Four', '/networks/51/bbc-four', 'https://i.imgur.com/PNDalgw.png'),
             ('BBC One', '/networks/12/bbc-one', 'https://i.imgur.com/u8x26te.png'),
-            ('BBC Three', '/webchannels/71/bbc-three', 'https://i.imgur.com/SDLeLcn.png'),
             ('BBC Two', '/networks/37/bbc-two', 'https://i.imgur.com/SKeGH1a.png'),
+            ('BBC Three', '/webchannels/71/bbc-three', 'https://i.imgur.com/SDLeLcn.png'),
+            ('BBC Four', '/networks/51/bbc-four', 'https://i.imgur.com/PNDalgw.png'),
             ('BET', '/networks/56/bet', 'https://i.imgur.com/ZpGJ5UQ.png'),
+            ('Blackpills', '/webchannels/186/blackpills', 'http://static.tvmaze.com/uploads/images/medium_landscape/108/270401.jpg'),
+            ('Brat', '/webchannels/274/brat', 'http://static.tvmaze.com/uploads/images/medium_landscape/161/403172.jpg'),
             ('Bravo', '/networks/52/bravo', 'https://i.imgur.com/TmEO3Tn.png'),
+            ('Cartoon Network', '/networks/11/cartoon-network', 'https://i.imgur.com/zmOLbbI.png'),
             ('CBC', '/networks/36/cbc', 'https://i.imgur.com/unQ7WCZ.png'),
             ('CBS', '/networks/2/cbs', 'https://i.imgur.com/8OT8igR.png'),
-            ('CTV', '/networks/48/ctv', 'https://i.imgur.com/qUlyVHz.png'),
-            ('CW', '/networks/5/the-cw', 'https://i.imgur.com/Q8tooeM.png'),
-            ('CW Seed', '/webchannels/13/cw-seed', 'https://i.imgur.com/nOdKoEy.png'),
-            ('Cartoon Network', '/networks/11/cartoon-network', 'https://i.imgur.com/zmOLbbI.png'),
             ('Channel 4', '/networks/45/channel-4', 'https://i.imgur.com/6ZA9UHR.png'),
             ('Channel 5', '/networks/135/channel-5', 'https://i.imgur.com/5ubnvOh.png'),
             ('Cinemax', '/networks/19/cinemax', 'https://i.imgur.com/zWypFNI.png'),
             ('Comedy Central', '/networks/23/comedy-central', 'https://i.imgur.com/ko6XN77.png'),
             ('Crackle', '/webchannels/4/crackle', 'https://i.imgur.com/53kqZSY.png'),
+            ('CTV', '/networks/48/ctv', 'https://i.imgur.com/qUlyVHz.png'),
+            ('CuriosityStream', '/webchannels/188/curiositystream', 'http://static.tvmaze.com/uploads/images/medium_landscape/108/272041.jpg'),
+            ('CW', '/networks/5/the-cw', 'https://i.imgur.com/Q8tooeM.png'),
+            ('CW Seed', '/webchannels/13/cw-seed', 'https://i.imgur.com/nOdKoEy.png'),
+            ('DC Universe', '/webchannels/187/dc-universe', 'http://static.tvmaze.com/uploads/images/medium_landscape/155/388605.jpg'),
             ('Discovery Channel', '/networks/66/discovery-channel', 'https://i.imgur.com/8UrXnAB.png'),
             ('Discovery ID', '/networks/89/investigation-discovery', 'https://i.imgur.com/07w7BER.png'),
             ('Disney Channel', '/networks/78/disney-channel', 'https://i.imgur.com/ZCgEkp6.png'),
+            ('Disney Junior', '/networks/1039/disney-junior', 'https://static.tvmaze.com/uploads/images/medium_landscape/46/116712.jpg'),
             ('Disney XD', '/networks/25/disney-xd', 'https://i.imgur.com/PAJJoqQ.png'),
             ('E! Entertainment', '/networks/43/e', 'https://i.imgur.com/3Delf9f.png'),
             ('E4', '/networks/41/e4', 'https://i.imgur.com/frpunK8.png'),
+            # ('Fearnet', '/networks/466/fearnet', 'https://static.tvmaze.com/uploads/images/large_landscape/25/64861.jpg'),
             ('FOX', '/networks/4/fox', 'https://i.imgur.com/6vc0Iov.png'),
-            ('FX', '/networks/13/fx', 'https://i.imgur.com/aQc1AIZ.png'),
             ('Freeform', '/networks/26/freeform', 'https://i.imgur.com/f9AqoHE.png'),
+            ('Fusion', '/networks/187/fusion', 'https://static.tvmaze.com/uploads/images/medium_untouched/11/29630.jpg'),
+            ('FX', '/networks/13/fx', 'https://i.imgur.com/aQc1AIZ.png'),
+            ('Hallmark', '/networks/50/hallmark-channel', 'https://i.imgur.com/zXS64I8.png'),
+            # ('Hallmark Movies & Mysteries', '/networks/252/hallmark-movies-mysteries', 'https://static.tvmaze.com/uploads/images/original_untouched/13/34664.jpg'),
             ('HBO', '/networks/8/hbo', 'https://i.imgur.com/Hyu8ZGq.png'),
             ('HGTV', '/networks/192/hgtv', 'https://i.imgur.com/INnmgLT.png'),
-            ('Hallmark', '/networks/50/hallmark-channel', 'https://i.imgur.com/zXS64I8.png'),
             ('History Channel', '/networks/53/history', 'https://i.imgur.com/LEMgy6n.png'),
+            # ('H2', '/networks/74/h2', 'https://static.tvmaze.com/uploads/images/medium_landscape/3/9115.jpg'),
+            ('Hulu', '/webchannels/2/hulu', 'https://i.imgur.com/Tf81i9O.png'),
             ('ITV', '/networks/35/itv', 'https://i.imgur.com/5Hxp5eA.png'),
             ('Lifetime', '/networks/18/lifetime', 'https://i.imgur.com/tvYbhen.png'),
             ('MTV', '/networks/22/mtv', 'https://i.imgur.com/QM6DpNW.png'),
-            ('NBC', '/networks/1/nbc', 'https://i.imgur.com/yPRirQZ.png'),
             ('National Geographic', '/networks/42/national-geographic-channel', 'https://i.imgur.com/XCGNKVQ.png'),
+            ('NBC', '/networks/1/nbc', 'https://i.imgur.com/yPRirQZ.png'),
             ('Netflix', '/webchannels/1/netflix', 'https://i.imgur.com/jI5c3bw.png'),
             ('Nickelodeon', '/networks/27/nickelodeon', 'https://i.imgur.com/OUVoqYc.png'),
+            ('Nicktoons', '/networks/73/nicktoons', 'https://static.tvmaze.com/uploads/images/medium_untouched/25/63394.jpg'),
+            ('Oxygen', '/networks/79/oxygen', 'https://static.tvmaze.com/uploads/images/medium_untouched/116/290882.jpg'),
             ('PBS', '/networks/85/pbs', 'https://i.imgur.com/r9qeDJY.png'),
+            # ('Playboy TV', '/networks/1035/playboy-tv', 'https://static.tvmaze.com/uploads/images/original_untouched/46/115366.jpg'),
             ('Showtime', '/networks/9/showtime', 'https://i.imgur.com/SawAYkO.png'),
             ('Sky1', '/networks/63/sky-1', 'https://i.imgur.com/xbgzhPU.png'),
             ('Starz', '/networks/17/starz', 'https://i.imgur.com/Z0ep2Ru.png'),
@@ -394,52 +388,29 @@ class tvshows:
             ('TBS', '/networks/32/tbs', 'https://i.imgur.com/RVCtt4Z.png'),
             ('TLC', '/networks/80/tlc', 'https://i.imgur.com/c24MxaB.png'),
             ('TNT', '/networks/14/tnt', 'https://i.imgur.com/WnzpAGj.png'),
-            ('TV Land', '/networks/57/tvland', 'https://i.imgur.com/1nIeDA5.png'),
             ('Travel Channel', '/networks/82/travel-channel', 'https://i.imgur.com/mWXv7SF.png'),
             ('TruTV', '/networks/84/trutv', 'https://i.imgur.com/HnB3zfc.png'),
+            ('TV Land', '/networks/57/tvland', 'https://i.imgur.com/1nIeDA5.png'),
             ('USA', '/networks/30/usa-network', 'https://i.imgur.com/Doccw9E.png'),
             ('VH1', '/networks/55/vh1', 'https://i.imgur.com/IUtHYzA.png'),
             ('WGN', '/networks/28/wgn-america', 'https://i.imgur.com/TL6MzgO.png')
+            # ('YouTube', '/webchannels/21/youtube', 'https://i.imgur.com/ZfewP1Y.png'),
+            # ('YouTube Premium', '/webchannels/43/youtube-premium', 'https://static.tvmaze.com/uploads/images/medium_landscape/160/401362.jpg')
         ]
-        for i in networks: self.list.append({'name': i[0], 'url': self.tvmaze_link + i[1], 'image': i[2], 'action': 'tvshows'})
+        for i in networks:
+            self.list.append({'name': i[0], 'url': self.tvmaze_link + i[1], 'image': i[2], 'action': 'tvshows'})
         self.addDirectory(self.list)
         return self.list
 
 
     def languages(self):
-        languages = [
-            ('Arabic', 'ar'),
-            ('Bosnian', 'bs'),
-            ('Bulgarian', 'bg'),
-            ('Chinese', 'zh'),
-            ('Croatian', 'hr'),
-            ('Dutch', 'nl'),
-            ('English', 'en'),
-            ('Finnish', 'fi'),
-            ('French', 'fr'),
-            ('German', 'de'),
-            ('Greek', 'el'),
-            ('Hebrew', 'he'),
-            ('Hindi ', 'hi'),
-            ('Hungarian', 'hu'),
-            ('Icelandic', 'is'),
-            ('Italian', 'it'),
-            ('Japanese', 'ja'),
-            ('Korean', 'ko'),
-            ('Norwegian', 'no'),
-            ('Persian', 'fa'),
-            ('Polish', 'pl'),
-            ('Portuguese', 'pt'),
-            ('Punjabi', 'pa'),
-            ('Romanian', 'ro'),
-            ('Russian', 'ru'),
-            ('Serbian', 'sr'),
-            ('Spanish', 'es'),
-            ('Swedish', 'sv'),
-            ('Turkish', 'tr'),
-            ('Ukrainian', 'uk')
-        ]
-        for i in languages: self.list.append({'name': str(i[0]), 'url': self.language_link % i[1], 'image': 'languages.png', 'action': 'tvshows'})
+        languages = [('Arabic', 'ar'), ('Bosnian', 'bs'), ('Bulgarian', 'bg'), ('Chinese', 'zh'), ('Croatian', 'hr'), ('Dutch', 'nl'),
+            ('English', 'en'), ('Finnish', 'fi'), ('French', 'fr'), ('German', 'de'), ('Greek', 'el'), ('Hebrew', 'he'), ('Hindi ', 'hi'),
+            ('Hungarian', 'hu'), ('Icelandic', 'is'), ('Italian', 'it'), ('Japanese', 'ja'), ('Korean', 'ko'), ('Norwegian', 'no'),
+            ('Persian', 'fa'), ('Polish', 'pl'), ('Portuguese', 'pt'), ('Punjabi', 'pa'), ('Romanian', 'ro'), ('Russian', 'ru'),
+            ('Serbian', 'sr'), ('Spanish', 'es'), ('Swedish', 'sv'), ('Turkish', 'tr'), ('Ukrainian', 'uk')]
+        for i in languages:
+            self.list.append({'name': str(i[0]), 'url': self.language_link % i[1], 'image': 'languages.png', 'action': 'tvshows'})
         self.addDirectory(self.list)
         return self.list
 
@@ -962,9 +933,9 @@ class tvshows:
                 studio = studio.encode('utf-8')
 
                 try: genre = item['genres']
-                except: genre = '0'
+                except: genre = 'NA'
                 genre = [i.title() for i in genre]
-                if genre == []: genre = '0'
+                if genre == []: genre = 'NA'
                 genre = ' / '.join(genre)
                 genre = genre.encode('utf-8')
 
