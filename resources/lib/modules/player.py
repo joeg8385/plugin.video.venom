@@ -15,7 +15,6 @@ import xbmc
 
 from resources.lib.modules import cleantitle, control, playcount
 
-
 try:
     from sqlite3 import dbapi2 as database
 except Exception:
@@ -26,7 +25,6 @@ except Exception:
 class player(xbmc.Player):
     def __init__(self):
         xbmc.Player.__init__(self)
-        self.play_next_triggered = False
 
 
     def run(self, title, year, season, episode, imdb, tvdb, url, meta):
@@ -46,17 +44,26 @@ class player(xbmc.Player):
             self.ids = dict((k, v) for k, v in self.ids.iteritems() if not v == '0')
             self.offset = bookmarks().get(self.name, self.year)
             poster, thumb, fanart, clearart, clearlogo, discart, meta = self.getMeta(meta)
+
+            isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
+
             item = control.item(path=url)
             item.setArt({'clearart': clearart, 'clearlogo': clearlogo, 'discart': discart, 'thumb': thumb, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
-            item.setInfo(type = 'Video', infoLabels = control.metadataClean(meta))
-            if 'plugin' in control.infoLabel('Container.PluginName'):
+            item.setProperty('IsPlayable', isPlayable)
+            item.setInfo(type='video', infoLabels=control.metadataClean(meta))
+
+            if isPlayable:
                 control.player.play(url, item)
             control.resolve(int(sys.argv[1]), True, item)
             control.window.setProperty('script.trakt.ids', json.dumps(self.ids))
             self.keepPlaybackAlive()
             control.window.clearProperty('script.trakt.ids')
-        except Exception:
-            return
+
+            control.closeAll()
+
+        except:
+            import traceback
+            traceback.print_exc()
 
 
     def getMeta(self, meta):

@@ -10,7 +10,6 @@ from resources.lib.modules import control
 from resources.lib.modules import client
 from resources.lib.modules import cache
 from resources.lib.modules import metacache
-from resources.lib.modules import workers
 from resources.lib.modules import trakt
 
 
@@ -270,33 +269,6 @@ class movies:
         return self.list
 
 
-    def worker(self, level=1):
-        if self.list == None or self.list == []: return
-        self.meta = []
-        total = len(self.list)
-
-        self.fanart_tv_headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
-        if not self.fanart_tv_user == '': self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
-
-        for i in range(0, total): self.list[i].update({'metacache': False})
-
-        self.list = metacache.fetch(self.list, self.lang, self.user)
-
-        for r in range(0, total, 40):
-            threads = []
-            for i in range(r, r+40):
-                if i <= total: threads.append(workers.Thread(self.super_info, i))
-            [i.start() for i in threads]
-            [i.join() for i in threads]
-        if self.meta: metacache.insert(self.meta)
-
-        self.list = [i for i in self.list if not i['imdb'] == '0']
-
-        # self.list = metacache.local(self.list, self.tm_img_link, 'poster3', 'fanart2')
-
-        if self.fanart_tv_user == '':
-            for i in self.list: i.update({'clearlogo': '0', 'clearart': '0'})
-
 
     def super_info(self, i):
         try:
@@ -371,15 +343,16 @@ class movies:
 ###--Fanart.tv artwork
             try:
                 artmeta = True
-                art = client.request(self.fanart_tv_art_link % imdb, headers = self.fanart_tv_headers, timeout = '10', error = True)
-                try: art = json.loads(art)
+                art = client.request(self.fanart_tv_art_link % tmdb, headers = self.fanart_tv_headers, timeout = '20', error = True)
+                try:
+                    art = json.loads(art)
                 except: artmeta = False
             except:
                 pass
 
             try:
                 poster2 = art['movieposter']
-                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '']
+                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '00']
                 poster2 = [(x[0], x[1]) for x in poster2]
                 poster2 = sorted(poster2, key=lambda x: int(x[1]), reverse=True)
                 poster2 = [x[0] for x in poster2][0]
@@ -450,42 +423,34 @@ class movies:
                 landscape = landscape.encode('utf-8')
             except:
                 landscape = '0'
+##---
 
 
-
-
-
-
+##--TMDb artwork
             try:
                 if self.tmdb_key == '': raise Exception()
-                art2 = client.request(self.tm_art_link % imdb, timeout= '10', error = True)
+                art2 = client.request(self.tmdb_art_link % imdb, timeout='20', error=True)
                 art2 = json.loads(art2)
             except:
                 pass
 
             try:
                 poster3 = art2['posters']
-                poster3 = [x for x in poster3 if x.get('iso_639_1') == 'en'] + [x for x in poster3 if not x.get('iso_639_1') == 'en']
                 poster3 = [(x['width'], x['file_path']) for x in poster3]
-                poster3 = [(x[0], x[1]) if x[0] < 300 else ('300', x[1]) for x in poster3]
-                poster3 = self.tm_img_link % poster3[0]
-                poster3 = poster3.encode('utf-8')
+                poster3 = [x[1] for x in poster3]
+                poster3 = self.tmdb_poster_path + poster3[0]
             except:
                 poster3 = '0'
 
             try:
                 fanart2 = art2['backdrops']
-                fanart2 = [x for x in fanart2 if x.get('iso_639_1') == 'en'] + [x for x in fanart2 if not x.get('iso_639_1') == 'en']
-                # fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920]
-                fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920] + [x for x in fanart2 if x.get('width') <= 3840]
                 fanart2 = [(x['width'], x['file_path']) for x in fanart2]
-                fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
-                fanart2 = self.tm_img_link % fanart2[0]
-                fanart2 = fanart2.encode('utf-8')
+                fanart2 = [x[1] for x in fanart2]
+                fanart2 = self.tmdb_background_path + fanart2[0]
             except:
                 fanart2 = '0'
 
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
+            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
             item = dict((k,v) for k, v in item.iteritems() if not v == '0')
             self.list[i].update(item)
 

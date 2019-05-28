@@ -82,7 +82,7 @@ class collections:
         self.marvelmovies_link = 'https://api.themoviedb.org/3/list/32793?api_key=%s' % (self.tmdb_key)
 
 # Boxset Collection
-
+        self.rounds_link = self.tmdb_api_link % ('13120', self.tmdb_key)
         self.tmdb300_link = self.tmdb_api_link % ('13132', self.tmdb_key)
         self.fortyeighthours_link = self.tmdb_api_link % ('33259', self.tmdb_key)
         self.aceventura_link = self.tmdb_api_link % ('33260', self.tmdb_key)
@@ -103,6 +103,7 @@ class collections:
         self.bluesbrothers_link = self.tmdb_api_link % ('33274', self.tmdb_key)
         self.bourne_link = self.tmdb_api_link % ('33275', self.tmdb_key)
         self.brucealmighty_link = self.tmdb_api_link % ('33276', self.tmdb_key)
+        self.brucelee_link = self.tmdb_api_link % ('13295', self.tmdb_key)
         self.caddyshack_link = self.tmdb_api_link % ('33277', self.tmdb_key)
         self.cheaperbythedozen_link = self.tmdb_api_link % ('33278', self.tmdb_key)
         self.cheechandchong_link = self.tmdb_api_link % ('33420', self.tmdb_key)
@@ -119,14 +120,16 @@ class collections:
         self.diehard_link = self.tmdb_api_link % ('33287', self.tmdb_key)
         self.dirtydancing_link = self.tmdb_api_link % ('33288', self.tmdb_key)
         self.dirtyharry_link = self.tmdb_api_link % ('33289', self.tmdb_key)
+        self.divergent_link = self.tmdb_api_link % ('13311', self.tmdb_key)
         self.dumbanddumber_link = self.tmdb_api_link % ('33290', self.tmdb_key)
         self.escapefromnewyork_link = self.tmdb_api_link % ('33291', self.tmdb_key)
         self.everywhichwaybutloose_link = self.tmdb_api_link % ('33292', self.tmdb_key)
         self.exorcist_link = self.tmdb_api_link % ('33293', self.tmdb_key)
         self.theexpendables_link = self.tmdb_api_link % ('33294', self.tmdb_key)
-        self.fastandthefurious_link = self.tmdb_api_link % ('32779', self.tmdb_key)
+        self.fastandthefurious_link = self.tmdb_api_link % ('13062', self.tmdb_key)
         self.fatherofthebride_link = self.tmdb_api_link % ('33295', self.tmdb_key)
         self.fletch_link = self.tmdb_api_link % ('33296', self.tmdb_key)
+        self.thefly_link = self.tmdb_api_link % ('13303', self.tmdb_key)
         self.friday_link = self.tmdb_api_link % ('33297', self.tmdb_key)
         self.fridaythe13th_link = self.tmdb_api_link % ('33298', self.tmdb_key)
         self.fugitive_link = self.tmdb_api_link % ('33299', self.tmdb_key)
@@ -165,7 +168,10 @@ class collections:
         self.jaws_link = self.tmdb_api_link % ('33325', self.tmdb_key)
         self.jeeperscreepers_link = self.tmdb_api_link % ('33326', self.tmdb_key)
         self.johnwick_link = self.tmdb_api_link % ('33327', self.tmdb_key)
+        self.journeytocenter_link = self.tmdb_api_link % ('13216', self.tmdb_key)
+        self.judgedredd_link = self.tmdb_api_link % ('13215', self.tmdb_key)
         self.jumanji_link = self.tmdb_api_link % ('33328', self.tmdb_key)
+        self.jumpst_link = self.tmdb_api_link % ('13213', self.tmdb_key)
         self.jurassicpark_link = self.tmdb_api_link % ('33217', self.tmdb_key)
         self.kickass_link = self.tmdb_api_link % ('33329', self.tmdb_key)
         self.killbill_link = self.tmdb_api_link % ('33330', self.tmdb_key)
@@ -176,6 +182,7 @@ class collections:
         self.lookwhostalking_link = self.tmdb_api_link % ('33335', self.tmdb_key)
         self.lordoftherings_link = 'https://www.imdb.com/search/title?title=the+lord+of+the+rings&title_type=feature&num_votes=1000,&countries=us&languages=en'
         self.machete_link = self.tmdb_api_link % ('33336', self.tmdb_key)
+        self.madmax_link = self.tmdb_api_link % ('13188', self.tmdb_key)
         self.magicmike_link = self.tmdb_api_link % ('33337', self.tmdb_key)
         self.majorleague_link = self.tmdb_api_link % ('33338', self.tmdb_key)
         self.manfromsnowyriver_link = self.tmdb_api_link % ('33339', self.tmdb_key)
@@ -206,11 +213,11 @@ class collections:
         self.omen_link = self.tmdb_api_link % ('33362', self.tmdb_key)
         self.paulblart_link = self.tmdb_api_link % ('33363', self.tmdb_key)
         self.piratesofthecaribbean_link = self.tmdb_api_link % ('33364', self.tmdb_key)
-        self.planetoftheapes_link = self.tmdb_api_link % ('33365', self.tmdb_key)
+        self.planetoftheapes_link = self.tmdb_api_link % ('13141', self.tmdb_key)
         self.policeacademy_link = self.tmdb_api_link % ('33366', self.tmdb_key)
         self.poltergeist_link = self.tmdb_api_link % ('33367', self.tmdb_key)
         self.porkys_link = self.tmdb_api_link % ('33368', self.tmdb_key)
-        self.predator_link = self.tmdb_api_link % ('33369', self.tmdb_key)
+        self.predator_link = self.tmdb_api_link % ('13136', self.tmdb_key)
         self.thepurge_link = self.tmdb_api_link % ('33370', self.tmdb_key)
         self.rambo_link = self.tmdb_api_link % ('33371', self.tmdb_key)
         self.red_link = self.tmdb_api_link % ('33372', self.tmdb_key)
@@ -218,7 +225,7 @@ class collections:
         self.riddick_link = self.tmdb_api_link % ('33374', self.tmdb_key)
         self.ridealong_link = self.tmdb_api_link % ('33375', self.tmdb_key)
         self.thering_link = self.tmdb_api_link % ('33418', self.tmdb_key)
-        self.robocop_link = self.tmdb_api_link % ('33376?', self.tmdb_key)
+        self.robocop_link = self.tmdb_api_link % ('13115', self.tmdb_key)
         self.rocky_link = self.tmdb_api_link % ('33377', self.tmdb_key)
         self.romancingthestone_link = self.tmdb_api_link % ('33378', self.tmdb_key)
         self.rushhour_link = self.tmdb_api_link % ('33379', self.tmdb_key)
@@ -234,7 +241,7 @@ class collections:
         self.speed_link = self.tmdb_api_link % ('33389', self.tmdb_key)
         self.stakeout_link = self.tmdb_api_link % ('33390', self.tmdb_key)
         self.startrek_link = self.tmdb_api_link % ('33391', self.tmdb_key)
-        self.starwars_link = self.tmdb_api_link % ('33237', self.tmdb_key)
+        self.starwars_link = self.tmdb_api_link % ('12741', self.tmdb_key)
         self.thesting_link = self.tmdb_api_link % ('33392', self.tmdb_key)
         self.taken_link = self.tmdb_api_link % ('33393', self.tmdb_key)
         self.taxi_link = self.tmdb_api_link % ('33394', self.tmdb_key)
@@ -313,7 +320,7 @@ class collections:
         self.shrek_link = 'https://api.themoviedb.org/3/list/33234?api_key=%s' % (self.tmdb_key)
         self.spongebobsquarepants_link = 'https://api.themoviedb.org/3/list/33235?api_key=%s' % (self.tmdb_key)
         self.spykids_link = 'https://api.themoviedb.org/3/list/33236?api_key=%s' % (self.tmdb_key)
-        self.starwars_link = 'https://api.themoviedb.org/3/list/33237?api_key=%s' % (self.tmdb_key)
+        self.starwars_link = 'https://api.themoviedb.org/3/list/12741?api_key=%s' % (self.tmdb_key)
         self.stuartlittle_link = 'https://api.themoviedb.org/3/list/33238?api_key=%s' % (self.tmdb_key)
         self.tarzan_link = 'https://api.themoviedb.org/3/list/33239?api_key=%s' % (self.tmdb_key)
         self.teenagemutantninjaturtles_link = 'https://api.themoviedb.org/3/list/33240?api_key=%s' % (self.tmdb_key)
@@ -357,6 +364,7 @@ class collections:
 
 
     def collectionBoxset(self):
+        self.addDirectoryItem('12 Rounds (2009-2015)', 'collections&url=rounds', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('300 (2007-2014)', 'collections&url=tmdb300', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('48 Hrs. (1982-1990)', 'collections&url=fortyeighthours', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Ace Ventura (1994-1995)', 'collections&url=aceventura', 'collectionboxset.png', 'collectionboxset.png')
@@ -376,6 +384,7 @@ class collections:
         self.addDirectoryItem('Blues Brothers (1980-1998)', 'collections&url=bluesbrothers', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Bourne (2002-2016)', 'collections&url=bourne', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Bruce Almighty (2003-2007)', 'collections&url=brucealmighty', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Bruce Lee (1965-2017)', 'collections&url=brucelee', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Caddyshack (1980-1988)', 'collections&url=caddyshack', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Cheaper by the Dozen (2003-2005)', 'collections&url=cheaperbythedozen', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Cheech and Chong (1978-1984)', 'collections&url=cheechandchong', 'collectionboxset.png', 'collectionboxset.png')
@@ -392,6 +401,7 @@ class collections:
         self.addDirectoryItem('Die Hard (1988-2013)', 'collections&url=diehard', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Dirty Dancing (1987-2004)', 'collections&url=dirtydancing', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Dirty Harry (1971-1988)', 'collections&url=dirtyharry', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Divergent (2014-2016)', 'collections&url=divergent', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Dumb and Dumber (1994-2014)', 'collections&url=dumbanddumber', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Escape from New York (1981-1996)', 'collections&url=escapefromnewyork', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Every Which Way But Loose (1978-1980)', 'collections&url=everywhichwaybutloose', 'collectionboxset.png', 'collectionboxset.png')
@@ -400,6 +410,7 @@ class collections:
         self.addDirectoryItem('Fast and the Furious (2001-2017)', 'collections&url=fastandthefurious', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Father of the Bride (1991-1995)', 'collections&url=fatherofthebride', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Fletch (1985-1989)', 'collections&url=fletch', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('The Fly (1986-1989)', 'collections&url=thefly', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Friday (1995-2002)', 'collections&url=friday', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Friday the 13th (1980-2009)', 'collections&url=fridaythe13th', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Fugitive (1993-1998)', 'collections&url=fugitive', 'collectionboxset.png', 'collectionboxset.png')
@@ -438,7 +449,10 @@ class collections:
         self.addDirectoryItem('Jaws (1975-1987)', 'collections&url=jaws', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Jeepers Creepers (2001-2017)', 'collections&url=jeeperscreepers', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('John Wick (2014-2017)', 'collections&url=johnwick', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Journey to the Center of the Earth (2008-2012)', 'collections&url=journeytocenter', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Judge Dredd (1995-2012)', 'collections&url=judgedredd', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Jumanji (1995-2005)', 'collections&url=jumanji', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Jump Street (2012-2014)', 'collections&url=jumpst', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Jurassic Park (1993-2015)', 'collections&url=jurassicpark', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Kick-Ass (2010-2013)', 'collections&url=kickass', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Kill Bill (2003-2004)', 'collections&url=killbill', 'collectionboxset.png', 'collectionboxset.png')
@@ -449,10 +463,11 @@ class collections:
         self.addDirectoryItem('Look Whos Talking (1989-1993)', 'collections&url=lookwhostalking', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Lord of The Rings (1978-2003)', 'collections&url=lordoftherings', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Machete (2010-2013)', 'collections&url=machete', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Mad Max (1979-2015)', 'collections&url=madmax', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Magic Mike (2012-2015)', 'collections&url=magicmike', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Major League (1989-1998)', 'collections&url=majorleague', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Man from Snowy River (1982-1988)', 'collections&url=manfromsnowyriver', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Mask (1994-2005)', 'collections&url=mask', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('The Mask (1994-2005)', 'collections&url=mask', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('The Matrix (1999-2003)', 'collections&url=matrix', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Maze Runner(2014-2018)', 'collections&url=mazerunner', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('The Mechanic (2011-2016)', 'collections&url=themechanic', 'collectionboxset.png', 'collectionboxset.png')
@@ -476,14 +491,14 @@ class collections:
         self.addDirectoryItem('Odd Couple (1968-1998)', 'collections&url=oddcouple', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Oh, God (1977-1984)', 'collections&url=ohgod', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Olympus Has Fallen (2013-2016)', 'collections&url=olympushasfallen', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Omen (1976-1981)', 'collections&url=omen', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('The Omen (1976-1981)', 'collections&url=omen', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Paul Blart Mall Cop (2009-2015)', 'collections&url=paulblart', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Pirates of the Caribbean (2003-2017)', 'collections&url=piratesofthecaribbean', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Planet of the Apes (1968-2014)', 'collections&url=planetoftheapes', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Planet of the Apes (1968-2017)', 'collections&url=planetoftheapes', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Police Academy (1984-1994)', 'collections&url=policeacademy', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Poltergeist (1982-1988)', 'collections&url=poltergeist', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Porkys (1981-1985)', 'collections&url=porkys', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Predator (1987-2010)', 'collections&url=predator', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Predator (1987-2018)', 'collections&url=predator', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('The Purge (2013-2016)', 'collections&url=thepurge', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Rambo (1982-2008)', 'collections&url=rambo', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('RED (2010-2013)', 'collections&url=red', 'collectionboxset.png', 'collectionboxset.png')
@@ -507,7 +522,7 @@ class collections:
         self.addDirectoryItem('Speed (1994-1997)', 'collections&url=speed', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Stakeout (1987-1993)', 'collections&url=stakeout', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Star Trek (1979-2016)', 'collections&url=startrek', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Star Wars (1977-2015)', 'collections&url=starwars', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Star Wars (1977-2017)', 'collections&url=starwars', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('The Sting (1973-1983)', 'collections&url=thesting', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Taken (2008-2014)', 'collections&url=taken', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Taxi (1998-2007)', 'collections&url=taxi', 'collectionboxset.png', 'collectionboxset.png')
@@ -518,7 +533,7 @@ class collections:
         self.addDirectoryItem('Texas Chainsaw Massacre (1974-2013)', 'collections&url=texaschainsawmassacre', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('The Thing (1982-2011)', 'collections&url=thething', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Thomas Crown Affair (1968-1999)', 'collections&url=thomascrownaffair', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Transformers (2002-2015)', 'collections&url=transformers', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Transformers (2002-2017)', 'collections&url=transformers', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Transporter (2002-2015)', 'collections&url=transporter', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Tron (1982-2010)', 'collections&url=tron', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Twilight (2008-2012)', 'collections&url=twilight', 'collectionboxset.png', 'collectionboxset.png')
@@ -594,7 +609,6 @@ class collections:
         self.addDirectoryItem('Shrek (2001-2011)', 'collections&url=shrek', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
         self.addDirectoryItem('SpongeBob SquarePants (2004-2017)', 'collections&url=spongebobsquarepants', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
         self.addDirectoryItem('Spy Kids (2001-2011)', 'collections&url=spykids', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
-        self.addDirectoryItem('Star Wars (1977-2015)', 'collections&url=starwars', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
         self.addDirectoryItem('Stuart Little (1999-2002)', 'collections&url=stuartlittle', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
         self.addDirectoryItem('Tarzan (1999-2016)', 'collections&url=tarzan', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
         self.addDirectoryItem('Teenage Mutant Ninja Turtles (1978-2009)', 'collections&url=teenagemutantninjaturtles', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
@@ -711,7 +725,7 @@ class collections:
             try:
                 title = client.parseDOM(item, 'a')[1]
                 title = client.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
+                # title = title.encode('utf-8')
 
                 year = client.parseDOM(item, 'span', attrs = {'class': 'lister-item-year.+?'})
                 year = re.findall('(\d{4})', year[0])[0]
@@ -1122,10 +1136,19 @@ class collections:
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
 ####################################
 
+                # poster = '0'
+                # if poster == '0' and 'poster3' in i: poster = i['poster3']
+                # if poster == '0' and 'poster2' in i: poster = i['poster2']
+                # if poster == '0' and 'poster' in i: poster = i['poster']
+
                 poster = '0'
-                if poster == '0' and 'poster3' in i: poster = i['poster3']
-                if poster == '0' and 'poster2' in i: poster = i['poster2']
-                if poster == '0' and 'poster' in i: poster = i['poster']
+                try:
+                    poster = i['poster']
+                    if poster == '0':
+                        if 'poster3' in i: poster = i['poster3']
+                        if poster == '0':
+                            if 'poster2' in i: poster = i['poster2']
+                except: pass
 
                 icon = '0'
                 if icon == '0' and 'icon3' in i: icon = i['icon3']
@@ -1157,6 +1180,9 @@ class collections:
                 landscape = '0'
                 if landscape == '0' and 'landscape' in i: landscape = i['landscape']
 
+                discart = '0'
+                if discart == '0' and 'discart' in i: discart = i['discart']
+
                 if poster == '0': poster = addonPoster
                 if icon == '0': icon = poster
                 if thumb == '0': thumb = poster
@@ -1171,17 +1197,17 @@ class collections:
                 if not clearlogo == '0' and not clearlogo == None: art.update({'clearlogo' : clearlogo})
                 if not clearart == '0' and not clearart == None: art.update({'clearart' : clearart})
                 if not landscape == '0' and not landscape == None: art.update({'landscape' : landscape})
-
+                if not discart == '0' and not discart == None: art.update({'discart' : discart})
 
                 item = control.item(label = label)
                 if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
                 item.setArt(art)
                 item.setProperty('IsPlayable', isPlayable)
-                item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
+                item.setInfo(type='video', infoLabels=control.metadataClean(meta))
                 video_streaminfo = {'codec': 'h264'}
                 item.addStreamInfo('video', video_streaminfo)
                 item.addContextMenuItems(cm)
-                control.addItem(handle = syshandle, url = url, listitem = item, isFolder = False)
+                control.addItem(handle=syshandle, url=url, listitem=item, isFolder=False)
             except:
                 pass
 
@@ -1197,7 +1223,7 @@ class collections:
             item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
             if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
 
-            control.addItem(handle = syshandle, url = url, listitem = item, isFolder = True)
+            control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
         except:
             pass
 
@@ -1240,7 +1266,7 @@ class collections:
                 if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
 
                 item.addContextMenuItems(cm)
-                control.addItem(handle = syshandle, url = url, listitem = item, isFolder = True)
+                control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:
                 pass
 
@@ -1248,7 +1274,7 @@ class collections:
         control.directory(syshandle, cacheToDisc = True)
 
 
-    def addDirectoryItem(self, name, query, thumb, icon, context = None, queue = False, isAction = True, isFolder = True):
+    def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
         try: name = control.lang(name).encode('utf-8')
         except: pass
 
@@ -1266,7 +1292,7 @@ class collections:
 
         item.setArt({'icon': thumb, 'thumb': thumb})
         if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
-        control.addItem(handle=syshandle, url = url, listitem = item, isFolder = isFolder)
+        control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
 
 
     def endDirectory(self):

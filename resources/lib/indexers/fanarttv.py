@@ -3,7 +3,8 @@
 '''
     Venom Add-on
 '''
-import json,xbmc
+import json
+
 from resources.lib.modules import client
 from resources.lib.modules import control
 
@@ -17,18 +18,13 @@ if not user == '':
     headers.update({'client-key': user})
 
 base_url = "http://webservice.fanart.tv/v3/%s/%s"
-
 lang = control.apiLanguage()['trakt']
-# lang = control.apiLanguage()['tvdb']
-# lang = control.setting('api.language')
-
 
 
 def get_tvshow_art(tvdb):
     url = base_url % ('tv', '%s')
     try:
         art = client.request(url % tvdb, headers=headers, timeout='30', error=True)
-        # xbmc.log('art = %s' % art, 2)
         art = json.loads(art)
     except: return None
 

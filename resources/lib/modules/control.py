@@ -13,36 +13,47 @@ addon = xbmcaddon.Addon
 AddonID = xbmcaddon.Addon().getAddonInfo('id')
 addonInfo = xbmcaddon.Addon().getAddonInfo
 addonName = addonInfo('name')
-
 lang = xbmcaddon.Addon().getLocalizedString
 lang2 = xbmc.getLocalizedString
-
 setting = xbmcaddon.Addon().getSetting
 setSetting = xbmcaddon.Addon().setSetting
 
 item = xbmcgui.ListItem
-infoLabel = xbmc.getInfoLabel
-condVisibility = xbmc.getCondVisibility
-content = xbmcplugin.setContent
-property = xbmcplugin.setProperty
+listControl = xbmcgui.ControlList
+labelControl = xbmcgui.ControlLabel
+XBFONT_LEFT = 0x00000000
+XBFONT_RIGHT = 0x00000001
+XBFONT_CENTER_X = 0x00000002
+XBFONT_CENTER_Y = 0x00000004
+XBFONT_TRUNCATED = 0x00000008
+
 addItem = xbmcplugin.addDirectoryItem
 directory = xbmcplugin.endOfDirectory
-jsonrpc = xbmc.executeJSONRPC
+content = xbmcplugin.setContent
+property = xbmcplugin.setProperty
+resolve = xbmcplugin.setResolvedUrl
+
 window = xbmcgui.Window(10000)
+windowDialog = xbmcgui.WindowDialog()
 dialog = xbmcgui.Dialog()
 progressDialog = xbmcgui.DialogProgress()
 progressDialogBG = xbmcgui.DialogProgressBG()
-windowDialog = xbmcgui.WindowDialog()
+getCurrentDialogId = xbmcgui.getCurrentWindowDialogId()
 button = xbmcgui.ControlButton
 image = xbmcgui.ControlImage
-getCurrentDialogId = xbmcgui.getCurrentWindowDialogId()
+
+infoLabel = xbmc.getInfoLabel
+condVisibility = xbmc.getCondVisibility
 keyboard = xbmc.Keyboard
 execute = xbmc.executebuiltin
 skin = xbmc.getSkinDir()
-
 player = xbmc.Player()
 playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-resolve = xbmcplugin.setResolvedUrl
+jsonrpc = xbmc.executeJSONRPC
+skinPath = xbmc.translatePath('special://skin/')
+addonPath = xbmc.translatePath(addonInfo('path'))
+dataPath = xbmc.translatePath(addonInfo('profile')).decode('utf-8')
+SETTINGS_PATH = xbmc.translatePath(os.path.join(addonInfo('path'), 'resources', 'settings.xml'))
 
 openFile = xbmcvfs.File
 makeFile = xbmcvfs.mkdir
@@ -51,12 +62,9 @@ listDir = xbmcvfs.listdir
 deleteDir = xbmcvfs.rmdir
 transPath = xbmc.translatePath
 
-skinPath = xbmc.translatePath('special://skin/')
-addonPath = xbmc.translatePath(addonInfo('path'))
-dataPath = xbmc.translatePath(addonInfo('profile')).decode('utf-8')
-SETTINGS_PATH = xbmc.translatePath(os.path.join(addonInfo('path'), 'resources', 'settings.xml'))
+menus_path = os.path.join(addonPath, 'resources', 'lib', 'menus')
+images_path = os.path.join(menus_path, 'images')
 settingsFile = os.path.join(dataPath, 'settings.xml')
-
 viewsFile = os.path.join(dataPath, 'views.db')
 bookmarksFile = os.path.join(dataPath, 'bookmarks.db')
 providercacheFile = os.path.join(dataPath, 'providers.db')
@@ -65,8 +73,10 @@ searchFile = os.path.join(dataPath, 'search.db')
 libcacheFile = os.path.join(dataPath, 'library.db')
 cacheFile = os.path.join(dataPath, 'cache.db')  # Used by trakt.py
 # traktSyncFile = os.path.join(dataPath, 'traktSync.db') # Used by trakt.py
+
 key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
 iv = "p2s5v8y/B?E(H+Mb"
+
 
 
 def sleep(time):  # Modified `sleep` command that honors a user exit request
@@ -128,8 +138,6 @@ def artPath():
 
 
 def appearance():
-    # appearance = setting('appearance.1').lower() if condVisibility('System.HasAddon(script.venom.artwork)') else
-    # setting('appearance.alt').lower()
     appearance = setting('appearance.1').lower()
     return appearance
 
@@ -282,7 +290,7 @@ def closeAll():
     return execute('Dialog.Close(all,true)')
 
 
-def visible(self):
+def visible():
     if int(getKodiVersion()) >= 18 and xbmc.getCondVisibility('Window.IsActive(busydialognocancel)') == 1: return True
     return xbmc.getCondVisibility('Window.IsActive(busydialog)') == 1
 
@@ -368,10 +376,12 @@ def cdnImport(uri, name):
     deleteDir(os.path.join(path, ''), force=True)
     return m
 
+
 ###---start adding TMDb to params
 def autoTraktSubscription(tvshowtitle, year, imdb, tvdb):
     from resources.lib.modules import libtools
     libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
+
 
 def moderator():
     netloc = [urlparse.urlparse(sys.argv[0]).netloc, '', 'plugin.video.live.streamspro', 'plugin.video.phstreams', 'plugin.video.cpstreams', 'plugin.video.tinklepad', 'script.tvguide.fullscreen', 'script.tvguide.assassins', 'plugin.video.metalliq', 'script.extendedinfo', 'plugin.program.super.favourites', 'plugin.video.openmeta']

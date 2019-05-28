@@ -1,3 +1,8 @@
+[B][COLOR red]Update - v2.9.3 - May 28, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Source list now utilizes multiline list items. Settings
+    contain option to turn this on or off base on your preference.[/I]
+[COLOR yellow]--[/COLOR][I] added a few more networks to TV Shows[/I]
+
 [B][COLOR red]Update - v2.9.2 - May 22, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] added check for valid debrid account to sources.py. Code
     to remove duplicate links broke if no debrid account.[/I]

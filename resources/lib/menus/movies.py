@@ -50,7 +50,8 @@ class movies:
         self.tmdb_link = 'http://api.themoviedb.org'
         # self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&language=en-US&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
         self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=' + self.tmdb_key
-        self.tmdb_img_link = 'http://image.tmdb.org/t/p/w%s%s'
+        self.tmdb_background_path = 'http://image.tmdb.org/t/p/w1280'
+        self.tmdb_poster_path = "https://image.tmdb.org/t/p/w500"
 
         self.tmdb_popular_link = 'http://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&page=1'
         self.tmdb_toprated_link = 'http://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
@@ -192,7 +193,7 @@ class movies:
 
             if self.list == None: 
                 self.list = []
-                raise Exception()
+                # raise Exception()
             if idx == True: self.movieDirectory(self.list)
             return self.list
         except:
@@ -829,7 +830,7 @@ class movies:
 
         self.list = [i for i in self.list if not i['imdb'] == '0']
 
-        self.list = metacache.local(self.list, self.tmdb_img_link, 'poster3', 'fanart2')
+        # self.list = metacache.local(self.list, self.tmdb_img_link, 'poster3', 'fanart2')
 
         if self.fanart_tv_user == '':
             for i in self.list:
@@ -914,15 +915,16 @@ class movies:
 ###--Fanart.tv artwork
             try:
                 artmeta = True
-                art = client.request(self.fanart_tv_art_link % imdb, headers = self.fanart_tv_headers, timeout = '20', error = True)
-                try: art = json.loads(art)
+                art = client.request(self.fanart_tv_art_link % tmdb, headers = self.fanart_tv_headers, timeout = '20', error = True)
+                try:
+                    art = json.loads(art)
                 except: artmeta = False
             except:
                 pass
 
             try:
                 poster2 = art['movieposter']
-                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '']
+                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '00']
                 poster2 = [(x[0], x[1]) for x in poster2]
                 poster2 = sorted(poster2, key=lambda x: int(x[1]), reverse=True)
                 poster2 = [x[0] for x in poster2][0]
@@ -993,6 +995,8 @@ class movies:
                 landscape = landscape.encode('utf-8')
             except:
                 landscape = '0'
+##---
+
 
 ##--TMDb artwork
             try:
@@ -1004,22 +1008,17 @@ class movies:
 
             try:
                 poster3 = art2['posters']
-                poster3 = [x for x in poster3 if x.get('iso_639_1') == self.lang] + [x for x in poster3 if x.get('iso_639_1') == 'en'] + [x for x in poster3 if x.get('iso_639_1') not in [self.lang, 'en']]
                 poster3 = [(x['width'], x['file_path']) for x in poster3]
-                poster3 = [(x[0], x[1]) if x[0] < 500 else ('500', x[1]) for x in poster3]
-                poster3 = self.tmdb_img_link % poster3[0]
-                poster3 = poster3.encode('utf-8')
+                poster3 = [x[1] for x in poster3]
+                poster3 = self.tmdb_poster_path + poster3[0]
             except:
                 poster3 = '0'
 
             try:
                 fanart2 = art2['backdrops']
-                fanart2 = [x for x in fanart2 if x.get('iso_639_1') == self.lang] + [x for x in fanart2 if x.get('iso_639_1') == 'en'] + [x for x in fanart2 if x.get('iso_639_1') not in [self.lang, 'en']]
-                fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920] + [x for x in fanart2 if x.get('width') <= 3840]
                 fanart2 = [(x['width'], x['file_path']) for x in fanart2]
-                fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
-                fanart2 = self.tmdb_img_link % fanart2[0]
-                fanart2 = fanart2.encode('utf-8')
+                fanart2 = [x[1] for x in fanart2]
+                fanart2 = self.tmdb_background_path + fanart2[0]
             except:
                 fanart2 = '0'
 
@@ -1133,40 +1132,29 @@ class movies:
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
 ####################################
 
-                # poster = '0'
-                # if poster == '0' and 'poster3' in i: poster = i['poster3']
-                # if poster == '0' and 'poster2' in i: poster = i['poster2']
-                # if poster == '0' and 'poster' in i: poster = i['poster']
-
-                poster = '0'
-                try:
-                    poster = i['poster']
-                    if poster == '0':
-                        if 'poster3' in i: poster = i['poster3']
-                        if poster == '0':
-                            if 'poster2' in i: poster = i['poster2']
-                except: pass
-
                 icon = '0'
-                if icon == '0' and 'icon3' in i: icon = i['icon3']
-                if icon == '0' and 'icon2' in i: icon = i['icon2']
                 if icon == '0' and 'icon' in i: icon = i['icon']
 
                 thumb = '0'
-                if thumb == '0' and 'thumb3' in i: thumb = i['thumb3']
-                if thumb == '0' and 'thumb2' in i: thumb = i['thumb2']
                 if thumb == '0' and 'thumb' in i: thumb = i['thumb']
 
                 banner = '0'
-                if banner == '0' and 'banner3' in i: banner = i['banner3']
-                if banner == '0' and 'banner2' in i: banner = i['banner2']
                 if banner == '0' and 'banner' in i: banner = i['banner']
+
+                poster = '0'
+                try:
+                    poster = i['poster3']
+                    if poster == '0':
+                        if 'poster2' in i: poster = i['poster2']
+                        if poster == '0':
+                            if 'poster' in i: poster = i['poster']
+                except: pass
 
                 fanart = '0'
                 if settingFanart:
-                    if fanart == '0' and 'fanart3' in i: fanart = i['fanart3']
-                    if fanart == '0' and 'fanart2' in i: fanart = i['fanart2']
-                    if fanart == '0' and 'fanart' in i: fanart = i['fanart']
+                    fanart = i['fanart2']
+                    if fanart == '0':
+                        if 'fanart' in i: fanart = i['fanart']
 
                 clearlogo = '0'
                 if clearlogo == '0' and 'clearlogo' in i: clearlogo = i['clearlogo']
@@ -1201,7 +1189,7 @@ class movies:
 
                 item.setArt(art)
                 item.setProperty('IsPlayable', isPlayable)
-                item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
+                item.setInfo(type='video', infoLabels=control.metadataClean(meta))
                 video_streaminfo = {'codec': 'h264'}
                 item.addStreamInfo('video', video_streaminfo)
                 item.addContextMenuItems(cm)

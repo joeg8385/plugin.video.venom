@@ -4,8 +4,7 @@
     Venom Add-on
 '''
 
-import os, base64, sys, urllib2, urlparse
-import xbmc, xbmcaddon, xbmcgui
+import os, sys
 
 from resources.lib.modules import control
 from resources.lib.modules import trakt
@@ -20,14 +19,6 @@ traktIndicators = trakt.getTraktIndicatorsInfo()
 
 
 class navigator:
-    ADDON_ID      = xbmcaddon.Addon().getAddonInfo('id')
-    HOMEPATH      = xbmc.translatePath('special://home/')
-    ADDONSPATH    = os.path.join(HOMEPATH, 'addons')
-    THISADDONPATH = os.path.join(ADDONSPATH, ADDON_ID)
-    NEWSFILE      = 'https://raw.githubusercontent.com/123Venom/zips/master/plugin.video.venom/newsinfo.txt'
-    LOCALNEWS     = os.path.join(THISADDONPATH, 'newsinfo.txt')
-
-
     def root(self):
         self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'movies.png')
         self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'tvshows.png')
@@ -53,7 +44,7 @@ class navigator:
         if downloads == True:
             self.addDirectoryItem(32009, 'downloadNavigator', 'downloads.png', 'DefaultFolder.png')
 
-        self.addDirectoryItem('News and Info!!', 'newsNavigator', 'icon.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem('News and Info!!', 'ShowNews', 'icon.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem('Change Log!!', 'ShowChangelog', 'icon.png', 'DefaultAddonProgram.png')
         self.endDirectory()
 
@@ -68,54 +59,6 @@ class navigator:
         is_enabled = control.setting(menu_title).strip()
         if (is_enabled == '' or is_enabled == 'false'): return False
         return True
-
-
-# News and Info
-    def news(self):
-            message = self.open_news_url(self.NEWSFILE)
-            r = open(self.LOCALNEWS)
-            compfile = r.read()
-            if len(message) > 1:
-                    if compfile == message: pass
-                    else:
-                            text_file = open(self.LOCALNEWS, "w")
-                            text_file.write(message)
-                            text_file.close()
-                            compfile = message
-            self.showText('[B][COLOR red]Update Information[/COLOR][/B]', compfile)
-
-
-    def open_news_url(self, url):
-            req = urllib2.Request(url)
-            req.add_header('User-Agent', 'klopp')
-            response = urllib2.urlopen(req)
-            link = response.read()
-            response.close()
-            print link
-            return link
-
-
-    def news_local(self):
-            r = open(self.LOCALNEWS)
-            compfile = r.read()
-            self.showText('[B]Updates and Information[/B]', compfile)
-
-
-    def showText(self, heading, text):
-        id = 10147
-        xbmc.executebuiltin('ActivateWindow(%d)' % id)
-        xbmc.sleep(500)
-        win = xbmcgui.Window(id)
-        retry = 50
-        while (retry > 0):
-            try:
-                xbmc.sleep(10)
-                retry -= 1
-                win.getControl(1).setLabel(heading)
-                win.getControl(5).setText(text)
-                quit()
-                return
-            except: pass
 
 
     def movies(self, lite=False):
@@ -280,19 +223,19 @@ class navigator:
     def tools(self):
         self.addDirectoryItem('[B]Cache Functions[/B]', 'cfNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32609, 'urlResolver', 'urlresolver.png', 'DefaultAddonProgram.png')
-        # Providers - 4
+        #-- Providers - 4
         self.addDirectoryItem(32651, 'openscrapersSettings&query=0.0', 'OpenScrapers.png', 'DefaultAddonProgram.png')
-        # General - 0
+        #-- General - 0
         self.addDirectoryItem(32043, 'openSettings&query=0.1', 'tools.png', 'DefaultAddonProgram.png')
-        # Navigation - 1
+        #-- Navigation - 1
         self.addDirectoryItem(32362, 'openSettings&query=1.0', 'tools.png', 'DefaultAddonProgram.png')
-        # Playback - 3
+        #-- Playback - 3
         self.addDirectoryItem(32045, 'openSettings&query=3.0', 'tools.png', 'DefaultAddonProgram.png')
-        # Api-keys - 8
+        #-- Api-keys - 8
         self.addDirectoryItem(32044, 'openSettings&query=8.0', 'tools.png', 'DefaultAddonProgram.png')
-        # Downloads - 10
+        #-- Downloads - 10
         self.addDirectoryItem(32048, 'openSettings&query=10.0', 'tools.png', 'DefaultAddonProgram.png')
-        # Subtitles - 11
+        #-- Subtitles - 11
         self.addDirectoryItem(32046, 'openSettings&query=11.0', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png')
@@ -311,7 +254,8 @@ class navigator:
 
 
     def library(self):
-        self.addDirectoryItem(32557, 'openSettings&query=8.0', 'tools.png', 'DefaultAddonProgram.png')
+#-- Library - 9
+        self.addDirectoryItem(32557, 'openSettings&query=9.0', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32558, 'updateLibrary&query=tool', 'library_update.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32559, control.setting('library.movie'), 'movies.png', 'DefaultMovies.png', isAction = False)
         self.addDirectoryItem(32560, control.setting('library.tv'), 'tvshows.png', 'DefaultTVShows.png', isAction = False)
@@ -355,9 +299,9 @@ class navigator:
             item.setInfo(type = 'Video', infoLabels = {'title': title})
             item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'banner': banner})
             item.setProperty('Fanart_Image', fanart)
-            control.addItem(handle = int(sys.argv[1]), url = url, listitem = item, isFolder = False)
+            control.addItem(handle = int(sys.argv[1]), url=url, listitem=item, isFolder=False)
             control.content(int(sys.argv[1]), content)
-            control.directory(int(sys.argv[1]), cacheToDisc = True)
+            control.directory(int(sys.argv[1]), cacheToDisc=True)
             from resources.lib.modules import views
             views.setView(content, {})
         except:
@@ -367,13 +311,13 @@ class navigator:
     def accountCheck(self):
         if traktCredentials == False and imdbCredentials == False:
             control.idle()
-            control.notification(title = 'default', message = 32042, icon = 'WARNING', sound = True)
+            control.notification(title='default', message=32042, icon='WARNING', sound=True)
             sys.exit()
 
 
     def infoCheck(self, version):
         try:
-            control.notification(title = 'default', message = 32074, icon = 'WARNING',  time = 5000, sound = True)
+            control.notification(title='default', message=32074, icon='WARNING',  time=5000, sound=True)
             return '1'
         except:
             return '1'
@@ -424,7 +368,7 @@ class navigator:
         control.notification(title = 'default', message = 'Search History Successfully Cleared!', icon = 'default', sound = True)
 
 
-    def addDirectoryItem(self, name, query, thumb, icon, context = None, queue = False, isAction = True, isFolder = True):
+    def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
         try: name = control.lang(name).encode('utf-8')
         except: pass
         url = '%s?action=%s' % (sysaddon, query) if isAction == True else query

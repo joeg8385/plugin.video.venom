@@ -204,7 +204,6 @@ class tvshows:
             except: pass
 
             self.list = cache.get(tvmaze.tvshows().tvmaze_list, 168, url)
-            # if idx == True: self.worker()
 
             if self.list == None:
                 self.list = []

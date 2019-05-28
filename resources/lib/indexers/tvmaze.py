@@ -4,7 +4,7 @@
     Venom Add-on
 '''
 
-import json,requests,threading,re,urllib,xbmc
+import json,requests,threading,re,urllib
 import datetime
 
 from resources.lib.modules import control
@@ -40,6 +40,8 @@ networks_this_season = [
             ('Channel 4', '/networks/45/channel-4', 'https://i.imgur.com/6ZA9UHR.png'),
             ('Channel 5', '/networks/135/channel-5', 'https://i.imgur.com/5ubnvOh.png'),
             ('Cinemax', '/networks/19/cinemax', 'https://i.imgur.com/zWypFNI.png'),
+            ('CNBC', '/networks/93/cnbc', 'https://static.tvmaze.com/uploads/images/original_untouched/10/27359.jpg'),
+
             ('Comedy Central', '/networks/23/comedy-central', 'https://i.imgur.com/ko6XN77.png'),
             ('Crackle', '/webchannels/4/crackle', 'https://i.imgur.com/53kqZSY.png'),
             ('CTV', '/networks/48/ctv', 'https://i.imgur.com/qUlyVHz.png'),
@@ -88,9 +90,14 @@ networks_this_season = [
             ('Travel Channel', '/networks/82/travel-channel', 'https://i.imgur.com/mWXv7SF.png'),
             ('TruTV', '/networks/84/trutv', 'https://i.imgur.com/HnB3zfc.png'),
             ('TV Land', '/networks/57/tvland', 'https://i.imgur.com/1nIeDA5.png'),
+
+            ('TV One', '/networks/224/tv-one', 'https://static.tvmaze.com/uploads/images/original_untouched/25/63413.jpg'),
+
             ('USA', '/networks/30/usa-network', 'https://i.imgur.com/Doccw9E.png'),
             ('VH1', '/networks/55/vh1', 'https://i.imgur.com/IUtHYzA.png'),
-            ('WGN', '/networks/28/wgn-america', 'https://i.imgur.com/TL6MzgO.png')
+            ('Viceland', '/networks/1006/viceland', 'https://static.tvmaze.com/uploads/images/original_untouched/42/105775.jpg'),
+            ('WGN', '/networks/28/wgn-america', 'https://i.imgur.com/TL6MzgO.png'),
+            ('WWE Network', '/webchannels/15/wwe-network', 'https://static.tvmaze.com/uploads/images/original_untouched/11/29695.jpg')
             # ('YouTube', '/webchannels/21/youtube', 'https://i.imgur.com/ZfewP1Y.png'),
             # ('YouTube Premium', '/webchannels/43/youtube-premium', 'https://static.tvmaze.com/uploads/images/medium_landscape/160/401362.jpg')
         ]
@@ -121,6 +128,8 @@ networks_view_all = [
             ('Channel 4', '/shows?Show[network_id]=45&page=1', 'https://i.imgur.com/6ZA9UHR.png'),
             ('Channel 5', '/shows?Show[network_id]=135&page=1', 'https://i.imgur.com/5ubnvOh.png'),
             ('Cinemax', '/shows?Show[network_id]=19&page=1', 'https://i.imgur.com/zWypFNI.png'),
+            ('CNBC', '/shows?Show[network_id]=93&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/10/27359.jpg'),
+
             ('Comedy Central', '/shows?Show[network_id]=23&page=1', 'https://i.imgur.com/ko6XN77.png'),
             ('Crackle', '/shows?Show%5BwebChannel_id%5D=4&page=1', 'https://i.imgur.com/53kqZSY.png'),
             ('CTV', '/shows?Show[network_id]=48&page=1', 'https://i.imgur.com/qUlyVHz.png'),
@@ -168,9 +177,15 @@ networks_view_all = [
             ('Travel Channel', '/shows?Show[network_id]=82&page=1', 'https://i.imgur.com/mWXv7SF.png'),
             ('TruTV', '/shows?Show[network_id]=84&page=1', 'https://i.imgur.com/HnB3zfc.png'),
             ('TV Land', '/shows?Show[network_id]=57&page=1', 'https://i.imgur.com/1nIeDA5.png'),
+
+            ('TV One', '/shows?Show[network_id]=224&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/25/63413.jpg'),
+
             ('USA', '/shows?Show[network_id]=30&page=1', 'https://i.imgur.com/Doccw9E.png'),
             ('VH1', '/shows?Show[network_id]=55&page=1', 'https://i.imgur.com/IUtHYzA.png'),
-            ('WGN', '/shows?Show[network_id]=28&page=1', 'https://i.imgur.com/TL6MzgO.png')
+            ('Viceland', '/shows?Show[network_id]=1006&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/42/105775.jpg'),
+            ('WGN', '/shows?Show[network_id]=28&page=1', 'https://i.imgur.com/TL6MzgO.png'),
+            ('WWE Network', '/shows?Show[webChannel_id]=15&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/11/29695.jpg')
+
             # ('YouTube', '/webchannels/21/youtube', 'https://i.imgur.com/ZfewP1Y.png'),
             # ('YouTube Premium', '/webchannels/43/youtube-premium', 'https://static.tvmaze.com/uploads/images/medium_landscape/160/401362.jpg')
         ]
@@ -294,17 +309,11 @@ class tvshows:
                 title = client.replaceHTMLCodes(title)
                 title = title.encode('utf-8')
 
-                # try:
-                    # year = item['premiered']
-                    # year = re.findall('(\d{4})', year)[0]
-                    # year = year.encode('utf-8')
-                    # # if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
-                # except: year = '0'
-
-                year = item['premiered']
-                year = re.findall('(\d{4})', year)[0]
-                year = year.encode('utf-8')
-                # if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
+                try:
+                    year = item['premiered']
+                    year = re.findall('(\d{4})', year)[0]
+                    year = year.encode('utf-8')
+                except: yeat = '0'
 
                 try:
                     imdb = item['externals']['imdb']
@@ -316,7 +325,7 @@ class tvshows:
                 try:
                     tvdb = item['externals']['thetvdb']
                     if tvdb == None or tvdb == '': tvdb = '0'
-                    tvdb = re.sub('[^0-9]', '', str(tvdb))
+                    else: tvdb = re.sub('[^0-9]', '', str(tvdb))
                     tvdb = tvdb.encode('utf-8')
                 except: tvdb = '0'
 
@@ -335,36 +344,32 @@ class tvshows:
                 if studio == None: studio = '0'
                 studio = studio.encode('utf-8')
 
-                try: genre = item['genres']
+                try:
+                    genre = item['genres']
+                    genre = [i.title() for i in genre]
+                    genre = (' / '.join(genre)).encode('utf-8')
+                    if genre == '' or genre == None: raise Exception()
                 except: genre = 'NA'
-                genre = [i.title() for i in genre]
-                if genre == []: genre = 'NA'
-                genre = ' / '.join(genre)
-                genre = genre.encode('utf-8')
 
-                try: duration = item['runtime']
+                try:
+                    duration = str(item['runtime']).encode('utf-8')
                 except: duration = '0'
-                if duration == None: duration = '0'
-                duration = str(duration)
-                duration = duration.encode('utf-8')
 
-                try: rating = item['rating']['average']
-                except: rating = '0'
-                if rating == None: rating = '1.0'
-                rating = str(rating)
-                rating = rating.encode('utf-8')
+                try:
+                    rating = str(item['rating']['average']).encode('utf-8')
+                except: rating = '0.0'
 
-                try: plot = item['summary']
+                try:
+                    plot = item['summary']
+                    plot = re.sub('<.+?>|</.+?>|\n', '', plot)
+                    plot = client.replaceHTMLCodes(plot)
+                    plot = plot.encode('utf-8')
                 except: plot = '0'
-                if plot == None: plot = '0'
-                plot = re.sub('<.+?>|</.+?>|\n', '', plot)
-                plot = client.replaceHTMLCodes(plot)
-                plot = plot.encode('utf-8')
 
-                try: content = item['type'].lower()
+                try:
+                    content = item['type'].lower()
+                    content = content.encode('utf-8')
                 except: content = '0'
-                if content == None or content == '': content = '0'
-                content = content.encode('utf-8')
 
                 # try: status = item['status']
                 # except: status = '0'
@@ -378,10 +383,10 @@ class tvshows:
                     # # cast.append({'name': people['person']['name'], 'role': people['character']['name']})
                 # except: cast = []
 
-                try: poster = item['image']['original']
+                try:
+                    poster = item['image']['original']
+                    poster = poster.encode('utf-8')
                 except: poster = '0'
-                if poster == None or poster == '': poster = '0'
-                poster = poster.encode('utf-8')
 
                 fanart = '0' ; banner = '0'
 
@@ -406,71 +411,62 @@ class tvshows:
                     item3 = client.request(url, timeout='20', error=True)
                 except: item3 = None ; fanart = '0'
 
-                # if imdb == '0':
-                    # try: imdb = client.parseDOM(item3, 'IMDB_ID')[0]
-                    # except: pass
-                    # if imdb == '': imdb = '0'
-                    # imdb = imdb.encode('utf-8')
-
-
                 if poster == '0' and not item3 == None :
-                    try: poster = client.parseDOM(item3, 'poster')[0]
-                    except: poster = ''
-                    if not poster == '': poster = self.tvdb_image + poster
-                    else: poster = '0'
-                    poster = client.replaceHTMLCodes(poster)
-                    poster = poster.encode('utf-8')
-                    # xbmc.log('poster for %s = %s' % (poster, title), 2)
+                    try:
+                        poster = client.parseDOM(item3, 'poster')[0]
+                        if not poster == '' or not poster == None: poster = self.tvdb_image + poster
+                        else: poster = '0'
+                        poster = client.replaceHTMLCodes(poster)
+                        poster = poster.encode('utf-8')
+                    except: poster = '0'
 
                 if not item3 == None:
-                    try: banner = client.parseDOM(item3, 'banner')[0]
-                    except: banner = ''
-                    if not banner == '': banner = self.tvdb_image + banner
-                    else: banner = '0'
-                    banner = client.replaceHTMLCodes(banner)
-                    banner = banner.encode('utf-8')
+                    try:
+                        banner = client.parseDOM(item3, 'banner')[0]
+                        if not banner == '' or not banner == None: banner = self.tvdb_image + banner
+                        else: banner = '0'
+                        banner = client.replaceHTMLCodes(banner)
+                        banner = banner.encode('utf-8')
+                    except: banner = '0'
 
                     try:
                         fanart = client.parseDOM(item3, 'fanart')[0]
-                    except: fanart = ''
-                    if not fanart == '': fanart = self.tvdb_image + fanart
-                    else: fanart = '0'
-                    fanart = client.replaceHTMLCodes(fanart)
-                    fanart = fanart.encode('utf-8')
+                        if not fanart == '': fanart = self.tvdb_image + fanart
+                        fanart = client.replaceHTMLCodes(fanart)
+                        fanart = fanart.encode('utf-8')
+                    except: fanart = '0'
 
-                try: cast = client.parseDOM(item3, 'Actors')[0]
-                except: cast = ''
-                cast = [x for x in cast.split('|') if not x == '']
-                try: cast = [(x.encode('utf-8'), '') for x in cast]
-                except: cast = []
-                if cast == []: cast = '0'
+                    try:
+                        cast = client.parseDOM(item3, 'Actors')[0]
+                        cast = [x for x in cast.split('|') if not x == '']
+                        cast = [(x.encode('utf-8'), '') for x in cast]
+                    except: cast = '0'
 
-                try: mpaa = client.parseDOM(item3, 'ContentRating')[0]
-                except: mpaa = ''
-                if mpaa == '': mpaa = '0'
-                mpaa = client.replaceHTMLCodes(mpaa)
-                mpaa = mpaa.encode('utf-8')
+                    try:
+                        mpaa = client.parseDOM(item3, 'ContentRating')[0]
+                        mpaa = client.replaceHTMLCodes(mpaa)
+                        mpaa = mpaa.encode('utf-8')
+                    except: mpaa = 'NR'
 
-                if duration == '0':
-                    try: duration = client.parseDOM(item3, 'Runtime')[0]
-                    except: duration = ''
-                    if duration == '': duration = '0'
-                    duration = client.replaceHTMLCodes(duration)
-                    duration = duration.encode('utf-8')
+                    if duration == '0':
+                        try:
+                            duration = client.parseDOM(item3, 'Runtime')[0]
+                            duration = client.replaceHTMLCodes(duration)
+                            duration = duration.encode('utf-8')
+                        except: duration = '0'
 
-                try:
-                    votes = client.parseDOM(item3, 'RatingCount')[0]
-                    votes = client.replaceHTMLCodes(votes)
-                    votes = votes.encode('utf-8')
-                except: votes = ''
+                    try:
+                        votes = client.parseDOM(item3, 'RatingCount')[0]
+                        votes = client.replaceHTMLCodes(votes)
+                        votes = votes.encode('utf-8')
+                    except: votes = '0'
 
-                if year == '0':
-                    try: year = client.parseDOM(item3, 'FirstAired')[0]
-                    except: year = ''
-                    try: year = re.compile('(\d{4})').findall(year)[0]
-                    except: year = ''
-                    if year == '': year = '0'
-                    year = year.encode('utf-8')
+                    if year == '0':
+                        try:
+                            year = client.parseDOM(item3, 'FirstAired')[0]
+                            year = re.compile('(\d{4})').findall(year)[0]
+                            year = year.encode('utf-8')
+                        except: year = '0'
 ###-----
 
                 if next == '0':

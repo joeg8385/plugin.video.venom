@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 
-import re,urllib,urlparse,random,json,sys,time,datetime,xbmc
+import os, sys, time, datetime
+import xbmc, xbmcgui
+import re, urllib, urlparse, random, json
 import openscrapers
 
 from resources.lib.modules import client,cleantitle,control,workers
 from resources.lib.modules import debrid,trakt,tvmaze,source_utils,log_utils
+from resources.lib.modules import cache
 
 try:
     from sqlite3 import dbapi2 as database
@@ -27,6 +30,7 @@ class sources:
     def play(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select):
         try:
             url = None
+            # items = cache.get(self.getSources, 24, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
             items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
             select = control.setting('hosts.mode') if select == None else select
             title = tvshowtitle if not tvshowtitle == None else title
@@ -69,46 +73,81 @@ class sources:
         syshandle = int(sys.argv[1])
         downloads = True if control.setting('downloads') == 'true' and not (control.setting('movie.download.path') == '' or control.setting('tv.download.path') == '') else False
         systitle = sysname = urllib.quote_plus(title)
+
         if 'tvshowtitle' in meta and 'season' in meta and 'episode' in meta:
             sysname += urllib.quote_plus(' S%02dE%02d' % (int(meta['season']), int(meta['episode'])))
         elif 'year' in meta:
             sysname += urllib.quote_plus(' (%s)' % meta['year'])
-        poster = meta['poster3'] if 'poster3' in meta else '0'
+
+        poster = meta['poster2'] if 'poster2' in meta else '0'
         if poster == '0': poster = meta['poster'] if 'poster' in meta else '0'
-        fanart = meta['fanart2'] if 'fanart2' in meta else '0'
-        if fanart == '0': fanart = meta['fanart'] if 'fanart' in meta else '0'
+
+        fanart = meta['fanart'] if 'fanart' in meta else '0'
+        if fanart == '0': fanart = meta['fanart2'] if 'fanart2' in meta else '0'
+
         thumb = meta['thumb'] if 'thumb' in meta else '0'
         if thumb == '0': thumb = poster
-        if thumb == '0': thumb = fanart
+
         banner = meta['banner'] if 'banner' in meta else '0'
         if banner == '0': banner = poster
+
+        clearart = meta['clearart'] if 'clearart' in meta else '0'
+        clearlogo = meta['clearlogo'] if 'clearlogo' in meta else '0'
+        discart = meta['discart'] if 'discart' in meta else '0'
+
         if poster == '0': poster = control.addonPoster()
         if banner == '0': banner = control.addonBanner()
         if not control.setting('fanart') == 'true': fanart = '0'
         if fanart == '0': fanart = control.addonFanart()
         if thumb == '0': thumb = control.addonFanart()
+
         sysimage = urllib.quote_plus(poster.encode('utf-8'))
         downloadMenu = control.lang(32403).encode('utf-8')
+
         for i in range(len(items)):
             try:
-                label = items[i]['label']
+
+                # item_height = 55
+                # self.source_list = control.listControl(20, 130, 760, 640, 'font12', '0xFFFFFFFF', '',
+                                                     # os.path.join(control.images_path, 'highlight11.png'),
+                                                     # '', 0, 0, 0, 0, item_height)
+                # self.addControl(self.source_list)
+                # self.source_list.addItems(self.sources)
+                # self.setFocus(self.source_list)
+
+                label = str(items[i]['label'])
+                if control.setting('sourcelist.multiline') == 'true':
+                    label = str(items[i]['multiline_label'])
+
+                # # # info_label = control.labelControl(control.XBFONT_LEFT, control.XBFONT_CENTER_Y, 760, 640, label, font="font10", alignment=control.XBFONT_CENTER_X)
+                # # # self.addControl(info_label)
+
                 syssource = urllib.quote_plus(json.dumps([items[i]]))
                 sysurl = '%s?action=playItem&title=%s&source=%s' % (sysaddon, systitle, syssource)
+
+                isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
+
                 cm = []
                 if downloads == True:
                     cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&source=%s)' % (sysaddon, sysname, sysimage, syssource)))
-                item = control.item(label = label)
-                item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'banner': banner})
-                item.setProperty('Fanart_Image', fanart)
+
+                item = control.item(label=label)
+                item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'banner': banner, 'clearart': clearart, 'clearlogo': clearlogo, 'discart': discart})
+                item.setProperty('IsPlayable', isPlayable)
+                if not fanart == '0' and not fanart == None:
+                    item.setProperty('Fanart_Image', fanart)
                 video_streaminfo = {'codec': 'h264'}
+                # item.setLabel(label)
+                # item.setLabel2('test')
                 item.addStreamInfo('video', video_streaminfo)
                 item.addContextMenuItems(cm)
-                item.setInfo(type = 'video', infoLabels = control.metadataClean(meta))
-                control.addItem(handle = syshandle, url = sysurl, listitem = item, isFolder = False)
+                item.setInfo(type='video', infoLabels=control.metadataClean(meta))
+                control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
+
             except:
                 pass
         control.content(syshandle, 'files')
-        control.directory(syshandle, cacheToDisc = True)
+        control.directory(syshandle, cacheToDisc=True)
 
 
     def playItem(self, title, source):
@@ -149,13 +188,15 @@ class sources:
             progressDialog.create(header, '')
             progressDialog.update(0)
             block = None
+
             for i in range(len(items)):
+                label = str(items[i]['label'])
                 try:
                     try:
                         if progressDialog.iscanceled(): break
                         progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
-                    except Exceptionn:
-                        progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
+                    except:
+                        progressDialog.update(int((100 / float(len(items))) * i), str(header2), str((items[i]['label']).replace('\n     ', '')))
                     if items[i]['source'] == block: raise Exception()
                     w = workers.Thread(self.sourcesResolve, items[i])
                     w.start()
@@ -202,7 +243,7 @@ class sources:
             pass
 
 
-    def getSources(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality = 'HD', timeout = 30):
+    def getSources(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality='HD', timeout=30):
         progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
         progressDialog.create(control.addonInfo('name'), '')
         progressDialog.update(0)
@@ -600,6 +641,7 @@ class sources:
             if control.setting('hosts.mode') == '2': url += '&select=1'
             else: url += '&select=2'
             control.execute('RunPlugin(%s)' % url)
+
         except:
             pass
 
@@ -617,7 +659,7 @@ class sources:
         if captcha == '': captcha = 'true'
         HEVC = control.setting('HEVC')
 
-###---Remove dupes
+###---Remove duplicates
         filter = []
         for i in self.sources:
             a = i['url'].lower()
@@ -702,52 +744,79 @@ class sources:
         if torr_identify == '': torr_identify = 'orange'
         torr_identify = self.getPremColor(torr_identify)
         for i in range(len(self.sources)):
-            if extra_info == 'true': t = source_utils.getFileType(self.sources[i]['url'])
+            if extra_info == 'true':
+                t = source_utils.getFileType(self.sources[i]['url'])
+                if t == '' or t == '0': t = None
             else: t = None
             u = self.sources[i]['url']
             p = self.sources[i]['provider']
             q = self.sources[i]['quality']
+            # q_color = self.color_quality(q)
+            # q = ('[COLOR %s]' % (q_color)) + q + '[/COLOR]' 
+            # q = '[COLOR lime]' + q + '[/COLOR]' 
             s = self.sources[i]['source']
             s = s.rsplit('.', 1)[0]
             l = self.sources[i]['language']
-            try: f = (' | '.join(['[I]%s [/I]' % info.strip() for info in self.sources[i]['info'].split('|')]))
-            except: f = ''
+            try: f = (' | '.join(['%s ' % info.strip() for info in self.sources[i]['info'].split('|')]))
+            except: f = None
             try: d = self.sources[i]['debrid']
             except: d = self.sources[i]['debrid'] = ''
             if d.lower() == 'real-debrid': d = 'RD'
             if d.lower() == 'premiumize.me': d = 'PM'
-            if not d == '': label = '%02d | [B]%s | %s[/B] | ' % (int(i+1), d, p)
-            else: label = '%02d | [B]%s[/B] | ' % (int(i+1), p)
-            if multi == True and not l == 'en': label += '[B]%s[/B] | ' % l
-            if t:
-                if q in ['4K', '1440p', '1080p', '720p']: label += '%s | [B][I]%s [/I][/B] | [I]%s[/I] | %s' % (s, q, t, f)
-                elif q == 'SD': label += '%s | %s | [I]%s[/I]' % (s, f, t)
-                else: label += '%s | %s | [I]%s [/I] | [I]%s[/I]' % (s, f, q, t)
+
+            if not d == '':
+                label = '%02d | %s | %s | %s | ' % (int(i+1), q, d, p)
             else:
-                if q in ['4K', '1440p', '1080p', '720p']: label += '%s | [B][I]%s [/I][/B] | %s' % (s, q, f)
-                elif q == 'SD': label += '%s | %s' % (s, f)
-                else: label += '%s | %s | [I]%s [/I]' % (s, f, q)
-            label = label.replace('| 0 |', '|').replace(' | [I]0 [/I]', '')
-            label = re.sub('\[I\]\s+\[/I\]', ' ', label)
-            label = re.sub('\|\s+\|', '|', label)
-            label = re.sub('\|(?:\s+|)$', '', label)
+                label = '%02d | %s | %s | ' % (int(i+1), q, p)
+
+            if multi == True and not l == 'en':
+                label += '%s | ' % l
+
+            multiline_label = label
+
+            if not t == None:
+                if not f == None:
+                    multiline_label += '%s \n       %s | %s' % (s, f, t)
+                    label += '%s | %s | %s' % (s, f, t)
+                else:
+                    multiline_label += '%s \n       %s' % (s, t)
+                    label += '%s | %s' % (s, t)
+            else:
+                if not f == None:
+                    multiline_label += '%s \n       %s' % (s, f)
+                    label += '%s | %s' % (s, f)
+                else:
+                    multiline_label += '%s' % s
+                    label += '%s' % s
+
+            # label = label.replace('| 0 |', '|').replace(' | [I]0 [/I]', '')
+            # label = re.sub('\[I\]\s+\[/I\]', ' ', label)
+            # label = re.sub('\|\s+\|', '|', label)
+            # label = re.sub('\|(?:\s+|)$', '', label)
+
             if d:
                 if 'torrent' in s.lower():
                     if not torr_identify == 'nocolor':
+                        self.sources[i]['multiline_label'] = ('[COLOR %s]' % (torr_identify)) + multiline_label.upper() + '[/COLOR]'
                         self.sources[i]['label'] = ('[COLOR %s]' % (torr_identify)) + label.upper() + '[/COLOR]'
                     else:
+                        self.sources[i]['multiline_label'] = multiline_label.upper()
                         self.sources[i]['label'] = label.upper()
                 else:
                     if not prem_identify == 'nocolor':
+                        self.sources[i]['multiline_label'] = ('[COLOR %s]' % (prem_identify)) + multiline_label.upper() + '[/COLOR]'
                         self.sources[i]['label'] = ('[COLOR %s]' % (prem_identify)) + label.upper() + '[/COLOR]'
                     else:
+                        self.sources[i]['multiline_label'] = multiline_label.upper()
                         self.sources[i]['label'] = label.upper()
             else:
+                self.sources[i]['multiline_label'] = multiline_label.upper()
                 self.sources[i]['label'] = label.upper()
+            # self.sources[i]['label'] = label.upper()
         try: 
             if not HEVC == 'true': self.sources = [i for i in self.sources if not 'HEVC' in i['label']]
         except: pass
-        self.sources = [i for i in self.sources if 'label' in i]
+        self.sources = [i for i in self.sources if 'label' or 'multiline_label' in i]
         return self.sources
 
 
@@ -797,7 +866,9 @@ class sources:
         try:
             labels = [i['label'] for i in items]
             select = control.selectDialog(labels)
-            if select == -1: return 'close://'
+            # if select == -1: return 'close://'
+            if select == -1: return
+
             next = [y for x,y in enumerate(items) if x >= select]
             prev = [y for x,y in enumerate(items) if x < select][::-1]
             items = [items[select]]
@@ -892,6 +963,7 @@ class sources:
                 pass
         try: progressDialog.close()
         except: pass
+        # control.closeAll()
         return u
 
 
@@ -971,3 +1043,15 @@ class sources:
         elif n == '9': n = 'nocolor'
         else: n == 'blue'
         return n
+
+    def color_quality(self, quality):
+        color = 'darkred'
+        if quality == '4K':
+            color = 'lime'
+        if quality == '1080p':
+            color = 'greenyellow'
+        if quality == '720p':
+            color = 'sandybrown'
+        if quality == 'SD':
+            color = 'red'
+        return color

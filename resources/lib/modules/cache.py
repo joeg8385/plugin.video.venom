@@ -33,14 +33,12 @@ def get(function, duration, *args):
 
     try:
         key = _hash_function(function, args)
-        # xbmc.log('key = %s' % key, 2)
         cache_result = cache_get(key)
         if cache_result:
             if _is_cache_valid(cache_result['date'], duration):
                 return ast.literal_eval(cache_result['value'].encode('utf-8'))
 
         fresh_result = repr(function(*args))
-        # xbmc.log('fresh_result = %s' % fresh_result, 2)
         cache_insert(key, fresh_result)
 
 #       Sometimes None is returned as a string instead of the special value None.
@@ -121,7 +119,7 @@ def cache_clean(duration = 1209600):
         cursor = _get_connection_cursor()
         cursor.execute("DELETE FROM %s WHERE date < %d" % (cache_table, now - duration))
         cursor.execute("VACUUM")
-        cursor.commit()
+        cursor.connection.commit()
     except:
         pass
 
@@ -148,7 +146,7 @@ def cache_clear_providers():
             try:
                 cursor.execute("DROP TABLE IF EXISTS %s" % t)
                 cursor.execute("VACUUM")
-                cursor.commit()
+                cursor.connection.commit()
             except:
                 pass
     except:
@@ -162,7 +160,7 @@ def cache_clear_meta():
             try:
                 cursor.execute("DROP TABLE IF EXISTS %s" % t)
                 cursor.execute("VACUUM")
-                cursor.commit()
+                cursor.connection.commit()
             except:
                 pass
     except:
@@ -176,7 +174,7 @@ def cache_clear():
             try:
                 cursor.execute("DROP TABLE IF EXISTS %s" % t)
                 cursor.execute("VACUUM")
-                cursor.commit()
+                cursor.connection.commit()
             except:
                 pass
     except:
@@ -190,7 +188,7 @@ def cache_clear_search():
             try:
                 cursor.execute("DROP TABLE IF EXISTS %s" % t)
                 cursor.execute("VACUUM")
-                cursor.commit()
+                cursor.connection.commit()
             except:
                 pass
     except:

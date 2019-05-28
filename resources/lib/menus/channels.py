@@ -284,7 +284,7 @@ class channels:
                 item.setArt(art)
                 item.addContextMenuItems(cm)
                 item.setProperty('IsPlayable', isPlayable)
-                item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
+                item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 
                 video_streaminfo = {'codec': 'h264'}
                 item.addStreamInfo('video', video_streaminfo)

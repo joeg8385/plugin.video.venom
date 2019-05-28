@@ -4,10 +4,8 @@
     Venom Add-on
 '''
 
-import urlparse,sys,urllib,xbmcaddon,xbmcgui
-
+import urlparse, sys, urllib
 from resources.lib.modules import control
-
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?','')))
 action = params.get('action')
@@ -58,9 +56,9 @@ elif action == 'infoCheck':
     from resources.lib.menus import navigator
     navigator.navigator().infoCheck('')
 
-elif action == 'newsNavigator':
-    from resources.lib.menus import navigator
-    navigator.navigator().news()
+elif action == 'ShowNews':
+    from resources.lib.modules import newsinfo
+    newsinfo.news()
 
 elif action == 'ShowChangelog':
     from resources.lib.modules import changelog

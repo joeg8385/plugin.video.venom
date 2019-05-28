@@ -1147,11 +1147,11 @@ class indexer:
                         item.setProperty('Fanart_Image', addonFanart)
 
                     if queue == False:
-                        item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
+                        item.setInfo(type='video', infoLabels = control.metadataClean(meta))
                         item.addContextMenuItems(cm)
                         control.addItem(handle=int(sys.argv[1]), url=url, listitem=item, isFolder=folder)
                     else:
-                        item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
+                        item.setInfo(type='video', infoLabels = control.metadataClean(meta))
                         playlist.add(url=url, listitem=item)
             except:
                 pass
@@ -1420,7 +1420,7 @@ class player(xbmc.Player):
             item = control.item(path=url, iconImage=icon, thumbnailImage=icon)
             try: item.setArt({'icon': icon})
             except: pass
-            item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
+            item.setInfo(type='video', infoLabels = control.metadataClean(meta))
             control.player.play(url, item)
             control.resolve(int(sys.argv[1]), True, item)
 

@@ -2,9 +2,6 @@
 <settings>
 <!-- General - 0 -->
 	<category label="32310">
-<!-- 		<setting id="appearance.alt" type="action" label="32311" default="-" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=artwork)" visible="!System.HasAddon(script.venom.artwork)" /> -->
-<!-- 		<setting id="appearance.1" type="select" label="32311" values="Venom|Covenant|Incursion|Stealth|Exuary" default="Venom" visible="System.HasAddon(script.venom.artwork)" /> -->
-		<setting id="appearance.alt" type="action" label="32311" default="-" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=artwork)" visible="hidden" />
 		<setting id="appearance.1" type="select" label="32311" values="Venom|Exodus|Exuary" default="Venom" visible="true" />
 		<setting id="api.language" type="select" label="32316" values="Dutch|English|German|Polish|Spanish|Swedish|Turkish" default="English" />
 		<setting type="lsep" label="32319" />
@@ -100,6 +97,7 @@
 		<setting id="scrapers.timeout.1" type="slider" label="32312" default="30" range="10,60" option="int" />
 		<setting id="debrid.only" type="bool" label="32653" default="false" enable="true" />
 		<setting id="hosts.mode" type="enum" label="32331" lvalues="32332|32333|32334" default="2" />
+		<setting id="sourcelist.multiline" type="bool" label="Multiline source list" default="true" enable="eq(-1,1)" />
 		<setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="0" />
 		<setting type="lsep" label="32338" />
 		<setting id="hosts.quality" type="enum" label="32339" values="4K|1440p|1080p|720p|480p" default="0" />

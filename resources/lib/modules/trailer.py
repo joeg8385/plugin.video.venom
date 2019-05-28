@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import sys
 import base64
 import json
@@ -18,18 +17,21 @@ class trailer:
         self.key_link = random.choice(['QUl6YVN5RDd2aFpDLTYta2habTVuYlVyLTZ0Q0JRQnZWcnFkeHNz', 'QUl6YVN5Q2RiNEFNenZpVG0yaHJhSFY3MXo2Nl9HNXBhM2ZvVXd3'])
         self.key_link = '&key=%s' % base64.urlsafe_b64decode(self.key_link)
         self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=id&type=video&maxResults=5&q=%s' + self.key_link
+        self.youtube_search = 'https://www.googleapis.com/youtube/v3/search?q='
         self.youtube_watch = 'https://www.youtube.com/watch?v=%s'
+
 
     def play(self, name='', url='', windowedtrailer=0):
         try:
             url = self.worker(name, url)
             if not url:return
+
             title = control.infoLabel('ListItem.Title')
             if not title: title = control.infoLabel('ListItem.Label')
             icon = control.infoLabel('ListItem.Icon')
-            item = control.item(label=name, iconImage=icon, thumbnailImage=icon, path=url)
-            item.setInfo(type="Video",infoLabels={ "Title":name})
-            item.setProperty('IsPlayable','true')
+            item = control.item(label=title, iconImage=icon, thumbnailImage=icon, path=url)
+            item.setInfo(type="video", infoLabels={'title': title})
+            item.setProperty('IsPlayable', 'true')
             control.resolve(handle=int(sys.argv[1]), succeeded=True, listitem=item)
             if windowedtrailer == 1:
                 # The call to the play() method is non-blocking. So we delay further script execution to keep the script alive at this spot.

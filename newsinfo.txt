@@ -1,1 +1,1 @@
-[B][COLOR red]May 19, 2019[/COLOR][/B][COLOR yellow]--[/COLOR][I] Busy work week ahead so taking a bit of time off.   Hope to be back at it next week and would like to get back to UpNext   integration[/I]
+[B][COLOR red]May 28, 2019[/COLOR][/B][COLOR yellow]--[/COLOR][I] May be channging our source select list from a directory list style to a window list.    A window list items has far more control over text label sizes and color choices for items not by complete line either.    Allot of work but it's been started.[/I]
