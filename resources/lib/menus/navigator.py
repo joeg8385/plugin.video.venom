@@ -296,7 +296,7 @@ class navigator:
             url = '%s?action=addView&content=%s' % (sys.argv[0], content)
             poster, banner, fanart = control.addonPoster(), control.addonBanner(), control.addonFanart()
             item = control.item(label=title)
-            item.setInfo(type = 'Video', infoLabels = {'title': title})
+            item.setInfo(type='video', infoLabels = {'title': title})
             item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'banner': banner})
             item.setProperty('Fanart_Image', fanart)
             control.addItem(handle = int(sys.argv[1]), url=url, listitem=item, isFolder=False)

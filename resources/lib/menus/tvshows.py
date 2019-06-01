@@ -888,8 +888,10 @@ class tvshows:
             if tvdb == '0' and not imdb == '0':
                 url = self.tvdb_by_imdb % imdb
                 result = client.request(url, timeout = '10')
+
                 try: tvdb = client.parseDOM(result, 'seriesid')[0]
                 except: tvdb = '0'
+
                 try: name = client.parseDOM(result, 'SeriesName')[0]
                 except: name = '0'
                 dupe = re.findall('[***]Duplicate (\d*)[***]', name)
@@ -1006,7 +1008,7 @@ class tvshows:
             try: cast = [(x.encode('utf-8'), '') for x in cast]
             except: cast = []
             if cast == []: cast = '0'
-            # xbmc.log('line 996 from tvshows cast = %s' % cast, 2)
+
             try: plot = client.parseDOM(item, 'Overview')[0]
             except: plot = ''
             if plot == '': plot = '0'
@@ -1146,8 +1148,11 @@ class tvshows:
 
         watchedMenu = control.lang(32068).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32066).encode('utf-8')
         unwatchedMenu = control.lang(32069).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32067).encode('utf-8')
-        queueMenu = control.lang(32065).encode('utf-8')
         traktManagerMenu = control.lang(32070).encode('utf-8')
+        playlistManagerMenu = control.lang(35522).encode('utf-8')
+        queueMenu = control.lang(32065).encode('utf-8')
+        showPlaylistMenu = control.lang(35517).encode('utf-8')
+        clearPlaylistMenu = control.lang(35516).encode('utf-8')
         nextMenu = control.lang(32053).encode('utf-8')
         playRandom = control.lang(32535).encode('utf-8')
         addToLibrary = control.lang(32551).encode('utf-8')
@@ -1180,45 +1185,7 @@ class tvshows:
                 except: pass
                 try: meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
                 except: pass
-                sysmeta = urllib.quote_plus(json.dumps(meta))
 
-                item = control.item(label = label)
-
-                if flatten == True:
-                    url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
-                else:
-                    url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
-
-####-Context Menu and Counters-####
-                cm = []
-                if traktCredentials == True:
-                    cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, sysname, imdb, tvdb)))
-
-                try:
-                    overlay = int(playcount.getTVShowOverlay(indicators, imdb, tvdb))
-                    watched = overlay == 7
-                    if watched:
-                        meta.update({'playcount': 1, 'overlay': 7})
-                        cm.append((unwatchedMenu, 'RunPlugin(%s?action=tvPlaycount&name=%s&imdb=%s&tvdb=%s&query=6)' % (sysaddon, systitle, imdb, tvdb)))
-                    else:
-                        meta.update({'playcount': 0, 'overlay': 6})
-                        cm.append((watchedMenu, 'RunPlugin(%s?action=tvPlaycount&name=%s&imdb=%s&tvdb=%s&query=7)' % (sysaddon, systitle, imdb, tvdb)))
-                    if unwatchedEnabled and not watched:
-                        count = playcount.getShowCount(indicators, imdb, tvdb, unwatchedLimit)
-                        if count:
-                            item.setProperty('TotalEpisodes', str(count['total']))
-                            item.setProperty('WatchedEpisodes', str(count['watched']))
-                            item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
-                except: pass
-
-                cm.append(('Find similar', 'ActivateWindow(10025,%s?action=tvshows&url=http://api.trakt.tv/shows/%s/related,return)' % (sysaddon, imdb)))
-                cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=season&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, urllib.quote_plus(systitle), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(tvdb))))
-                cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-                if isOld == True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
-                cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tvdb)))
-                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
-####################################
 
                 poster = '0'
                 # if poster == '0' and 'poster3' in i: poster = i['poster3']
@@ -1263,16 +1230,64 @@ class tvshows:
 
                 art = {}
                 if not poster == '0' and not poster == None: art.update({'poster' : poster, 'tvshow.poster' : poster, 'season.poster' : poster})
+                if not fanart == '0' and not fanart == None: art.update({'fanart' : fanart})
                 if not icon == '0' and not icon == None: art.update({'icon' : icon})
                 if not thumb == '0' and not thumb == None: art.update({'thumb' : thumb})
                 if not banner == '0' and not banner == None: art.update({'banner' : banner})
                 if not clearlogo == '0' and not clearlogo == None: art.update({'clearlogo' : clearlogo})
                 if not clearart == '0' and not clearart == None: art.update({'clearart' : clearart})
                 if not landscape == '0' and not landscape == None: art.update({'landscape' : landscape})
-                if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
 
+                item = control.item(label = label)
+
+                if flatten == True:
+                    url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
+                else:
+                    url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
+
+
+####-Context Menu and Counters-####
+                cm = []
+                if traktCredentials == True:
+                    cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, sysname, imdb, tvdb)))
+
+                try:
+                    overlay = int(playcount.getTVShowOverlay(indicators, imdb, tvdb))
+                    watched = overlay == 7
+                    if watched:
+                        meta.update({'playcount': 1, 'overlay': 7})
+                        cm.append((unwatchedMenu, 'RunPlugin(%s?action=tvPlaycount&name=%s&imdb=%s&tvdb=%s&query=6)' % (sysaddon, systitle, imdb, tvdb)))
+                    else:
+                        meta.update({'playcount': 0, 'overlay': 6})
+                        cm.append((watchedMenu, 'RunPlugin(%s?action=tvPlaycount&name=%s&imdb=%s&tvdb=%s&query=7)' % (sysaddon, systitle, imdb, tvdb)))
+                    if unwatchedEnabled and not watched:
+                        count = playcount.getShowCount(indicators, imdb, tvdb, unwatchedLimit)
+                        if count:
+                            item.setProperty('TotalEpisodes', str(count['total']))
+                            item.setProperty('WatchedEpisodes', str(count['watched']))
+                            item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
+                except: pass
+
+                sysmeta = urllib.quote_plus(json.dumps(meta))
+                sysart = urllib.quote_plus(json.dumps(art))
+
+                cm.append(('Find similar', 'ActivateWindow(10025,%s?action=tvshows&url=http://api.trakt.tv/shows/%s/related,return)' % (sysaddon, imdb)))
+                cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=season&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, urllib.quote_plus(systitle), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(tvdb))))
+                # cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, systitle, sysurl, sysmeta, sysart)))
+                cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, systitle)))
+                cm.append((showPlaylistMenu, 'RunPlugin(%s?action=showPlaylist)' % sysaddon))
+                cm.append((clearPlaylistMenu, 'RunPlugin(%s?action=clearPlaylist)' % sysaddon))
+
+                if isOld == True:
+                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tvdb)))
+                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+####################################
+
+
+                if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
                 item.setArt(art)
-                item.setInfo(type = 'Video', infoLabels=control.metadataClean(meta))
+                item.setInfo(type='video', infoLabels=control.metadataClean(meta))
                 video_streaminfo = {'codec': 'h264'}
                 item.addStreamInfo('video', video_streaminfo)
                 item.addContextMenuItems(cm)

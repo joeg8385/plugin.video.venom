@@ -121,7 +121,7 @@ class documentary:
             control.execute('PlayMedia(%s)' % url)
 
 #            item = xbmcgui.ListItem(str(docu_title), iconImage='DefaultVideo.png', thumbnailImage='DefaultVideo.png')
-#            item.setInfo(type='Video', infoLabels={'Title': str(docu_title), 'Plot': str(docu_title)})
+#            item.setInfo(type='video', infoLabels={'Title': str(docu_title), 'Plot': str(docu_title)})
 #            item.setProperty('IsPlayable','true')
 #            item.setPath(url)
 #            control.resolve(int(sys.argv[1]), True, item)

@@ -1,1 +1,1 @@
-[B][COLOR red]May 28, 2019[/COLOR][/B][COLOR yellow]--[/COLOR][I] May be channging our source select list from a directory list style to a window list.    A window list items has far more control over text label sizes and color choices for items not by complete line either.    Allot of work but it's been started.[/I]
+[B][COLOR red]May 28, 2019[/COLOR][/B][COLOR yellow]--[/COLOR][I] Allot of work went into the new playlist manager but was needed    for advanced playlist handling for what's in store....stay tuned!

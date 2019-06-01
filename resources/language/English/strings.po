@@ -2310,7 +2310,7 @@ msgid "Playlist Cleared"
 msgstr ""
 
 msgctxt "#35522"
-msgid ""
+msgid "Playlist Manager"
 msgstr ""
 
 msgctxt "#35523"

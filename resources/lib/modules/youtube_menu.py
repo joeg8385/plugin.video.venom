@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import xbmcplugin,xbmcgui,sys,os,re,urllib,urllib2
-from resources.lib.modules import client,control,workers
+import sys, re, urllib, urllib2
+from resources.lib.modules import control
 
 syshandle = int(sys.argv[1])
 
@@ -30,47 +30,47 @@ class youtube_menu(object):
     def addMenuItem(self, name, action, subid, iconimage, fanart, description='', isFolder=True):
         u=sys.argv[0] + "?action=" + action + "&subid=" + subid
         liz=control.item(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-        liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": description})
-        liz.setProperty('fanart_image', fanart)
-        control.addItem(handle=syshandle,url=u,listitem=liz,isFolder=isFolder)
+        liz.setInfo(type='video', infoLabels={'title': name, 'plot': description})
+        liz.setProperty('Fanart_Image', fanart)
+        control.addItem(handle=syshandle, url=u, listitem=liz, isFolder=isFolder)
 
 
     def addSectionItem(self, name, iconimage, fanart):
         u=sys.argv[0]+"?action=sectionItem"
         liz=control.item(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-        liz.setProperty('fanart_image', fanart)
-        control.addItem(handle=syshandle,url=u,listitem=liz,isFolder=False)
+        liz.setProperty('Fanart_Image', fanart)
+        control.addItem(handle=syshandle, url=u, listitem=liz, isFolder=False)
 
 
     def addSearchItem(self, name, search_id, icon, fanart):
         work_url = "plugin://plugin.video.youtube/kodion/search/query/?q="+search_id+"/"
         liz=control.item(name)
-        liz.setInfo( type="Video", infoLabels={ "Title": name })
-        liz.setArt({ 'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart })
-        control.addItem(handle=syshandle,url=work_url,listitem=liz,isFolder=True)
+        liz.setInfo( type='video', infoLabels={'title': name})
+        liz.setArt({'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart})
+        control.addItem(handle=syshandle, url=work_url, listitem=liz, isFolder=True)
 
 
     def addChannelItem(self, name, channel_id, icon, fanart):
         work_url = "plugin://plugin.video.youtube/channel/"+channel_id+"/"
         liz=control.item(name)
-        liz.setInfo( type="Video", infoLabels={ "Title": name })
-        liz.setArt({ 'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart })
-        control.addItem(handle=syshandle,url=work_url,listitem=liz,isFolder=True)
+        liz.setInfo( type='video', infoLabels={'title': name})
+        liz.setArt({'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart})
+        control.addItem(handle=syshandle, url=work_url, listitem=liz, isFolder=True)
 
 
     def addPlaylistItem(self, name, playlist_id, icon, fanart):
         work_url = "plugin://plugin.video.youtube/playlist/"+playlist_id+"/"
         liz=control.item(name)
-        liz.setInfo( type="Video", infoLabels={ "Title": name })
-        liz.setArt({ 'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart })
-        control.addItem(handle=syshandle,url=work_url,listitem=liz,isFolder=True)
+        liz.setInfo( type='video', infoLabels={'title': name})
+        liz.setArt({'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart})
+        control.addItem(handle=syshandle, url=work_url, listitem=liz, isFolder=True)
 
 
     def addVideoItem(self, name, video_id, icon, fanart):
         work_url = "plugin://plugin.video.youtube/play/?video_id="+video_id
         liz=control.item(name)
-        liz.setInfo( type="Video", infoLabels={ "Title": name })
+        liz.setInfo( type='video', infoLabels={'title': name})
         liz.setArt({ 'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart })
         liz.setProperty('IsPlayable', 'true')
-        control.addItem(handle=syshandle,url=work_url,listitem=liz,isFolder=True)
+        control.addItem(handle=syshandle, url=work_url, listitem=liz, isFolder=True)
 

@@ -212,6 +212,7 @@ def metadataClean(metadata):
     return {k: v for k, v in metadata.iteritems() if k in allowed}
 
 
+
 ####################################################
 # --- Dialogs
 ####################################################
@@ -232,11 +233,13 @@ def notification(title=None, message=None, icon=None, time=3000, sound=False):
     if isinstance(title, (int, long)):
         heading = lang(title).encode('utf-8')
     else:
-        heading = str(title).encode('utf-8')
+        # heading = str(title).encode('utf-8')
+        heading = str(title)
     if isinstance(message, (int, long)):
         body = lang(message).encode('utf-8')
     else:
-        body = str(message).encode('utf-8')
+        # body = str(message).encode('utf-8')
+        body = str(message)
     if icon == None or 'icon' or 'default':
         icon = addonIcon()
     elif icon == 'INFO':
@@ -256,15 +259,6 @@ def selectDialog(list, heading=addonInfo('name')):
     return dialog.select(heading, list)
 
 
-# def optionDialog(self, message, labelConfirm = None, labelDeny = None, title = None):
-# if not labelConfirm == None:
-# labelConfirm = self.__translate(labelConfirm)
-# if not labelDeny == None:
-# labelDeny = self.__translate(labelDeny)
-# return xbmcgui.Dialog().yesno(self.title(title), self.__translate(message), yeslabel = labelConfirm, nolabel = labelDeny)
-########################
-
-
 def busy():
     if int(getKodiVersion()) >= 18:
         return execute('ActivateWindow(busydialognocancel)')
@@ -281,9 +275,9 @@ def idle():
 
 def hide():
     if int(getKodiVersion()) >= 18:
-        xbmc.executebuiltin('Dialog.Close(busydialognocancel)')
+        return execute('Dialog.Close(busydialognocancel)')
     else:
-        xbmc.executebuiltin('Dialog.Close(busydialog)')
+        return execute('Dialog.Close(busydialog)')
 
 
 def closeAll():
@@ -293,6 +287,10 @@ def closeAll():
 def visible():
     if int(getKodiVersion()) >= 18 and xbmc.getCondVisibility('Window.IsActive(busydialognocancel)') == 1: return True
     return xbmc.getCondVisibility('Window.IsActive(busydialog)') == 1
+########################
+
+
+
 
 
 def refresh():

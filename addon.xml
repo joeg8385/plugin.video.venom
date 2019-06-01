@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="2.9.3" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="2.9.4" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -34,10 +34,12 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v2.9.3 - May 28, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Source list now utilizes multiline list items. Settings
-    contain option to turn this on or off base on your preference.[/I]
-[COLOR yellow]--[/COLOR][I] added a few more networks to TV Shows[/I]
+[B][COLOR red]Update - v2.9.4 - June 1, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added a new Playlist Manager to context menu for none
+    directory type list items.  You can add, remove, view playlist,
+    and clear entire playlist.  For directory list items I added the
+    playlist viewer and playlist clear options.  I suggest using
+    the existing "Add to playlist" option for full shows and seasons[/I]
 		</news>
 	</extension>
 

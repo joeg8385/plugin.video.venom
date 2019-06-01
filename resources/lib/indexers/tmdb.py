@@ -30,12 +30,11 @@ class movies:
         self.tmdb_link = 'http://api.themoviedb.org'
         self.tmdb_image = 'http://image.tmdb.org/t/p/original'
         self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
-        # self.tmdb_background_path = 'http://image.tmdb.org/t/p/w1280'
+        self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
 
-        # self.tmdb_api_link = 'http://api.themoviedb.org/3/list/%s?api_key=%s' % ('%s', '%s')
         self.tmdb_info_link = 'http://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,external_ids' % ('%s', self.tmdb_key, self.lang)
 ###                                                                                  other "append_to_response" options                                           alternative_titles,videos,images
-        self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=' + self.tmdb_key
+        self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
 
 
     def get_request(self, url):
@@ -403,36 +402,32 @@ class movies:
                 pass
         return self.list
 
-# ###--TMDb artwork
-            # try:
-                # if self.tmdb_key == '': raise Exception()
-                # art2 = client.request(self.tmdb_art_link % imdb, timeout='30', error=True)
-                # art2 = json.loads(art2)
-            # except: return extended_art
 
-            # try:
-                # poster3 = art2['posters']
-                # poster3 = [(x['width'], x['file_path']) for x in poster3]
-                # poster3 = [x[1] for x in poster3]
-                # poster3 = self.tmdb_poster_path + poster3[0]
-            # except:
-                # poster3 = '0'
-                # return extended_art
+    def tmdb_art(self, tmdb):
+        try:
+            if self.tmdb_key == '': raise Exception()
+            art3 = client.request(self.tmdb_art_link % tmdb, timeout='20', error=True)
+            art3 = json.loads(art3)
+        except: return None
 
-            # extended_art = {'extended': True, 'banner': banner, 'poster2': poster2, 'poster3': poster3, 'fanart2': fanart2, 'fanart3': '0', 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape}
-            # try:
-                # fanart2 = art2['backdrops']
-                # fanart2 = [(x['width'], x['file_path']) for x in fanart2]
-                # fanart2 = [x[1] for x in fanart2]
-                # fanart2 = self.tmdb_background_path + fanart2[0]
-            # except:
-                # fanart2 = '0'
-                # return extended_art
-            # extended_art = {'extended': True, 'banner': banner, 'poster2': poster2, 'poster3': poster3, 'fanart2': fanart2, 'fanart3': fanart3, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape}
+        try:
+            poster3 = art3['posters']
+            poster3 = [(x['width'], x['file_path']) for x in poster3]
+            poster3 = [x[1] for x in poster3]
+            poster3 = self.tmdb_poster + poster3[0]
+        except:
+            poster3 = '0'
 
-            # return extended_art
-        # except:
-            # return None
+        try:
+            fanart3 = art3['backdrops']
+            fanart3 = [(x['width'], x['file_path']) for x in fanart3]
+            fanart3 = [x[1] for x in fanart3]
+            fanart3 = self.tmdb_fanart + fanart3[0]
+        except:
+            fanart3 = '0'
+
+        extended_art = {'extended': True, 'poster3': poster3, 'fanart3': fanart3}
+        return extended_art
 
 
 class tvshows:
@@ -448,12 +443,15 @@ class tvshows:
         if self.tmdb_key == '' or self.tmdb_key == None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
-        self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
-        # self.tmdb_background_path = 'http://image.tmdb.org/t/p/w1280'
+        self.tmdb_link = 'http://api.themoviedb.org'
         self.tmdb_image = 'http://image.tmdb.org/t/p/original'
+        self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
+        self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
+
         self.tmdb_info_link = 'http://api.themoviedb.org/3/tv/%s?api_key=%s&language=%s&append_to_response=credits,content_ratings,external_ids' % ('%s', self.tmdb_key, self.lang)
 ###                                                                                  other "append_to_response" options                                           alternative_titles,videos,images
 
+        self.tmdb_art_link = 'http://api.themoviedb.org/3/tv/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
 
 
     def get_request(self, url):
@@ -821,3 +819,30 @@ class tvshows:
             except:
                 pass
         return self.list
+
+
+    def tmdb_art(self, tmdb):
+        try:
+            if self.tmdb_key == '': raise Exception()
+            art3 = client.request(self.tmdb_art_link % tmdb, timeout='20', error=True)
+            art3 = json.loads(art3)
+        except: return None
+
+        try:
+            poster3 = art3['posters']
+            poster3 = [(x['width'], x['file_path']) for x in poster3]
+            poster3 = [x[1] for x in poster3]
+            poster3 = self.tmdb_poster + poster3[0]
+        except:
+            poster3 = '0'
+
+        try:
+            fanart3 = art3['backdrops']
+            fanart3 = [(x['width'], x['file_path']) for x in fanart3]
+            fanart3 = [x[1] for x in fanart3]
+            fanart3 = self.tmdb_fanart + fanart3[0]
+        except:
+            fanart3 = '0'
+
+        extended_art = {'extended': True, 'poster3': poster3, 'fanart3': fanart3}
+        return extended_art

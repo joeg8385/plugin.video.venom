@@ -4,10 +4,11 @@
     Venom Add-on
 '''
 
-import urlparse, sys, urllib
+import urlparse, sys, urllib, xbmc
 from resources.lib.modules import control
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?','')))
+
 action = params.get('action')
 
 subid = params.get('subid')
@@ -24,6 +25,7 @@ premiered = params.get('premiered')
 url = params.get('url')
 image = params.get('image')
 meta = params.get('meta')
+art = params.get('art')
 select = params.get('select')
 query = params.get('query')
 source = params.get('source')
@@ -381,10 +383,6 @@ elif action == 'refresh':
     from resources.lib.modules import control
     control.refresh()
 
-elif action == 'queueItem':
-    from resources.lib.modules import control
-    control.queueItem()
-
 elif action == 'openSettings':
     from resources.lib.modules import control
     control.openSettings(query)
@@ -441,6 +439,31 @@ elif action == 'cachesyncMovies':
 elif action == 'cachesyncTVShows':
     from resources.lib.modules import trakt
     trakt.cachesyncTVShows()
+
+
+####################################################
+# PLAYLIST
+####################################################
+elif action == 'playlistManager':
+    from resources.lib.modules import playlist
+    playlist.playlistManager(name, url, meta, art)
+
+elif action == 'showPlaylist':
+    from resources.lib.modules import playlist
+    playlist.playlistShow()
+
+elif action == 'clearPlaylist':
+    from resources.lib.modules import playlist
+    playlist.playlistClear()
+
+elif action == 'queueItem':
+    from resources.lib.modules import control
+    control.queueItem()
+    if name == None:
+        control.notification(title = 35515, message = 35519, icon = 'INFO', sound = False)
+    else:
+        control.notification(title = name, message = 35519, icon = 'INFO', sound = False)
+
 
 
 

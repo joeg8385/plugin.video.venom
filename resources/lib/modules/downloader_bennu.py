@@ -14,17 +14,17 @@ def downloader():
     if not downloadPath == '':
         item = control.item('[COLOR FF00b8ff]Downloads[/COLOR]', iconImage=thumb, thumbnailImage=thumb)
         item.addContextMenuItems([], replaceItems=True)
-        item.setProperty('fanart_image', fanart)
+        item.setProperty('Fanart_Image', fanart)
         control.addItem(handle=int(sys.argv[1]), url=downloadPath, listitem=item, isFolder=True)
     if status == 'downloading':
         item = control.item('[COLOR red]Stop Downloads[/COLOR]', iconImage=thumb, thumbnailImage=thumb)
         item.addContextMenuItems([], replaceItems=True)
-        item.setProperty('fanart_image', fanart)
+        item.setProperty('Fanart_Image', fanart)
         control.addItem(handle=int(sys.argv[1]), url=sys.argv[0]+'?action=stopDownload', listitem=item, isFolder=True)
     else:
         item = control.item('[COLOR FF00b8ff]Start Downloads[/COLOR]', iconImage=thumb, thumbnailImage=thumb)
         item.addContextMenuItems([], replaceItems=True)
-        item.setProperty('fanart_image', fanart)
+        item.setProperty('Fanart_Image', fanart)
         control.addItem(handle=int(sys.argv[1]), url=sys.argv[0]+'?action=startDownload', listitem=item, isFolder=True)
     if status == 'downloading':
         item = control.item('[COLOR gold]Download Status[/COLOR]', iconImage=thumb, thumbnailImage=thumb)

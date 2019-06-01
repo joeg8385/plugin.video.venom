@@ -4,14 +4,13 @@
     Venom Add-on
 '''
 
-import os,re,imp,json,urlparse,time,base64,threading,xbmc
+import os, re, imp, json, urlparse, time, threading
 
 from resources.lib.modules import cache
 from resources.lib.modules import control
 from resources.lib.modules import cleandate
 from resources.lib.modules import client
 from resources.lib.modules import utils
-from resources.lib.modules import log_utils
 
 from resources.lib.extensions import tools
 from resources.lib.extensions import database
@@ -117,8 +116,8 @@ def _error(url, post, timestamp, message):
     _cache(url = url, post = post, timestamp = timestamp)
     if control.setting('trakt.notifications'):
         control.notification(title = 32315, message = message, icon = 'ERROR', sound = True)
-    control.idle()
-    sys.exit()
+    control.hide()
+    # sys.exit()
     return None
 
 
@@ -856,7 +855,6 @@ def getTVShowSummary(id, full=True):
         url = '/shows/%s' % id
         if full: url += '?extended=full'
         return cache.get(getTraktAsJson, 48, url)
-        # return getTraktAsJson(url)
     except:
         return
 
@@ -911,7 +909,7 @@ def SearchAll(title, year, full=True):
 
 def SearchMovie(title, year, full=True):
     try:
-        url = '/search/movie?query=%s' % urllib.quote_plus(title)
+        url = '/search/movie?query=%s' % title
         if year: url += '&year=%s' % year
         if full: url += '&extended=full'
         return getTraktAsJson(url)
@@ -921,7 +919,7 @@ def SearchMovie(title, year, full=True):
 
 def SearchTVShow(title, year, full=True):
     try:
-        url = '/search/show?query=%s' % urllib.quote_plus(title)
+        url = '/search/show?query=%s' % title
         if year: url += '&year=%s' % year
         if full: url += '&extended=full'
         return getTraktAsJson(url)

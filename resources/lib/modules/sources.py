@@ -641,7 +641,6 @@ class sources:
             if control.setting('hosts.mode') == '2': url += '&select=1'
             else: url += '&select=2'
             control.execute('RunPlugin(%s)' % url)
-
         except:
             pass
 
@@ -812,7 +811,6 @@ class sources:
             else:
                 self.sources[i]['multiline_label'] = multiline_label.upper()
                 self.sources[i]['label'] = label.upper()
-            # self.sources[i]['label'] = label.upper()
         try: 
             if not HEVC == 'true': self.sources = [i for i in self.sources if not 'HEVC' in i['label']]
         except: pass

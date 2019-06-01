@@ -4,7 +4,8 @@
     Venom Add-on
 '''
 
-import os,sys,re,json,urllib,urlparse,datetime
+import os ,sys ,re , datetime
+import urllib, urlparse, json
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleangenre
@@ -48,10 +49,11 @@ class movies:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
         self.tmdb_link = 'http://api.themoviedb.org'
-        # self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&language=en-US&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
-        self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=' + self.tmdb_key
+        self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
         self.tmdb_background_path = 'http://image.tmdb.org/t/p/w1280'
         self.tmdb_poster_path = "https://image.tmdb.org/t/p/w500"
+
+        # self.tmdb_img_link = 'https://image.tmdb.org/t/p/w%s%s'
 
         self.tmdb_popular_link = 'http://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&page=1'
         self.tmdb_toprated_link = 'http://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
@@ -809,7 +811,7 @@ class movies:
 
 
     def worker(self, level=1):
-        # if self.list == None or self.list == []: return
+        if self.list == None or self.list == []: return
         self.meta = []
         total = len(self.list)
 
@@ -924,7 +926,7 @@ class movies:
 
             try:
                 poster2 = art['movieposter']
-                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '00']
+                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '']
                 poster2 = [(x[0], x[1]) for x in poster2]
                 poster2 = sorted(poster2, key=lambda x: int(x[1]), reverse=True)
                 poster2 = [x[0] for x in poster2][0]
@@ -1021,6 +1023,7 @@ class movies:
                 fanart2 = self.tmdb_background_path + fanart2[0]
             except:
                 fanart2 = '0'
+##---
 
             item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart,
                     'discart': discart, 'landscape': landscape, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
@@ -1053,12 +1056,12 @@ class movies:
         except: isOld = True
 
         indicators = playcount.getMovieIndicators()
-
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
         playbackMenu = control.lang(32063).encode('utf-8') if control.setting('hosts.mode') == '2' else control.lang(32064).encode('utf-8')
         watchedMenu = control.lang(32068).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32066).encode('utf-8')
         unwatchedMenu = control.lang(32069).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32067).encode('utf-8')
+        playlistManagerMenu = control.lang(35522).encode('utf-8')
         queueMenu = control.lang(32065).encode('utf-8')
         traktManagerMenu = control.lang(32070).encode('utf-8')
         nextMenu = control.lang(32053).encode('utf-8')
@@ -1074,7 +1077,8 @@ class movies:
                 try: labelProgress = label + ' [' + str(int(i['progress'] * 100)) + '%]'
                 except: labelProgress = label
 
-                sysname = urllib.quote_plus('%s (%s)' % (title, year))
+                # sysname = urllib.quote_plus('%s (%s)' % (title, year))
+                sysname = urllib.quote_plus(label)
                 systitle = urllib.quote_plus(title)
 
                 meta = dict((k,v) for k, v in i.iteritems() if not v == '0')
@@ -1100,37 +1104,9 @@ class movies:
                 try: meta.update({'year': int(meta['year'])})
                 except: pass
 
-                poster = [i[x] for x in ['poster3', 'poster0', 'poster2'] if i.get(x, '0') != '0']
+                poster = [i[x] for x in ['poster3', 'poster', 'poster2'] if i.get(x, '0') != '0']
                 poster = poster[0] if poster else addonPoster
                 meta.update({'poster': poster})
-                sysmeta = urllib.quote_plus(json.dumps(meta))
-
-                url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
-                sysurl = urllib.quote_plus(url)
-                # path = '%s?action=play&title=%s&year=%s&imdb=%s' % (sysaddon, systitle, year, imdb)
-
-####-Context Menu and Counters-####
-                cm = []
-                if traktCredentials == True:
-                    cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
-                try:
-                    overlay = int(playcount.getMovieOverlay(indicators, imdb))
-                    if overlay == 7:
-                        cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
-                        meta.update({'playcount': 1, 'overlay': 7})
-                    else:
-                        cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
-                        meta.update({'playcount': 0, 'overlay': 6})
-                except: pass
-
-                cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=http://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
-                cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-                cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
-                if isOld == True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
-                cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
-                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
-####################################
 
                 icon = '0'
                 if icon == '0' and 'icon' in i: icon = i['icon']
@@ -1142,19 +1118,15 @@ class movies:
                 if banner == '0' and 'banner' in i: banner = i['banner']
 
                 poster = '0'
-                try:
-                    poster = i['poster3']
-                    if poster == '0':
-                        if 'poster2' in i: poster = i['poster2']
-                        if poster == '0':
-                            if 'poster' in i: poster = i['poster']
-                except: pass
+                if poster == '0' and 'poster3' in i: poster = i['poster3']
+                if poster == '0' and 'poster2' in i: poster = i['poster2']
+                if poster == '0' and 'poster' in i: poster = i['poster']
 
                 fanart = '0'
                 if settingFanart:
-                    fanart = i['fanart2']
-                    if fanart == '0':
-                        if 'fanart' in i: fanart = i['fanart']
+                    if fanart == '0' and 'fanart3' in i: fanart = i['fanart3']
+                    if fanart == '0' and 'fanart2' in i: fanart = i['fanart2']
+                    if fanart == '0' and 'fanart' in i: fanart = i['fanart']
 
                 clearlogo = '0'
                 if clearlogo == '0' and 'clearlogo' in i: clearlogo = i['clearlogo']
@@ -1175,18 +1147,50 @@ class movies:
                 if fanart == '0': fanart = addonFanart
 
                 art = {}
-                if not poster == '0' and not poster == None: art.update({'poster' : poster})
                 if not icon == '0' and not icon == None: art.update({'icon' : icon})
                 if not thumb == '0' and not thumb == None: art.update({'thumb' : thumb})
                 if not banner == '0' and not banner == None: art.update({'banner' : banner})
+                if not poster == '0' and not poster == None: art.update({'poster' : poster})
+                if not fanart == '0' and not fanart == None: art.update({'fanart' : fanart})
                 if not clearlogo == '0' and not clearlogo == None: art.update({'clearlogo' : clearlogo})
                 if not clearart == '0' and not clearart == None: art.update({'clearart' : clearart})
                 if not landscape == '0' and not landscape == None: art.update({'landscape' : landscape})
                 if not discart == '0' and not discart == None: art.update({'discart' : discart})
 
-                item = control.item(label = labelProgress)
-                if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
 
+####-Context Menu and Counters-####
+                cm = []
+                if traktCredentials == True:
+                    cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
+                try:
+                    overlay = int(playcount.getMovieOverlay(indicators, imdb))
+                    if overlay == 7:
+                        cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
+                        meta.update({'playcount': 1, 'overlay': 7})
+                    else:
+                        cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
+                        meta.update({'playcount': 0, 'overlay': 6})
+                except: pass
+
+                sysmeta = urllib.quote_plus(json.dumps(meta))
+                sysart = urllib.quote_plus(json.dumps(art))
+
+                url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
+                sysurl = urllib.quote_plus(url)
+                # path = '%s?action=play&title=%s&year=%s&imdb=%s' % (sysaddon, systitle, year, imdb)
+
+                cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=http://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
+                cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
+                cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
+                cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
+                if isOld == True:
+                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
+                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+####################################
+
+                item = control.item(label=labelProgress)
+                if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
                 item.setArt(art)
                 item.setProperty('IsPlayable', isPlayable)
                 item.setInfo(type='video', infoLabels=control.metadataClean(meta))
@@ -1258,9 +1262,9 @@ class movies:
                 if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
 
                 item.addContextMenuItems(cm)
-                control.addItem(handle = syshandle, url = url, listitem = item, isFolder = True)
+                control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:
                 pass
 
         control.content(syshandle, 'addons')
-        control.directory(syshandle, cacheToDisc = True)
+        control.directory(syshandle, cacheToDisc=True)

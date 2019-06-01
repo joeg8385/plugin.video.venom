@@ -18,14 +18,10 @@ class movies:
     def __init__(self):
         self.count = 40
         self.list = []
+        self.meta = []
 
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
-        self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
-        self.today_date = (self.datetime).strftime('%Y-%m-%d')
-        self.month_date = (self.datetime - datetime.timedelta(days = 30)).strftime('%Y-%m-%d')
-        self.year_date = (self.datetime - datetime.timedelta(days = 365)).strftime('%Y-%m-%d')
 
-        self.imdb_link = 'https://www.imdb.com'
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
 
         self.lang = control.apiLanguage()['trakt']
@@ -34,20 +30,15 @@ class movies:
         if self.tmdb_key == '' or self.tmdb_key == None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
-        # self.tm_art_link = 'https://api.themoviedb.org/3/movie/%s/images?api_key=%s&language=en-US&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
-        self.tm_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=' + self.tmdb_key
-        self.tm_img_link = 'https://image.tmdb.org/t/p/w%s%s'
+        self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
+        self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
 
-        self.fanart_tv_user = control.setting('fanart.tv.user')
-        if self.fanart_tv_user == '' or self.fanart_tv_user == None:
-            self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
-        self.user = str(self.fanart_tv_user) + str(self.tmdb_key)
-        self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/movies/%s'
-        self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
+        self.tmdb_info_link = 'http://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,external_ids' % ('%s', self.tmdb_key, self.lang)
+###                                                                                  other "append_to_response" options                                           alternative_titles,videos,images
+        self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
 
 
     def imdb_list(self, url):
-        list = []
         try:
             for i in re.findall('date\[(\d+)\]', url):
                 url = url.replace('date[%s]' % i, (self.datetime - datetime.timedelta(days = int(i))).strftime('%Y-%m-%d'))
@@ -92,6 +83,8 @@ class movies:
                 title = client.parseDOM(item, 'a')[1]
                 title = client.replaceHTMLCodes(title)
                 title = title.encode('utf-8')
+
+                originaltitle = title
 
                 year = client.parseDOM(item, 'span', attrs = {'class': 'lister-item-year.+?'})
                 year = re.findall('(\d{4})', year[0])[0]
@@ -201,11 +194,26 @@ class movies:
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
-                list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
+                item = {}
+                item = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
+                                'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
+                                'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False, 'next': next}
+                meta = {}
+                meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
+
+                # fanart_thread = threading.Thread
+                from resources.lib.indexers import fanarttv
+                extended_art = fanarttv.get_movie_art(tmdb)
+                if not extended_art == None:
+                    item.update(extended_art)
+                    meta.update(item)
+
+                self.list.append(item)
+                self.meta.append(meta)
+                metacache.insert(self.meta)
             except:
                 pass
-
-        return list
+        return self.list
 
 
     def imdb_person_list(self, url):
@@ -278,14 +286,6 @@ class movies:
 
             item = trakt.getMovieSummary(id=imdb)
 
-            title = item.get('title')
-            title = client.replaceHTMLCodes(title)
-
-            originaltitle = title
-
-            year = item.get('year', 0)
-            year = re.sub('[^0-9]', '', str(year))
-
             imdb = item.get('ids', {}).get('imdb', '0')
             imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
 
@@ -294,27 +294,6 @@ class movies:
             premiered = item.get('released', '0')
             try: premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
             except: premiered = '0'
-
-            genre = item.get('genres', [])
-            genre = [x.title() for x in genre]
-            genre = ' / '.join(genre).strip()
-            if not genre: genre = '0'
-
-            duration = str(item.get('runtime', 0))
-
-            rating = item.get('rating', '0')
-            if not rating or rating == '0.0': rating = '0'
-
-            votes = item.get('votes', '0')
-            try: votes = str(format(int(votes), ',d'))
-            except: pass
-
-            mpaa = item.get('certification', '0')
-            if not mpaa: mpaa = '0'
-
-            tagline = item.get('tagline', '0')
-
-            plot = item.get('overview', '0')
 
             people = trakt.getPeople(imdb, 'movies')
 
@@ -339,93 +318,6 @@ class movies:
             except:
                 pass
 
-
-###--Fanart.tv artwork
-            try:
-                artmeta = True
-                art = client.request(self.fanart_tv_art_link % tmdb, headers = self.fanart_tv_headers, timeout = '20', error = True)
-                try:
-                    art = json.loads(art)
-                except: artmeta = False
-            except:
-                pass
-
-            try:
-                poster2 = art['movieposter']
-                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '00']
-                poster2 = [(x[0], x[1]) for x in poster2]
-                poster2 = sorted(poster2, key=lambda x: int(x[1]), reverse=True)
-                poster2 = [x[0] for x in poster2][0]
-                poster2 = poster2.encode('utf-8')
-            except:
-                poster2 = '0'
-
-            try:
-                if 'moviebackground' in art: fanart = art['moviebackground']
-                else: fanart = art['moviethumb']
-                fanart = [(x['url'], x['likes']) for x in fanart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in fanart if x.get('lang') == '']
-                fanart = [(x[0], x[1]) for x in fanart]
-                fanart = sorted(fanart, key=lambda x: int(x[1]), reverse=True)
-                fanart = [x[0] for x in fanart][0]
-                fanart = fanart.encode('utf-8')
-            except:
-                fanart = '0'
-
-            try:
-                banner = art['moviebanner']
-                banner = [(x['url'], x['likes']) for x in banner if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in banner if x.get('lang') == '']
-                banner = [(x[0], x[1]) for x in banner]
-                banner = sorted(banner, key=lambda x: int(x[1]), reverse=True)
-                banner = [x[0] for x in banner][0]
-                banner = banner.encode('utf-8')
-            except:
-                banner = '0'
-
-            try:
-                if 'hdmovielogo' in art: clearlogo = art['hdmovielogo']
-                else: clearlogo = art['movielogo']
-                clearlogo = [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == '']
-                clearlogo = [(x[0], x[1]) for x in clearlogo]
-                clearlogo = sorted(clearlogo, key=lambda x: int(x[1]), reverse=True)
-                clearlogo = [x[0] for x in clearlogo][0]
-                clearlogo = clearlogo.encode('utf-8')
-            except:
-                clearlogo = '0'
-
-            try:
-                if 'hdmovieclearart' in art: clearart = art['hdmovieclearart']
-                else: clearart = art['movieart']
-                clearart = [(x['url'], x['likes']) for x in clearart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in clearart if x.get('lang') == '']
-                clearart = [(x[0], x[1]) for x in clearart]
-                clearart = sorted(clearart, key=lambda x: int(x[1]), reverse=True)
-                clearart = [x[0] for x in clearart][0]
-                clearart = clearart.encode('utf-8')
-            except:
-                clearart = '0'
-
-            try:
-                discart = art['moviedisc']
-                discart = [(x['url'], x['likes']) for x in discart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in discart if x.get('lang') == '']
-                discart = [(x[0], x[1]) for x in discart]
-                discart = sorted(discart, key=lambda x: int(x[1]), reverse=True)
-                discart = [x[0] for x in discart][0]
-                discart = discart.encode('utf-8')
-            except:
-                discart = '0'
-
-            try:
-                if 'moviethumb' in art: landscape = art['moviethumb']
-                else: landscape = art['moviebackground']
-                landscape = [(x['url'], x['likes']) for x in landscape if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in landscape if x.get('lang') == '']
-                landscape = [(x[0], x[1]) for x in landscape]
-                landscape = sorted(landscape, key=lambda x: int(x[1]), reverse=True)
-                landscape = [x[0] for x in landscape][0]
-                landscape = landscape.encode('utf-8')
-            except:
-                landscape = '0'
-##---
-
-
 ##--TMDb artwork
             try:
                 if self.tmdb_key == '': raise Exception()
@@ -438,7 +330,7 @@ class movies:
                 poster3 = art2['posters']
                 poster3 = [(x['width'], x['file_path']) for x in poster3]
                 poster3 = [x[1] for x in poster3]
-                poster3 = self.tmdb_poster_path + poster3[0]
+                poster3 = self.tmdb_poster + poster3[0]
             except:
                 poster3 = '0'
 
@@ -446,31 +338,18 @@ class movies:
                 fanart2 = art2['backdrops']
                 fanart2 = [(x['width'], x['file_path']) for x in fanart2]
                 fanart2 = [x[1] for x in fanart2]
-                fanart2 = self.tmdb_background_path + fanart2[0]
+                fanart2 = self.tmdb_fanart + fanart2[0]
             except:
                 fanart2 = '0'
 
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
-            item = dict((k,v) for k, v in item.iteritems() if not v == '0')
-            self.list[i].update(item)
-
-            if artmeta == False: raise Exception()
-
-            meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
-            self.meta.append(meta)
-        except:
-            pass
-
 
 class tvshows:
-    def __init__(self, type = 'show', notifications = True):
+    def __init__(self):
         self.count = 40
         self.list = []
         self.meta = []
-        self.threads = []
-        self.type = type
+
         self.lang = control.apiLanguage()['tvdb']
-        self.notifications = notifications
 
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 
@@ -489,5 +368,34 @@ class tvshows:
         self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
         self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
         self.tvdb_image = 'http://thetvdb.com/banners/'
-        self.imdb_user = control.setting('imdb.user').replace('ur', '')
-        self.imdb_link = 'http://www.imdb.com'
+
+
+
+
+
+
+
+
+##--TMDb artwork
+            try:
+                if self.tmdb_key == '': raise Exception()
+                art2 = client.request(self.tmdb_art_link % imdb, timeout='20', error=True)
+                art2 = json.loads(art2)
+            except:
+                pass
+
+            try:
+                poster3 = art2['posters']
+                poster3 = [(x['width'], x['file_path']) for x in poster3]
+                poster3 = [x[1] for x in poster3]
+                poster3 = self.tmdb_poster + poster3[0]
+            except:
+                poster3 = '0'
+
+            try:
+                fanart2 = art2['backdrops']
+                fanart2 = [(x['width'], x['file_path']) for x in fanart2]
+                fanart2 = [x[1] for x in fanart2]
+                fanart2 = self.tmdb_fanart + fanart2[0]
+            except:
+                fanart2 = '0'

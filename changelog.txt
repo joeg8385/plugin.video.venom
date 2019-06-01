@@ -1,3 +1,10 @@
+[B][COLOR red]Update - v2.9.4 - June 1, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added a new Playlist Manager to context menu for none
+    directory type list items.  You can add, remove, view playlist,
+    and clear entire playlist.  For directory list items I added the
+    playlist viewer and playlist clear options.  I suggest using
+    the existing "Add to playlist" option for full shows and seasons[/I]
+
 [B][COLOR red]Update - v2.9.3 - May 28, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Source list now utilizes multiline list items. Settings
     contain option to turn this on or off base on your preference.[/I]
@@ -9,8 +16,8 @@
 [COLOR yellow]--[/COLOR][I] added discart to movies from fanart.tv[/I]
 [COLOR yellow]--[/COLOR][I] added Trakt "Box Office" to movies.[/I]
 [COLOR yellow]--[/COLOR][I] added Navigation controls to settings page to
-    turn off dupliacte movie and tv shows from IMDb, TMDb, and Trakt.  May
-    add more.[/I]
+    turn off dupliacte movie and tv shows from IMDb, TMDb, and Trakt.
+    May add more.[/I]
 [COLOR yellow]--[/COLOR][I] added option to Tools menu to reset View Types to default.[/I]
 
 [B][COLOR red]Update - v2.9.1 - May 19, 2019[/COLOR][/B]

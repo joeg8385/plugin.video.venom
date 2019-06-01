@@ -386,7 +386,7 @@ def manager(name, imdb, tvdb, content, refresh = True):
 
         # if select:
             # if select in ['watch', 'unwatch']:
-                # control.show()
+                # control.busy()
                 # globals()[select](imdb = imdb, tvdb = tvdb, season = season, episode = episode, refresh = refresh, notification = True)
                 # control.hide()
 

@@ -4,7 +4,8 @@
 Venom
 '''
 
-import os,sys,re,json,urllib,urlparse,datetime,base64
+import os, sys, re, datetime, xbmc
+import urllib, urlparse, json
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleangenre
@@ -35,7 +36,7 @@ class collections:
 
         self.imdb_link = 'https://www.imdb.com'
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
-        self.imdbinfo = 'https://www.omdbapi.com/?i=%s&plot=short&r=json'
+        # self.imdbinfo = 'https://www.omdbapi.com/?i=%s&plot=short&r=json'
 
         self.lang = control.apiLanguage()['trakt']
 
@@ -43,14 +44,14 @@ class collections:
         if self.tmdb_key == '' or self.tmdb_key == None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
-        self.tmdb_lang = 'en'
         self.tmdb_link = 'https://api.themoviedb.org'
-        self.tmdb_image = 'https://image.tmdb.org/t/p/original'
-        self.tmdb_poster = 'https://image.tmdb.org/t/p/w500'
         self.tmdb_api_link = 'https://api.themoviedb.org/3/list/%s?api_key=%s' % ('%s', '%s')
-        self.tmdb_info_link = 'https://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,releases,external_ids' % ('%s', self.tmdb_key, self.tmdb_lang)
-        self.tmdb_art_link = 'https://api.themoviedb.org/3/movie/%s/images?api_key=%s&language=en-US&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
-        self.tmdb_img_link = 'https://image.tmdb.org/t/p/w%s%s'
+        # self.tmdb_info_link = 'https://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,releases,external_ids' % ('%s', self.tmdb_key, self.lang)
+        self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
+        self.tmdb_background_path = 'http://image.tmdb.org/t/p/w1280'
+        self.tmdb_poster_path = "https://image.tmdb.org/t/p/w500"
+
+        # self.tmdb_img_link = 'https://image.tmdb.org/t/p/w%s%s'
 
         self.fanart_tv_user = control.setting('fanart.tv.user')
         if self.fanart_tv_user == '' or self.fanart_tv_user == None:
@@ -175,7 +176,9 @@ class collections:
         self.jurassicpark_link = self.tmdb_api_link % ('33217', self.tmdb_key)
         self.kickass_link = self.tmdb_api_link % ('33329', self.tmdb_key)
         self.killbill_link = self.tmdb_api_link % ('33330', self.tmdb_key)
-        self.kingkong_link = self.tmdb_api_link % ('33331', self.tmdb_key)
+
+        self.kingkong_link = self.tmdb_api_link % ('113082', self.tmdb_key)
+        # self.kingkong_link = self.tmdb_api_link % ('33331', self.tmdb_key)
         self.laracroft_link = self.tmdb_api_link % ('33332', self.tmdb_key)
         self.legallyblonde_link = self.tmdb_api_link % ('33333', self.tmdb_key)
         self.lethalweapon_link = self.tmdb_api_link % ('33334', self.tmdb_key)
@@ -818,7 +821,7 @@ class collections:
         return self.list
 
 
-    def worker(self, level = 1):
+    def worker(self, level=1):
         if self.list == None or self.list == []: return
         self.meta = []
         total = len(self.list)
@@ -846,7 +849,8 @@ class collections:
         # self.list = metacache.local(self.list, self.tmdb_img_link, 'poster3', 'fanart2')
 
         if self.fanart_tv_user == '':
-            for i in self.list: i.update({'clearlogo': '0', 'clearart': '0'})
+            for i in self.list:
+                i.update({'clearlogo': '0', 'clearart': '0'})
 
 
     def super_imdb_info(self, i):
@@ -1001,34 +1005,30 @@ class collections:
             except:
                 landscape = '0'
 
-###--TMDb artwork
+##--TMDb artwork
             try:
                 if self.tmdb_key == '': raise Exception()
-                art2 = client.request(self.tmdb_art_link % imdb, timeout = '10', error = True)
+                art2 = client.request(self.tmdb_art_link % imdb, timeout='20', error=True)
                 art2 = json.loads(art2)
             except:
                 pass
 
             try:
                 poster3 = art2['posters']
-                poster3 = [x for x in poster3 if x.get('iso_639_1') == self.lang] + [x for x in poster3 if x.get('iso_639_1') == 'en'] + [x for x in poster3 if x.get('iso_639_1') not in [self.lang, 'en']]
                 poster3 = [(x['width'], x['file_path']) for x in poster3]
-                poster3 = [(x[0], x[1]) if x[0] < 500 else ('500', x[1]) for x in poster3]
-                poster3 = self.tmdb_img_link % poster3[0]
-                poster3 = poster3.encode('utf-8')
+                poster3 = [x[1] for x in poster3]
+                poster3 = self.tmdb_poster_path + poster3[0]
             except:
                 poster3 = '0'
 
             try:
                 fanart2 = art2['backdrops']
-                fanart2 = [x for x in fanart2 if x.get('iso_639_1') == self.lang] + [x for x in fanart2 if x.get('iso_639_1') == 'en'] + [x for x in fanart2 if x.get('iso_639_1') not in [self.lang, 'en']]
-                fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920] + [x for x in fanart2 if x.get('width') <= 3840]
                 fanart2 = [(x['width'], x['file_path']) for x in fanart2]
-                fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
-                fanart2 = self.tmdb_img_link % fanart2[0]
-                fanart2 = fanart2.encode('utf-8')
+                fanart2 = [x[1] for x in fanart2]
+                fanart2 = self.tmdb_background_path + fanart2[0]
             except:
                 fanart2 = '0'
+##---
 
             item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart,
                     'discart': discart, 'landscape': landscape, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
@@ -1049,7 +1049,6 @@ class collections:
             control.notification(title = 32001, message = 33049, icon = 'INFO')
             sys.exit()
 
-
         addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
         addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
 
@@ -1065,6 +1064,7 @@ class collections:
         playbackMenu = control.lang(32063).encode('utf-8') if control.setting('hosts.mode') == '2' else control.lang(32064).encode('utf-8')
         watchedMenu = control.lang(32068).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32066).encode('utf-8')
         unwatchedMenu = control.lang(32069).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32067).encode('utf-8')
+        playlistManagerMenu = control.lang(35522).encode('utf-8')
         queueMenu = control.lang(32065).encode('utf-8')
         traktManagerMenu = control.lang(32070).encode('utf-8')
         nextMenu = control.lang(32053).encode('utf-8')
@@ -1106,68 +1106,23 @@ class collections:
                 poster = [i[x] for x in ['poster3', 'poster', 'poster2'] if i.get(x, '0') != '0']
                 poster = poster[0] if poster else addonPoster
                 meta.update({'poster': poster})
-                sysmeta = urllib.quote_plus(json.dumps(meta))
-
-                url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
-                sysurl = urllib.quote_plus(url)
-#                path = '%s?action=play&title=%s&year=%s&imdb=%s' % (sysaddon, systitle, year, imdb)
-
-####-Context Menu and Overlays-####
-                cm = []
-                if traktCredentials == True:
-                    cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
-
-                try:
-                    overlay = int(playcount.getMovieOverlay(indicators, imdb))
-                    if overlay == 7:
-                        cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
-                        meta.update({'playcount': 1, 'overlay': 7})
-                    else:
-                        cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
-                        meta.update({'playcount': 0, 'overlay': 6})
-                except:
-                    pass
-                cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
-                cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-                cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
-                if isOld == True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
-                cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
-                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
-####################################
-
-                # poster = '0'
-                # if poster == '0' and 'poster3' in i: poster = i['poster3']
-                # if poster == '0' and 'poster2' in i: poster = i['poster2']
-                # if poster == '0' and 'poster' in i: poster = i['poster']
-
-                poster = '0'
-                try:
-                    poster = i['poster']
-                    if poster == '0':
-                        if 'poster3' in i: poster = i['poster3']
-                        if poster == '0':
-                            if 'poster2' in i: poster = i['poster2']
-                except: pass
 
                 icon = '0'
-                if icon == '0' and 'icon3' in i: icon = i['icon3']
-                if icon == '0' and 'icon2' in i: icon = i['icon2']
                 if icon == '0' and 'icon' in i: icon = i['icon']
 
                 thumb = '0'
-                if thumb == '0' and 'thumb3' in i: thumb = i['thumb3']
-                if thumb == '0' and 'thumb2' in i: thumb = i['thumb2']
                 if thumb == '0' and 'thumb' in i: thumb = i['thumb']
 
                 banner = '0'
-                if banner == '0' and 'banner3' in i: banner = i['banner3']
-                if banner == '0' and 'banner2' in i: banner = i['banner2']
                 if banner == '0' and 'banner' in i: banner = i['banner']
+
+                poster = '0'
+                if poster == '0' and 'poster3' in i: poster = i['poster3']
+                if poster == '0' and 'poster2' in i: poster = i['poster2']
+                if poster == '0' and 'poster' in i: poster = i['poster']
 
                 fanart = '0'
                 if settingFanart:
-                    if fanart == '0' and 'fanart3' in i: fanart = i['fanart3']
                     if fanart == '0' and 'fanart2' in i: fanart = i['fanart2']
                     if fanart == '0' and 'fanart' in i: fanart = i['fanart']
 
@@ -1190,16 +1145,50 @@ class collections:
                 if fanart == '0': fanart = addonFanart
 
                 art = {}
-                if not poster == '0' and not poster == None: art.update({'poster' : poster})
                 if not icon == '0' and not icon == None: art.update({'icon' : icon})
                 if not thumb == '0' and not thumb == None: art.update({'thumb' : thumb})
                 if not banner == '0' and not banner == None: art.update({'banner' : banner})
+                if not poster == '0' and not poster == None: art.update({'poster' : poster})
+                if not fanart == '0' and not fanart == None: art.update({'fanart' : fanart})
                 if not clearlogo == '0' and not clearlogo == None: art.update({'clearlogo' : clearlogo})
                 if not clearart == '0' and not clearart == None: art.update({'clearart' : clearart})
                 if not landscape == '0' and not landscape == None: art.update({'landscape' : landscape})
                 if not discart == '0' and not discart == None: art.update({'discart' : discart})
 
-                item = control.item(label = label)
+
+####-Context Menu and Overlays-####
+                cm = []
+                if traktCredentials == True:
+                    cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
+
+                try:
+                    overlay = int(playcount.getMovieOverlay(indicators, imdb))
+                    if overlay == 7:
+                        cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
+                        meta.update({'playcount': 1, 'overlay': 7})
+                    else:
+                        cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
+                        meta.update({'playcount': 0, 'overlay': 6})
+                except: pass
+
+                sysmeta = urllib.quote_plus(json.dumps(meta))
+                sysart = urllib.quote_plus(json.dumps(art))
+
+                url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
+                sysurl = urllib.quote_plus(url)
+#                path = '%s?action=play&title=%s&year=%s&imdb=%s' % (sysaddon, systitle, year, imdb)
+
+                cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
+                cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
+                cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
+                cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
+                if isOld == True:
+                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
+                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+####################################
+
+                item = control.item(label=label)
                 if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
                 item.setArt(art)
                 item.setProperty('IsPlayable', isPlayable)
@@ -1271,7 +1260,7 @@ class collections:
                 pass
 
         control.content(syshandle, 'addons')
-        control.directory(syshandle, cacheToDisc = True)
+        control.directory(syshandle, cacheToDisc=True)
 
 
     def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
@@ -1297,4 +1286,4 @@ class collections:
 
     def endDirectory(self):
         control.content(syshandle, 'addons')
-        control.directory(syshandle, cacheToDisc = True)
+        control.directory(syshandle, cacheToDisc=True)

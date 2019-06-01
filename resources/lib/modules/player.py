@@ -224,7 +224,6 @@ class player(xbmc.Player):
             pass
 
 
-
     def idleForPlayback(self):
         for i in range(0, 200):
             if control.visible(): control.idle()
@@ -251,10 +250,10 @@ class player(xbmc.Player):
 
 
     def onAVStarted(self):
+        control.closeAll()
         for i in range(0, 600):
             if self.isPlayback(): break
             control.sleep(100)
-        control.closeAll()
             # if not self.isPlayingVideo(): control.sleep(100)
         if not self.offset == '0':
             self.seekTime(float(self.offset))
@@ -271,10 +270,10 @@ class player(xbmc.Player):
 
 
     def onPlayBackStarted(self):
+        control.closeAll()
         for i in range(0, 600):
             if self.isPlayback(): break
             control.sleep(100)
-        control.closeAll()
             # if not self.isPlayingVideo(): control.sleep(100)
         if not self.offset == '0':
             self.seekTime(float(self.offset))
@@ -284,13 +283,13 @@ class player(xbmc.Player):
 
     def onPlayBackStopped(self):
         bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
+        control.playlist.clear()
         if control.setting('crefresh') == 'true':
             xbmc.executebuiltin('Container.Refresh')
         try:
             if (self.currentTime / self.totalTime) >= .90:
                 self.libForPlayback()
-        except:
-            pass
+        except: pass
 
 
     def onPlayBackEnded(self):

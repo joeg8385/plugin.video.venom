@@ -1866,7 +1866,7 @@ class File(object):
 
 			# item = xbmcgui.ListItem(label = label)
 			# item.setArt(art)
-			# item.setInfo(type = 'Video', infoLabels = Media.metadataClean(metadata))
+			# item.setInfo(type = 'video', infoLabels = control.metadataClean(metadata))
 
 			# if not context == None:
 				# from resources.lib.extensions import interface
