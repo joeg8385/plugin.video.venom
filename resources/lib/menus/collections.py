@@ -260,7 +260,7 @@ class collections:
         self.tron_link = 'https://www.imdb.com/search/title?title=tron&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
         self.twilight_link = 'https://www.imdb.com/search/title?title=twilight&title_type=feature&num_votes=1000,&countries=us&languages=en&plot=vampire&sort=release_date,desc'
         self.undersiege_link = self.tmdb_api_link % ('33403', self.tmdb_key)
-        self.underworld_link = 'https://www.imdb.com/search/title?title=Underworld&title_type=feature&num_votes=1000,&genres=action&countries=us&languages=en&sort=release_date,desc'
+        self.underworld_link = 'https://www.imdb.com/search/title?title=Underworld&title_type=feature&num_votes=1000,&genres=action&countries=us&languages=en&sort=release_date,asc'
         self.universalsoldier_link = self.tmdb_api_link % ('33404', self.tmdb_key)
         self.wallstreet_link = self.tmdb_api_link % ('33405', self.tmdb_key)
         self.waynesworld_link = self.tmdb_api_link % ('33406', self.tmdb_key)
@@ -663,23 +663,59 @@ class collections:
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
                 self.list = cache.get(tmdb.movies().tmdb_collections_list, 720, url)
+                self.sort()
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
                 self.list = cache.get(tmdb.movies().tmdb_list, 720, url)
+                self.sort()
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
                 self.list = cache.get(self.imdb_list, 720, url)
                 if idx == True: self.worker()
+                self.sort()
 
             elif u in self.imdb_link:
                 self.list = cache.get(self.imdb_list, 720, url)
                 if idx == True: self.worker()
+                self.sort()
 
             if idx == True: self.movieDirectory(self.list)
             return self.list
         except:
             pass
+
+
+    def sort(self):
+        try:
+            attribute = int(control.setting('sort.movies.type'))
+            reverse = int(control.setting('sort.movies.order')) == 1
+            if attribute == 0: reverse = False
+            if attribute > 0:
+                if attribute == 1:
+                    try:
+                        self.list = sorted(self.list, key = lambda k: re.sub('(^the |^a |^an )', '', k['title'].lower()), reverse = reverse)
+                    except: self.list = sorted(self.list, key = lambda k: k['title'].lower(), reverse = reverse)
+                elif attribute == 2:
+                    self.list = sorted(self.list, key = lambda k: float(k['rating']), reverse = reverse)
+                elif attribute == 3:
+                    self.list = sorted(self.list, key = lambda k: int(k['votes'].replace(',', '')), reverse = reverse)
+                elif attribute == 4:
+                    for i in range(len(self.list)):
+                        if not 'premiered' in self.list[i]: self.list[i]['premiered'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
+                elif attribute == 5:
+                    for i in range(len(self.list)):
+                        if not 'added' in self.list[i]: self.list[i]['added'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['added'], reverse = reverse)
+                elif attribute == 6:
+                    for i in range(len(self.list)):
+                        if not 'watched' in self.list[i]: self.list[i]['watched'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['watched'], reverse = reverse)
+            elif reverse:
+                self.list = reversed(self.list)
+        except:
+            tools.Logger.error()
 
 
     def imdb_list(self, url):
@@ -1077,14 +1113,15 @@ class collections:
                 except: title = i['title']
                 label = '%s (%s)' % (i['title'], i['year'])
 
-                sysname = urllib.quote_plus('%s (%s)' % (title, year))
+                # sysname = urllib.quote_plus('%s (%s)' % (title, year))
+                sysname = urllib.quote_plus(label)
                 systitle = urllib.quote_plus(title)
 
                 meta = dict((k,v) for k, v in i.iteritems() if not v == '0')
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tmdb_id': tmdb})
                 meta.update({'mediatype': 'movie'})
-                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
+                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
 
                 # Some descriptions have a link at the end that. Remove it.
                 try:

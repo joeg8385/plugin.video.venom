@@ -1,3 +1,7 @@
+[B][COLOR red]Update - v2.9.5 - June 2, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added Movie Collection sorting controlled in settings[/I]
+[COLOR yellow]--[/COLOR][I] Fixed cache duration[/I]
+
 [B][COLOR red]Update - v2.9.4 - June 1, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Added a new Playlist Manager to context menu for none
     directory type list items.  You can add, remove, view playlist,

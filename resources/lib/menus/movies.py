@@ -162,7 +162,7 @@ class movies:
                 if idx == True: self.worker()
 
             elif u in self.imdb_link:
-                self.list = cache.get(self.imdb_list, 168, url)
+                self.list = cache.get(self.imdb_list, 96, url)
                 if idx == True: self.worker()
 
             if self.list == None: self.list = []
@@ -1085,7 +1085,7 @@ class movies:
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tmdb_id': tmdb})
                 meta.update({'mediatype': 'movie'})
-                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
+                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})
 
                 # Some descriptions have a link at the end that. Remove it.
                 try:
