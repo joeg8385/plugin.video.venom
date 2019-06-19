@@ -39,7 +39,7 @@ def syncTraktWatched():
     control.notification(title = 'default', message = 'Trakt Watched Status Sync Complete', icon='default', time=1, sound=False)
 
 
-if traktCredentials == True:
+if traktCredentials is True:
     syncTraktWatched()
 
 

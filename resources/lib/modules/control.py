@@ -13,8 +13,11 @@ addon = xbmcaddon.Addon
 AddonID = xbmcaddon.Addon().getAddonInfo('id')
 addonInfo = xbmcaddon.Addon().getAddonInfo
 addonName = addonInfo('name')
+addonVersion = addonInfo('version')
+
 lang = xbmcaddon.Addon().getLocalizedString
 lang2 = xbmc.getLocalizedString
+
 setting = xbmcaddon.Addon().getSetting
 setSetting = xbmcaddon.Addon().setSetting
 
@@ -26,13 +29,6 @@ XBFONT_RIGHT = 0x00000001
 XBFONT_CENTER_X = 0x00000002
 XBFONT_CENTER_Y = 0x00000004
 XBFONT_TRUNCATED = 0x00000008
-
-addItem = xbmcplugin.addDirectoryItem
-directory = xbmcplugin.endOfDirectory
-content = xbmcplugin.setContent
-property = xbmcplugin.setProperty
-resolve = xbmcplugin.setResolvedUrl
-
 window = xbmcgui.Window(10000)
 windowDialog = xbmcgui.WindowDialog()
 dialog = xbmcgui.Dialog()
@@ -42,28 +38,42 @@ getCurrentDialogId = xbmcgui.getCurrentWindowDialogId()
 button = xbmcgui.ControlButton
 image = xbmcgui.ControlImage
 
+addItem = xbmcplugin.addDirectoryItem
+directory = xbmcplugin.endOfDirectory
+content = xbmcplugin.setContent
+property = xbmcplugin.setProperty
+resolve = xbmcplugin.setResolvedUrl
+
 infoLabel = xbmc.getInfoLabel
 condVisibility = xbmc.getCondVisibility
 keyboard = xbmc.Keyboard
 execute = xbmc.executebuiltin
 skin = xbmc.getSkinDir()
+
 player = xbmc.Player()
+player2 = xbmc.Player
 playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+
 jsonrpc = xbmc.executeJSONRPC
 skinPath = xbmc.translatePath('special://skin/')
-addonPath = xbmc.translatePath(addonInfo('path'))
-dataPath = xbmc.translatePath(addonInfo('profile')).decode('utf-8')
-SETTINGS_PATH = xbmc.translatePath(os.path.join(addonInfo('path'), 'resources', 'settings.xml'))
 
-openFile = xbmcvfs.File
-makeFile = xbmcvfs.mkdir
-deleteFile = xbmcvfs.delete
-listDir = xbmcvfs.listdir
-deleteDir = xbmcvfs.rmdir
-transPath = xbmc.translatePath
+# addonPath = xbmc.translatePath(addonInfo('path'))
+
+try:
+    addonPath = xbmcaddon.Addon().getAddonInfo('path').decode('utf-8')
+except:
+    addonPath = xbmcaddon.Addon().getAddonInfo('path')
 
 menus_path = os.path.join(addonPath, 'resources', 'lib', 'menus')
-images_path = os.path.join(menus_path, 'images')
+# images_path = os.path.join(menus_path, 'images')
+
+SETTINGS_PATH = xbmc.translatePath(os.path.join(addonInfo('path'), 'resources', 'settings.xml'))
+
+try:
+    dataPath = xbmc.translatePath(addonInfo('profile')).decode('utf-8')
+except:
+    dataPath = xbmc.translatePath(addonInfo('profile'))
+
 settingsFile = os.path.join(dataPath, 'settings.xml')
 viewsFile = os.path.join(dataPath, 'views.db')
 bookmarksFile = os.path.join(dataPath, 'bookmarks.db')
@@ -74,9 +84,38 @@ libcacheFile = os.path.join(dataPath, 'library.db')
 cacheFile = os.path.join(dataPath, 'cache.db')  # Used by trakt.py
 # traktSyncFile = os.path.join(dataPath, 'traktSync.db') # Used by trakt.py
 
+openFile = xbmcvfs.File
+makeFile = xbmcvfs.mkdir
+deleteFile = xbmcvfs.delete
+listDir = xbmcvfs.listdir
+deleteDir = xbmcvfs.rmdir
+transPath = xbmc.translatePath
+
 key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
 iv = "p2s5v8y/B?E(H+Mb"
 
+
+# def lang(language_id):
+    # text = getLangString(language_id)
+    # text = text.encode('utf-8', 'replace')
+    # text = display_string(text)
+    # return text
+
+
+# def display_string(object):
+    # if type(object) is str or type(object) is unicode:
+        # return deaccentString(object)
+    # if type(object) is int:
+        # return '%s' % object
+    # if type(object) is bytes:
+        # object = ''.join(chr(x) for x in object)
+        # return object
+
+
+# def deaccentString(text):
+    # text = u'%s' % text
+    # text = ''.join(c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn')
+    # return text
 
 
 def sleep(time):  # Modified `sleep` command that honors a user exit request
@@ -129,6 +168,22 @@ def addonName():
     return addonInfo('name')
 
 
+def addonPath(addon):
+    try:
+        addonID = xbmcaddon.Addon(addon)
+    except:
+        addonID = None
+
+    if addonID is None:
+        return ''
+    else:
+        return xbmc.translatePath(addonID.getAddonInfo('path').decode('utf-8'))
+
+
+def addonVersion(addon):
+    return xbmcaddon.Addon(addon).getAddonInfo('version')
+
+
 def artPath():
     theme = appearance()
     return os.path.join(xbmcaddon.Addon('plugin.video.venom').getAddonInfo('path'), 'resources', 'artwork', theme)
@@ -150,14 +205,15 @@ def artwork():
 def addonIcon():
     theme = appearance()
     art = artPath()
-    if not (art == None and theme in ['-', '']): return os.path.join(art, 'icon.png')
+    if not (art is None and theme in ['-', '']):
+        return os.path.join(art, 'icon.png')
     return addonInfo('icon')
 
 
 def addonThumb():
     theme = appearance()
     art = artPath()
-    if not (art == None and theme in ['-', '']):
+    if not (art is None and theme in ['-', '']):
         return os.path.join(art, 'poster.png')
     elif theme == '-':
         return 'DefaultFolder.png'
@@ -167,28 +223,32 @@ def addonThumb():
 def addonPoster():
     theme = appearance()
     art = artPath()
-    if not (art == None and theme in ['-', '']): return os.path.join(art, 'poster.png')
+    if not (art is None and theme in ['-', '']):
+        return os.path.join(art, 'poster.png')
     return 'DefaultVideo.png'
 
 
 def addonBanner():
     theme = appearance()
     art = artPath()
-    if not (art == None and theme in ['-', '']): return os.path.join(art, 'banner.png')
+    if not (art is None and theme in ['-', '']):
+        return os.path.join(art, 'banner.png')
     return 'DefaultVideo.png'
 
 
 def addonFanart():
     theme = appearance()
     art = artPath()
-    if not (art == None and theme in ['-', '']): return os.path.join(art, 'fanart.jpg')
+    if not (art is None and theme in ['-', '']):
+        return os.path.join(art, 'fanart.jpg')
     return addonInfo('fanart')
 
 
 def addonNext():
     theme = appearance()
     art = artPath()
-    if not (art == None and theme in ['-', '']): return os.path.join(art, 'next.png')
+    if not (art is None and theme in ['-', '']):
+        return os.path.join(art, 'next.png')
     return 'DefaultVideo.png'
 
 
@@ -202,7 +262,8 @@ def metaFile():
 def metadataClean(metadata):
     # Filter out non-existing/custom keys.
     # Otherise there are tons of errors in Kodi 18 log.
-    if metadata == None: return metadata
+    if metadata is None:
+        return metadata
     allowed = ['genre', 'country', 'year', 'episode', 'season', 'sortepisode', 'sortseason', 'episodeguide', 'showlink',
                'top250', 'setid', 'tracknumber', 'rating', 'userrating', 'watched', 'playcount', 'overlay', 'cast',
                'castandrole', 'director', 'mpaa', 'plot', 'plotoutline', 'title', 'originaltitle', 'sorttitle',
@@ -240,7 +301,7 @@ def notification(title=None, message=None, icon=None, time=3000, sound=False):
     else:
         # body = str(message).encode('utf-8')
         body = str(message)
-    if icon == None or 'icon' or 'default':
+    if icon is None or 'icon' or 'default':
         icon = addonIcon()
     elif icon == 'INFO':
         icon = xbmcgui.NOTIFICATION_INFO
@@ -257,6 +318,35 @@ def yesnoDialog(line1, line2, line3, heading=addonInfo('name'), nolabel='', yesl
 
 def selectDialog(list, heading=addonInfo('name')):
     return dialog.select(heading, list)
+
+
+def okDialog(title=None, message=None):
+    if title == 'default' or None: title = addonName()
+    if isinstance(title, (int, long)):
+        heading = lang(title).encode('utf-8')
+    else:
+        # heading = str(title).encode('utf-8')
+        heading = str(title)
+    if isinstance(message, (int, long)):
+        body = lang(message).encode('utf-8')
+    else:
+        # body = str(message).encode('utf-8')
+        body = str(message)
+    return dialog.ok(heading, body)
+
+
+def context(items = None, labels = None):
+    if items:
+        labels = [i[0] for i in items]
+        choice = xbmcgui.Dialog().contextmenu(labels)
+
+        if choice >= 0:
+            return items[choice][1]()
+        else:
+            return False
+
+    else:
+        return xbmcgui.Dialog().contextmenu(labels)
 
 
 def busy():
@@ -285,11 +375,10 @@ def closeAll():
 
 
 def visible():
-    if int(getKodiVersion()) >= 18 and xbmc.getCondVisibility('Window.IsActive(busydialognocancel)') == 1: return True
+    if int(getKodiVersion()) >= 18 and xbmc.getCondVisibility('Window.IsActive(busydialognocancel)') == 1:
+        return True
     return xbmc.getCondVisibility('Window.IsActive(busydialog)') == 1
 ########################
-
-
 
 
 
@@ -305,8 +394,12 @@ def openSettings(query=None, id=addonInfo('id')):
     try:
         idle()
         execute('Addon.OpenSettings(%s)' % id)
-        if query == None: raise Exception()
+
+        if query is None:
+            raise Exception()
+
         c, f = query.split('.')
+
         if int(getKodiVersion()) >= 18:
             execute('SetFocus(%i)' % (int(c) - 100))
             execute('SetFocus(%i)' % (int(f) - 80))
@@ -314,6 +407,8 @@ def openSettings(query=None, id=addonInfo('id')):
             execute('SetFocus(%i)' % (int(c) + 100))
             execute('SetFocus(%i)' % (int(f) + 200))
     except:
+        import traceback
+        traceback.print_exc()
         return
 
 
@@ -340,16 +435,24 @@ def apiLanguage(ret_name=None):
                'kg', 'kk', 'kj', 'ki', 'ko', 'kn', 'km', 'kl', 'ks', 'kr', 'kw', 'kv', 'ku', 'ky']
     name = None
     name = setting('api.language')
-    if not name: name = 'AUTO'
+
+    if not name:
+        name = 'AUTO'
+
     if name[-1].isupper():
         try:
             name = xbmc.getLanguage(xbmc.ENGLISH_NAME).split(' ')[0]
         except: pass
-    try: name = langDict[name]
-    except: name = 'en'
+
+    try:
+        name = langDict[name]
+    except:
+        name = 'en'
+
     lang = {'trakt': name} if name in trakt else {'trakt': 'en'}
     lang['tvdb'] = name if name in tvdb else 'en'
     lang['youtube'] = name if name in youtube else 'en'
+
     if ret_name:
         lang['trakt'] = [i[0] for i in langDict.iteritems() if i[1] == lang['trakt']][0]
         lang['tvdb'] = [i[0] for i in langDict.iteritems() if i[1] == lang['tvdb']][0]
@@ -397,26 +500,3 @@ def getSettingDefault(id):
     except:
         return None
 
-
-class Translation(object):
-
-    @classmethod
-    def string(self, id, utf8=True, system=False):
-        from resources.lib.extensions import tools
-        if isinstance(id, (int, long)):
-            # Needs ID when called from RunScript(vpn.py)
-            if system:
-                result = xbmc.getLocalizedString(id)
-            else:
-                result = xbmcaddon.Addon(AddonID).getLocalizedString(id)
-        else:
-            try:
-                result = str(id)
-            except:
-                result = id
-        if utf8:
-            try:
-                if not '•' in result: result = tools.Converter.unicode(string=result, umlaut=True).encode('utf-8')
-            except:
-                result = tools.Converter.unicode(string=result, umlaut=True).encode('utf-8')
-        return result

@@ -8,7 +8,6 @@ import urlparse, sys, urllib, xbmc
 from resources.lib.modules import control
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?','')))
-
 action = params.get('action')
 
 subid = params.get('subid')
@@ -35,8 +34,7 @@ windowedtrailer = params.get('windowedtrailer')
 windowedtrailer = int(windowedtrailer) if windowedtrailer in ("0","1") else 0
 
 
-
-if action == None:
+if action is None:
     from resources.lib.menus import navigator
     from resources.lib.modules import cache
     run = control.setting('first.info')
@@ -47,7 +45,7 @@ if action == None:
         changelog.get()
         control.setSetting(id='first.info', value='false')
     cache.cache_version_check()
-    navigator.navigator().root()
+    navigator.Navigator().root()
 
 
 
@@ -56,7 +54,7 @@ if action == None:
 ####################################################
 elif action == 'infoCheck':
     from resources.lib.menus import navigator
-    navigator.navigator().infoCheck('')
+    navigator.Navigator().infoCheck('')
 
 elif action == 'ShowNews':
     from resources.lib.modules import newsinfo
@@ -73,79 +71,79 @@ elif action == 'ShowChangelog':
 ####################################################
 elif action == 'movieNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().movies()
+    navigator.Navigator().movies()
 
 elif action == 'movieliteNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().movies(lite=True)
+    navigator.Navigator().movies(lite=True)
 
 elif action == 'mymovieNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().mymovies()
+    navigator.Navigator().mymovies()
 
 elif action == 'mymovieliteNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().mymovies(lite=True)
+    navigator.Navigator().mymovies(lite=True)
 
 elif action == 'movies':
     from resources.lib.menus import movies
-    movies.movies().get(url)
+    movies.Movies().get(url)
 
 elif action == 'moviePage':
     from resources.lib.menus import movies
-    movies.movies().get(url)
+    movies.Movies().get(url)
 
 elif action == 'tmdbmovies':
     from resources.lib.menus import movies
-    movies.movies().getTMDb(url)
+    movies.Movies().getTMDb(url)
 
 elif action == 'tmdbmoviePage':
     from resources.lib.menus import movies
-    movies.movies().getTMDb(url)
+    movies.Movies().getTMDb(url)
 
 elif action == 'newMovies':
     from resources.lib.menus import movies
-    movies.movies().newMovies()
+    movies.Movies().newMovies()
 
 elif action == 'movieSearch':
     from resources.lib.menus import movies
-    movies.movies().search()
+    movies.Movies().search()
 
 elif action == 'movieSearchnew':
     from resources.lib.menus import movies
-    movies.movies().search_new()
+    movies.Movies().search_new()
 
 elif action == 'movieSearchterm':
     from resources.lib.menus import movies
-    movies.movies().search_term(name)
+    movies.Movies().search_term(name)
 
 elif action == 'moviePerson':
     from resources.lib.menus import movies
-    movies.movies().person()
+    movies.Movies().person()
 
 elif action == 'movieGenres':
     from resources.lib.menus import movies
-    movies.movies().genres()
+    movies.Movies().genres()
 
 elif action == 'movieLanguages':
     from resources.lib.menus import movies
-    movies.movies().languages()
+    movies.Movies().languages()
 
 elif action == 'movieCertificates':
     from resources.lib.menus import movies
-    movies.movies().certifications()
+    movies.Movies().certifications()
 
 elif action == 'movieYears':
     from resources.lib.menus import movies
-    movies.movies().years()
+    movies.Movies().years()
 
 elif action == 'moviePersons':
     from resources.lib.menus import movies
-    movies.movies().persons(url)
+    movies.Movies().persons(url)
 
 elif action == 'movieUserlists':
     from resources.lib.menus import movies
-    movies.movies().userlists()
+    movies.Movies().userlists()
 
 
 
@@ -154,32 +152,32 @@ elif action == 'movieUserlists':
 ####################################################
 elif action == 'collectionsNavigator':
     from resources.lib.menus import collections
-    # navigator.navigator().collections()
-    collections.collections().collectionsNavigator()
+    # navigator.Navigator().collections()
+    collections.Collections().collectionsNavigator()
 
 elif action == 'collectionActors':
     from resources.lib.menus import collections
-    collections.collectionsr().collectionActors()
+    collections.Collections().collectionActors()
 
 elif action == 'collectionBoxset':
     from resources.lib.menus import collections
-    collections.collections().collectionBoxset()
+    collections.Collections().collectionBoxset()
 
 elif action == 'collectionKids':
     from resources.lib.menus import collections
-    collections.collections().collectionKids()
+    collections.Collections().collectionKids()
 
 elif action == 'collectionBoxsetKids':
     from resources.lib.menus import collections
-    collections.collections().collectionBoxsetKids()
+    collections.Collections().collectionBoxsetKids()
 
 elif action == 'collectionSuperhero':
     from resources.lib.menus import collections
-    collections.collections().collectionSuperhero()
+    collections.Collections().collectionSuperhero()
 
 elif action == 'collections':
     from resources.lib.menus import collections
-    collections.collections().get(url)
+    collections.Collections().get(url)
 
 
 
@@ -188,23 +186,23 @@ elif action == 'collections':
 ####################################################
 elif action == "furkNavigator":
     from resources.lib.menus import navigator
-    navigator.navigator().furk()
+    navigator.Navigator().furk()
 
 elif action == "furkMetaSearch":
     from resources.lib.menus import furk
-    furk.furk().furk_meta_search(url)
+    furk.Furk().furk_meta_search(url)
 
 elif action == "furkSearch":
     from resources.lib.menus import furk
-    furk.furk().search()
+    furk.Furk().search()
 
 elif action == "furkUserFiles":
     from resources.lib.menus import furk
-    furk.furk().user_files()
+    furk.Furk().user_files()
 
 elif action == "furkSearchNew":
     from resources.lib.menus import furk
-    furk.furk().search_new()
+    furk.Furk().search_new()
 
 
 
@@ -214,19 +212,19 @@ elif action == "furkSearchNew":
 
 elif action == 'tvNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().tvshows()
+    navigator.Navigator().tvshows()
 
 elif action == 'tvliteNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().tvshows(lite=True)
+    navigator.Navigator().tvshows(lite=True)
 
 elif action == 'mytvNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().mytvshows()
+    navigator.Navigator().mytvshows()
 
 elif action == 'mytvliteNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().mytvshows(lite=True)
+    navigator.Navigator().mytvshows(lite=True)
 
 elif action == 'channels':
     from resources.lib.menus import channels
@@ -236,67 +234,67 @@ elif action == 'channels':
 
 elif action == 'tvshows':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().get(url)
+    tvshows.TVshows().get(url)
 
 elif action == 'tvshowPage':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().get(url)
+    tvshows.TVshows().get(url)
 
 elif action == 'tmdbTvshows':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().getTMDb(url)
+    tvshows.TVshows().getTMDb(url)
 
 elif action == 'tmdbTvshowPage':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().getTMDb(url)
+    tvshows.TVshows().getTMDb(url)
 
 elif action == 'tvmazeTvshows':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().getTVmaze(url)
+    tvshows.TVshows().getTVmaze(url)
 
 elif action == 'tvmazeTvshowPage':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().getTVmaze(url)
+    tvshows.TVshows().getTVmaze(url)
 
 elif action == 'tvSearch':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().search()
+    tvshows.TVshows().search()
 
 elif action == 'tvSearchnew':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().search_new()
+    tvshows.TVshows().search_new()
 
 elif action == 'tvSearchterm':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().search_term(name)
+    tvshows.TVshows().search_term(name)
 
 elif action == 'tvPerson':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().person()
+    tvshows.TVshows().person()
 
 elif action == 'tvGenres':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().genres()
+    tvshows.TVshows().genres()
 
 elif action == 'tvNetworks':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().networks()
+    tvshows.TVshows().networks()
 
 elif action == 'tvLanguages':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().languages()
+    tvshows.TVshows().languages()
 
 elif action == 'tvCertificates':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().certifications()
+    tvshows.TVshows().certifications()
 
 elif action == 'tvPersons':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().persons(url)
+    tvshows.TVshows().persons(url)
 
 elif action == 'tvUserlists':
     from resources.lib.menus import tvshows
-    tvshows.tvshows().userlists()
+    tvshows.TVshows().userlists()
 
 
 
@@ -305,7 +303,7 @@ elif action == 'tvUserlists':
 ####################################################
 elif action == 'seasons':
     from resources.lib.menus import seasons
-    seasons.seasons().get(tvshowtitle, year, imdb, tvdb)
+    seasons.Seasons().get(tvshowtitle, year, imdb, tvdb)
 
 
 
@@ -314,27 +312,27 @@ elif action == 'seasons':
 ####################################################
 elif action == 'episodes':
     from resources.lib.menus import episodes
-    episodes.episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
+    episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
 
 elif action == 'tvWidget':
     from resources.lib.menus import episodes
-    episodes.episodes().widget()
+    episodes.Episodes().widget()
 
 elif action == 'calendar':
     from resources.lib.menus import episodes
-    episodes.episodes().calendar(url)
+    episodes.Episodes().calendar(url)
 
 elif action == 'calendars':
     from resources.lib.menus import episodes
-    episodes.episodes().calendars()
+    episodes.Episodes().calendars()
 
 elif action == 'episodesUnfinished':
     from resources.lib.menus import episodes
-    episodes.episodes().unfinished()
+    episodes.Episodes().unfinished()
 
 elif action == 'episodesUserlists':
     from resources.lib.menus import episodes
-    episodes.episodes().userlists()
+    episodes.Episodes().userlists()
 
 
 
@@ -345,28 +343,30 @@ elif action == 'download':
     import json
     from resources.lib.modules import sources
     from resources.lib.modules import downloader
-    try: downloader.download(name, image, sources.sources().sourcesResolve(json.loads(source)[0], True))
-    except: pass
+    try:
+        downloader.download(name, image, sources.Sources().sourcesResolve(json.loads(source)[0], True))
+    except:
+        pass
 
 elif action == 'downloadNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().downloads()
+    navigator.Navigator().downloads()
 
 elif action == 'libraryNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().library()
+    navigator.Navigator().library()
 
 elif action == 'toolNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().tools()
+    navigator.Navigator().tools()
 
 elif action == 'searchNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().search()
+    navigator.Navigator().search()
 
 elif action == 'viewsNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().views()
+    navigator.Navigator().views()
 
 elif action == 'resetViewTypes':
     from resources.lib.modules import views
@@ -459,11 +459,10 @@ elif action == 'clearPlaylist':
 elif action == 'queueItem':
     from resources.lib.modules import control
     control.queueItem()
-    if name == None:
+    if name is None:
         control.notification(title = 35515, message = 35519, icon = 'INFO', sound = False)
     else:
         control.notification(title = name, message = 35519, icon = 'INFO', sound = False)
-
 
 
 
@@ -472,62 +471,83 @@ elif action == 'queueItem':
 ####################################################
 elif action == 'play':
     from resources.lib.modules import sources
-    sources.sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select)
+    sources.Sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select)
 
 elif action == 'playItem':
     from resources.lib.modules import sources
-    sources.sources().playItem(title, source)
+    sources.Sources().playItem(title, source)
 
 elif action == 'trailer':
     from resources.lib.modules import trailer
-    trailer.trailer().play(name, url, windowedtrailer)
+    trailer.Trailer().play(name, url, windowedtrailer)
 
 elif action == 'addItem':
     from resources.lib.modules import sources
-    sources.sources().addItem(title)
+    sources.Sources().addItem(title)
 
 elif action == 'alterSources':
     from resources.lib.modules import sources
-    sources.sources().alterSources(url, meta)
+    sources.Sources().alterSources(url, meta)
 
 elif action == 'random':
     rtype = params.get('rtype')
+
     if rtype == 'movie':
         from resources.lib.menus import movies
-        rlist = movies.movies().get(url, create_directory=False)
+        rlist = movies.Movies().get(url, create_directory=False)
         r = sys.argv[0]+"?action=play"
+
     elif rtype == 'episode':
         from resources.lib.menus import episodes
-        rlist = episodes.episodes().get(tvshowtitle, year, imdb, tvdb, season, create_directory=False)
+        rlist = episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, create_directory=False)
         r = sys.argv[0]+"?action=play"
+
     elif rtype == 'season':
-        from resources.lib.menus import episodes
-        rlist = episodes.seasons().get(tvshowtitle, year, imdb, tvdb, create_directory=False)
+        from resources.lib.menus import seasons
+        rlist = seasons.Seasons().get(tvshowtitle, year, imdb, tvdb, create_directory=False)
         r = sys.argv[0]+"?action=random&rtype=episode"
+
     elif rtype == 'show':
         from resources.lib.menus import tvshows
-        rlist = tvshows.tvshows().get(url, create_directory=False)
+        rlist = tvshows.TVshows().get(url, create_directory=False)
         r = sys.argv[0]+"?action=random&rtype=season"
+
     from resources.lib.modules import control
     from random import randint
     import json
+
     try:
         rand = randint(1,len(rlist))-1
+
         for p in ['title','year','imdb','tvdb','season','episode','tvshowtitle','premiered','select']:
+
             if rtype == "show" and p == "tvshowtitle":
-                try: r += '&'+p+'='+urllib.quote_plus(rlist[rand]['title'])
-                except: pass
+                try:
+                    r += '&'+p+'='+urllib.quote_plus(rlist[rand]['title'])
+                except:
+                    pass
             else:
-                try: r += '&'+p+'='+urllib.quote_plus(rlist[rand][p])
-                except: pass
-        try: r += '&meta='+urllib.quote_plus(json.dumps(rlist[rand]))
-        except: r += '&meta='+urllib.quote_plus("{}")
+                try:
+                    r += '&'+p+'='+urllib.quote_plus(rlist[rand][p])
+                except:
+                    pass
+
+        try:
+            r += '&meta='+urllib.quote_plus(json.dumps(rlist[rand]))
+        except:
+            r += '&meta='+urllib.quote_plus("{}")
+
         if rtype == "movie":
-            try: control.infoDialog(rlist[rand]['title'], control.lang(32536).encode('utf-8'), time=30000)
-            except: pass
+            try:
+                control.infoDialog(rlist[rand]['title'], control.lang(32536).encode('utf-8'), time=30000)
+            except:
+                pass
+
         elif rtype == "episode":
-            try: control.infoDialog(rlist[rand]['tvshowtitle']+" - Season "+rlist[rand]['season']+" - "+rlist[rand]['title'], control.lang(32536).encode('utf-8'), time=30000)
-            except: pass
+            try:
+                control.infoDialog(rlist[rand]['tvshowtitle']+" - Season "+rlist[rand]['season']+" - "+rlist[rand]['title'], control.lang(32536).encode('utf-8'), time=30000)
+            except:
+                pass
         control.execute('RunPlugin(%s)' % r)
     except:
         control.infoDialog(control.lang(32537).encode('utf-8'), time=8000)
@@ -576,29 +596,33 @@ elif action == 'service':
 ####################################################
 elif action == 'cfNavigator':
     from resources.lib.menus import navigator
-    navigator.navigator().cf()
+    navigator.Navigator().cf()
 
 elif action == 'clearAllCache':
     from resources.lib.menus import navigator
-    navigator.navigator().clearCacheAll()
+    navigator.Navigator().clearCacheAll()
 
 elif action == 'clearSources':
     from resources.lib.menus import navigator
-    navigator.navigator().clearCacheProviders()
+    navigator.Navigator().clearCacheProviders()
     if params['opensettings'] == 'true':
         control.openSettings(query, 'plugin.video.venom')
 
 elif action == 'clearMetaCache':
     from resources.lib.menus import navigator
-    navigator.navigator().clearCacheMeta()
+    navigator.Navigator().clearCacheMeta()
 
 elif action == 'clearCache':
     from resources.lib.menus import navigator
-    navigator.navigator().clearCache()
+    navigator.Navigator().clearCache()
 
 elif action == 'clearCacheSearch':
     from resources.lib.menus import navigator
-    navigator.navigator().clearCacheSearch()
+    navigator.Navigator().clearCacheSearch()
+
+elif action == 'clearBookmarks':
+    from resources.lib.menus import navigator
+    navigator.Navigator().clearBookmarks()
 
 
 
@@ -621,93 +645,93 @@ elif action == 'urlResolverRDTorrent':
     control.openSettings(query, "script.module.resolveurl")
 
 elif action == "toggleAll":
-    sourcelist = []
+    sourceList = []
     from resources.lib import sources
     sourceList = sources.all_providers
     for i in sourceList:
         source_setting = 'provider.' + i
         control.setSetting(source_setting, params['setting'])
-#    xbmc.log('All providers = %s' % sourceList,2)
+#    xbmc.log('All providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")
 
 elif action == "toggleAllHosters":
-    sourcelist = []
+    sourceList = []
     from resources.lib import sources
     sourceList = sources.hoster_providers
     for i in sourceList:
         source_setting = 'provider.' + i
         control.setSetting(source_setting, params['setting'])
-#    xbmc.log('All Hoster providers = %s' % sourceList,2)
+#    xbmc.log('All Hoster providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")
 
 elif action == "toggleAllForeign":
-    sourcelist = []
+    sourceList = []
     from resources.lib import sources
     sourceList = sources.all_foreign_providers
     for i in sourceList:
         source_setting = 'provider.' + i
         control.setSetting(source_setting, params['setting'])
-#    xbmc.log('All Foregin providers = %s' % sourceList,2)
+#    xbmc.log('All Foregin providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")
 
 elif action == "toggleAllSpanish":
-    sourcelist = []
+    sourceList = []
     from resources.lib import sources
     sourceList = sources.spanish_providers
     for i in sourceList:
         source_setting = 'provider.' + i
         control.setSetting(source_setting, params['setting'])
-#    xbmc.log('All Spanish providers = %s' % sourceList,2)
+#    xbmc.log('All Spanish providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")
 
 elif action == "toggleAllGerman":
-    sourcelist = []
+    sourceList = []
     from resources.lib import sources
     sourceList = sources.german_providers
     for i in sourceList:
         source_setting = 'provider.' + i
         control.setSetting(source_setting, params['setting'])
-#    xbmc.log('All German providers = %s' % sourceList,2)
+#    xbmc.log('All German providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")
 
 elif action == "toggleAllGreek":
-    sourcelist = []
+    sourceList = []
     from resources.lib import sources
     sourceList = sources.greek_providers
     for i in sourceList:
         source_setting = 'provider.' + i
         control.setSetting(source_setting, params['setting'])
-#    xbmc.log('All Greek providers = %s' % sourceList,2)
+#    xbmc.log('All Greek providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")
 
 elif action == "toggleAllPolish":
-    sourcelist = []
+    sourceList = []
     from resources.lib import sources
     sourceList = sources.polish_providers
     for i in sourceList:
         source_setting = 'provider.' + i
         control.setSetting(source_setting, params['setting'])
-#    xbmc.log('All Polish providers = %s' % sourceList,2)
+#    xbmc.log('All Polish providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")
 
 elif action == "toggleAllPaid":
-    sourcelist = []
+    sourceList = []
     from resources.lib import sources
     sourceList = sources.all_paid_providers
     for i in sourceList:
         source_setting = 'provider.' + i
         control.setSetting(source_setting, params['setting'])
-#    xbmc.log('All Paid providers = %s' % sourceList,2)
+#    xbmc.log('All Paid providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")
 
 elif action == "toggleAllDebrid":
-    sourcelist = []
+    sourceList = []
     from resources.lib import sources
     sourceList = sources.debrid_providers
     for i in sourceList:
         source_setting = 'provider.' + i
         control.setSetting(source_setting, params['setting'])
-#    xbmc.log('All Debrid providers = %s' % sourceList,2)
+#    xbmc.log('All Debrid providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")
 
 elif action == "toggleAllTorrent":
@@ -717,16 +741,16 @@ elif action == "toggleAllTorrent":
     for i in sourceList:
         source_setting = 'provider.' + i
         control.setSetting(source_setting, params['setting'])
-#    xbmc.log('All Torrent providers = %s' % sourceList,2)
+#    xbmc.log('All Torrent providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")
 
 if action == "toggleDefaults":
-    sourcelist = []
+    sourceList = []
     from resources.lib import sources
     sourceList = sources.all_providers
     for i in sourceList:
         source_setting = 'provider.' + i
         default = control.getSettingDefault(source_setting)
         control.setSetting(source_setting, default)
-#    xbmc.log('All providers = %s' % sourceList,2)
+#    xbmc.log('All providers = %s' % sourceList, 2)
     control.openSettings(query, "plugin.video.venom")

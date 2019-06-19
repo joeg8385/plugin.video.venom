@@ -21,7 +21,8 @@ import sys, requests, json, urllib, urlparse, os
 sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
 accepted_extensions = ['mkv','mp4','avi', 'm4v']
 
-class furk:
+
+class Furk:
     def __init__(self):
         self.base_link = "https://www.furk.net"
         self.meta_search_link = "/api/plugins/metasearch?api_key=%s&q=%s"
@@ -34,7 +35,6 @@ class furk:
         self.api_key = control.setting('furk.api')
         self.list = []
         test = os.
-
 
 
         def user_files(self):
@@ -62,21 +62,22 @@ class furk:
                         thumb = i['ss_urls'][0]
                     else:
                         thumb = ''
-
                     self.addDirectoryItem(name , url_dl, thumb, '', False)
-
                 else:
                     pass
             self.endDirectory()
             return ''
         except:
             pass
+
     def search(self):
         from resources.lib.menus import navigator
+        navigator.Navigator().addDirectoryItem('New Search', 'furkSearchNew', 'search.png', 'search.png')
 
-        navigator.navigator().addDirectoryItem('New Search', 'furkSearchNew', 'search.png', 'search.png')
-        try: from sqlite3 import dbapi2 as database
-        except: from pysqlite2 import dbapi2 as database
+        try:
+            from sqlite3 import dbapi2 as database
+        except:
+            from pysqlite2 import dbapi2 as database
 
         dbcon = database.connect(control.searchFile)
         dbcur = dbcon.cursor()
@@ -93,14 +94,14 @@ class furk:
         for (id,term) in dbcur.fetchall():
             if term not in str(lst):
                 delete_option = True
-                navigator.navigator().addDirectoryItem(term, 'furkMetaSearch&url=%s' % term, 'search.png', 'search.png')
+                navigator.Navigator().addDirectoryItem(term, 'furkMetaSearch&url=%s' % term, 'search.png', 'search.png')
                 lst += [(term)]
         dbcur.close()
 
         if delete_option:
-            navigator.navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
+            navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
 
-        navigator.navigator().endDirectory()
+        navigator.Navigator().endDirectory()
 
     def search_new(self):
             control.idle()
@@ -109,16 +110,19 @@ class furk:
             k = control.keyboard('', t) ; k.doModal()
             q = k.getText() if k.isConfirmed() else None
 
-            if (q == None or q == ''): return
+            if (q is None or q == ''): return
 
-            try: from sqlite3 import dbapi2 as database
-            except: from pysqlite2 import dbapi2 as database
+            try:
+                from sqlite3 import dbapi2 as database
+            except:
+                from pysqlite2 import dbapi2 as database
 
             dbcon = database.connect(control.searchFile)
             dbcur = dbcon.cursor()
             dbcur.execute("INSERT INTO furk VALUES (?,?)", (None,q))
             dbcon.commit()
             dbcur.close()
+
             url = urllib.quote_plus(q)
             url = '%s?action=furkMetaSearch&url=%s' % (sys.argv[0], urllib.quote_plus(url))
             control.execute('Container.Update(%s)' % url)
@@ -165,14 +169,21 @@ class furk:
 
     def addDirectoryItem(self, name, query, thumb, icon, isAction=True):
         try:
-            name = name.encode('utf-8')
-            url = '%s?action=%s' % (sysaddon, query) if isAction == True else query
-            item = control.item(label=name)
-            item.setArt({'icon': thumb, 'thumb': thumb})
-            control.addItem(handle=syshandle, url=url, listitem=item)
+            if type(name) is str or type(name) is unicode:
+                name = str(name)
+            if type(name) is int:
+                name = control.lang(name).encode('utf-8')
         except:
-            pass
+            import traceback
+            traceback.print_exc()
+
+            url = '%s?action=%s' % (sysaddon, query) if isAction else query
+            item = control.item(label=name)
+            item.setArt({'icon': icon, 'poster': icon, 'thumb': thumb})
+            control.addItem(handle=syshandle, url=url, listitem=item)
+
 
     def endDirectory(self):
         control.content(syshandle, 'addons')
         control.directory(syshandle, cacheToDisc=True)
+        control.sleep(200)

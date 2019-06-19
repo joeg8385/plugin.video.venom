@@ -24,7 +24,7 @@ params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) 
 action = params.get('action')
 
 
-class collections:
+class Collections:
     def __init__(self):
         self.list = []
 
@@ -36,12 +36,11 @@ class collections:
 
         self.imdb_link = 'https://www.imdb.com'
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
-        # self.imdbinfo = 'https://www.omdbapi.com/?i=%s&plot=short&r=json'
 
         self.lang = control.apiLanguage()['trakt']
 
         self.tmdb_key = control.setting('tm.user')
-        if self.tmdb_key == '' or self.tmdb_key == None:
+        if self.tmdb_key == '' or self.tmdb_key is None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
         self.tmdb_link = 'https://api.themoviedb.org'
@@ -54,7 +53,7 @@ class collections:
         # self.tmdb_img_link = 'https://image.tmdb.org/t/p/w%s%s'
 
         self.fanart_tv_user = control.setting('fanart.tv.user')
-        if self.fanart_tv_user == '' or self.fanart_tv_user == None:
+        if self.fanart_tv_user == '' or self.fanart_tv_user is None:
             self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
         self.user = str('self.fanart_tv_user') + str(control.setting('tm.user'))
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/movies/%s'
@@ -159,7 +158,7 @@ class collections:
         self.hungergames_link = 'https://www.imdb.com/search/title?title=hunger+games&title_type=feature&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
         self.huntsman_link = self.tmdb_api_link % ('13235', self.tmdb_key)
         self.independenceday_link = self.tmdb_api_link % ('33317', self.tmdb_key)
-        self.indianajones_link = self.tmdb_api_link % ('33318', self.tmdb_key)
+        self.indianajones_link = self.tmdb_api_link % ('113191', self.tmdb_key)
         self.insidious_link = self.tmdb_api_link % ('33319', self.tmdb_key)
         self.ironeagle_link = self.tmdb_api_link % ('33320', self.tmdb_key)
         self.jackreacher_link = self.tmdb_api_link % ('33321', self.tmdb_key)
@@ -168,17 +167,15 @@ class collections:
         self.jamesbond_link = self.tmdb_api_link % ('33324', self.tmdb_key)
         self.jaws_link = self.tmdb_api_link % ('33325', self.tmdb_key)
         self.jeeperscreepers_link = self.tmdb_api_link % ('33326', self.tmdb_key)
-        self.johnwick_link = self.tmdb_api_link % ('33327', self.tmdb_key)
+        self.johnwick_link = self.tmdb_api_link % ('113190', self.tmdb_key)
         self.journeytocenter_link = self.tmdb_api_link % ('13216', self.tmdb_key)
         self.judgedredd_link = self.tmdb_api_link % ('13215', self.tmdb_key)
-        self.jumanji_link = self.tmdb_api_link % ('33328', self.tmdb_key)
+        self.jumanji_link = self.tmdb_api_link % ('113189', self.tmdb_key)
         self.jumpst_link = self.tmdb_api_link % ('13213', self.tmdb_key)
-        self.jurassicpark_link = self.tmdb_api_link % ('33217', self.tmdb_key)
+        self.jurassicpark_link = self.tmdb_api_link % ('113188', self.tmdb_key)
         self.kickass_link = self.tmdb_api_link % ('33329', self.tmdb_key)
         self.killbill_link = self.tmdb_api_link % ('33330', self.tmdb_key)
-
         self.kingkong_link = self.tmdb_api_link % ('113082', self.tmdb_key)
-        # self.kingkong_link = self.tmdb_api_link % ('33331', self.tmdb_key)
         self.laracroft_link = self.tmdb_api_link % ('33332', self.tmdb_key)
         self.legallyblonde_link = self.tmdb_api_link % ('33333', self.tmdb_key)
         self.lethalweapon_link = self.tmdb_api_link % ('33334', self.tmdb_key)
@@ -198,7 +195,7 @@ class collections:
         self.mightyducks_link = self.tmdb_api_link % ('33345', self.tmdb_key)
         self.misscongeniality_link = self.tmdb_api_link % ('33346', self.tmdb_key)
         self.missinginaction_link = self.tmdb_api_link % ('33347', self.tmdb_key)
-        self.missionimpossible_link = self.tmdb_api_link % ('33348', self.tmdb_key)
+        self.missionimpossible_link = self.tmdb_api_link % ('113187', self.tmdb_key)
         self.themummy_link = 'https://www.imdb.com/search/title?title=mummy&title_type=feature&release_date=1999-01-01,&num_votes=1000,&countries=us&languages=en&sort=release_date,desc'
         self.nakedgun_link = self.tmdb_api_link % ('33349', self.tmdb_key)
         self.nationallampoon_link = self.tmdb_api_link % ('33350', self.tmdb_key)
@@ -244,7 +241,7 @@ class collections:
         self.speed_link = self.tmdb_api_link % ('33389', self.tmdb_key)
         self.stakeout_link = self.tmdb_api_link % ('33390', self.tmdb_key)
         self.startrek_link = self.tmdb_api_link % ('33391', self.tmdb_key)
-        self.starwars_link = self.tmdb_api_link % ('12741', self.tmdb_key)
+        self.starwars_link = self.tmdb_api_link % ('113185', self.tmdb_key)
         self.thesting_link = self.tmdb_api_link % ('33392', self.tmdb_key)
         self.taken_link = self.tmdb_api_link % ('33393', self.tmdb_key)
         self.taxi_link = self.tmdb_api_link % ('33394', self.tmdb_key)
@@ -303,7 +300,7 @@ class collections:
         self.howtotrainyourdragon_link = 'https://api.themoviedb.org/3/list/33210?api_key=%s' % (self.tmdb_key)
         self.hunchbackofnotredame_link = 'https://api.themoviedb.org/3/list/33211?api_key=%s' % (self.tmdb_key)
         self.iceage_link = 'https://api.themoviedb.org/3/list/33212?api_key=%s' % (self.tmdb_key)
-        self.jurassicpark_link = 'https://api.themoviedb.org/3/list/33217?api_key=%s' % (self.tmdb_key)
+        self.jurassicpark_link = self.tmdb_api_link % ('113188', self.tmdb_key)
         self.kungfupanda_link = 'https://api.themoviedb.org/3/list/33218?api_key=%s' % (self.tmdb_key)
         self.ladyandthetramp_link = 'https://api.themoviedb.org/3/list/33219?api_key=%s' % (self.tmdb_key)
         self.liloandstitch_link = 'https://api.themoviedb.org/3/list/33220?api_key=%s' % (self.tmdb_key)
@@ -323,7 +320,7 @@ class collections:
         self.shrek_link = 'https://api.themoviedb.org/3/list/33234?api_key=%s' % (self.tmdb_key)
         self.spongebobsquarepants_link = 'https://api.themoviedb.org/3/list/33235?api_key=%s' % (self.tmdb_key)
         self.spykids_link = 'https://api.themoviedb.org/3/list/33236?api_key=%s' % (self.tmdb_key)
-        self.starwars_link = 'https://api.themoviedb.org/3/list/12741?api_key=%s' % (self.tmdb_key)
+        self.starwars_link = self.tmdb_api_link % ('113185', self.tmdb_key)
         self.stuartlittle_link = 'https://api.themoviedb.org/3/list/33238?api_key=%s' % (self.tmdb_key)
         self.tarzan_link = 'https://api.themoviedb.org/3/list/33239?api_key=%s' % (self.tmdb_key)
         self.teenagemutantninjaturtles_link = 'https://api.themoviedb.org/3/list/33240?api_key=%s' % (self.tmdb_key)
@@ -357,7 +354,7 @@ class collections:
 
     def collectionsNavigator(self, lite=False):
         self.addDirectoryItem('Movies', 'collectionBoxset', 'boxsets.png', 'boxsets.png')
-        if self.getMenuEnabled('navi.xmascollections') == True:
+        if self.getMenuEnabled('navi.xmascollections') is True:
             self.addDirectoryItem('Christmas Collections', 'collections&url=xmasmovies', 'boxsets.png', 'boxsets.png')
         self.addDirectoryItem('DC Comics', 'collections&url=dcmovies', 'boxsets.png', 'boxsets.png')
         self.addDirectoryItem('Marvel Comics', 'collections&url=marvelmovies', 'boxsets.png', 'boxsets.png')
@@ -410,7 +407,7 @@ class collections:
         self.addDirectoryItem('Every Which Way But Loose (1978-1980)', 'collections&url=everywhichwaybutloose', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Exorcist (1973-2005)', 'collections&url=exorcist', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('The Expendables (2010-2014)', 'collections&url=theexpendables', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Fast and the Furious (2001-2017)', 'collections&url=fastandthefurious', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Fast and the Furious (2001-2021)', 'collections&url=fastandthefurious', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Father of the Bride (1991-1995)', 'collections&url=fatherofthebride', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Fletch (1985-1989)', 'collections&url=fletch', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('The Fly (1986-1989)', 'collections&url=thefly', 'collectionboxset.png', 'collectionboxset.png')
@@ -442,7 +439,7 @@ class collections:
         self.addDirectoryItem('Hunger Games (2012-2015)', 'collections&url=hungergames', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('The Huntsman (2012-2016)', 'collections&url=huntsman', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Independence Day (1996-2016)', 'collections&url=independenceday', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Indiana Jones (1981-2008)', 'collections&url=indianajones', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Indiana Jones (1981-2021)', 'collections&url=indianajones', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Insidious (2010-2015)', 'collections&url=insidious', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Iron Eagle (1986-1992)', 'collections&url=ironeagle', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Jack Reacher (2012-2016)', 'collections&url=jackreacher', 'collectionboxset.png', 'collectionboxset.png')
@@ -451,15 +448,15 @@ class collections:
         self.addDirectoryItem('James Bond (1963-2015)', 'collections&url=jamesbond', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Jaws (1975-1987)', 'collections&url=jaws', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Jeepers Creepers (2001-2017)', 'collections&url=jeeperscreepers', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('John Wick (2014-2017)', 'collections&url=johnwick', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('John Wick (2014-2021)', 'collections&url=johnwick', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Journey to the Center of the Earth (2008-2012)', 'collections&url=journeytocenter', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Judge Dredd (1995-2012)', 'collections&url=judgedredd', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Jumanji (1995-2005)', 'collections&url=jumanji', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Jumanji (1995-2019)', 'collections&url=jumanji', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Jump Street (2012-2014)', 'collections&url=jumpst', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Jurassic Park (1993-2015)', 'collections&url=jurassicpark', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Jurassic Park (1993-2021)', 'collections&url=jurassicpark', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Kick-Ass (2010-2013)', 'collections&url=kickass', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Kill Bill (2003-2004)', 'collections&url=killbill', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('King Kong (1933-2016)', 'collections&url=kingkong', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('King Kong (1933-2020)', 'collections&url=kingkong', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Lara Croft (2001-2003)', 'collections&url=laracroft', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Legally Blonde (2001-2003)', 'collections&url=legallyblonde', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Lethal Weapon (1987-1998)', 'collections&url=lethalweapon', 'collectionboxset.png', 'collectionboxset.png')
@@ -479,7 +476,7 @@ class collections:
         self.addDirectoryItem('Mighty Ducks (1995-1996)', 'collections&url=mightyducks', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Miss Congeniality (2000-2005)', 'collections&url=misscongeniality', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Missing in Action (1984-1988)', 'collections&url=missinginaction', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Mission Impossible (1996-2015)', 'collections&url=missionimpossible', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Mission Impossible (1996-2021)', 'collections&url=missionimpossible', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('The Mummy (1999-2017)', 'collections&url=themummy', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Naked Gun (1988-1994)', 'collections&url=nakedgun', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('National Lampoon (1978-2006)', 'collections&url=nationallampoon', 'collectionboxset.png', 'collectionboxset.png')
@@ -525,7 +522,7 @@ class collections:
         self.addDirectoryItem('Speed (1994-1997)', 'collections&url=speed', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Stakeout (1987-1993)', 'collections&url=stakeout', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Star Trek (1979-2016)', 'collections&url=startrek', 'collectionboxset.png', 'collectionboxset.png')
-        self.addDirectoryItem('Star Wars (1977-2017)', 'collections&url=starwars', 'collectionboxset.png', 'collectionboxset.png')
+        self.addDirectoryItem('Star Wars (1977-2019)', 'collections&url=starwars', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('The Sting (1973-1983)', 'collections&url=thesting', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Taken (2008-2014)', 'collections&url=taken', 'collectionboxset.png', 'collectionboxset.png')
         self.addDirectoryItem('Taxi (1998-2007)', 'collections&url=taxi', 'collectionboxset.png', 'collectionboxset.png')
@@ -592,7 +589,7 @@ class collections:
         self.addDirectoryItem('How to Train Your Dragon (2010-2014)', 'collections&url=howtotrainyourdragon', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
         self.addDirectoryItem('Hunchback of Notre Dame (1996-2002)', 'collections&url=hunchbackofnotredame', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
         self.addDirectoryItem('Ice Age (2002-2016)', 'collections&url=iceage', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
-        self.addDirectoryItem('Jurassic Park (1993-2015)', 'collections&url=jurassicpark', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
+        self.addDirectoryItem('Jurassic Park (1993-2021)', 'collections&url=jurassicpark', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
         self.addDirectoryItem('Kung Fu Panda (2008-2016)', 'collections&url=kungfupanda', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
         self.addDirectoryItem('Lady and the Tramp (1955-2001)', 'collections&url=ladyandthetramp', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
         self.addDirectoryItem('Lilo and Stitch (2002-2006)', 'collections&url=liloandstitch', 'collectionkidsboxset.png', 'collectionkidsboxset.png')
@@ -648,7 +645,8 @@ class collections:
 
     def getMenuEnabled(self, menu_title):
         is_enabled = control.setting(menu_title).strip()
-        if (is_enabled == '' or is_enabled == 'false'): return False
+        if (is_enabled == '' or is_enabled == 'false'):
+            return False
         return True
 
 
@@ -662,25 +660,25 @@ class collections:
 
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = cache.get(tmdb.movies().tmdb_collections_list, 720, url)
+                self.list = cache.get(tmdb.Movies().tmdb_collections_list, 0, url)
                 self.sort()
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = cache.get(tmdb.movies().tmdb_list, 720, url)
+                self.list = cache.get(tmdb.Movies().tmdb_list, 0, url)
                 self.sort()
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
                 self.list = cache.get(self.imdb_list, 720, url)
-                if idx == True: self.worker()
+                if idx is True: self.worker()
                 self.sort()
 
             elif u in self.imdb_link:
                 self.list = cache.get(self.imdb_list, 720, url)
-                if idx == True: self.worker()
+                if idx is True: self.worker()
                 self.sort()
 
-            if idx == True: self.movieDirectory(self.list)
+            if idx is True: self.movieDirectory(self.list)
             return self.list
         except:
             pass
@@ -690,12 +688,14 @@ class collections:
         try:
             attribute = int(control.setting('sort.movies.type'))
             reverse = int(control.setting('sort.movies.order')) == 1
-            if attribute == 0: reverse = False
+            if attribute == 0:
+                reverse = False
             if attribute > 0:
                 if attribute == 1:
                     try:
                         self.list = sorted(self.list, key = lambda k: re.sub('(^the |^a |^an )', '', k['title'].lower()), reverse = reverse)
-                    except: self.list = sorted(self.list, key = lambda k: k['title'].lower(), reverse = reverse)
+                    except:
+                        self.list = sorted(self.list, key = lambda k: k['title'].lower(), reverse = reverse)
                 elif attribute == 2:
                     self.list = sorted(self.list, key = lambda k: float(k['rating']), reverse = reverse)
                 elif attribute == 3:
@@ -715,7 +715,8 @@ class collections:
             elif reverse:
                 self.list = reversed(self.list)
         except:
-            tools.Logger.error()
+            import traceback
+            traceback.print_exc()
 
 
     def imdb_list(self, url):
@@ -850,7 +851,8 @@ class collections:
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'tagline': '0', 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
+                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa,
+                                            'director': director, 'cast': cast, 'plot': plot, 'tagline': '0', 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
             except:
                 pass
 
@@ -858,7 +860,8 @@ class collections:
 
 
     def worker(self, level=1):
-        if self.list == None or self.list == []: return
+        if self.list is None or self.list == []:
+            return
         self.meta = []
         total = len(self.list)
 
@@ -870,13 +873,11 @@ class collections:
         self.list = metacache.fetch(self.list, self.lang, self.user)
 
         imdb_t = self.list[i]['imdb']
-        tmdb_t = self.list[i]['tmdb']
 
         for r in range(0, total, 40):
             threads = []
-            for i in range(r, r+40):
+            for i in range(r, r + 40):
                 if i <= total and imdb_t != '0': threads.append(workers.Thread(self.super_imdb_info, i))
-                if i <= total and tmdb_t != '0': threads.append(workers.Thread(self.super_tmdb_info, i))
             [i.start() for i in threads]
             [i.join() for i in threads]
             if self.meta: metacache.insert(self.meta)
@@ -891,7 +892,8 @@ class collections:
 
     def super_imdb_info(self, i):
         try:
-            if self.list[i]['metacache'] == True: raise Exception()
+            if self.list[i]['metacache'] is True:
+                raise Exception()
 
             imdb = self.list[i]['imdb']
 
@@ -949,7 +951,8 @@ class collections:
             cast = [(person['name'], person['role']) for person in cast]
 
             try:
-                if self.lang == 'en' or self.lang not in item.get('available_translations', [self.lang]): raise Exception()
+                if self.lang == 'en' or self.lang not in item.get('available_translations', [self.lang]):
+                    raise Exception()
                 trans_item = trakt.getMovieTranslation(imdb, self.lang, full = True)
 
                 title = trans_item.get('title') or title
@@ -1043,7 +1046,8 @@ class collections:
 
 ##--TMDb artwork
             try:
-                if self.tmdb_key == '': raise Exception()
+                if self.tmdb_key == '':
+                    raise Exception()
                 art2 = client.request(self.tmdb_art_link % imdb, timeout='20', error=True)
                 art2 = json.loads(art2)
             except:
@@ -1066,12 +1070,14 @@ class collections:
                 fanart2 = '0'
 ##---
 
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart,
-                    'discart': discart, 'landscape': landscape, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
+            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2, 'poster3': poster3, 'banner': banner,
+                        'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape, 'premiered': premiered,
+                        'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
             item = dict((k,v) for k, v in item.iteritems() if not v == '0')
             self.list[i].update(item)
 
-            if artmeta == False: raise Exception()
+            if artmeta is False:
+                raise Exception()
 
             meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
             self.meta.append(meta)
@@ -1080,7 +1086,7 @@ class collections:
 
 
     def movieDirectory(self, items):
-        if items == None or len(items) == 0: 
+        if items is None or len(items) == 0: 
             control.idle()
             control.notification(title = 32001, message = 33049, icon = 'INFO')
             sys.exit()
@@ -1097,9 +1103,18 @@ class collections:
 
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
-        playbackMenu = control.lang(32063).encode('utf-8') if control.setting('hosts.mode') == '2' else control.lang(32064).encode('utf-8')
-        watchedMenu = control.lang(32068).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32066).encode('utf-8')
-        unwatchedMenu = control.lang(32069).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32067).encode('utf-8')
+        if control.setting('hosts.mode') == '2':
+            playbackMenu = control.lang(32063).encode('utf-8')
+        else:
+            playbackMenu = control.lang(32064).encode('utf-8')
+
+        if trakt.getTraktIndicatorsInfo() is True:
+            watchedMenu = control.lang(32068).encode('utf-8')
+            unwatchedMenu = control.lang(32069).encode('utf-8')
+        else:
+            watchedMenu = control.lang(32066).encode('utf-8')
+            unwatchedMenu = control.lang(32067).encode('utf-8')
+
         playlistManagerMenu = control.lang(35522).encode('utf-8')
         queueMenu = control.lang(32065).encode('utf-8')
         traktManagerMenu = control.lang(32070).encode('utf-8')
@@ -1182,20 +1197,20 @@ class collections:
                 if fanart == '0': fanart = addonFanart
 
                 art = {}
-                if not icon == '0' and not icon == None: art.update({'icon' : icon})
-                if not thumb == '0' and not thumb == None: art.update({'thumb' : thumb})
-                if not banner == '0' and not banner == None: art.update({'banner' : banner})
-                if not poster == '0' and not poster == None: art.update({'poster' : poster})
-                if not fanart == '0' and not fanart == None: art.update({'fanart' : fanart})
-                if not clearlogo == '0' and not clearlogo == None: art.update({'clearlogo' : clearlogo})
-                if not clearart == '0' and not clearart == None: art.update({'clearart' : clearart})
-                if not landscape == '0' and not landscape == None: art.update({'landscape' : landscape})
-                if not discart == '0' and not discart == None: art.update({'discart' : discart})
+                if not icon == '0' and not icon is None: art.update({'icon' : icon})
+                if not thumb == '0' and not thumb is None: art.update({'thumb' : thumb})
+                if not banner == '0' and not banner is None: art.update({'banner' : banner})
+                if not poster == '0' and not poster is None: art.update({'poster' : poster})
+                if not fanart == '0' and not fanart is None: art.update({'fanart' : fanart})
+                if not clearlogo == '0' and not clearlogo is None: art.update({'clearlogo' : clearlogo})
+                if not clearart == '0' and not clearart is None: art.update({'clearart' : clearart})
+                if not landscape == '0' and not landscape is None: art.update({'landscape' : landscape})
+                if not discart == '0' and not discart is None: art.update({'discart' : discart})
 
 
 ####-Context Menu and Overlays-####
                 cm = []
-                if traktCredentials == True:
+                if traktCredentials is True:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
 
                 try:
@@ -1206,7 +1221,8 @@ class collections:
                     else:
                         cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
                         meta.update({'playcount': 0, 'overlay': 6})
-                except: pass
+                except:
+                    pass
 
                 sysmeta = urllib.quote_plus(json.dumps(meta))
                 sysart = urllib.quote_plus(json.dumps(art))
@@ -1219,14 +1235,19 @@ class collections:
                 cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
                 cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
-                if isOld == True:
+
+                if isOld is True:
                     cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
 ####################################
 
                 item = control.item(label=label)
-                if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
+                if 'cast' in i:
+                    item.setCast(i['cast'])
+                if not fanart == '0' and not fanart is None:
+                    item.setProperty('Fanart_Image', fanart)
                 item.setArt(art)
                 item.setProperty('IsPlayable', isPlayable)
                 item.setInfo(type='video', infoLabels=control.metadataClean(meta))
@@ -1237,21 +1258,26 @@ class collections:
             except:
                 pass
 
-        try:
-            url = items[0]['next']
-            if url == '': raise Exception()
+        if next:
+            try:
+                url = items[0]['next']
+                if url == '':
+                    raise Exception()
 
-            icon = control.addonNext()
-            url = '%s?action=moviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
+                if not self.tmdb_link in url:
+                    url = '%s?action=moviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
-            item = control.item(label=nextMenu)
+                elif self.tmdb_link in url:
+                    url = '%s?action=tmdbmoviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
-            item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-            if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
-
-            control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
-        except:
-            pass
+                item = control.item(label=nextMenu)
+                icon = control.addonNext()
+                item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
+                if not addonFanart is None:
+                    item.setProperty('Fanart_Image', addonFanart)
+                control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
+            except:
+                pass
 
         control.content(syshandle, 'movies')
         control.directory(syshandle, cacheToDisc=True)
@@ -1259,7 +1285,9 @@ class collections:
 
 
     def addDirectory(self, items, queue=False):
-        if items == None or len(items) == 0: control.idle() ; sys.exit()
+        if items is None or len(items) == 0:
+            control.idle()
+            sys.exit()
 
         addonFanart, addonThumb, artPath = control.addonFanart(), control.addonThumb(), control.artPath()
         queueMenu = control.lang(32065).encode('utf-8')
@@ -1270,26 +1298,38 @@ class collections:
             try:
                 name = i['name']
 
-                if i['image'].startswith('http'): thumb = i['image']
-                elif not artPath == None: thumb = os.path.join(artPath, i['image'])
-                else: thumb = addonThumb
+                if i['image'].startswith('http'):
+                    thumb = i['image']
+                elif not artPath is None:
+                    thumb = os.path.join(artPath, i['image'])
+                else:
+                    thumb = addonThumb
 
                 url = '%s?action=%s' % (sysaddon, i['action'])
-                try: url += '&url=%s' % urllib.quote_plus(i['url'])
-                except: pass
+
+                try:
+                    url += '&url=%s' % urllib.quote_plus(i['url'])
+                except:
+                    pass
 
                 cm = []
                 cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=movie&url=%s)' % (sysaddon, urllib.quote_plus(i['url']))))
-                if queue == True:
+
+                if queue is True:
                     cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-                try: cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s)' % (sysaddon, urllib.quote_plus(i['context']))))
-                except: pass
+
+                try:
+                    cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s)' % (sysaddon, urllib.quote_plus(i['context']))))
+                except:
+                    pass
+
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
 
                 item = control.item(label = name)
 
                 item.setArt({'icon': thumb, 'thumb': thumb, 'poster': thumb, 'banner': thumb})
-                if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+                if not addonFanart is None:
+                    item.setProperty('Fanart_Image', addonFanart)
 
                 item.addContextMenuItems(cm)
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
@@ -1301,26 +1341,40 @@ class collections:
 
 
     def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
-        try: name = control.lang(name).encode('utf-8')
-        except: pass
+        try:
+            if type(name) is str or type(name) is unicode:
+                name = str(name)
+            if type(name) is int:
+                name = control.lang(name).encode('utf-8')
+        except:
+            import traceback
+            traceback.print_exc()
 
-        url = '%s?action=%s' % (sysaddon, query) if isAction == True else query
+        url = '%s?action=%s' % (sysaddon, query) if isAction else query
 
-        thumb = os.path.join(artPath, thumb) if not artPath == None else icon
+        thumb = os.path.join(artPath, thumb) if not artPath is None else icon
 
         cm = []
-        if queue == True: cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-        if not context == None: cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
+
+        if queue is True:
+            cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
+        if not context is None:
+            cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
         cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
 
-        item = control.item(label = name)
+        item = control.item(label=name)
         item.addContextMenuItems(cm)
 
-        item.setArt({'icon': thumb, 'thumb': thumb})
-        if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+        # item.setArt({'icon': thumb, 'thumb': thumb})
+        item.setArt({'icon': icon, 'poster': icon, 'thumb': thumb})
+
+        if not addonFanart is None:
+            item.setProperty('Fanart_Image', addonFanart)
+
         control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
 
 
     def endDirectory(self):
         control.content(syshandle, 'addons')
         control.directory(syshandle, cacheToDisc=True)
+        control.sleep(200)

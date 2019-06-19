@@ -33,7 +33,7 @@ def log(msg, level = LOGNOTICE):
     except Exception as e:
         try:
             xbmc.log('Logging Failure: %s' % (e), level)
-        except Exception:
+        except:
             pass
 
 

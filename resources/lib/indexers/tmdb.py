@@ -14,7 +14,7 @@ from resources.lib.modules import log_utils
 # from resources.lib.modules import trakt
 
 
-class movies:
+class Movies:
     def __init__(self):
         self.list = []
         self.meta = []
@@ -24,7 +24,7 @@ class movies:
         self.lang = control.apiLanguage()['trakt']
 
         self.tmdb_key = control.setting('tm.user')
-        if self.tmdb_key == '' or self.tmdb_key == None:
+        if self.tmdb_key == '' or self.tmdb_key is None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
         self.tmdb_link = 'http://api.themoviedb.org'
@@ -89,7 +89,8 @@ class movies:
             if not 'page=' in url: raise Exception()
             next = '%s&page=%s' % (next.split('&page=', 1)[0], str(page+1))
             next = next.encode('utf-8')
-        except: next = ''
+        except:
+            next = ''
 
         for item in items:
             try:
@@ -101,7 +102,8 @@ class movies:
                     originaltitle = item['original_title']
                     originaltitle = client.replaceHTMLCodes(title)
                     originaltitle = title.encode('utf-8')
-                except: originaltitle = title
+                except:
+                    originaltitle = title
 
                 year = item['release_date']
                 year = re.compile('(\d{4})').findall(year)[-1]
@@ -112,12 +114,12 @@ class movies:
                 tmdb = tmdb.encode('utf-8')
 
                 poster = item['poster_path']
-                if poster == '' or poster == None: poster = '0'
+                if poster == '' or poster is None: poster = '0'
                 if not poster == '0': poster = '%s%s' % (self.tmdb_poster, poster)
                 poster = poster.encode('utf-8')
 
                 fanart = item['backdrop_path']
-                if fanart == '' or fanart == None: fanart = '0'
+                if fanart == '' or fanart is None: fanart = '0'
                 if not fanart == '0': fanart = '%s%s' % (self.tmdb_image, fanart)
                 fanart = fanart.encode('utf-8')
 
@@ -135,7 +137,7 @@ class movies:
                 except: votes = '0'
 
                 plot = item['overview']
-                if plot == '' or plot == None: plot = '0'
+                if plot == '' or plot is None: plot = '0'
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
@@ -149,13 +151,13 @@ class movies:
                 item = self.get_request(url)
 
                 imdb = item['external_ids']['imdb_id']
-                if imdb == '' or imdb == None: imdb = '0'
+                if imdb == '' or imdb is None: imdb = '0'
                 imdb = imdb.encode('utf-8')
 
                 # studio = item['production_companies']
                 # try: studio = [x['name'] for x in studio][0]
                 # except: studio = '0'
-                # if studio == '' or studio == None: studio = '0'
+                # if studio == '' or studio is None: studio = '0'
                 # studio = studio.encode('utf-8')
 
                 genre = item['genres']
@@ -182,7 +184,7 @@ class movies:
                 director = item['credits']['crew']
                 try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
                 except: director = '0'
-                if director == '' or director == None or director == []: director = '0'
+                if director == '' or director is None or director == []: director = '0'
                 director = (' / '.join(director)).encode('utf-8')
 
                 writer = item['credits']['crew']
@@ -190,7 +192,7 @@ class movies:
                 except: writer = '0'
                 try: writer = [x for n,x in enumerate(writer) if x not in writer[:n]]
                 except: writer = '0'
-                if writer == '' or writer == None or writer == []: writer = '0'
+                if writer == '' or writer is None or writer == []: writer = '0'
                 writer = (' / '.join(writer)).encode('utf-8')
 
                 cast = item['credits']['cast']
@@ -198,7 +200,7 @@ class movies:
                 except: cast = []
 
                 try:
-                    if not imdb == None or not imdb == '0':
+                    if not imdb is None or not imdb == '0':
                         url = self.imdbinfo % imdb
                         item = client.request(url, timeout='30')
                         item = json.loads(item)
@@ -206,16 +208,16 @@ class movies:
                         plot2 = item['Plot']
                         plot2 = client.replaceHTMLCodes(plot2)
                         plot2 = plot.encode('utf-8')
-                        if plot == '0' or plot == '' or plot == None: plot = plot2
+                        if plot == '0' or plot == '' or plot is None: plot = plot2
 
                         rating2 = str(item['imdbRating'])
                         rating2 = rating2.encode('utf-8')
-                        if rating == '0' or rating == '' or rating == None: rating = rating2
+                        if rating == '0' or rating == '' or rating is None: rating = rating2
 
                         votes2 = str(item['imdbVotes'])
                         votes2 = str(format(int(votes2),',d'))
                         votes2 = votes2.encode('utf-8')
-                        if votes == '0' or votes == '' or votes == None: votes = votes2
+                        if votes == '0' or votes == '' or votes is None: votes = votes2
                 except:
                     pass
 
@@ -229,7 +231,7 @@ class movies:
                 # fanart_thread = threading.Thread
                 from resources.lib.indexers import fanarttv
                 extended_art = fanarttv.get_movie_art(tmdb)
-                if not extended_art == None:
+                if not extended_art is None:
                     item.update(extended_art)
                     meta.update(item)
 
@@ -257,6 +259,12 @@ class movies:
                 title = client.replaceHTMLCodes(title)
                 title = title.encode('utf-8')
 
+                try: 
+                    originaltitle = item['original_title']
+                    originaltitle = client.replaceHTMLCodes(title)
+                    originaltitle = title.encode('utf-8')
+                except: originaltitle = title
+
                 year = item['release_date']
                 year = re.compile('(\d{4})').findall(year)[0]
                 year = year.encode('utf-8')
@@ -266,12 +274,12 @@ class movies:
                 tmdb = tmdb.encode('utf-8')
 
                 poster = item['poster_path']
-                if poster == '' or poster == None: poster = '0'
+                if poster == '' or poster is None: poster = '0'
                 if not poster == '0': poster = '%s%s' % (self.tmdb_poster, poster)
                 poster = poster.encode('utf-8')
 
                 fanart = item['backdrop_path']
-                if fanart == '' or fanart == None: fanart = '0'
+                if fanart == '' or fanart is None: fanart = '0'
                 if not fanart == '0': fanart = '%s%s' % (self.tmdb_image, fanart)
                 fanart = fanart.encode('utf-8')
 
@@ -289,13 +297,13 @@ class movies:
                 except: votes = '0'
 
                 plot = item['overview']
-                if plot == '' or plot == None: plot = '0'
+                if plot == '' or plot is None: plot = '0'
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
                 try:
                     tagline = item['tagline']
-                    if tagline == '' or tagline == '0' or tagline == None:
+                    if tagline == '' or tagline == '0' or tagline is None:
                         tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
                     tagline = tagline.encode('utf-8')
                 except: tagline = '0'
@@ -306,13 +314,13 @@ class movies:
                 item = self.get_request(url)
 
                 imdb = item['external_ids']['imdb_id']
-                if imdb == '' or imdb == None: imdb = '0'
+                if imdb == '' or imdb is None: imdb = '0'
                 imdb = imdb.encode('utf-8')
 
                 # studio = item['production_companies']
                 # try: studio = [x['name'] for x in studio][0]
                 # except: studio = '0'
-                # if studio == '' or studio == None: studio = '0'
+                # if studio == '' or studio is None: studio = '0'
                 # studio = studio.encode('utf-8')
 
                 genre = item['genres']
@@ -324,7 +332,7 @@ class movies:
 
                 try: duration = str(item['runtime'])
                 except: duration = '0'
-                if duration == '' or duration == None or duration == 'N/A': duration = '0'
+                if duration == '' or duration is None or duration == 'N/A': duration = '0'
                 duration = duration.encode('utf-8')
 
                 mpaa = item['release_dates']['results']
@@ -341,7 +349,7 @@ class movies:
                 director = item['credits']['crew']
                 try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
                 except: director = '0'
-                if director == '' or director == None or director == []: director = '0'
+                if director == '' or director is None or director == []: director = '0'
                 director = ' / '.join(director)
                 director = director.encode('utf-8')
 
@@ -350,7 +358,7 @@ class movies:
                 except: writer = '0'
                 try: writer = [x for n,x in enumerate(writer) if x not in writer[:n]]
                 except: writer = '0'
-                if writer == '' or writer == None or writer == []: writer = '0'
+                if writer == '' or writer is None or writer == []: writer = '0'
                 writer = ' / '.join(writer)
                 writer = writer.encode('utf-8')
 
@@ -359,7 +367,7 @@ class movies:
                 except: cast = []
 
                 try:
-                    if not imdb == None or not imdb == '0':
+                    if not imdb is None or not imdb == '0':
                         url = self.imdbinfo % imdb
                         item = client.request(url, timeout='30')
                         item = json.loads(item)
@@ -367,21 +375,21 @@ class movies:
                         plot2 = item['Plot']
                         plot2 = client.replaceHTMLCodes(plot2)
                         plot2 = plot.encode('utf-8')
-                        if plot == '0' or plot == '' or plot == None: plot = plot2
+                        if plot == '0' or plot == '' or plot is None: plot = plot2
 
                         rating2 = str(item['imdbRating'])
                         rating2 = rating2.encode('utf-8')
-                        if rating == '0' or rating == '' or rating == None: rating = rating2
+                        if rating == '0' or rating == '' or rating is None: rating = rating2
 
                         votes2 = str(item['imdbVotes'])
                         votes2 = str(format(int(votes2),',d'))
                         votes2 = votes2.encode('utf-8')
-                        if votes == '0' or votes == '' or votes == None: votes = votes2
+                        if votes == '0' or votes == '' or votes is None: votes = votes2
                 except:
                     pass
 
                 item = {}
-                item = {'content': 'movie', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
+                item = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
                                 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
                                 'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False, 'next': next}
                 meta = {}
@@ -390,7 +398,7 @@ class movies:
                 # fanart_thread = threading.Thread
                 from resources.lib.indexers import fanarttv
                 extended_art = fanarttv.get_movie_art(imdb)
-                if not extended_art == None:
+                if not extended_art is None:
                     item.update(extended_art)
                     meta.update(item)
 
@@ -406,8 +414,9 @@ class movies:
     def tmdb_art(self, tmdb):
         try:
             if self.tmdb_key == '': raise Exception()
-            art3 = client.request(self.tmdb_art_link % tmdb, timeout='20', error=True)
-            art3 = json.loads(art3)
+            # art3 = client.request(self.tmdb_art_link % tmdb, timeout='20', error=True)
+            art3 = self.get_request(self.tmdb_art_link % tmdb)
+            # art3 = json.loads(art3)
         except: return None
 
         try:
@@ -430,7 +439,7 @@ class movies:
         return extended_art
 
 
-class tvshows:
+class TVshows:
     def __init__(self):
         self.list = []
         self.meta = []
@@ -440,7 +449,7 @@ class tvshows:
         self.lang = control.apiLanguage()['tvdb']
 
         self.tmdb_key = control.setting('tm.user')
-        if self.tmdb_key == '' or self.tmdb_key == None:
+        if self.tmdb_key == '' or self.tmdb_key is None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
         self.tmdb_link = 'http://api.themoviedb.org'
@@ -520,17 +529,17 @@ class tvshows:
                 tmdb = tmdb.encode('utf-8')
 
                 poster = item['poster_path']
-                if poster == '' or poster == None: poster = '0'
+                if poster == '' or poster is None: poster = '0'
                 if not poster == '0': poster = '%s%s' % (self.tmdb_poster, poster)
                 poster = poster.encode('utf-8')
 
                 fanart = item['backdrop_path']
-                if fanart == '' or fanart == None: fanart = '0'
+                if fanart == '' or fanart is None: fanart = '0'
                 if not fanart == '0': fanart = '%s%s' % (self.tmdb_image, fanart)
                 fanart = fanart.encode('utf-8')
 
                 # bannner = item['banner_path']
-                # if banner == '' or banner == None: banner = '0'
+                # if banner == '' or banner is None: banner = '0'
                 # if not banner == '0': banner = self.tmdb_image + banner
                 # banner = banner.encode('utf-8')
 
@@ -540,17 +549,17 @@ class tvshows:
                 premiered = premiered.encode('utf-8')
 
                 rating = str(item['vote_average'])
-                if rating == '' or rating == None: rating = '0'
+                if rating == '' or rating is None: rating = '0'
                 rating = rating.encode('utf-8')
 
                 votes = str(item['vote_count'])
                 try: votes = str(format(int(votes),',d'))
                 except: pass
-                if votes == '' or votes == None: votes = '0'
+                if votes == '' or votes is None: votes = '0'
                 votes = votes.encode('utf-8')
 
                 plot = item['overview']
-                if plot == '' or plot == None: plot = '0'
+                if plot == '' or plot is None: plot = '0'
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
@@ -563,12 +572,12 @@ class tvshows:
                 item = self.get_request(url)
 
                 tvdb = item['external_ids']['tvdb_id']
-                if tvdb == '' or tvdb == None or tvdb == 'N/A' or tvdb == 'NA': tvdb = '0'
+                if tvdb == '' or tvdb is None or tvdb == 'N/A' or tvdb == 'NA': tvdb = '0'
                 tvdb = re.sub('[^0-9]', '', str(tvdb))
                 tvdb = tvdb.encode('utf-8')
 
                 imdb = item['external_ids']['imdb_id']
-                if imdb == '' or imdb == None or imdb == 'N/A' or imdb == 'NA': imdb = '0'
+                if imdb == '' or imdb is None or imdb == 'N/A' or imdb == 'NA': imdb = '0'
                 imdb = imdb.encode('utf-8')
 
                 genre = item['genres']
@@ -593,13 +602,13 @@ class tvshows:
                 studio = item['networks']
                 try: studio = [x['name'] for x in studio][0]
                 except: studio = '0'
-                if studio == '' or studio == None: studio = '0'
+                if studio == '' or studio is None: studio = '0'
                 studio = studio.encode('utf-8')
 
                 director = item['credits']['crew']
                 try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
                 except: director = '0'
-                if director == '' or director == None or director == []: director = '0'
+                if director == '' or director is None or director == []: director = '0'
                 director = ' / '.join(director)
                 director = director.encode('utf-8')
 
@@ -641,7 +650,7 @@ class tvshows:
                 # fanart_thread = threading.Thread
                 from resources.lib.indexers import fanarttv
                 extended_art = fanarttv.get_tvshow_art(tvdb)
-                if not extended_art == None:
+                if not extended_art is None:
                     item.update(extended_art)
                     meta.update(item)
 
@@ -669,7 +678,7 @@ class tvshows:
                 year = year.encode('utf-8')
 
                 tmdb = item['id']
-                if tmdb == '' or tmdb == None: tmdb = '0'
+                if tmdb == '' or tmdb is None: tmdb = '0'
                 tmdb = re.sub('[^0-9]', '', str(tmdb))
                 tmdb = tmdb.encode('utf-8')
 
@@ -677,12 +686,12 @@ class tvshows:
                 tvdb = '0'
 
                 poster = item['poster_path']
-                if poster == '' or poster == None: poster = '0'
+                if poster == '' or poster is None: poster = '0'
                 else: poster = self.tmdb_poster + poster
                 poster = poster.encode('utf-8')
 
                 fanart = item['backdrop_path']
-                if fanart == '' or fanart == None: fanart = '0'
+                if fanart == '' or fanart is None: fanart = '0'
                 if not fanart == '0': fanart = '%s%s' % (self.tmdb_image, fanart)
                 fanart = fanart.encode('utf-8')
 
@@ -692,23 +701,23 @@ class tvshows:
                 premiered = premiered.encode('utf-8')
 
                 rating = str(item['vote_average'])
-                if rating == '' or rating == None: rating = '0'
+                if rating == '' or rating is None: rating = '0'
                 rating = rating.encode('utf-8')
 
                 votes = str(item['vote_count'])
                 try: votes = str(format(int(votes),',d'))
                 except: pass
-                if votes == '' or votes == None: votes = '0'
+                if votes == '' or votes is None: votes = '0'
                 votes = votes.encode('utf-8')
 
                 plot = item['overview']
-                if plot == '' or plot == None: plot = '0'
+                if plot == '' or plot is None: plot = '0'
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
                 try:
                     tagline = item['tagline']
-                    if tagline == '' or tagline == '0' or tagline == None:
+                    if tagline == '' or tagline == '0' or tagline is None:
                         tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
                     tagline = tagline.encode('utf-8')
                 except: tagline = '0'
@@ -718,12 +727,12 @@ class tvshows:
                 item = self.get_request(url)
 
                 tvdb = item['external_ids']['tvdb_id']
-                if tvdb == '' or tvdb == None or tvdb == 'N/A' or tvdb == 'NA': tvdb = '0'
+                if tvdb == '' or tvdb is None or tvdb == 'N/A' or tvdb == 'NA': tvdb = '0'
                 tvdb = re.sub('[^0-9]', '', str(tvdb))
                 tvdb = tvdb.encode('utf-8')
 
                 imdb = item['external_ids']['imdb_id']
-                if imdb == '' or imdb == None or imdb == 'N/A' or imdb == 'NA': imdb = '0'
+                if imdb == '' or imdb is None or imdb == 'N/A' or imdb == 'NA': imdb = '0'
                 imdb = imdb.encode('utf-8')
 
                 genre = item['genres']
@@ -735,7 +744,7 @@ class tvshows:
 
                 try: duration = str(item['runtime'])
                 except: duration = '0'
-                if duration == '' or duration == None or duration == 'N/A': duration = '0'
+                if duration == '' or duration is None or duration == 'N/A': duration = '0'
                 duration = duration.encode('utf-8')
 
                 try:
@@ -748,19 +757,19 @@ class tvshows:
                 # studio = item['production_companies']
                 # try: studio = [x['name'] for x in studio][0]
                 # except: studio = '0'
-                # if studio == '' or studio == None: studio = '0'
+                # if studio == '' or studio is None: studio = '0'
                 # studio = studio.encode('utf-8')
 
                 studio = item['networks']
                 try: studio = [x['name'] for x in studio][0]
                 except: studio = '0'
-                if studio == '' or studio == None: studio = '0'
+                if studio == '' or studio is None: studio = '0'
                 studio = studio.encode('utf-8')
 
                 director = item['credits']['crew']
                 try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
                 except: director = '0'
-                if director == '' or director == None or director == []: director = '0'
+                if director == '' or director is None or director == []: director = '0'
                 director = ' / '.join(director)
                 director = director.encode('utf-8')
 
@@ -769,7 +778,7 @@ class tvshows:
                 except: writer = '0'
                 try: writer = [x for n,x in enumerate(writer) if x not in writer[:n]]
                 except: writer = '0'
-                if writer == '' or writer == None or writer == []: writer = '0'
+                if writer == '' or writer is None or writer == []: writer = '0'
                 writer = ' / '.join(writer)
                 writer = writer.encode('utf-8')
 
@@ -778,7 +787,7 @@ class tvshows:
                 except: cast = []
 
                 try:
-                    if not imdb == None or imdb == '0':
+                    if not imdb is None or not imdb == '0':
                         url = self.imdbinfo % imdb
                         item = client.request(url, timeout='30')
                         item = json.loads(item)
@@ -786,16 +795,16 @@ class tvshows:
                         plot2 = item['Plot']
                         plot2 = client.replaceHTMLCodes(plot2)
                         plot2 = plot.encode('utf-8')
-                        if plot == '0' or plot == '' or plot == None: plot = plot2
+                        if plot == '0' or plot == '' or plot is None: plot = plot2
 
                         rating2 = str(item['imdbRating'])
                         rating2 = rating2.encode('utf-8')
-                        if rating == '0' or rating == '' or rating == None: rating = rating2
+                        if rating == '0' or rating == '' or rating is None: rating = rating2
 
                         votes2 = str(item['imdbVotes'])
                         votes2 = str(format(int(votes2),',d'))
                         votes2 = votes2.encode('utf-8')
-                        if votes == '0' or votes == '' or votes == None: votes = votes2
+                        if votes == '0' or votes == '' or votes is None: votes = votes2
                 except:
                     pass
 
@@ -809,7 +818,7 @@ class tvshows:
                 # fanart_thread = threading.Thread
                 from resources.lib.indexers import fanarttv
                 extended_art =  fanarttv.get_tvshow_art(tvdb)
-                if not extended_art == None:
+                if not extended_art is None:
                     item.update(extended_art)
                     meta.update(item)
 
@@ -824,8 +833,9 @@ class tvshows:
     def tmdb_art(self, tmdb):
         try:
             if self.tmdb_key == '': raise Exception()
-            art3 = client.request(self.tmdb_art_link % tmdb, timeout='20', error=True)
-            art3 = json.loads(art3)
+            # art3 = client.request(self.tmdb_art_link % tmdb, timeout='20', error=True)
+            art3 = self.get_request(self.tmdb_art_link % tmdb)
+            # art3 = json.loads(art3)
         except: return None
 
         try:

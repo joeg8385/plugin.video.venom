@@ -27,7 +27,7 @@ class movies:
         self.lang = control.apiLanguage()['trakt']
 
         self.tmdb_key = control.setting('tm.user')
-        if self.tmdb_key == '' or self.tmdb_key == None:
+        if self.tmdb_key == '' or self.tmdb_key is None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
         self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
@@ -204,7 +204,7 @@ class movies:
                 # fanart_thread = threading.Thread
                 from resources.lib.indexers import fanarttv
                 extended_art = fanarttv.get_movie_art(tmdb)
-                if not extended_art == None:
+                if not extended_art is None:
                     item.update(extended_art)
                     meta.update(item)
 
@@ -223,7 +223,8 @@ class movies:
 #            items = client.parseDOM(result, 'div', attrs = {'class': '.+?etail'})
             items = client.parseDOM(result, 'div', attrs = {'class': '.+? lister-item'}) + client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
         except:
-            tools.Logger.error()
+            import traceback
+            traceback.print_exc()
 
         for item in items:
             try:
@@ -280,7 +281,8 @@ class movies:
 
     def super_info(self, i):
         try:
-            if self.list[i]['metacache'] == True: raise Exception()
+            if self.list[i]['metacache'] is True:
+                raise Exception()
 
             imdb = self.list[i]['imdb']
 
@@ -354,14 +356,14 @@ class tvshows:
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 
         self.fanart_tv_user = control.setting('fanart.tv.user')
-        if self.fanart_tv_user == '' or self.fanart_tv_user == None:
+        if self.fanart_tv_user == '' or self.fanart_tv_user is None:
             self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
         self.user = self.fanart_tv_user + str('')
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
         self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
 
         # self.tvdb_key = control.setting('tvdb.user')
-        # if self.tvdb_key == '' or self.tvdb_key == None:
+        # if self.tvdb_key == '' or self.tvdb_key is None:
             # self.tvdb_key = '1D62F2F90030C444'
         self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
         self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)

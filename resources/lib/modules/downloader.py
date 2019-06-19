@@ -5,7 +5,7 @@ import xbmc,xbmcplugin,xbmcvfs,xbmcgui
 
 
 def download(name, image, url):
-    if url == None: return
+    if url is None: return
     from resources.lib.modules import control
     try: headers = dict(urlparse.parse_qsl(url.rsplit('|', 1)[1]))
     except: headers = dict('')

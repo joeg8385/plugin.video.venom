@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import json,os,xbmc,xbmcaddon
+import json, os, xbmc, xbmcaddon
 
 try:
     from sqlite3 import dbapi2 as database
@@ -76,8 +76,14 @@ def addEpisodes(meta, content):
         item = dict()
         meta = json.loads(meta)
         content = "episode"
-        try: id = meta['imdb']
-        except: id = meta['tvdb']
+
+        try:
+            id = meta['imdb']
+            if id == '' or id is None:
+                id = meta['tvdb']
+        except:
+            id = meta['episodeIDS']['trakt']
+
         if 'title' in meta: title = item['title'] = meta['title']
         if 'tvshowtitle' in meta: title = item['tvshowtitle'] = meta['tvshowtitle']
         if 'year' in meta: item['year'] = meta['year']
@@ -90,6 +96,7 @@ def addEpisodes(meta, content):
         if 'tmdb' in meta: item['tmdb'] = meta['tmdb']
         if 'tvdb' in meta: item['tvdb'] = meta['tvdb']
         if 'tvrage' in meta: item['tvrage'] = meta['tvrage']
+        if 'episodeIDS' in meta: item['episodeIDS'] = meta['episodeIDS']
         if 'episode' in meta: item['episode'] = meta['episode']
         if 'season' in meta: item['season'] = meta['season']
         if 'premiered' in meta: item['premiered'] = meta['premiered']
@@ -115,15 +122,17 @@ def deleteFavourite(meta, content):
         try:
             dbcon = database.connect(favouritesFile)
             dbcur = dbcon.cursor()
-            try: dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['imdb']))
+            try:
+                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['imdb']))
             except: pass
-            try: dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tvdb']))
+            try:
+                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tvdb']))
             except: pass
-            try: dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tmdb']))
+            try:
+                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tmdb']))
             except: pass
             dbcon.commit()
-        except:
-            pass
+        except: pass
         control.refresh()
         control.notification(title = title, message = 'Removed From Favorites', icon = 'INFO', sound = True)
     except:
@@ -136,15 +145,17 @@ def deleteProgress(meta, content):
         try:
             dbcon = database.connect(progressFile)
             dbcur = dbcon.cursor()
-            try: dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['imdb']))
+            try:
+                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['imdb']))
             except: pass
-            try: dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tvdb']))
+            try:
+                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tvdb']))
             except: pass
-            try: dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tmdb']))
+            try:
+                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tmdb']))
             except: pass
             dbcon.commit()
-        except:
-            pass
+        except: pass
         control.refresh()
     except:
         return

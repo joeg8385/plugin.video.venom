@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import xbmc,xbmcgui,xbmcaddon,xbmcvfs,xbmcgui
-import time,datetime,calendar
-import urlparse,urllib
+import xbmc, xbmcgui, xbmcaddon, xbmcvfs, xbmcgui
+import time, datetime, calendar
+import urlparse, urllib
 
 import numbers
 import json
@@ -170,7 +170,7 @@ class Format(object):
 
 	@classmethod
 	def font(self, label, color = None, bold = None, italic = None, light = None, uppercase = None, lowercase = None, capitalcase = None, newline = None, separator = None, translate = True):
-		if label == None: return label
+		if label is None: return label
 		if translate: label = self.__translate(label)
 		if label:
 			if color:
@@ -197,7 +197,7 @@ class Format(object):
 
 	@classmethod
 	def fontColor(self, label, color, translate = True):
-		if color == None: return label
+		if color is None: return label
 		if len(color) == 6: color = 'FF' + color
 		if translate: label = self.__translate(label)
 		return '[COLOR ' + color + ']' + label + '[/COLOR]'
@@ -414,13 +414,13 @@ class Settings(object):
 	def cacheGet(self, id, raw, database = False):
 		self.cache()
 		if raw:
-			if Settings.CacheMainData == None:
+			if Settings.CacheMainData is None:
 				Settings.CacheMainData = File.readNow(self.pathAddon())
 			data = Settings.CacheMainData
 			values = Settings.CacheMainValues
 			parameter = Settings.ParameterDefault
 		else:
-			if Settings.CacheUserData == None:
+			if Settings.CacheUserData is None:
 				Settings.CacheUserData = File.readNow(self.pathProfile())
 			data = Settings.CacheUserData
 			values = Settings.CacheUserValues
@@ -434,7 +434,7 @@ class Settings(object):
 			return result
 		else:
 			result = self.raw(id = id, parameter = parameter, data = data)
-			if result == None: # Not in the userdata settings yet. Fallback to normal Kodi lookup.
+			if result is None: # Not in the userdata settings yet. Fallback to normal Kodi lookup.
 				global SettingsAddon
 				result = SettingsAddon.getSetting(id)
 			values[id] = result
@@ -481,7 +481,7 @@ class Settings(object):
 	@classmethod
 	def raw(self, id, parameter = ParameterDefault, data = None):
 		try:
-			if data == None: data = self.data()
+			if data is None: data = self.data()
 			indexStart = data.find('id="%s"' % id)
 			if indexStart < 0: return None
 			indexStart += 4
@@ -575,13 +575,13 @@ class Settings(object):
 	@classmethod
 	def getList(self, id, raw = False, cached = True):
 		result = self.get(id = id, raw = raw, cached = cached, database = True)
-		return [] if result == None or result == '' else result
+		return [] if result is None or result == '' else result
 
 
 	@classmethod
 	def getObject(self, id, raw = False, cached = True):
 		result = self.get(id = id, raw = raw, cached = cached, database = True)
-		return None if result == None or result == '' else result
+		return None if result is None or result == '' else result
 
 
 
@@ -606,7 +606,7 @@ class Logger(object):
 		if message5: message += divider + str(message5)
 		if name:
 			nameValue = control.addonName().upper()
-			if not name == True:
+			if not name is True:
 				nameValue += ' ' + name
 			nameValue += ' ' + System.version()
 			if parameters:
@@ -670,7 +670,7 @@ class Icon(object):
 
 	@classmethod
 	def _initialize(self, special = SpecialNone):
-		if special == False or not special == Icon.ThemeInitialized:
+		if special is False or not special == Icon.ThemeInitialized:
 			Icon.ThemeInitialized = special
 			if special: theme = special
 			else: theme = tools.Settings.getString('interface.theme.icon').lower()
@@ -721,12 +721,12 @@ class Icon(object):
 
 	@classmethod
 	def path(self, icon, type = TypeDefault, default = None, special = SpecialNone, quality = None):
-		if icon == None: return None
+		if icon is None: return None
 		self._initialize(special = special)
-		if Icon.ThemePath == None:
+		if Icon.ThemePath is None:
 			return default
 		else:
-			if quality == None:
+			if quality is None:
 				if type == Icon.TypeIcon: type = Icon.ThemeIcon
 				elif type == Icon.TypeThumb: type = Icon.ThemeThumb
 				elif type == Icon.TypePoster: type = Icon.ThemePoster
@@ -913,9 +913,9 @@ class Dialog(object):
 
 	@classmethod
 	def option(self, message, labelConfirm = None, labelDeny = None, title = None):
-		if not labelConfirm == None:
+		if not labelConfirm is None:
 			labelConfirm = self.__translate(labelConfirm)
-		if not labelDeny == None:
+		if not labelDeny is None:
 			labelDeny = self.__translate(labelDeny)
 		return xbmcgui.Dialog().yesno(self.title(title), self.__translate(message), yeslabel = labelConfirm, nolabel = labelDeny)
 
@@ -965,7 +965,7 @@ class Dialog(object):
 	# default: Default set input.
 	@classmethod
 	def input(self, type = InputAlphabetic, verify = False, confirm = False, hidden = False, default = None, title = None):
-		default = '' if default == None else default
+		default = '' if default is None else default
 		if verify:
 			option = xbmcgui.PASSWORD_VERIFY
 			if isinstance(verify, basestring):
@@ -977,7 +977,7 @@ class Dialog(object):
 		else:
 			option = None
 		# NB: Although the default parameter is given in the docs, it seems that the parameter is not actually called "default". Hence, pass it in as an unmaed parameter.
-		if option == None: result = xbmcgui.Dialog().input(self.title(title), str(default), type = type)
+		if option is None: result = xbmcgui.Dialog().input(self.title(title), str(default), type = type)
 		else: result = xbmcgui.Dialog().input(self.title(title), str(default), type = type, option = option)
 
 		if verify:
@@ -991,8 +991,8 @@ class Dialog(object):
 
 	@classmethod
 	def browse(self, type = BrowseDefault, default = None, multiple = False, mask = [], title = None):
-		if default == None: default = File.joinPath(System.pathHome(), '') # Needs to end with a slash
-		if mask == None: mask = []
+		if default is None: default = File.joinPath(System.pathHome(), '') # Needs to end with a slash
+		if mask is None: mask = []
 		elif isinstance(mask, basestring): mask = [mask]
 		for i in range(len(mask)):
 			mask[i] = mask[i].lower()
@@ -1024,7 +1024,7 @@ class Dialog(object):
 
 	@classmethod
 	def information(self, items, title = None, refresh = None):
-		if items == None or len(items) == 0:
+		if items is None or len(items) == 0:
 			return False
 
 		def decorate(item):
@@ -1033,15 +1033,15 @@ class Dialog(object):
 			prefix = Dialog.prefixContains(label)
 			if not prefix: label = self.__translate(label)
 
-			if value == None:
+			if value is None:
 				heading = value or 'items' in item
 				label = Format.font(label, bold = True, uppercase = heading, color = Format.ColorPrimary if heading else None, translate = False if prefix else True)
 			else:
 				if not label == '':
-					if not value == None:
+					if not value is None:
 						label += ': '
 					label = Format.font(label, bold = True, color = Format.ColorSecondary)
-				if not value == None:
+				if not value is None:
 					label += Format.font(self.__translate(item['value']), italic = ('link' in item and item['link']))
 			return label
 
@@ -1051,7 +1051,7 @@ class Dialog(object):
 			closes = []
 			returns = []
 			for item in items:
-				if not item == None:
+				if not item is None:
 					if 'items' in item:
 						# if not len(result) == 0:
 							# result.append('')
@@ -1063,7 +1063,7 @@ class Dialog(object):
 						closes.append(item['close'] if 'close' in item else False)
 						returns.append(item['return'] if 'return' in item else None)
 						for i in item['items']:
-							if not i == None:
+							if not i is None:
 								result.append(decorate(i))
 								actions.append(i['action'] if 'action' in i else None)
 								closes.append(i['close'] if 'close' in i else False)
@@ -1097,7 +1097,7 @@ class Dialog(object):
 	@classmethod
 	def title(self, extension = None, bold = True, titleless = False):
 		title = '' if titleless else System.name().encode('utf-8')
-		if not extension == None:
+		if not extension is None:
 			if not titleless:
 				title += Format.divider()
 			title += self.__translate(extension)
@@ -1115,7 +1115,7 @@ class Loader(object):
 
 	@classmethod
 	def type(self):
-		if Loader.Type == None: Loader.Type = 'busydialognocancel' if System.versionKodiNew() else 'busydialog'
+		if Loader.Type is None: Loader.Type = 'busydialognocancel' if System.versionKodiNew() else 'busydialog'
 		return Loader.Type
 
 	@classmethod
@@ -1159,11 +1159,11 @@ class System(object):
 	@classmethod
 	def versionKodi(self, full = False):
 		if full:
-			if System.KodiVersionFull == None:
+			if System.KodiVersionFull is None:
 				System.KodiVersionFull = self.infoLabel('System.BuildVersion')
 			return System.KodiVersionFull
 		else:
-			if System.KodiVersion == None:
+			if System.KodiVersion is None:
 				try: System.KodiVersion = float(re.search('^\d+\.?\d+', self.infoLabel('System.BuildVersion')).group(0))
 				except: pass
 			return System.KodiVersion
@@ -1179,7 +1179,7 @@ class System(object):
 	def path(self, id):
 		try: addon = xbmcaddon.Addon(id)
 		except: addon = None
-		if addon == None:
+		if addon is None:
 			return ''
 		else:
 			return File.translatePath(addon.getAddonInfo('path').decode('utf-8'))
@@ -1207,7 +1207,7 @@ class System(object):
 		try:
 			addon = xbmcaddon.Addon(id)
 			id = addon.getAddonInfo('id')
-			return not id == None and not id == ''
+			return not id is None and not id == ''
 		except:
 			return False
 
@@ -1241,12 +1241,12 @@ class Converter(object):
 
 	@classmethod
 	def boolean(self, value, string = False, none = False):
-		if none and value == None:
+		if none and value is None:
 			return value
 		elif string:
 			return 'true' if value else 'false'
 		else:
-			if value == True or value == False:
+			if value is True or value is False:
 				return value
 			elif isinstance(value, numbers.Number):
 				return value > 0
@@ -1259,7 +1259,7 @@ class Converter(object):
 	@classmethod
 	def dictionary(self, jsonData):
 		try:
-			if jsonData == None: return None
+			if jsonData is None: return None
 			jsonData = json.loads(jsonData)
 
 			# In case the quotes in the string were escaped, causing the first json.loads to return a unicode string.
@@ -1273,7 +1273,7 @@ class Converter(object):
 	@classmethod
 	def unicode(self, string, umlaut = False):
 		try:
-			if string == None:
+			if string is None:
 				return string
 			if umlaut:
 				try: string = string.replace(unichr(196), 'AE').replace(unichr(203), 'EE').replace(unichr(207), 'IE').replace(unichr(214), 'OE').replace(unichr(220), 'UE').replace(unichr(228), 'ae').replace(unichr(235), 'ee').replace(unichr(239), 'ie').replace(unichr(246), 'oe').replace(unichr(252), 'ue')
@@ -1399,7 +1399,7 @@ class Time(object):
 		return self.start()
 
 	def elapsed(self, milliseconds = False):
-		if self.mStart == None:
+		if self.mStart is None:
 			self.mStart = time.time()
 		if milliseconds: return int((time.time() - self.mStart) * 1000)
 		else: return int(time.time() - self.mStart)
@@ -1414,7 +1414,7 @@ class Time(object):
 	# UTC timestamp
 	@classmethod
 	def timestamp(self, fixedTime = None):
-		if fixedTime == None:
+		if fixedTime is None:
 			# Do not use time.clock(), gives incorrect result for search.py
 			return int(time.time())
 		else:
@@ -1422,7 +1422,7 @@ class Time(object):
 
 	@classmethod
 	def format(self, timestamp = None, format = FormatDateTime):
-		if timestamp == None: timestamp = self.timestamp()
+		if timestamp is None: timestamp = self.timestamp()
 		return datetime.datetime.utcfromtimestamp(timestamp).strftime(format)
 
 	# datetime object from string
@@ -1749,8 +1749,8 @@ class File(object):
 			except: pass
 			# This is important, especailly for Windows.
 			# When deleteing a file and immediatly replacing it, the old file might still exist and the file is never replaced.
-			if sleep: Time.sleep(0.1 if sleep == True else sleep)
-		if bytes == None:
+			if sleep: Time.sleep(0.1 if sleep is True else sleep)
+		if bytes is None:
 			return xbmcvfs.copy(pathFrom, pathTo)
 		else:
 			try:
@@ -1805,7 +1805,7 @@ class File(object):
 			# This is important, especailly for Windows.
 			# When deleteing a file and immediatly replacing it, the old file might still exist and the file is never replaced.
 			# Especailly important for import Reaper's settings on inital use.
-			if sleep: Time.sleep(0.1 if sleep == True else sleep)
+			if sleep: Time.sleep(0.1 if sleep is True else sleep)
 		try:
 			shutil.move(pathFrom, pathTo)
 			return True
@@ -1813,288 +1813,3 @@ class File(object):
 			return False
 
 
-
-# ###################################################################
-# # PLAYLIST
-# ###################################################################
-# class Playlist(object):
-
-	# Id = xbmc.PLAYLIST_VIDEO
-
-	# @classmethod
-	# def playlist(self):
-		# return xbmc.PlayList(Playlist.Id)
-
-	# @classmethod
-	# def show(self):
-		# from resources.lib.extensions import window
-		# window.Window.show(window.Window.IdWindowPlaylist)
-
-	# @classmethod
-	# def clear(self, notification = True):
-		# self.playlist().clear()
-		# if notification:
-			# from resources.lib.extensions import interface
-			# control.notification(title = 35515, message = 35521, icon = 'INFO')
-
-	# @classmethod
-	# def items(self):
-		# try: return [i['label'] for i in System.executeJson(method = 'Playlist.GetItems', parameters = {'playlistid' : Playlist.Id})['result']['items']]
-		# except: return []
-
-	# @classmethod
-	# def empty(self):
-		# return len(self.items()) == 0
-
-	# @classmethod
-	# def contains(self, label):
-		# return label in self.items()
-
-	# @classmethod
-	# def position(self, label):
-		# try: return self.items().index(label)
-		# except: return -1
-
-	# @classmethod
-	# def add(self, link = None, label = None, metadata = None, art = None, context = None, notification = True):
-		# if link == None:
-			# System.execute('Action(Queue)')
-		# else:
-			# if isinstance(metadata, basestring): metadata = Converter.jsonFrom(metadata)
-			# if isinstance(art, basestring): art = Converter.jsonFrom(art)
-			# if isinstance(context, basestring): context = Converter.jsonFrom(context)
-
-			# item = xbmcgui.ListItem(label = label)
-			# item.setArt(art)
-			# item.setInfo(type = 'video', infoLabels = control.metadataClean(metadata))
-
-			# if not context == None:
-				# from resources.lib.extensions import interface
-				# menu = interface.Context()
-				# menu.jsonFrom(context)
-				# item.addContextMenuItems([menu.menu()])
-
-			# self.playlist().add(url = link, listitem = item)
-			# if notification:
-				# from resources.lib.extensions import interface
-				# control.notification(title = 35515, message = 35519, icon = 'INFO')
-
-	# @classmethod
-	# def remove(self, label, notification = True):
-		# #self.playlist().remove(link) # This doesn't seem to work all the time.
-		# position = self.position(label = label)
-		# if position >= 0:
-			# System.executeJson(method = 'Playlist.Remove', parameters = {'playlistid' : Playlist.Id, 'position' : position})
-			# if notification:
-				# from resources.lib.extensions import interface
-				# control.notification(title = 35515, message = 35520, icon = 'INFO')
-
-
-
-###################################################################
-# MEDIA
-###################################################################
-class Media(object):
-
-	TypeNone = None
-	TypeMovie = 'movie'
-	TypeDocumentary = 'documentary'
-	TypeShort = 'short'
-	TypeShow = 'show'
-	TypeSeason = 'season'
-	TypeEpisode = 'episode'
-
-
-	NameSeasonLong = control.lang(32055).encode('utf-8')
-	NameSeasonShort = NameSeasonLong[0].upper()
-	NameEpisodeLong = control.lang(33028).encode('utf-8')
-	NameEpisodeShort = NameEpisodeLong[0].upper()
-
-	OrderTitle = 0
-	OrderTitleYear = 1
-	OrderYearTitle = 2
-	OrderSeason = 3
-	OrderEpisode = 4
-	OrderSeasonEpisode = 5
-	OrderEpisodeTitle = 6
-	OrderSeasonEpisodeTitle = 7
-
-	Default = 0
-
-	DefaultMovie = 4
-	DefaultDocumentary = 4
-	DefaultShort = 4
-	DefaultShow = 0
-	DefaultSeason = 0
-	DefaultEpisode = 6
-
-	DefaultAeonNoxMovie = 0
-	DefaultAeonNoxDocumentary = 0
-	DefaultAeonNoxShort = 0
-	DefaultAeonNoxShow = 0
-	DefaultAeonNoxSeason = 0
-	DefaultAeonNoxEpisode = 0
-
-	FormatsTitle = [
-		(OrderTitle,		'%s'),
-		(OrderTitleYear,	'%s %d'),
-		(OrderTitleYear,	'%s. %d'),
-		(OrderTitleYear,	'%s - %d'),
-		(OrderTitleYear,	'%s (%d)'),
-		(OrderTitleYear,	'%s [%d]'),
-		(OrderYearTitle,	'%d %s'),
-		(OrderYearTitle,	'%d. %s'),
-		(OrderYearTitle,	'%d - %s'),
-		(OrderYearTitle,	'(%d) %s'),
-		(OrderYearTitle,	'[%d] %s'),
-	]
-
-	FormatsSeason = [
-		(OrderSeason,	NameSeasonLong + ' %01d'),
-		(OrderSeason,	NameSeasonLong + ' %02d'),
-		(OrderSeason,	NameSeasonShort + ' %01d'),
-		(OrderSeason,	NameSeasonShort + ' %02d'),
-		(OrderSeason,	'%01d ' + NameSeasonLong),
-		(OrderSeason,	'%02d ' + NameSeasonLong),
-		(OrderSeason,	'%01d. ' + NameSeasonLong),
-		(OrderSeason,	'%02d. ' + NameSeasonLong),
-		(OrderSeason,	'%01d'),
-		(OrderSeason,	'%02d'),
-	]
-
-	FormatsEpisode = [
-		(OrderTitle,				'%s'),
-		(OrderEpisodeTitle,			'%01d %s'),
-		(OrderEpisodeTitle,			'%02d %s'),
-		(OrderEpisodeTitle,			'%01d. %s'),
-		(OrderEpisodeTitle,			'%02d. %s'),
-		(OrderSeasonEpisodeTitle,	'%01dx%01d %s'),
-		(OrderSeasonEpisodeTitle,	'%01dx%02d %s'),
-		(OrderSeasonEpisodeTitle,	'%02dx%02d %s'),
-		(OrderEpisodeTitle,			NameEpisodeShort + '%01d %s'),
-		(OrderEpisodeTitle,			NameEpisodeShort + '%02d %s'),
-		(OrderEpisodeTitle,			NameEpisodeShort + '%01d. %s'),
-		(OrderEpisodeTitle,			NameEpisodeShort + '%02d. %s'),
-		(OrderSeasonEpisodeTitle,	NameSeasonShort + '%01d' + NameEpisodeShort + '%01d %s'),
-		(OrderSeasonEpisodeTitle,	NameSeasonShort + '%01d' + NameEpisodeShort + '%02d %s'),
-		(OrderSeasonEpisodeTitle,	NameSeasonShort + '%02d' + NameEpisodeShort + '%02d %s'),
-		(OrderEpisode,				'%01d'),
-		(OrderEpisode,				'%02d'),
-		(OrderSeasonEpisode,		'%01dx%01d'),
-		(OrderSeasonEpisode,		'%01dx%02d'),
-		(OrderSeasonEpisode,		'%02dx%02d'),
-		(OrderEpisode,				NameEpisodeShort + '%01d'),
-		(OrderEpisode,				NameEpisodeShort + '%02d'),
-		(OrderSeasonEpisode,		NameSeasonShort + '%01d' + NameEpisodeShort + '%01d'),
-		(OrderSeasonEpisode,		NameSeasonShort + '%01d' + NameEpisodeShort + '%02d'),
-		(OrderSeasonEpisode,		NameSeasonShort + '%02d' + NameEpisodeShort + '%02d'),
-	]
-
-	Formats = None
-
-
-	@classmethod
-	def _format(self, format, title = None, year = None, season = None, episode = None):
-		order = format[0]
-		format = format[1]
-		if order == Media.OrderTitle:
-			return format % (title)
-		elif order == Media.OrderTitleYear:
-			return format % (title, year)
-		elif order == Media.OrderYearTitle:
-			return format % (year, title)
-		elif order == Media.OrderSeason:
-			return format % (season)
-		elif order == Media.OrderEpisode:
-			return format % (episode)
-		elif order == Media.OrderSeasonEpisode:
-			return format % (season, episode)
-		elif order == Media.OrderEpisodeTitle:
-			return format % (episode, title)
-		elif order == Media.OrderSeasonEpisodeTitle:
-			return format % (season, episode, title)
-		else:
-			return title
-
-
-	@classmethod
-	def _extract(self, metadata, encode = False):
-		title = metadata['tvshowtitle'] if 'tvshowtitle' in metadata else metadata['title']
-		if encode: title = Converter.unicode(string = title, umlaut = True)
-		year = int(metadata['year']) if 'year' in metadata else None
-		season = int(metadata['season']) if 'season' in metadata else None
-		episode = int(metadata['episode']) if 'episode' in metadata else None
-		pack = bool(metadata['pack']) if 'pack' in metadata else False
-		return (title, year, season, episode, pack)
-
-
-	@classmethod
-	def _data(self, title, year, season, episode, encode = False):
-		if not title == None and encode: title = Converter.unicode(string = title, umlaut = True)
-		if not year == None: year = int(year)
-		if not season == None: season = int(season)
-		if not episode == None: episode = int(episode)
-		return (title, year, season, episode)
-
-
-	@classmethod
-	def _initialize(self):
-		if Media.Formats == None:
-			Media.Formats = {}
-
-			setting = Media.DefaultMovie
-			Media.Formats[Media.TypeMovie] = Media.FormatsTitle[setting]
-
-			setting = Media.DefaultDocumentary
-			Media.Formats[Media.TypeDocumentary] = Media.FormatsTitle[setting]
-
-			setting = Media.DefaultShort
-			Media.Formats[Media.TypeShort] = Media.FormatsTitle[setting]
-
-			setting = Media.DefaultShow
-			Media.Formats[Media.TypeShow] = Media.FormatsTitle[setting]
-
-			setting == Media.DefaultSeason
-			Media.Formats[Media.TypeSeason] = Media.FormatsSeason[setting]
-
-			setting = Media.DefaultEpisode
-			Media.Formats[Media.TypeEpisode] = Media.FormatsEpisode[setting]
-
-
-	@classmethod
-	def typeMovie(self, type):
-		return type == Media.TypeMovie or type == Media.TypeDocumentary or type == Media.TypeShort
-
-
-	@classmethod
-	def typeTelevision(self, type):
-		return type == Media.TypeShow or type == Media.TypeSeason or type == Media.TypeEpisode
-
-
-	@classmethod
-	def metadataClean(self, metadata):
-		# Filter out non-existing/custom keys.
-		# Otherise there are tons of errors in Kodi 18 log.
-		if metadata == None: return metadata
-		allowed = ['genre', 'country', 'year', 'episode', 'season', 'sortepisode', 'sortseason', 'episodeguide', 'showlink', 'top250', 'setid', 'tracknumber', 'rating', 'userrating', 'watched', 'playcount', 'overlay', 'cast', 'castandrole', 'director', 'mpaa', 'plot', 'plotoutline', 'title', 'originaltitle', 'sorttitle', 'duration', 'studio', 'tagline', 'writer', 'tvshowtitle', 'premiered', 'status', 'set', 'setoverview', 'tag', 'imdbnumber', 'code', 'aired', 'credits', 'lastplayed', 'album', 'artist', 'votes', 'path', 'trailer', 'dateadded', 'mediatype', 'dbid']
-		return {k: v for k, v in metadata.iteritems() if k in allowed}
-
-	@classmethod
-	def title(self, type = TypeNone, metadata = None, title = None, year = None, season = None, episode = None, encode = False, pack = False):
-		if not metadata == None:
-			title, year, season, episode, packs = self._extract(metadata = metadata, encode = encode)
-		title, year, season, episode = self._data(title = title, year = year, season = season, episode = episode, encode = encode)
-
-		if type == Media.TypeNone:
-			pack = (pack and packs)
-			if not season == None and not episode == None and not pack:
-				type = Media.TypeEpisode
-			if not season == None:
-				type = Media.TypeSeason
-			else:
-				type = Media.TypeMovie
-
-		self._initialize()
-		format = Media.Formats[type]
-
-		return self._format(format = format, title = title, year = year, season = season, episode = episode)

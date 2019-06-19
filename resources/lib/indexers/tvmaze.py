@@ -4,7 +4,7 @@
     Venom Add-on
 '''
 
-import json,requests,threading,re,urllib
+import json, requests, threading, re, urllib
 import datetime
 
 from resources.lib.modules import control
@@ -207,7 +207,7 @@ class tvshows:
         self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s?embed=cast'
 
         # self.tvdb_key = control.setting('tvdb.user')
-        # if self.tvdb_key == '' or self.tvdb_key == None:
+        # if self.tvdb_key == '' or self.tvdb_key is None:
             # self.tvdb_key = '1D62F2F90030C444'
         self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
         self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
@@ -217,7 +217,7 @@ class tvshows:
 
 
         self.tmdb_key = control.setting('tm.user')
-        if self.tmdb_key == '' or self.tmdb_key == None:
+        if self.tmdb_key == '' or self.tmdb_key is None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
         self.tmdb_art_link = 'http://api.themoviedb.org/3/tv/%s/images?api_key=' + self.tmdb_key
 
@@ -227,7 +227,7 @@ class tvshows:
         self.tmdb_img_link = 'http://image.tmdb.org/t/p/w%s%s'
 
         self.fanart_tv_user = control.setting('fanart.tv.user')
-        if self.fanart_tv_user == '' or self.fanart_tv_user == None:
+        if self.fanart_tv_user == '' or self.fanart_tv_user is None:
             self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
         self.user = self.fanart_tv_user + str('')
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
@@ -316,14 +316,14 @@ class tvshows:
 
                 try:
                     imdb = item['externals']['imdb']
-                    if imdb == None or imdb == '': imdb = '0'
+                    if imdb is None or imdb == '': imdb = '0'
                     else: imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
                     imdb = imdb.encode('utf-8')
                 except: imdb = '0'
 
                 try:
                     tvdb = item['externals']['thetvdb']
-                    if tvdb == None or tvdb == '': tvdb = '0'
+                    if tvdb is None or tvdb == '': tvdb = '0'
                     else: tvdb = re.sub('[^0-9]', '', str(tvdb))
                     tvdb = tvdb.encode('utf-8')
                 except: tvdb = '0'
@@ -340,14 +340,14 @@ class tvshows:
                 if studio == '0':
                     try: studio = item['webChannel']['name']
                     except: studio = '0'
-                if studio == None: studio = '0'
+                if studio is None: studio = '0'
                 studio = studio.encode('utf-8')
 
                 try:
                     genre = item['genres']
                     genre = [i.title() for i in genre]
                     genre = (' / '.join(genre)).encode('utf-8')
-                    if genre == '' or genre == None: raise Exception()
+                    if genre == '' or genre is None: raise Exception()
                 except: genre = 'NA'
 
                 try:
@@ -370,10 +370,10 @@ class tvshows:
                     content = content.encode('utf-8')
                 except: content = '0'
 
-                # try: status = item['status']
-                # except: status = '0'
-                # if status == None or status == '': status = '0'
-                # status = status.encode('utf-8')
+                try:
+                    status = item['status']
+                    status = status.encode('utf-8')
+                except: status = '0'
 
                 # cast = []
                 # try:
@@ -410,19 +410,19 @@ class tvshows:
                     item3 = client.request(url, timeout='20', error=True)
                 except: item3 = None ; fanart = '0'
 
-                if poster == '0' and not item3 == None :
+                if poster == '0' and not item3 is None :
                     try:
                         poster = client.parseDOM(item3, 'poster')[0]
-                        if not poster == '' or not poster == None: poster = self.tvdb_image + poster
+                        if not poster == '' or not poster is None: poster = self.tvdb_image + poster
                         else: poster = '0'
                         poster = client.replaceHTMLCodes(poster)
                         poster = poster.encode('utf-8')
                     except: poster = '0'
 
-                if not item3 == None:
+                if not item3 is None:
                     try:
                         banner = client.parseDOM(item3, 'banner')[0]
-                        if not banner == '' or not banner == None: banner = self.tvdb_image + banner
+                        if not banner == '' or not banner is None: banner = self.tvdb_image + banner
                         else: banner = '0'
                         banner = client.replaceHTMLCodes(banner)
                         banner = banner.encode('utf-8')
@@ -470,14 +470,18 @@ class tvshows:
 
                 if next == '0':
                     item = {}
-                    item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'cast': cast, 'rating': rating, 'votes': votes, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False, 'content': content}
+                    item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'cast': cast,
+                            'rating': rating, 'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0',
+                            'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False}
 
                     meta = {}
                     meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
 
                 else:
                     item = {}
-                    item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'cast': cast, 'rating': rating, 'votes': votes, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False, 'next': next, 'content': content}
+                    item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'cast': cast,
+                            'rating': rating, 'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0',
+                            'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False, 'next': next}
 
                     meta = {}
                     meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
@@ -485,7 +489,7 @@ class tvshows:
                 # fanart_thread = threading.Thread
                 from resources.lib.indexers import fanarttv
                 extended_art = fanarttv.get_tvshow_art(tvdb)
-                if not extended_art == None:
+                if not extended_art is None:
                     item.update(extended_art)
                     meta.update(item)
 

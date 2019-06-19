@@ -48,7 +48,8 @@ def playlistManager(name = None, url = None, meta = None, art = None):
                 playlistClear()
                 control.hide()
     except:
-        tools.Logger.error()
+        import traceback
+        traceback.print_exc()
         control.hide()
 
 
@@ -93,12 +94,12 @@ def position(label):
 
 
 def playlistAdd(name, url, meta, art):
-    # if not name == None: name.encode('utf-8')
+    # if not name is None: name.encode('utf-8')
     labelPosition = position(label = name)
     if labelPosition >= 0:
         return control.notification(title = 35522, message = 'Title already in playlist', icon = 'INFO', sound = False)
 
-    # if url == None:
+    # if url is None:
         # control.queueItem()
     # else:
     if isinstance(meta, basestring): meta = json.loads(meta)

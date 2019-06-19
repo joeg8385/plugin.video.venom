@@ -11,7 +11,7 @@ from resources.lib.modules import client
 from resources.lib.modules import control
 
 
-class trailer:
+class Trailer:
     def __init__(self):
         self.base_link = 'https://www.youtube.com'
         self.key_link = random.choice(['QUl6YVN5RDd2aFpDLTYta2habTVuYlVyLTZ0Q0JRQnZWcnFkeHNz', 'QUl6YVN5Q2RiNEFNenZpVG0yaHJhSFY3MXo2Nl9HNXBhM2ZvVXd3'])
@@ -28,7 +28,9 @@ class trailer:
 
             title = control.infoLabel('ListItem.Title')
             if not title: title = control.infoLabel('ListItem.Label')
+
             icon = control.infoLabel('ListItem.Icon')
+
             item = control.item(label=title, iconImage=icon, thumbnailImage=icon, path=url)
             item.setInfo(type="video", infoLabels={'title': title})
             item.setProperty('IsPlayable', 'true')
@@ -45,7 +47,8 @@ class trailer:
                 # or the user pressed one of X, ESC, or Backspace keys on the keyboard/remote to stop playback.
                 control.execute("Dialog.Close(%s, true)" % control.getCurrentDialogId)
         except:
-            pass
+            import traceback
+            traceback.print_exc()
 
 
     def worker(self, name, url):
@@ -80,7 +83,8 @@ class trailer:
                 if url:
                     return url
         except:
-            return
+            import traceback
+            traceback.print_exc()
 
 
     def resolve(self, url):
@@ -95,4 +99,5 @@ class trailer:
             url = 'plugin://plugin.video.youtube/play/?video_id=%s' % id
             return url
         except:
-            return
+            import traceback
+            traceback.print_exc()

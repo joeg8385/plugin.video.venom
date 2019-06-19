@@ -10,7 +10,7 @@ from resources.lib.modules import control
 
 
 user = control.setting('fanart.tv.user')
-if user == '' or user == None:
+if user == '' or user is None:
     user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
 
 headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
@@ -97,12 +97,16 @@ def get_tvshow_art(tvdb):
 
 def get_movie_art(imdb):
     url = base_url % ('movies', '%s')
+
     try:
         artmeta = True
         art = client.request(url % imdb, headers=headers, timeout='30', error=True)
-        try: art = json.loads(art)
-        except: artmeta = False
-        if artmeta == False: return None
+        try:
+            art = json.loads(art)
+        except:
+            artmeta = False
+        if artmeta is False:
+            return None
     except:
             pass
 
@@ -117,8 +121,11 @@ def get_movie_art(imdb):
         poster2 = '0'
 
     try:
-        if 'moviebackground' in art: fanart2 = art['moviebackground']
-        else: fanart2 = art['moviethumb']
+        if 'moviebackground' in art:
+            fanart2 = art['moviebackground']
+        else:
+            fanart2 = art['moviethumb']
+
         fanart2 = [(x['url'], x['likes']) for x in fanart2 if x.get('lang') == lang] + [(x['url'], x['likes']) for x in fanart2 if x.get('lang') == '']
         fanart2 = [(x[0], x[1]) for x in fanart2]
         fanart2 = sorted(fanart2, key=lambda x: int(x[1]), reverse=True)
@@ -138,8 +145,11 @@ def get_movie_art(imdb):
         banner2 = '0'
 
     try:
-        if 'hdmovielogo' in art: clearlogo = art['hdmovielogo']
-        else: clearlogo = art['movielogo']
+        if 'hdmovielogo' in art:
+            clearlogo = art['hdmovielogo']
+        else:
+            clearlogo = art['movielogo']
+
         clearlogo = [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == lang] + [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == '']
         clearlogo = [(x[0], x[1]) for x in clearlogo]
         clearlogo = sorted(clearlogo, key=lambda x: int(x[1]), reverse=True)
@@ -149,8 +159,11 @@ def get_movie_art(imdb):
         clearlogo = '0'
 
     try:
-        if 'hdmovieclearart' in art: clearart = art['hdmovieclearart']
-        else: clearart = art['movieart']
+        if 'hdmovieclearart' in art:
+            clearart = art['hdmovieclearart']
+        else:
+            clearart = art['movieart']
+
         clearart = [(x['url'], x['likes']) for x in clearart if x.get('lang') == lang] + [(x['url'], x['likes']) for x in clearart if x.get('lang') == '']
         clearart = [(x[0], x[1]) for x in clearart]
         clearart = sorted(clearart, key=lambda x: int(x[1]), reverse=True)
@@ -170,8 +183,11 @@ def get_movie_art(imdb):
         discart = '0'
 
     try:
-        if 'moviethumb' in art: landscape = art['moviethumb']
-        else: landscape = art['moviebackground']
+        if 'moviethumb' in art:
+            landscape = art['moviethumb']
+        else:
+            landscape = art['moviebackground']
+
         landscape = [(x['url'], x['likes']) for x in landscape if x.get('lang') == lang] + [(x['url'], x['likes']) for x in landscape if x.get('lang') == '']
         landscape = [(x[0], x[1]) for x in landscape]
         landscape = sorted(landscape, key=lambda x: int(x[1]), reverse=True)

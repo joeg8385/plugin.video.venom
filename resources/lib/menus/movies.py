@@ -4,8 +4,8 @@
     Venom Add-on
 '''
 
-import os ,sys ,re , datetime
-import urllib, urlparse, json
+import os, sys, re, datetime
+import urllib, urlparse, json, xbmc
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleangenre
@@ -24,7 +24,7 @@ params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) 
 action = params.get('action')
 
 
-class movies:
+class Movies:
     def __init__(self, type='movie', notifications=True):
         self.count = 40
         self.type = type
@@ -45,13 +45,14 @@ class movies:
         self.lang = control.apiLanguage()['trakt']
 
         self.tmdb_key = control.setting('tm.user')
-        if self.tmdb_key == '' or self.tmdb_key == None:
+        if self.tmdb_key == '' or self.tmdb_key is None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
         self.tmdb_link = 'http://api.themoviedb.org'
         self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
         self.tmdb_background_path = 'http://image.tmdb.org/t/p/w1280'
         self.tmdb_poster_path = "https://image.tmdb.org/t/p/w500"
+        # self.tmdb_poster_path = "https://image.tmdb.org/t/p/w300"
 
         # self.tmdb_img_link = 'https://image.tmdb.org/t/p/w%s%s'
 
@@ -61,7 +62,7 @@ class movies:
         self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&language=en-US&region=US&page=1'
 
         self.fanart_tv_user = control.setting('fanart.tv.user')
-        if self.fanart_tv_user == '' or self.fanart_tv_user == None:
+        if self.fanart_tv_user == '' or self.fanart_tv_user is None:
             self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
         self.user = str(self.fanart_tv_user) + str(self.tmdb_key)
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/movies/%s'
@@ -142,36 +143,38 @@ class movies:
                 # if '/users/me/' in url and '/collection/' in url:
                 # self.list = sorted(self.list, key=lambda k: utils.title_key(k['title']))
                 self.sort()
-                if idx == True: self.worker()
+                if idx is True: self.worker()
 
             elif u in self.trakt_link and self.search_link in url:
                 self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
-                if idx == True: self.worker(level=0)
+                if idx is True: self.worker(level=0)
 
             elif self.traktunfinished_link in url:
                 self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
-                if idx == True: self.worker(level=0)
+                if idx is True: self.worker(level=0)
 
             elif u in self.trakt_link:
                 self.list = cache.get(self.trakt_list, 24, url, self.trakt_user)
-                if idx == True: self.worker()
+                if idx is True: self.worker()
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
                 self.list = cache.get(self.imdb_list, 3, url)
                 self.sort()
-                if idx == True: self.worker()
+                if idx is True: self.worker()
 
             elif u in self.imdb_link:
                 self.list = cache.get(self.imdb_list, 96, url)
                 if idx == True: self.worker()
 
-            if self.list == None: self.list = []
+            if self.list is None: self.list = []
 
-            if idx == True: self.movieDirectory(self.list)
+            if idx is True: self.movieDirectory(self.list)
             return self.list
         except:
-            try: invalid = self.list == None or len(self.list) == 0
-            except: invalid = True
+            try:
+                invalid = (self.list is None or len(self.list) == 0)
+            except:
+                invalid = True
             if invalid:
                 control.idle()
                 if self.notifications: control.notification(title = 32001, message = 33049, icon = 'INFO')
@@ -187,19 +190,19 @@ class movies:
 
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = cache.get(tmdb.movies().tmdb_collections_list, 24, url)
+                self.list = cache.get(tmdb.Movies().tmdb_collections_list, 24, url)
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = cache.get(tmdb.movies().tmdb_list, 168, url)
+                self.list = cache.get(tmdb.Movies().tmdb_list, 168, url)
 
-            if self.list == None: 
+            if self.list is None: 
                 self.list = []
-                # raise Exception()
-            if idx == True: self.movieDirectory(self.list)
+                raise Exception()
+            if idx is True: self.movieDirectory(self.list)
             return self.list
         except:
-            try: invalid = self.list == None or len(self.list) == 0
+            try: invalid = self.list is None or len(self.list) == 0
             except: invalid = True
             if invalid:
                 control.idle()
@@ -249,20 +252,21 @@ class movies:
             elif reverse:
                 self.list = reversed(self.list)
         except:
-            tools.Logger.error()
+            import traceback
+            traceback.print_exc()
 
 
     def search(self):
-        navigator.navigator().addDirectoryItem(32603, 'movieSearchnew', 'search.png', 'DefaultMovies.png')
+        navigator.Navigator().addDirectoryItem(32603, 'movieSearchnew', 'search.png', 'DefaultMovies.png')
         try:
             from sqlite3 import dbapi2 as database
-        except Exception:
+        except:
             from pysqlite2 import dbapi2 as database
         dbcon = database.connect(control.searchFile)
         dbcur = dbcon.cursor()
         try:
             dbcur.executescript("CREATE TABLE IF NOT EXISTS movies (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
-        except Exception:
+        except:
             pass
         dbcur.execute("SELECT * FROM movies ORDER BY ID DESC")
         lst = []
@@ -270,12 +274,12 @@ class movies:
         for (id, term) in dbcur.fetchall():
             if term not in str(lst):
                 delete_option = True
-                navigator.navigator().addDirectoryItem(term, 'movieSearchterm&name=%s' % term, 'search.png', 'DefaultMovies.png')
+                navigator.Navigator().addDirectoryItem(term, 'movieSearchterm&name=%s' % term, 'search.png', 'DefaultMovies.png')
                 lst += [(term)]
         dbcur.close()
         if delete_option:
-            navigator.navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
-        navigator.navigator().endDirectory()
+            navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
+        navigator.Navigator().endDirectory()
 
 
     def search_new(self):
@@ -368,7 +372,7 @@ class movies:
 
 
     def persons(self, url):
-        if url == None:
+        if url is None:
             self.list = cache.get(self.imdb_person_list, 24, self.personlist_link)
         else:
             self.list = cache.get(self.imdb_person_list, 1, url)
@@ -385,12 +389,12 @@ class movies:
     def userlists(self):
         userlists = []
         try:
-            if trakt.getTraktCredentialsInfo() == False: raise Exception()
+            if trakt.getTraktCredentialsInfo() is False: raise Exception()
             activity = trakt.getActivity()
         except: pass
 
         try:
-            if trakt.getTraktCredentialsInfo() == False: raise Exception()
+            if trakt.getTraktCredentialsInfo() is False: raise Exception()
             self.list = []
             lists = []
 
@@ -414,7 +418,7 @@ class movies:
         except: pass
 
         try:
-            if trakt.getTraktCredentialsInfo() == False: raise Exception()
+            if trakt.getTraktCredentialsInfo() is False: raise Exception()
             self.list = []
             lists = []
 
@@ -550,7 +554,9 @@ class movies:
                     tagline = client.replaceHTMLCodes(tagline)
                 except: tagline = '0'
 
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': '0', 'fanart': '0', 'next': next, 'progress': progress})
+                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration,
+                                            'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb,
+                                            'tvdb': '0', 'poster': '0', 'fanart': '0', 'next': next, 'progress': progress})
             except:
                 pass
         return self.list
@@ -739,7 +745,9 @@ class movies:
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
-                list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
+                list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating,
+                                            'votes': votes, 'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'imdb': imdb,
+                                            'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
             except:
                 pass
 
@@ -753,7 +761,10 @@ class movies:
 #            items = client.parseDOM(result, 'div', attrs = {'class': '.+?etail'})
             items = client.parseDOM(result, 'div', attrs = {'class': '.+? lister-item'}) + client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
         except:
-            tools.Logger.error()
+            import traceback
+            traceback.print_exc()
+            pass
+
 
         for item in items:
             try:
@@ -811,7 +822,7 @@ class movies:
 
 
     def worker(self, level=1):
-        if self.list == None or self.list == []: return
+        if self.list is None or self.list == []: return
         self.meta = []
         total = len(self.list)
 
@@ -847,7 +858,7 @@ class movies:
 
     def super_info(self, i):
         try:
-            if self.list[i]['metacache'] == True: raise Exception()
+            if self.list[i]['metacache'] is True: raise Exception()
 
             imdb = self.list[i]['imdb']
 
@@ -920,7 +931,8 @@ class movies:
                 art = client.request(self.fanart_tv_art_link % tmdb, headers = self.fanart_tv_headers, timeout = '20', error = True)
                 try:
                     art = json.loads(art)
-                except: artmeta = False
+                except:
+                    artmeta = False
             except:
                 pass
 
@@ -935,8 +947,10 @@ class movies:
                 poster2 = '0'
 
             try:
-                if 'moviebackground' in art: fanart = art['moviebackground']
-                else: fanart = art['moviethumb']
+                if 'moviebackground' in art:
+                    fanart = art['moviebackground']
+                else:
+                    fanart = art['moviethumb']
                 fanart = [(x['url'], x['likes']) for x in fanart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in fanart if x.get('lang') == '']
                 fanart = [(x[0], x[1]) for x in fanart]
                 fanart = sorted(fanart, key=lambda x: int(x[1]), reverse=True)
@@ -1023,14 +1037,17 @@ class movies:
                 fanart2 = self.tmdb_background_path + fanart2[0]
             except:
                 fanart2 = '0'
+
 ##---
 
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart,
-                    'discart': discart, 'landscape': landscape, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
+            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2,
+                        'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart,
+                        'discart': discart, 'landscape': landscape, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating,
+                        'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
             item = dict((k,v) for k, v in item.iteritems() if not v == '0')
             self.list[i].update(item)
 
-            if artmeta == False: raise Exception()
+            if artmeta is False: raise Exception()
 
             meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
             self.meta.append(meta)
@@ -1039,7 +1056,7 @@ class movies:
 
 
     def movieDirectory(self, items):
-        if items == None or len(items) == 0:
+        if items is None or len(items) == 0:
             control.idle()
             control.notification(title = 32001, message = 33049, icon = 'INFO')
             sys.exit()
@@ -1056,11 +1073,21 @@ class movies:
         except: isOld = True
 
         indicators = playcount.getMovieIndicators()
+
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
-        playbackMenu = control.lang(32063).encode('utf-8') if control.setting('hosts.mode') == '2' else control.lang(32064).encode('utf-8')
-        watchedMenu = control.lang(32068).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32066).encode('utf-8')
-        unwatchedMenu = control.lang(32069).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32067).encode('utf-8')
+        if control.setting('hosts.mode') == '2':
+            playbackMenu = control.lang(32063).encode('utf-8')
+        else:
+            playbackMenu = control.lang(32064).encode('utf-8')
+
+        if trakt.getTraktIndicatorsInfo() is True:
+            watchedMenu = control.lang(32068).encode('utf-8')
+            unwatchedMenu = control.lang(32069).encode('utf-8')
+        else:
+            watchedMenu = control.lang(32066).encode('utf-8')
+            unwatchedMenu = control.lang(32067).encode('utf-8')
+
         playlistManagerMenu = control.lang(35522).encode('utf-8')
         queueMenu = control.lang(32065).encode('utf-8')
         traktManagerMenu = control.lang(32070).encode('utf-8')
@@ -1147,21 +1174,30 @@ class movies:
                 if fanart == '0': fanart = addonFanart
 
                 art = {}
-                if not icon == '0' and not icon == None: art.update({'icon' : icon})
-                if not thumb == '0' and not thumb == None: art.update({'thumb' : thumb})
-                if not banner == '0' and not banner == None: art.update({'banner' : banner})
-                if not poster == '0' and not poster == None: art.update({'poster' : poster})
-                if not fanart == '0' and not fanart == None: art.update({'fanart' : fanart})
-                if not clearlogo == '0' and not clearlogo == None: art.update({'clearlogo' : clearlogo})
-                if not clearart == '0' and not clearart == None: art.update({'clearart' : clearart})
-                if not landscape == '0' and not landscape == None: art.update({'landscape' : landscape})
-                if not discart == '0' and not discart == None: art.update({'discart' : discart})
-
+                if not icon == '0' and not icon is None:
+                    art.update({'icon' : icon})
+                if not thumb == '0' and not thumb is None:
+                    art.update({'thumb' : thumb})
+                if not banner == '0' and not banner is None:
+                    art.update({'banner' : banner})
+                if not poster == '0' and not poster is None:
+                    art.update({'poster' : poster})
+                if not fanart == '0' and not fanart is None:
+                    art.update({'fanart' : fanart})
+                if not clearlogo == '0' and not clearlogo is None:
+                    art.update({'clearlogo' : clearlogo})
+                if not clearart == '0' and not clearart is None:
+                    art.update({'clearart' : clearart})
+                if not landscape == '0' and not landscape is None:
+                    art.update({'landscape' : landscape})
+                if not discart == '0' and not discart is None:
+                    art.update({'discart' : discart})
 
 ####-Context Menu and Counters-####
                 cm = []
-                if traktCredentials == True:
+                if traktCredentials is True:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
+
                 try:
                     overlay = int(playcount.getMovieOverlay(indicators, imdb))
                     if overlay == 7:
@@ -1170,7 +1206,8 @@ class movies:
                     else:
                         cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
                         meta.update({'playcount': 0, 'overlay': 6})
-                except: pass
+                except:
+                    pass
 
                 sysmeta = urllib.quote_plus(json.dumps(meta))
                 sysart = urllib.quote_plus(json.dumps(art))
@@ -1183,14 +1220,19 @@ class movies:
                 cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
                 cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
-                if isOld == True:
+
+                if isOld is True:
                     cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
 ####################################
 
                 item = control.item(label=labelProgress)
-                if not fanart == '0' and not fanart == None: item.setProperty('Fanart_Image', fanart)
+                if 'cast' in i:
+                    item.setCast(i['cast'])
+                if not fanart == '0' and not fanart is None:
+                    item.setProperty('Fanart_Image', fanart)
                 item.setArt(art)
                 item.setProperty('IsPlayable', isPlayable)
                 item.setInfo(type='video', infoLabels=control.metadataClean(meta))
@@ -1204,7 +1246,8 @@ class movies:
         if next:
             try:
                 url = items[0]['next']
-                if url == '': raise Exception()
+                if url == '':
+                    raise Exception()
 
                 if not self.tmdb_link in url:
                     url = '%s?action=moviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
@@ -1215,7 +1258,8 @@ class movies:
                 item = control.item(label=nextMenu)
                 icon = control.addonNext()
                 item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-                if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+                if not addonFanart is None:
+                    item.setProperty('Fanart_Image', addonFanart)
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:
                 pass
@@ -1225,8 +1269,10 @@ class movies:
         views.setView('movies', {'skin.estuary': 55, 'skin.confluence': 500})
 
 
-    def addDirectory(self, items, queue = False):
-        if items == None or len(items) == 0: control.idle() ; sys.exit()
+    def addDirectory(self, items, queue=False):
+        if items is None or len(items) == 0:
+            control.idle()
+            sys.exit()
 
         sysaddon = sys.argv[0]
         syshandle = int(sys.argv[1])
@@ -1240,26 +1286,38 @@ class movies:
             try:
                 name = i['name']
 
-                if i['image'].startswith('http'): thumb = i['image']
-                elif not artPath == None: thumb = os.path.join(artPath, i['image'])
-                else: thumb = addonThumb
+                if i['image'].startswith('http'):
+                    thumb = i['image']
+                elif not artPath is None:
+                    thumb = os.path.join(artPath, i['image'])
+                else:
+                    thumb = addonThumb
 
                 url = '%s?action=%s' % (sysaddon, i['action'])
-                try: url += '&url=%s' % urllib.quote_plus(i['url'])
-                except: pass
+
+                try:
+                    url += '&url=%s' % urllib.quote_plus(i['url'])
+                except:
+                    pass
 
                 cm = []
                 cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=movie&url=%s)' % (sysaddon, urllib.quote_plus(i['url']))))
-                if queue == True:
+
+                if queue is True:
                     cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-                try: cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s)' % (sysaddon, urllib.quote_plus(i['context']))))
-                except: pass
+
+                try:
+                    cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s)' % (sysaddon, urllib.quote_plus(i['context']))))
+                except:
+                    pass
+
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
 
                 item = control.item(label = name)
 
                 item.setArt({'icon': thumb, 'thumb': thumb, 'poster': thumb, 'banner': thumb})
-                if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+                if not addonFanart is None:
+                    item.setProperty('Fanart_Image', addonFanart)
 
                 item.addContextMenuItems(cm)
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)

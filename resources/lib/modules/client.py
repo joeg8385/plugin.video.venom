@@ -8,15 +8,15 @@ from resources.lib.modules import cache, dom_parser, workers, utils, log_utils, 
 
 def request(url, close=True, redirect=True, error=False, proxy=None, post=None, headers=None, mobile=False, XHR=False, limit=None, referer=None, cookie=None, compression=True, output='', timeout='30', ignoreSsl = False, flare = True, ignoreErrors = None):
     try:
-        if url == None: return None
+        if url is None: return None
         handlers = []
 
-        if not proxy == None:
+        if not proxy is None:
             handlers += [urllib2.ProxyHandler({'http':'%s' % (proxy)}), urllib2.HTTPHandler]
             opener = urllib2.build_opener(*handlers)
             opener = urllib2.install_opener(opener)
 
-        if output == 'cookie' or output == 'extended' or not close == True:
+        if output == 'cookie' or output == 'extended' or not close is True:
             cookies = cookielib.LWPCookieJar()
             handlers += [urllib2.HTTPHandler(), urllib2.HTTPSHandler(), urllib2.HTTPCookieProcessor(cookies)]
             opener = urllib2.build_opener(*handlers)
@@ -35,44 +35,53 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 
         if url.startswith('//'): url = 'http:' + url
 
-        try: headers.update(headers)
-        except: headers = {}
+        try:
+            headers.update(headers)
+        except:
+            headers = {}
+
         if 'User-Agent' in headers:
             pass
-        elif not mobile == True:
+        elif not mobile is True:
             #headers['User-Agent'] = agent()
             headers['User-Agent'] = cache.get(randomagent, 1)
         else:
             headers['User-Agent'] = 'Apple-iPhone/701.341'
+
         if 'Referer' in headers:
             pass
         elif referer is not None:
             headers['Referer'] = referer
+
         if not 'Accept-Language' in headers:
             headers['Accept-Language'] = 'en-US'
+
         if 'X-Requested-With' in headers:
             pass
-        elif XHR == True:
+        elif XHR is True:
             headers['X-Requested-With'] = 'XMLHttpRequest'
+
         if 'Cookie' in headers:
             pass
-        elif not cookie == None:
+        elif not cookie is None:
             headers['Cookie'] = cookie
+
         if 'Accept-Encoding' in headers:
             pass
         elif compression and limit is None:
             headers['Accept-Encoding'] = 'gzip'
 
-        if redirect == False:
-
+        if redirect is False:
             class NoRedirection(urllib2.HTTPErrorProcessor):
                 def http_response(self, request, response): return response
 
             opener = urllib2.build_opener(NoRedirection)
             opener = urllib2.install_opener(opener)
 
-            try: del headers['Referer']
-            except: pass
+            try:
+                del headers['Referer']
+            except:
+                pass
 
         if isinstance(post, dict):
             # Gets rid of the error: 'ascii' codec can't decode byte 0xd0 in position 0: ordinal not in range(128)
@@ -88,8 +97,11 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
         try:
             response = urllib2.urlopen(request, timeout=int(timeout))
         except urllib2.HTTPError as response:
-            try: ignore = ignoreErrors and (int(response.code) == ignoreErrors or int(response.code) in ignoreErrors)
-            except: ignore = False
+            try:
+                ignore = ignoreErrors and (int(response.code) == ignoreErrors or int(response.code) in ignoreErrors)
+            except:
+                ignore = False
+
             if not ignore:
                 if response.code == 503:
                     cf_result = response.read(5242880)
@@ -99,24 +111,24 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
                         cf_result = gzip.GzipFile(fileobj=StringIO.StringIO(cf_result)).read()
                     if flare and 'cloudflare' in str(response.info()).lower():
                         try:
-                            from resources.lib.modules.cfscrape import cfscrape
+                            from resources.lib.modules import cfscrape
                             if isinstance(post, dict):
                                 data = post
                             else:
                                 try: data = urlparse.parse_qs(post)
                                 except: data = None
                             scraper = cfscrape.CloudflareScraper()
-                            response = scraper.request(method = 'GET' if post == None else 'POST', url = url, headers = headers, data = data, timeout = int(timeout))
+                            response = scraper.request(method = 'GET' if post is None else 'POST', url = url, headers = headers, data = data, timeout = int(timeout))
                             result = response.content
                             flare = 'cloudflare' # Used below
                             try:
                                 cookies = response.request._cookies
                             except:
-                                from resources.lib.extensions import tools
-                                tools.Logger.error()
+                                import traceback
+                                traceback.print_exc()
                         except:
-                            from resources.lib.extensions import tools
-                            tools.Logger.error()
+                            import traceback
+                            traceback.print_exc()
 
                     elif 'cf-browser-verification' in cf_result:
 
@@ -134,27 +146,27 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
                         response = urllib2.urlopen(request, timeout=int(timeout))
                     else:
                         log_utils.log('Request-Error (%s): %s' % (str(response.code), url), log_utils.LOGDEBUG)
-                        if error == False: return
+                        if error is False: return
                 else:
                     log_utils.log('Request-Error (%s): %s' % (str(response.code), url), log_utils.LOGDEBUG)
-                    if error == False: return
+                    if error is False: return
 
         if output == 'cookie':
             try: result = '; '.join(['%s=%s' % (i.name, i.value) for i in cookies])
             except: pass
             try: result = cf
             except: pass
-            if close == True: response.close()
+            if close is True: response.close()
             return result
 
         elif output == 'geturl':
             result = response.geturl()
-            if close == True: response.close()
+            if close is True: response.close()
             return result
 
         elif output == 'headers':
             result = response.headers
-            if close == True: response.close()
+            if close is True: response.close()
             return result
 
         elif output == 'chunk':
@@ -162,13 +174,13 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
             except: content = (2049 * 1024)
             if content < (2048 * 1024): return
             result = response.read(16 * 1024)
-            if close == True: response.close()
+            if close is True: response.close()
             return result
 
         if not flare == 'cloudflare':
             if limit == '0':
                 result = response.read(224 * 1024)
-            elif not limit == None:
+            elif not limit is None:
                 result = response.read(int(limit) * 1024)
             else:
                 result = response.read(5242880)
@@ -191,7 +203,7 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 
             if limit == '0':
                 result = response.read(224 * 1024)
-            elif not limit == None:
+            elif not limit is None:
                 result = response.read(int(limit) * 1024)
             else:
                 result = response.read(5242880)
@@ -217,14 +229,14 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
             except: pass
             try: cookie = cf
             except: pass
-            if close == True: response.close()
+            if close is True: response.close()
             return (result, response_code, response_headers, headers, cookie)
         else:
-            if close == True: response.close()
+            if close is True: response.close()
             return result
     except Exception as e:
-        from resources.lib.extensions import tools
-        tools.Logger.error()
+        import traceback
+        traceback.print_exc()
         log_utils.log('Request-Error: (%s) => %s' % (str(e), url), log_utils.LOGDEBUG)
         return
 
@@ -330,7 +342,7 @@ class cfcookie:
         for i in range(0, 15): threads.append(workers.Thread(self.get_cookie, netloc, ua, timeout))
         [i.start() for i in threads]
         for i in range(0, 30):
-            if not self.cookie == None: return self.cookie
+            if not self.cookie is None: return self.cookie
             time.sleep(1)
 
 

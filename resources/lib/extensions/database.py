@@ -8,12 +8,15 @@ import xbmcgui
 import xbmcaddon
 import threading
 
-try: from sqlite3 import dbapi2 as database
-except: from pysqlite2 import dbapi2 as database
+try:
+	from sqlite3 import dbapi2 as database
+except:
+	from pysqlite2 import dbapi2 as database
 
 DatabaseInstances = {}
 DatabaseLocks = {}
 DatabaseLocksCustom = {}
+
 
 class Database(object):
 	Timeout = 20
@@ -24,7 +27,7 @@ class Database(object):
 		try:
 			self.mAddon = addon
 			self.mDatabase = None
-			if name == None: name = hashlib.sha256(path).hexdigest().upper()
+			if name is None: name = hashlib.sha256(path).hexdigest().upper()
 			global DatabaseLocks
 			if not name in DatabaseLocks:
 				DatabaseLocks[name] = threading.Lock()
@@ -33,7 +36,7 @@ class Database(object):
 			if not name in DatabaseLocksCustom:
 				DatabaseLocksCustom[name] = threading.Lock()
 			self.mLockCustom = DatabaseLocksCustom[name]
-			if path == None:
+			if path is None:
 				if not name.endswith(Database.Extension): name += Database.Extension
 				self.mPath = os.path.join(xbmc.translatePath(self._addon().getAddonInfo('profile').decode('utf-8')), name)
 				if default and not xbmcvfs.exists(self.mPath): xbmcvfs.copy(os.path.join(default, name), self.mPath)
@@ -54,7 +57,7 @@ class Database(object):
 		global DatabaseInstances
 		if not name in DatabaseInstances:
 			DatabaseInstances[name] = Database(name = name, default = default)
-			if not create == None: DatabaseInstances[name]._create(create)
+			if not create is None: DatabaseInstances[name]._create(create)
 		return DatabaseInstances[name]
 
 
@@ -119,7 +122,7 @@ class Database(object):
 	def _execute(self, query, parameters = None):
 		try:
 			self.mLock.acquire()
-			if parameters == None: self.mDatabase.execute(query)
+			if parameters is None: self.mDatabase.execute(query)
 			else: self.mDatabase.execute(query, parameters)
 			return True
 		except Exception as error:
@@ -134,7 +137,7 @@ class Database(object):
 	# If tables is None, will retrieve all tables in the database.
 	def _executeAll(self, query, tables = None, parameters = None):
 		result = True
-		if tables == None:
+		if tables is None:
 			tables = self._tables()
 		tables = self._list(tables)
 		for table in tables:
@@ -217,7 +220,7 @@ class Database(object):
 	# Deletes specific row in table.
 	# If table is none, assumes it was already set in the query
 	def _delete(self, query, table = None, parameters = None, commit = True):
-		if not table == None:
+		if not table is None:
 			query = query % table
 		result = self._execute(query, parameters = parameters)
 		if result and commit:

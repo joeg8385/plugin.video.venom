@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
+
 <!-- General - 0 -->
 	<category label="32310">
 		<setting id="appearance.1" type="select" label="32311" values="Venom|Exodus|Exuary" default="Venom" visible="true" />
@@ -16,6 +17,7 @@
 		<setting id="sort.movies.order" type="enum" label="33679" lvalues="33649|33650" default="1" subsetting="true" enable="!eq(-1,0)" />
 	</category>
 
+
 <!-- Navigation - 1 -->
 	<category label="32621">
 		<setting type="lsep" label="32001" />
@@ -28,7 +30,6 @@
 		<setting id="navi.movie.trakt.popular" type="bool" label="32415" default="true" />
 		<setting id="navi.movie.imdb.boxoffice" type="bool" label="32416" default="true" />
 		<setting id="navi.movie.trakt.boxoffice" type="bool" label="32417" default="true" />
-
 		<setting type="lsep" label="32002" />
 		<setting id="navi.tv.imdb.popular" type="bool" label="32413" default="true" />
 		<setting id="navi.tv.tmdb.popular" type="bool" label="32414" default="true" />
@@ -47,15 +48,17 @@
 		<setting id="tv.specials" type="bool" label="32649" default="true" />
 		<setting id="showunaired" type="bool" label="32570" default="true" />
 		<setting id="unaired.identify" type="enum" label="32608" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="8" enable="eq(-1,true)" />
-
-<!-- 		<setting type="bool" id="enable.upnext" default="false" label="40065" visible="System.HasAddon(service.upnext)" />
-		<setting type="slider" id="upnext.time" enable="eq(-1,true)" visible="eq(-1,true)" default="30" label="40066" option="int" range="10,60" /> -->
+		<setting type="lsep" label="40025" />
+		<setting type="action" action="InstallAddon(service.upnext)" label="40027" option="close" visible="!System.HasAddon(service.upnext)"/>
+		<setting type="bool" id="enable.upnext" default="false" label="40028" visible="System.HasAddon(service.upnext)" />
+		<setting id="upnext.notice" type="text" label="If enabled Episodes are hard coded to Auto play" default="" enable="false" />   
+		<setting type="slider" id="upnext.time" enable="eq(-2,true)" visible="eq(-2,true)" default="60" label="40029" option="int" range="10,60" />
+		<setting id="auto.playlistcreate" type="bool" label="40030" default="true" />
 		<!-- <setting id="tvshows.unwatched.enabled" type="bool" label="33891" default="true" /> -->
 		<!-- <setting id="tvshows.unwatched.limit" type="bool" label="33892" default="true" subsetting="false" visible="eq(-1,true)" /> -->
-
 		<setting type="lsep" label="32375" />
 		<setting id="tvshows.networks.view" type="enum" label="32376" lvalues="32377|32378" default="1" />
-<!-- 		<setting id="tvshows.networks.filter" type="enum" label="32379" lvalues="32380|32381|32382|32383|32384|32385" default="4" enable="eq(-1, 1)" /> -->
+		<!-- <setting id="tvshows.networks.filter" type="enum" label="32379" lvalues="32380|32381|32382|32383|32384|32385" default="4" enable="eq(-1, 1)" /> -->
 		<setting label="32004" type="lsep" />
 		<setting id="sort.shows.type" type="enum" label="35191" lvalues="33564|33039|35187|35188|35391|35392|35393" default="0" />
 		<setting id="sort.shows.order" type="enum" label="33679" lvalues="33649|33650" default="0" subsetting="true" enable="!eq(-1,0)" />
@@ -83,11 +86,9 @@
 <!-- Providers - 4 -->
 	<category label="32345">
 		<setting id="module.provider" type="text" label="32650" default="Openscrapers Scrapers" visible="true" enable="false" />
-        <setting id="open.settings" type="action" label="32651" option="close" action="RunPlugin(plugin://script.module.openscrapers/?mode=OpenscrapersSettings&opensettings=true&query=4.1)" />
-        <setting type="lsep" label="40067" />
+		<setting id="open.settings" type="action" label="32651" option="close" action="RunPlugin(plugin://script.module.openscrapers/?mode=OpenscrapersSettings&opensettings=true&query=4.1)" />
+		<setting type="lsep" label="40067" />
 		<setting id="clear.sources" type="action" label="32652" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=clearSources&opensettings=true&query=4.2)" />
-<!-- 		<setting label="Set All Default Providers" type="action" option="close" action="RunPlugin(plugin://plugin.video.venom/?action=toggleDefaults&query=4.1)" />
-		<setting label="Enable Paid Debrid-w/Torrents" type="action" action="RunPlugin(plugin://plugin.video.venom/?action=toggleAllPaid&setting=true&query=4.2)" option="close" /> -->
 	</category>
 
 
@@ -148,13 +149,10 @@
 	<category label="API Keys">
 		<setting type="lsep" label="FANART.TV" />
 		<setting id="fanart.tv.user" type="text" label="Fanart API" default="" />
-
 		<setting type="lsep" label="TMDb" />
 		<setting id="tm.user" type="text" option="hidden" label="TMDb API" default="" />
-
 		<setting type="lsep" label="TVDb" />
 		<setting id="tvdb.user" type="text" label="TVDb API" default="HARD CODED" enable="false" />
-
 		<setting type="lsep" label="IMDb" />
 		<setting id="imdb.user" type="text" label="32303" default="" />
 	</category>
@@ -165,15 +163,12 @@
 		<setting id="library.movie" type="folder" label="32543" default="special://userdata/addon_data/plugin.video.venom/Movies" />
 		<setting id="library.tv" type="folder" label="32544" default="special://userdata/addon_data/plugin.video.venom/TVShows" />
 		<setting type="lsep" label="32542" />
-
 		<setting type="sep" />
 		<setting id="library.service.update" type="bool" label="32545" default="true" />
 		<setting id="library.service.notification" type="bool" label="32546" default="true" />
-
 		<setting type="sep" />
 		<setting id="library.update" type="bool" label="32547" default="true" />
 		<setting id="library.check" type="bool" label="32548" default="true" />
-
 		<setting type="sep" />
 		<setting id="library.importdelay" type="bool" label="$NUMBER[24]HR delay before import" default="true" />
 		<setting id="library.check_movie" type="bool" label="32549" default="false" />

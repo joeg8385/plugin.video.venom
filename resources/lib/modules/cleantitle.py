@@ -6,7 +6,7 @@ import unicodedata
 
 
 def get(title):
-    if title == None: return
+    if title is None: return
     try:
         title = title.encode('utf-8')
     except:
@@ -19,7 +19,7 @@ def get(title):
 
 
 def geturl(title):
-    if title == None: return
+    if title is None: return
     title = title.lower()
     title = title.translate(None, ':*?"\'\.<>|&!,')
     title = title.replace('/', '-')
@@ -29,7 +29,7 @@ def geturl(title):
 
 
 def get_simple(title):
-    if title == None: return
+    if title is None: return
     title = title.lower()
     title = re.sub('(\d{4})', '', title)
     title = re.sub('&#(\d+);', '', title)
@@ -41,7 +41,7 @@ def get_simple(title):
 
 
 def getsearch(title):
-    if title == None: return
+    if title is None: return
     title = title.lower()
     title = re.sub('&#(\d+);', '', title)
     title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
@@ -51,13 +51,13 @@ def getsearch(title):
 
 
 def query(title):
-    if title == None: return
+    if title is None: return
     title = title.replace('\'', '').rsplit(':', 1)[0].rsplit(' -', 1)[0].replace('-', ' ')
     return title
 
 
 def get_query(title):
-    if title == None: return
+    if title is None: return
     title = title.replace(' ', '.').replace(':', '').replace('.-.', '.').replace('\'', '')
     return title
 

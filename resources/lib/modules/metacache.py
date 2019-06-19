@@ -24,7 +24,7 @@ def fetch(items, lang = 'en', user=''):
             match = dbcur.fetchone()
             t1 = int(match[5])
             update = (abs(t2 - t1) / 3600) >= 720
-            if update == True: raise Exception()
+            if update is True: raise Exception()
             item = eval(match[4].encode('utf-8'))
             item = dict((k, v) for k, v in item.iteritems() if not v == '0')
             items[i].update(item)

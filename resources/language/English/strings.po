@@ -886,7 +886,7 @@ msgid ""
 msgstr ""
 
 msgctxt "#32510"
-msgid ""
+msgid "[B]Cache Functions[/B]"
 msgstr ""
 
 msgctxt "#32511"
@@ -1230,7 +1230,7 @@ msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Search[/COLOR] Cache..."
 msgstr ""
 
 msgctxt "#32615"
-msgid "Check Host for Valid URL"
+msgid "[B]VENOM[/B] : Clear [COLOR=yellow]Bookmarks[/COLOR] Cache..."
 msgstr ""
 
 msgctxt "#32616"
@@ -1400,6 +1400,53 @@ msgstr ""
 msgctxt "#32659"
 msgid "Oscar Nominees"
 msgstr ""
+
+msgctxt "#32660"
+msgid "Resume Point Saved..."
+msgstr ""
+
+msgctxt "#32661"
+msgid ""
+msgstr ""
+
+msgctxt "#32662"
+msgid ""
+msgstr ""
+
+msgctxt "#32663"
+msgid ""
+msgstr ""
+
+msgctxt "#32664"
+msgid ""
+msgstr ""
+
+msgctxt "#32665"
+msgid "Check Host for Valid URL"
+msgstr ""
+
+msgctxt "#32666"
+msgid ""
+msgstr ""
+
+msgctxt "#32667"
+msgid ""
+msgstr ""
+
+msgctxt "#32668"
+msgid ""
+msgstr ""
+
+msgctxt "#32669"
+msgid ""
+msgstr ""
+
+msgctxt "#32670"
+msgid ""
+msgstr ""
+
+
+
 
 
 
@@ -2325,9 +2372,173 @@ msgstr ""
 
 
 
+msgctxt "#40020"
+msgid ""
+msgstr ""
 
+msgctxt "#40021"
+msgid ""
+msgstr ""
 
+msgctxt "#40022"
+msgid ""
+msgstr ""
 
+msgctxt "#40023"
+msgid ""
+msgstr ""
+
+msgctxt "#40024"
+msgid ""
+msgstr ""
+
+msgctxt "#40025"
+msgid "Up Next Settings"
+msgstr ""
+
+msgctxt "#40026"
+msgid "Smart Play Settings"
+msgstr ""
+
+msgctxt "#40027"
+msgid "Install UpNext Addon..."
+msgstr ""
+
+msgctxt "#40028"
+msgid "Enabled Up Next Addon Integration"
+msgstr ""
+
+msgctxt "#40029"
+msgid "    Up Next Notification Time"
+msgstr ""
+
+msgctxt "#40030"
+msgid "Auto Playlist Creation"
+msgstr ""
+
+msgctxt "#40031"
+msgid "Auto Episode Resume"
+msgstr ""
+
+msgctxt "#40032"
+msgid "Force Episode Resume on Continue Watching Items"
+msgstr ""
+
+msgctxt "#40033"
+msgid ""
+msgstr ""
+
+msgctxt "#40034"
+msgid ""
+msgstr ""
+
+msgctxt "#40035"
+msgid ""
+msgstr ""
+
+msgctxt "#40036"
+msgid ""
+msgstr ""
+
+msgctxt "#40037"
+msgid ""
+msgstr ""
+
+msgctxt "#40038"
+msgid ""
+msgstr ""
+
+msgctxt "#40039"
+msgid ""
+msgstr ""
+
+msgctxt "#40040"
+msgid ""
+msgstr ""
+
+msgctxt "#40041"
+msgid ""
+msgstr ""
+
+msgctxt "#40042"
+msgid ""
+msgstr ""
+
+msgctxt "#40043"
+msgid ""
+msgstr ""
+
+msgctxt "#40044"
+msgid ""
+msgstr ""
+
+msgctxt "#40045"
+msgid ""
+msgstr ""
+
+msgctxt "#40046"
+msgid ""
+msgstr ""
+
+msgctxt "#40047"
+msgid ""
+msgstr ""
+
+msgctxt "#40048"
+msgid ""
+msgstr ""
+
+msgctxt "#40049"
+msgid ""
+msgstr ""
+
+msgctxt "#40050"
+msgid ""
+msgstr ""
+
+msgctxt "#40051"
+msgid ""
+msgstr ""
+
+msgctxt "#40052"
+msgid ""
+msgstr ""
+
+msgctxt "#40053"
+msgid ""
+msgstr ""
+
+msgctxt "#40054"
+msgid ""
+msgstr ""
+
+msgctxt "#40055"
+msgid ""
+msgstr ""
+
+msgctxt "#40056"
+msgid ""
+msgstr ""
+
+msgctxt "#40057"
+msgid ""
+msgstr ""
+
+msgctxt "#40058"
+msgid ""
+msgstr ""
+
+msgctxt "#40059"
+msgid ""
+msgstr ""
+
+msgctxt "#40060"
+msgid ""
+msgstr ""
+
+msgctxt "#40061"
+msgid ""
+msgstr ""
 
 msgctxt "#40062"
 msgid "Trakt Username"

@@ -59,7 +59,7 @@ def get(function, duration, *args):
             else: return None
 
         return ast.literal_eval(fresh_result.encode('utf-8'))
-    except Exception:
+    except:
         return None
 
 
@@ -69,7 +69,7 @@ def remove(function, *args):
         cursor = _get_connection_cursor()
         cursor.execute("DELETE FROM %s WHERE key = ?" % cache_table, [key])
         cursor.connection.commit()
-    except Exception:
+    except:
         pass
 
 
@@ -78,7 +78,7 @@ def timeout(function, *args):
         key = _hash_function(function, args)
         result = cache_get(key)
         return int(result['date'])
-    except Exception:
+    except:
         return None
 
 
@@ -86,7 +86,7 @@ def cache_existing(function, *args):
     try:
         cache_result = cache_get(_hash_function(function, args))
         return ast.literal_eval(cache_result['value'].encode('utf-8'))
-    except Exception:
+    except:
         return None
 
 
@@ -137,7 +137,7 @@ def cache_clear_all():
     cache_clear_meta()
     cache_clear()
     cache_clear_search()
-
+    cache_clear_bookmarks()
 
 def cache_clear_providers():
     try:
@@ -185,6 +185,20 @@ def cache_clear_search():
     try:
         cursor = _get_connection_cursor_search()
         for t in ['tvshow', 'movies']:
+            try:
+                cursor.execute("DROP TABLE IF EXISTS %s" % t)
+                cursor.execute("VACUUM")
+                cursor.connection.commit()
+            except:
+                pass
+    except:
+        pass
+
+
+def cache_clear_bookmarks():
+    try:
+        cursor = _get_connection_cursor_bookmarks()
+        for t in ['idFile']:
             try:
                 cursor.execute("DROP TABLE IF EXISTS %s" % t)
                 cursor.execute("VACUUM")
@@ -243,6 +257,20 @@ def _get_connection_search():
     return conn
 
 
+def _get_connection_cursor_bookmarks():
+    conn = _get_connection_bookmarks()
+    return conn.cursor()
+
+
+def _get_connection_bookmarks():
+    control.makeFile(control.dataPath)
+    conn = db.connect(control.bookmarksFile)
+    conn.row_factory = _dict_factory
+    return conn
+
+
+
+
 def _dict_factory(cursor, row):
     d = {}
     for idx, col in enumerate(cursor.description):
@@ -260,7 +288,10 @@ def _get_function_name(function_instance):
 
 def _generate_md5(*args):
     md5_hash = hashlib.md5()
-    [md5_hash.update(str(arg)) for arg in args]
+    try:
+        [md5_hash.update(str(arg)) for arg in args]
+    except:
+        [md5_hash.update(str(arg).encode('utf-8')) for arg in args]
     return str(md5_hash.hexdigest())
 
 

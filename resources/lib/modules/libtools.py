@@ -72,7 +72,7 @@ class lib_tools:
     def check_sources(title, year, imdb, tvdb = None, season = None, episode = None, tvshowtitle = None, premiered = None):
         try:
             from resources.lib.modules import sources
-            src = sources.sources().getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+            src = sources.Sources().getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
             return src and len(src) > 5
         except:
             return False
@@ -135,8 +135,8 @@ class libmovies:
             files_added += 1
         except:
             pass
-        if range == True: return
-        if self.infoDialog == True:
+        if range is True: return
+        if self.infoDialog is True:
             control.notification(title = name, message = 32554, icon = 'default', time = 1, sound = True)
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo') and files_added > 0:
             control.execute('UpdateLibrary(video)')
@@ -149,15 +149,15 @@ class libmovies:
             self.infoDialog = True
             self.silentDialog = True
         from resources.lib.menus import movies
-        items = movies.movies().get(url, idx = False)
-        if items == None: items = []
+        items = movies.Movies().get(url, idx = False)
+        if items is None: items = []
         for i in items:
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if xbmc.abortRequested is True: return sys.exit()
                 self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], i['tmdb'], range = True)
             except:
                 pass
-        if self.infoDialog == True:
+        if self.infoDialog is True:
             self.silentDialog = False
             control.notification(title = 'default', message = 'Trakt Movies Sync Complete', icon = 'default', time = 1, sound = False)
 
@@ -169,15 +169,15 @@ class libmovies:
             control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
             self.infoDialog = True
         from resources.lib.menus import movies
-        items = movies.movies().get(url, idx = False)
-        if items == None: items = []
+        items = movies.Movies().get(url, idx = False)
+        if items is None: items = []
         for i in items:
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if xbmc.abortRequested is True: return sys.exit()
                 self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], i['tmdb'], range = True)
             except:
                 pass
-        if self.infoDialog == True:
+        if self.infoDialog is True:
             control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = False)
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo'):
             control.execute('UpdateLibrary(video)')
@@ -221,7 +221,7 @@ class libtvshows:
             control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
             self.infoDialog = True
         from resources.lib.menus import episodes
-        items = episodes.episodes().get(tvshowtitle, year, imdb, tvdb, idx = False)
+        items = episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, idx = False)
         try: items = [{'title': i['title'], 'year': i['year'], 'imdb': i['imdb'], 'tvdb': i['tvdb'], 'season': i['season'], 'episode': i['episode'], 'tvshowtitle': i['tvshowtitle'], 'premiered': i['premiered']} for i in items]
         except: items = []
         try:
@@ -242,13 +242,13 @@ class libtvshows:
         files_added = 0
         for i in items:
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if xbmc.abortRequested is True: return sys.exit()
                 if self.check_setting == 'true':
                     if i['episode'] == '1':
                         self.block = True
                         src = lib_tools.check_sources(i['title'], i['year'], i['imdb'], i['tvdb'], i['season'], i['episode'], i['tvshowtitle'], i['premiered'])
                         if src: self.block = False
-                    if self.block == True: raise Exception()
+                    if self.block is True: raise Exception()
                 premiered = i.get('premiered', '0')
                 if (premiered != '0' and int(re.sub('[^0-9]', '', str(premiered))) > int(self.date)) or (premiered == '0' and not self.include_unknown):
                     continue
@@ -256,7 +256,7 @@ class libtvshows:
                 files_added += 1
             except:
                 pass
-        if range == True: return
+        if range is True: return
         if self.infoDialog is True:
             control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = False)
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo') and files_added > 0:
@@ -270,11 +270,11 @@ class libtvshows:
             self.infoDialog = True
             self.silentDialog = True
         from resources.lib.menus import tvshows
-        items = tvshows.tvshows().get(url, idx = False)
-        if items == None: items = []
+        items = tvshows.TVshows().get(url, idx = False)
+        if items is None: items = []
         for i in items:
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if xbmc.abortRequested is True: return sys.exit()
                 self.add(i['title'], i['year'], i['imdb'], i['tvdb'], range = True)
             except:
                 pass
@@ -291,15 +291,15 @@ class libtvshows:
             control.notification(title = 'default', message = 32552, icon = 'default', time = 10000000, sound = False)
             self.infoDialog = True
         from resources.lib.menus import tvshows
-        items = tvshows.tvshows().get(url, idx = False)
-        if items == None: items = []
+        items = tvshows.TVshows().get(url, idx = False)
+        if items is None: items = []
         for i in items:
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if xbmc.abortRequested is True: return sys.exit()
                 self.add(i['title'], i['year'], i['imdb'], i['tvdb'], range = True)
             except:
                 pass
-        if self.infoDialog == True:
+        if self.infoDialog is True:
             control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = False)
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo'):
             control.execute('UpdateLibrary(video)')
@@ -338,7 +338,7 @@ class libepisodes:
 
 
     def update(self, query = None, info = 'true'):
-        if not query == None: control.idle()
+        if not query is None: control.idle()
         try:
             items = []
             season, episode = [], []
@@ -361,7 +361,7 @@ class libepisodes:
                     except: tvshowtitle = None
                     try: tvshowtitle = params['show']
                     except: pass
-                    if tvshowtitle == None or tvshowtitle == '': raise Exception()
+                    if tvshowtitle is None or tvshowtitle == '': raise Exception()
                     year, imdb, tvdb = params['year'], params['imdb'], params['tvdb']
                     imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
                     try: tmdb = params['tmdb']
@@ -402,7 +402,7 @@ class libepisodes:
             self.date = (self.datetime - datetime.timedelta(hours = 24)).strftime('%Y%m%d')
         for item in items:
             it = None
-            if xbmc.abortRequested == True: return sys.exit()
+            if xbmc.abortRequested is True: return sys.exit()
             try:
                 dbcur.execute("SELECT * FROM tvshows WHERE id = '%s'" % item['tvdb'])
                 fetch = dbcur.fetchone()
@@ -410,8 +410,8 @@ class libepisodes:
             except:
                 pass
             try:
-                if not it == None: raise Exception()
-                it = episodes.episodes().get(item['tvshowtitle'], item['year'], item['imdb'], item['tvdb'], idx = False)
+                if not it is None: raise Exception()
+                it = episodes.Episodes().get(item['tvshowtitle'], item['year'], item['imdb'], item['tvdb'], idx = False)
                 status = it[0]['status'].lower()
                 it = [{'title': i['title'], 'year': i['year'], 'imdb': i['imdb'], 'tvdb': i['tvdb'], 'season': i['season'], 'episode': i['episode'], 'tvshowtitle': i['tvshowtitle'], 'premiered': i['premiered']} for i in it]
                 if status == 'continuing': raise Exception()
@@ -435,14 +435,14 @@ class libepisodes:
                 continue
             for i in it:
                 try:
-                    if xbmc.abortRequested == True: return sys.exit()
+                    if xbmc.abortRequested is True: return sys.exit()
                     premiered = i.get('premiered', '0')
                     if (premiered != '0' and int(re.sub('[^0-9]', '', str(premiered))) > int(self.date)) or (premiered == '0' and not self.include_unknown):
                         continue
                     libtvshows().strmFile(i)
                     files_added += 1
                 except: pass
-        if self.infoDialog == True:
+        if self.infoDialog is True:
             control.notification(title = 'default', message = 32554, icon = 'default', time = 1, sound = False)
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo') and files_added > 0:
             control.execute('UpdateLibrary(video)')
@@ -461,7 +461,7 @@ class libepisodes:
             dbcur.execute("CREATE TABLE IF NOT EXISTS service (""setting TEXT, ""value TEXT, ""UNIQUE(setting)"");")
             dbcur.execute("SELECT * FROM service WHERE setting = 'last_run'")
             fetch = dbcur.fetchone()
-            if fetch == None:
+            if fetch is None:
                 serviceProperty = "1970-01-01 23:59:00.000000"
                 dbcur.execute("INSERT INTO service Values (?, ?)", ('last_run', serviceProperty))
                 dbcon.commit()
@@ -480,7 +480,7 @@ class libepisodes:
                 t2 = datetime.datetime.strptime(serviceProperty, '%Y-%m-%d %H:%M:%S.%f')
                 t3 = datetime.datetime.now()
                 check = abs(t3 - t2) > t1
-                if check == False: raise Exception()
+                if check is False: raise Exception()
                 if (control.player.isPlaying() or control.condVisibility('Library.IsScanningVideo')): raise Exception()
                 serviceProperty = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
                 control.window.setProperty(self.property, serviceProperty)

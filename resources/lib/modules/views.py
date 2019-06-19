@@ -61,7 +61,7 @@ def setView(content, viewDict=None):
                 dbcur.execute("SELECT * FROM views WHERE skin = '%s' AND view_type = '%s'" % (record[0], record[1]))
                 view = dbcur.fetchone()
                 view = view[2]
-                if view == None: raise Exception()
+                if view is None: raise Exception()
                 return control.execute('Container.SetViewMode(%s)' % str(view))
             except:
                 try: return control.execute('Container.SetViewMode(%s)' % str(viewDict[skin]))

@@ -187,15 +187,16 @@ class documentary:
     def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
         try: name = control.lang(name).encode('utf-8')
         except: pass
-        url = '%s?action=%s' % (sysaddon, query) if isAction == True else query
-        thumb = os.path.join(artPath, thumb) if not artPath == None else icon
+        url = '%s?action=%s' % (sysaddon, query) if isAction is True else query
+        thumb = os.path.join(artPath, thumb) if not artPath is None else icon
         cm = []
-        if queue == True: cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-        if not context == None: cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
+        if queue is True: cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
+        if not context is None: cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
         item = control.item(label=name)
         item.addContextMenuItems(cm)
         item.setArt({'icon': thumb, 'thumb': thumb})
-        if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+        if not addonFanart is None:
+            item.setProperty('Fanart_Image', addonFanart)
         control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
 
     def endDirectory(self):
@@ -203,7 +204,9 @@ class documentary:
         control.directory(syshandle, cacheToDisc=True)
 
     def addDirectory(self, items, queue=False, isFolder=True):
-        if items == None or len(items) == 0: control.idle() ; sys.exit()
+        if items is None or len(items) == 0:
+            control.idle()
+            sys.exit()
 
         sysaddon = sys.argv[0]
 
@@ -221,9 +224,12 @@ class documentary:
             try:
                 name = i['name']
 
-                if i['image'].startswith('http'): thumb = i['image']
-                elif not artPath == None: thumb = os.path.join(artPath, i['image'])
-                else: thumb = addonThumb
+                if i['image'].startswith('http'):
+                    thumb = i['image']
+                elif not artPath is None:
+                    thumb = os.path.join(artPath, i['image'])
+                else:
+                    thumb = addonThumb
 
                 item = control.item(label=name)
 
@@ -241,7 +247,8 @@ class documentary:
                     item.setInfo("audio", '')
 
                 item.setArt({'icon': thumb, 'thumb': thumb})
-                if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+                if not addonFanart is None:
+                    item.setProperty('Fanart_Image', addonFanart)
 
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
             except:
