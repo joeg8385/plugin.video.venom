@@ -27,7 +27,7 @@ def news():
             text_file.write(message)
             text_file.close()
             compfile = message
-    showText('[B][COLOR red]Update Information[/COLOR][/B]', compfile)
+    showText('[B][COLOR red]News and Info[/COLOR][/B]', compfile)
 
 
 def open_news_url(url):

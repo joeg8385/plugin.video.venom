@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-import time
+import time, xbmc
 from resources.lib.modules import control
 
 try:
@@ -13,23 +13,33 @@ except:
 def fetch(items, lang = 'en', user=''):
     try:
         t2 = int(time.time())
+
+        if not control.existsPath(control.dataPath):
+            control.makeFile(control.dataPath)
+
         dbcon = database.connect(control.metacacheFile)
         dbcur = dbcon.cursor()
+        dbcur.execute("CREATE TABLE IF NOT EXISTS meta (""imdb TEXT, ""tmdb TEXT, ""tvdb TEXT, ""lang TEXT, ""user TEXT, ""item TEXT, ""time TEXT, ""UNIQUE(imdb, tmdb, tvdb, lang, user)"");")
     except:
         return items
+
     for i in range(0, len(items)):
         try:
             dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tmdb'], lang, user, items[i]['tvdb'], lang, user))
             # dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tvdb'], lang, user))
             match = dbcur.fetchone()
-            t1 = int(match[5])
-            update = (abs(t2 - t1) / 3600) >= 720
-            if update is True: raise Exception()
-            item = eval(match[4].encode('utf-8'))
-            item = dict((k, v) for k, v in item.iteritems() if not v == '0')
-            items[i].update(item)
-            items[i].update({'metacache': True})
+            if not match is None:
+                t1 = int(match[6])
+                update = (abs(t2 - t1) / 3600) >= 720
+                if update is True:
+                    raise Exception()
+                item = eval(match[5].encode('utf-8'))
+                item = dict((k, v) for k, v in item.iteritems() if not v == '0')
+                items[i].update(item)
+                items[i].update({'metacache': True})
         except:
+            import traceback
+            traceback.print_exc()
             pass
     return items
 
@@ -42,12 +52,15 @@ def insert(meta):
         dbcur.execute("CREATE TABLE IF NOT EXISTS meta (""imdb TEXT, ""tmdb TEXT, ""tvdb TEXT, ""lang TEXT, ""user TEXT, ""item TEXT, ""time TEXT, ""UNIQUE(imdb, tmdb, tvdb, lang, user)"");")
         # dbcur.execute("CREATE TABLE IF NOT EXISTS meta (""imdb TEXT, ""tvdb TEXT, ""lang TEXT, ""user TEXT, ""item TEXT, ""time TEXT, ""UNIQUE(imdb, tvdb, lang, user)"");")
         t = int(time.time())
+
         for m in meta:
             try:
                 i = repr(m['item'])
-                try: dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tmdb'], lang, user, items[i]['tvdb'], lang, user))
+                try:
+                    dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tmdb'], lang, user, items[i]['tvdb'], lang, user))
                 # try: dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (m['imdb'], m['lang'], m['user'], m['tvdb'], m['lang'], m['user']))
-                except: pass
+                except:
+                    pass
                 dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m['imdb'], m['tmdb'], m['tvdb'], m['lang'], m['user'], i, t))
                 # dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?)", (m['imdb'], m['tvdb'], m['lang'], m['user'], i, t))
             except:

@@ -29,8 +29,8 @@ class Sources:
     def play(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select):
         try:
             url = None
-            # items = cache.get(self.getSources, 24, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
-            items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+            items = cache.get(self.getSources, 24, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+            # items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 
             if select is None:
                 if not episode is None and control.setting('enable.upnext') == 'true':
@@ -72,9 +72,7 @@ class Sources:
 
             from resources.lib.modules import player
             if control.playlist.size() != 0:
-                playlist = control.playlist.getPlayListId()
-                # xbmc.log('playlist = %d' % playlist, 2)
-                # xbmc.log('playlist.size = %d' % control.playlist.size(), 2)
+                # playlist = control.playlist.getPlayListId()
                 # control.player2().play(control.playlist)
                 # player.Player().play_playlist(title, year, season, episode, imdb, tvdb, url, meta)
                 player.Player().play_source(title, year, season, episode, imdb, tvdb, url, meta)
@@ -721,6 +719,8 @@ class Sources:
             dbcur = dbcon.cursor()
             dbcur.execute("CREATE TABLE IF NOT EXISTS rel_url (""source TEXT, ""imdb_id TEXT, ""season TEXT, ""episode TEXT, ""rel_url TEXT, ""UNIQUE(source, imdb_id, season, episode)"");")
             dbcur.execute("CREATE TABLE IF NOT EXISTS rel_src (""source TEXT, ""imdb_id TEXT, ""season TEXT, ""episode TEXT, ""hosts TEXT, ""added TEXT, ""UNIQUE(source, imdb_id, season, episode)"");")
+            dbcur.connection.commit()
+            dbcon.close()
         except:
             import traceback
             traceback.print_exc()
@@ -739,8 +739,10 @@ class Sources:
             try:
                 dbcur.execute("DELETE FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
                 dbcur.execute("DELETE FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
-                dbcon.commit()
+                dbcur.connection.commit()
             except:
+                import traceback
+                traceback.print_exc()
                 pass
         ''' END '''
 
@@ -748,47 +750,57 @@ class Sources:
             sources = []
             dbcur.execute("SELECT * FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             match = dbcur.fetchone()
-            t1 = int(re.sub('[^0-9]', '', str(match[5])))
-            t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
-            update = abs(t2 - t1) > 60
-            if update is False:
-                sources = eval(match[4].encode('utf-8'))
-                return self.sources.extend(sources)
+            if not match is None:
+                t1 = int(re.sub('[^0-9]', '', str(match[5])))
+                t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
+                update = abs(t2 - t1) > 60
+                if update is False:
+                    sources = eval(match[4].encode('utf-8'))
+                    return self.sources.extend(sources)
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         try:
             url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             url = dbcur.fetchone()
-            url = eval(url[4].encode('utf-8'))
+            if not url is None:
+                url = eval(url[4].encode('utf-8'))
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         try:
             if url is None:
                 url = call.movie(imdb, title, localtitle, aliases, year)
-            if url is None:
-                raise Exception()
-            dbcur.execute("DELETE FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
-            dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, '', '', repr(url)))
-            dbcon.commit()
+            if not url is None:
+                dbcur.execute("DELETE FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
+                dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, '', '', repr(url)))
+                dbcur.connection.commit()
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         try:
             sources = []
             sources = call.sources(url, self.hostDict, self.hostprDict)
-            if sources is None or sources == []:
-                raise Exception()
-            sources = [json.loads(t) for t in set(json.dumps(d, sort_keys=True) for d in sources)]
-            for i in sources:
-                i.update({'provider': source})
-            self.sources.extend(sources)
-            dbcur.execute("DELETE FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
-            dbcur.execute("INSERT INTO rel_src Values (?, ?, ?, ?, ?, ?)", (source, imdb, '', '', repr(sources), datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
-            dbcon.commit()
+            if not sources is None and not sources == []:
+                sources = [json.loads(t) for t in set(json.dumps(d, sort_keys=True) for d in sources)]
+                for i in sources:
+                    i.update({'provider': source})
+                self.sources.extend(sources)
+                dbcur.execute("DELETE FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
+                dbcur.execute("INSERT INTO rel_src Values (?, ?, ?, ?, ?, ?)", (source, imdb, '', '', repr(sources), datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
+                dbcur.connection.commit()
+                dbcon.close()
         except:
+            import traceback
+            traceback.print_exc()
+            dbcon.close()
             pass
 
 
@@ -803,68 +815,81 @@ class Sources:
             sources = []
             dbcur.execute("SELECT * FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
             match = dbcur.fetchone()
-            t1 = int(re.sub('[^0-9]', '', str(match[5])))
-            t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
-            update = abs(t2 - t1) > 60
-            if update is False:
-                sources = eval(match[4].encode('utf-8'))
-                return self.sources.extend(sources)
+            if not match is None:
+                t1 = int(re.sub('[^0-9]', '', str(match[5])))
+                t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
+                update = abs(t2 - t1) > 60
+                if update is False:
+                    sources = eval(match[4].encode('utf-8'))
+                    return self.sources.extend(sources)
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         try:
             url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             url = dbcur.fetchone()
-            url = eval(url[4].encode('utf-8'))
+            if not url is None:
+                url = eval(url[4].encode('utf-8'))
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         try:
             if url is None:
                 url = call.tvshow(imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year)
-            if url is None:
-                raise Exception()
-            dbcur.execute("DELETE FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
-            dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, '', '', repr(url)))
-            dbcon.commit()
+            if not url is None:
+                dbcur.execute("DELETE FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
+                dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, '', '', repr(url)))
+                dbcur.connection.commit()
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         try:
             ep_url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
             ep_url = dbcur.fetchone()
-            ep_url = eval(ep_url[4].encode('utf-8'))
+            if not ep_url is None:
+                ep_url = eval(ep_url[4].encode('utf-8'))
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         try:
-            if url is None:
-                raise Exception()
-            if ep_url is None:
-                ep_url = call.episode(url, imdb, tvdb, title, premiered, season, episode)
-            if ep_url is None:
-                raise Exception()
-            dbcur.execute("DELETE FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
-            dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, season, episode, repr(ep_url)))
-            dbcon.commit()
+            if not url is None:
+                if ep_url is None:
+                    ep_url = call.episode(url, imdb, tvdb, title, premiered, season, episode)
+                if not ep_url is None:
+                    dbcur.execute("DELETE FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
+                    dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, season, episode, repr(ep_url)))
+                    dbcur.connection.commit()
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         try:
             sources = []
             sources = call.sources(ep_url, self.hostDict, self.hostprDict)
-            if sources is None or sources == []:
-                raise Exception()
-            sources = [json.loads(t) for t in set(json.dumps(d, sort_keys=True) for d in sources)]
-            for i in sources:
-                i.update({'provider': source})
-            self.sources.extend(sources)
-            dbcur.execute("DELETE FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
-            dbcur.execute("INSERT INTO rel_src Values (?, ?, ?, ?, ?, ?)", (source, imdb, season, episode, repr(sources), datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
-            dbcon.commit()
+            if not sources is None and not sources == []:
+                sources = [json.loads(t) for t in set(json.dumps(d, sort_keys=True) for d in sources)]
+                for i in sources:
+                    i.update({'provider': source})
+                self.sources.extend(sources)
+                dbcur.execute("DELETE FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
+                dbcur.execute("INSERT INTO rel_src Values (?, ?, ?, ?, ?, ?)", (source, imdb, season, episode, repr(sources), datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
+                dbcur.connection.commit()
+                dbcon.close()
         except:
+            import traceback
+            traceback.print_exc()
+            dbcon.close()
             pass
 
 
@@ -927,6 +952,39 @@ class Sources:
         log_utils.log('Removed %s duplicate sources from list' % (len(self.sources) - len(filter)), log_utils.LOGDEBUG)
         self.sources = filter
 ###---
+
+
+##---Filter out uncached torrents
+        # filter = []
+        # for i in self.sources:
+            # a = i['url'].lower()
+            # from resources.lib.modules import premiumize
+            # cached = premiumize.PremiumizeMe.check_cache(a)
+            # log_utils.log('cached = %s' % cached, log_utils.LOGDEBUG)
+
+            # for sublist2 in filter:
+                # b = sublist2['url'].lower()
+                # # if 'magnet:' in a and debrid.status() is True:
+                # if (a.endswith('.torrent') or 'magnet:' in a) and debrid.status() is True:
+                    # log_utils.log('line 942 from sources.py', log_utils.LOGDEBUG)
+                    # from resources.lib.modules import premiumize
+                    # cached = premiumize.PremiumizeMe.check_cache(a)
+                    # log_utils.log('cached = %s' % cached, log_utils.LOGDEBUG)
+
+                    # if cached is False:
+                            # # log_utils.log('hello from filter', log_utils.LOGDEBUG)
+                            # filter.remove(sublist2)
+                            # log_utils.log('Removing %s - %s (DUPLICATE uncached TORRENT) :: %s' % (i['provider'], info_hash.group(1), sublist['provider']), log_utils.LOGDEBUG)
+                            # break
+                # elif a == b:
+                    # filter.remove(sublist2)
+                    # log_utils.log('Removing %s - %s (DUPLICATE LINK) ALREADY IN :: %s' % (i['provider'], i['url'], sublist['source']), log_utils.LOGDEBUG)
+                    # break
+            # filter.append(i)
+        # log_utils.log('Removed %s duplicate sources from list' % (len(self.sources) - len(filter)), log_utils.LOGDEBUG)
+        # self.sources = filter
+# ##---
+
 
 
         random.shuffle(self.sources)
@@ -1114,11 +1172,12 @@ class Sources:
                 self.sources[i]['label'] = label.upper()
         try: 
             if not HEVC == 'true':
-                self.sources = [i for i in self.sources if not 'HEVC' in i['label']]
+                self.sources = [i for i in self.sources if 'label' or 'multiline_label' in i['label']]
         except:
             pass
 
-        self.sources = [i for i in self.sources if 'label' or 'multiline_label' in i]
+        # self.sources = [i for i in self.sources if 'label' or 'multiline_label' in i]
+        self.sources = [i for i in self.sources if 'label' in i]
         return self.sources
 
 

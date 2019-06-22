@@ -209,7 +209,6 @@ elif action == "furkSearchNew":
 ####################################################
 # TV Shows
 ####################################################
-
 elif action == 'tvNavigator':
     from resources.lib.menus import navigator
     navigator.Navigator().tvshows()
@@ -229,8 +228,6 @@ elif action == 'mytvliteNavigator':
 elif action == 'channels':
     from resources.lib.menus import channels
     channels.channels().get()
-
-
 
 elif action == 'tvshows':
     from resources.lib.menus import tvshows
@@ -305,6 +302,14 @@ elif action == 'seasons':
     from resources.lib.menus import seasons
     seasons.Seasons().get(tvshowtitle, year, imdb, tvdb)
 
+elif action == 'seasonsUserlists':
+    from resources.lib.indexers import seasons
+    seasons.Seasons().userlists()
+
+elif action == 'seasonsList':
+    from resources.lib.menus import seasons
+    seasons.Seasons().seasonList(url)
+
 
 
 ####################################################
@@ -376,9 +381,6 @@ elif action == 'addView':
     from resources.lib.modules import views
     views.addView(content)
 
-
-
-
 elif action == 'refresh':
     from resources.lib.modules import control
     control.refresh()
@@ -406,11 +408,9 @@ elif action == 'moviePlaycount':
     from resources.lib.modules import playcount
     playcount.movies(imdb, query)
 
-
 elif action == 'episodePlaycount':
     from resources.lib.modules import playcount
     playcount.episodes(imdb, tvdb, season, episode, query)
-
 
 elif action == 'tvPlaycount':
     from resources.lib.modules import playcount

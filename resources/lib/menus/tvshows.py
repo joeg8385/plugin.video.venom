@@ -32,6 +32,7 @@ class TVshows:
         self.threads = []
         self.type = type
         self.lang = control.apiLanguage()['tvdb']
+        self.season_special = False
         self.notifications = notifications
 
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
@@ -574,7 +575,7 @@ class TVshows:
                 plot = plot.encode('utf-8')
 
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
-                                            'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': '0', 'fanart': '0', 'next': next})
+                                            'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': tvdb, 'poster': '0', 'fanart': '0', 'next': next})
             except:
                 pass
 
@@ -591,13 +592,18 @@ class TVshows:
 
         for item in items:
             try:
-                try: name = item['list']['name']
-                except: name = item['name']
+                try:
+                    name = item['list']['name']
+                except:
+                    name = item['name']
                 name = client.replaceHTMLCodes(name)
                 name = name.encode('utf-8')
 
-                try: url = (trakt.slug(item['list']['user']['username']), item['list']['ids']['slug'])
-                except: url = ('me', item['ids']['slug'])
+                try:
+                    url = (trakt.slug(item['list']['user']['username']), item['list']['ids']['slug'])
+                except:
+                    url = ('me', item['ids']['slug'])
+
                 url = self.traktlist_link % url
                 url = url.encode('utf-8')
 
@@ -756,7 +762,7 @@ class TVshows:
                 plot = plot.encode('utf-8')
 
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-                                            'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': '0', 'poster': poster, 'next': next})
+                                            'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
             except:
                 pass
 
@@ -831,52 +837,42 @@ class TVshows:
 
     def worker(self, level = 1):
         try:
-            if self.list is None or self.list == []: return
+            if self.list is None or self.list == []:
+                return
             self.meta = []
             total = len(self.list)
-            # maximum = 50
-            maximum = total + 10
 
             self.fanart_tv_headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
-            if not self.fanart_tv_user == '': self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
+            if not self.fanart_tv_user == '':
+                self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 
-            for i in range(0, total): self.list[i].update({'metacache': False})
+            for i in range(0, total):
+                self.list[i].update({'metacache': False})
+
             self.list = metacache.fetch(self.list, self.lang, self.user)
-
-            # imdb = []
-            # threads = []
-
-            # for i in range(total):
-
-                # threads = [x for x in threads if x.is_alive()]
-                # while len(threads) >= maximum:
-                    # control.sleep(0.5)
-                    # threads = [x for x in threads if x.is_alive()]
-                # if not self.list[i]['imdb'] in imdb: # Otherwise data is retrieved multiple times if different episodes of the same show are in the list.
-                    # imdb.append(self.list[i]['imdb'])
-                    # thread = workers.Thread(self.super_info, i)
-                    # thread.start()
-                    # threads.append(thread)
-            # [x.join() for x in threads]
 
             for r in range(0, total, 40):
                 threads = []
-                for i in range(r, r+40):
+                for i in range(r, r + 40):
                     if i <= total: threads.append(workers.Thread(self.super_info, i))
                 [i.start() for i in threads]
                 [i.join() for i in threads]
 
-            if self.meta: metacache.insert(self.meta)
+                if self.meta:
+                    metacache.insert(self.meta)
+
             self.list = [i for i in self.list if not i['tvdb'] == '0']
+
             if self.fanart_tv_user == '':
-                for i in self.list: i.update({'clearlogo': '0', 'clearart': '0'})
+                for i in self.list:
+                    i.update({'clearlogo': '0', 'clearart': '0'})
         except:
             import traceback
             traceback.print_exc()
 
 
     def metadataRetrieve(self, title, year, imdb, tvdb):
-        self.list = [{'metacache' : False, 'title' : title, 'year' : year, 'imdb' : imdb, 'tvdb' : tvdb}]
+        self.list = [{'metacache' : False, 'title' : title, 'year' : year, 'imdb' : imdb, 'tmdb' : tmdb, 'tvdb' : tvdb}]
         self.worker()
         return self.list[0]
 
@@ -1154,11 +1150,6 @@ class TVshows:
         try: isOld = False ; control.item().getArt('type')
         except: isOld = True
 
-        unwatchedEnabled = True
-        unwatchedLimit = False
-
-        indicators = playcount.getTVShowIndicators()
-
         flatten = True if control.setting('flatten.tvshows') == 'true' else False
 
         if trakt.getTraktIndicatorsInfo() is True:
@@ -1199,13 +1190,17 @@ class TVshows:
                     plot = plot.strip()
                     if re.match('[a-zA-Z\d]$', plot): plot += ' ...'
                     meta['plot'] = plot
-                except: pass
+                except:
+                    pass
 
-                try: meta.update({'duration': str(int(meta['duration']) * 60)})
-                except: pass
-                try: meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
-                except: pass
-
+                try:
+                    meta.update({'duration': str(int(meta['duration']) * 60)})
+                except:
+                    pass
+                try:
+                    meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
+                except:
+                    pass
 
                 poster = '0'
                 # if poster == '0' and 'poster3' in i: poster = i['poster3']
@@ -1249,16 +1244,22 @@ class TVshows:
                 if fanart == '0': fanart = addonFanart
 
                 art = {}
-                if not poster == '0' and not poster is None: art.update({'poster' : poster, 'tvshow.poster' : poster, 'season.poster' : poster})
-                if not fanart == '0' and not fanart is None: art.update({'fanart' : fanart})
-                if not icon == '0' and not icon is None: art.update({'icon' : icon})
-                if not thumb == '0' and not thumb is None: art.update({'thumb' : thumb})
-                if not banner == '0' and not banner is None: art.update({'banner' : banner})
-                if not clearlogo == '0' and not clearlogo is None: art.update({'clearlogo' : clearlogo})
-                if not clearart == '0' and not clearart is None: art.update({'clearart' : clearart})
-                if not landscape == '0' and not landscape is None: art.update({'landscape' : landscape})
-
-                item = control.item(label = label)
+                if not poster == '0' and not poster is None:
+                    art.update({'poster' : poster, 'tvshow.poster' : poster, 'season.poster' : poster})
+                if not fanart == '0' and not fanart is None:
+                    art.update({'fanart' : fanart})
+                if not icon == '0' and not icon is None:
+                    art.update({'icon' : icon})
+                if not thumb == '0' and not thumb is None:
+                    art.update({'thumb' : thumb})
+                if not banner == '0' and not banner is None:
+                    art.update({'banner' : banner})
+                if not clearlogo == '0' and not clearlogo is None:
+                    art.update({'clearlogo' : clearlogo})
+                if not clearart == '0' and not clearart is None:
+                    art.update({'clearart' : clearart})
+                if not landscape == '0' and not landscape is None:
+                    art.update({'landscape' : landscape})
 
                 if flatten is True:
                     url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
@@ -1266,12 +1267,13 @@ class TVshows:
                     url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
 
 
-####-Context Menu and Counters-####
+####-Context Menu-####
                 cm = []
+
                 if traktCredentials is True:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, sysname, imdb, tvdb)))
-
                 try:
+                    indicators = playcount.getTVShowIndicators()
                     overlay = int(playcount.getTVShowOverlay(indicators, imdb, tvdb))
                     watched = overlay == 7
                     if watched:
@@ -1280,19 +1282,15 @@ class TVshows:
                     else:
                         meta.update({'playcount': 0, 'overlay': 6})
                         cm.append((watchedMenu, 'RunPlugin(%s?action=tvPlaycount&name=%s&imdb=%s&tvdb=%s&query=7)' % (sysaddon, systitle, imdb, tvdb)))
-                    if unwatchedEnabled and not watched:
-                        count = playcount.getShowCount(indicators, imdb, tvdb, unwatchedLimit)
-                        if count:
-                            item.setProperty('TotalEpisodes', str(count['total']))
-                            item.setProperty('WatchedEpisodes', str(count['watched']))
-                            item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
-                except: pass
+                except:
+                    pass
 
                 sysmeta = urllib.quote_plus(json.dumps(meta))
                 sysart = urllib.quote_plus(json.dumps(art))
 
                 cm.append(('Find similar', 'ActivateWindow(10025,%s?action=tvshows&url=http://api.trakt.tv/shows/%s/related,return)' % (sysaddon, imdb)))
-                cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=season&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, urllib.quote_plus(systitle), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(tvdb))))
+                cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=season&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (
+                                    sysaddon, urllib.quote_plus(systitle), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(tvdb))))
                 # cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, systitle, sysurl, sysmeta, sysart)))
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, systitle)))
                 cm.append((showPlaylistMenu, 'RunPlugin(%s?action=showPlaylist)' % sysaddon))
@@ -1304,6 +1302,24 @@ class TVshows:
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
 ####################################
 
+                item = control.item(label = label)
+
+                unwatchedEnabled = True
+                unwatchedLimit = False
+
+                if unwatchedEnabled:
+                    count = playcount.getShowCount(indicators, imdb, tvdb, unwatchedLimit)
+                    if count:
+                        item.setProperty('TotalEpisodes', str(count['total']))
+                        item.setProperty('WatchedEpisodes', str(count['watched']))
+                        item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
+
+                total_seasons = trakt.getSeasons(imdb, full=False)
+                total_seasons = [i['number'] for i in total_seasons]
+                total_seasons = len(total_seasons)
+                # if control.setting('tv.specials') == 'true' and self.season_special is True:
+                    # total_seasons = total_seasons - 1
+                item.setProperty('TotalSeasons', str(total_seasons))
 
                 if not fanart == '0' and not fanart is None:
                     item.setProperty('Fanart_Image', fanart)

@@ -1,3 +1,11 @@
+[B][COLOR red]Update - v2.9.7 - June 22, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed bad key references in metadata.db[/I]
+[COLOR yellow]--[/COLOR][I] fixed multiple issues with provider cache
+    calls from sources.py file, no .commit() and no .close() used for db access.
+    Multiple iterate of Nonetype objects fixed....hope this fixes your Fire OS devices.[/I]
+[COLOR yellow]--[/COLOR][I] Added SeasonTotals to set.Property(), used
+    by some skins[/I]
+
 [B][COLOR red]Update - v2.9.6 - June 19, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] initial release of UpNext integration[/I]
 [COLOR yellow]--[/COLOR][I] Please read the newsinfo for an indepth help on UpNext[/I]

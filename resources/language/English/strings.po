@@ -1912,7 +1912,7 @@ msgid ""
 msgstr ""
 
 msgctxt "#33665"
-msgid ""
+msgid "Season Lists"
 msgstr ""
 
 msgctxt "#33666"

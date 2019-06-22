@@ -8,17 +8,22 @@ from resources.lib.modules import trakt
 
 def getMovieIndicators(refresh=False):
     try:
-        if trakt.getTraktIndicatorsInfo() is True: raise Exception()
+        if trakt.getTraktIndicatorsInfo() is True:
+            raise Exception()
         from metahandler import metahandlers
         indicators = metahandlers.MetaData(preparezip = False)
         return indicators
     except:
         pass
     try:
-        if trakt.getTraktIndicatorsInfo() is False: raise Exception()
-        if refresh is False: timeout = 720
-        elif trakt.getWatchedActivity() < trakt.timeoutsyncMovies(): timeout = 720
-        else: timeout = 0
+        if trakt.getTraktIndicatorsInfo() is False:
+            raise Exception()
+        if refresh is False:
+            timeout = 720
+        elif trakt.getWatchedActivity() < trakt.timeoutsyncMovies():
+            timeout = 720
+        else:
+            timeout = 0
         indicators = trakt.cachesyncMovies(timeout = timeout)
         return indicators
     except:
@@ -27,17 +32,22 @@ def getMovieIndicators(refresh=False):
 
 def getTVShowIndicators(refresh=False):
     try:
-        if trakt.getTraktIndicatorsInfo() is True: raise Exception()
+        if trakt.getTraktIndicatorsInfo() is True:
+            raise Exception()
         from metahandler import metahandlers
         indicators = metahandlers.MetaData(preparezip=False)
         return indicators
     except:
         pass
     try:
-        if trakt.getTraktIndicatorsInfo() is False: raise Exception()
-        if refresh is False: timeout = 720
-        elif trakt.getWatchedActivity() < trakt.timeoutsyncTVShows(): timeout = 720
-        else: timeout = 0
+        if trakt.getTraktIndicatorsInfo() is False:
+            raise Exception()
+        if refresh is False:
+            timeout = 720
+        elif trakt.getWatchedActivity() < trakt.timeoutsyncTVShows():
+            timeout = 720
+        else:
+            timeout = 0
         indicators = trakt.cachesyncTVShows(timeout = timeout)
         return indicators
     except:
@@ -141,9 +151,9 @@ def getShowCount(indicators, imdb, tvdb, limit = False):
 
 def getSeasonCount(imdb, season = None, season_special = False, limit = False):
     try:
-        if trakt.getTraktIndicatorsInfo() is False: raise Exception()
+        if trakt.getTraktIndicatorsInfo() is False:
+            raise Exception()
         result = trakt.seasonCount(imdb)
-
         if season is None:
             if limit and result:
                 for i in range(len(result)):
@@ -155,6 +165,10 @@ def getSeasonCount(imdb, season = None, season_special = False, limit = False):
             else:
                 result = result[int(season) - 1]
 
+                # if int(season) > 1:
+                    # result = result[int(season) - 1]
+                # else:
+                    # result = result[int(season)]
             if limit:
                 result['unwatched'] = min(99, result['unwatched'])
             return result

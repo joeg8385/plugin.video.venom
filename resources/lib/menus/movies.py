@@ -827,9 +827,11 @@ class Movies:
         total = len(self.list)
 
         self.fanart_tv_headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
-        if not self.fanart_tv_user == '': self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
+        if not self.fanart_tv_user == '':
+            self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 
-        for i in range(0, total): self.list[i].update({'metacache': False})
+        for i in range(0, total):
+            self.list[i].update({'metacache': False})
 
         self.list = metacache.fetch(self.list, self.lang, self.user)
 
@@ -839,7 +841,8 @@ class Movies:
                 if i <= total: threads.append(workers.Thread(self.super_info, i))
             [i.start() for i in threads]
             [i.join() for i in threads]
-            if self.meta: metacache.insert(self.meta)
+            if self.meta:
+                metacache.insert(self.meta)
 
         self.list = [i for i in self.list if not i['imdb'] == '0']
 

@@ -30,7 +30,7 @@ RES_SD = ['576', '576p', '576i', 'sd576', '576sd', '576 ', '576p ', '576i ', 'sd
                         '240', '240p', '240i', 'sd240', '240sd', '240 ', '240p ', '240i ', 'sd240 ', '240sd ']
 SCR = ['dvdscr', 'screener', 'scr', 'r5', 'r6', 'dvdscr ', 'r5 ', 'r6 ']
 CAM = ['camrip', 'cam rip', 'tsrip', 'ts rip', 'hdcam', 'hd cam', 'hdts', 'hd ts', 'dvdcam', 'dvd cam', 'dvdts', 'dvd ts', 'cam', 'telesync',
-                'tele sync', 'ts', 'camrip ', 'tsrip ', 'hdcam ', 'hdts ', 'dvdcam ', 'dvdts ', 'telesync ']
+                'tele sync', 'ts', 'camrip ', 'tsrip ', 'hcam', 'hdts ', 'dvdcam ', 'dvdts ', 'telesync ']
 
 
 CODEC_H265 = ['hevc', 'h265', 'h.265', 'x265', 'x.265 ', '265 ']
@@ -44,8 +44,8 @@ CODEC_MKV  = ['mkv', 'mkv ', '.mkv', 'matroska', 'matroska ']
 
 
 AUDIO_8CH = ['ch8', '8ch', 'ch7', '7ch', '7 1', 'ch7 1', '7 1ch', 'ch8 ', '8ch ', 'ch7 ', '7ch ', '.ddp']
-AUDIO_6CH = ['ch6', '6ch', 'ch6', '6ch', '6 1', 'ch6 1', '6 1ch', '5 1', 'ch5 1', '5 1ch', '5.1', 'ch6 ', '6ch ', 'ch6 ', '6ch ', '.dd', '.dts']
-AUDIO_2CH = ['ch2', '2ch', 'stereo', 'dualaudio', 'dual', '2 0', 'ch2 0', '2 0ch', 'ch2 ', '2ch ', 'stereo ', 'dualaudio ', 'dual ']
+AUDIO_6CH = ['ch6', '6ch', 'ch6', '6ch', '6 1', 'ch6 1', '6 1ch', '5 1', 'ch5 1', '5 1ch', '5.1.', 'ch6 ', '6ch ', 'ch6 ', '6ch ']
+AUDIO_2CH = ['ch2', '2ch', 'stereo', 'dualaudio', 'dual-audio', 'dual', '2 0', 'ch2 0', '2 0ch', 'ch2 ', '2ch ', 'stereo ', 'dual audio', 'dual ']
 AUDIO_1CH = ['ch1', '1ch', 'mono', 'monoaudio', 'ch1 0', '1 0ch', 'ch1 ', '1ch ', 'mono ']
 
 VIDEO_3D = ['3d', 'sbs', 'hsbs', 'sidebyside', 'side by side', 'stereoscopic', 'tab', 'htab', 'topandbottom', 'top and bottom']
@@ -155,7 +155,7 @@ def getFileType(url):
     if any(value in url for value in ['bd-r', 'bd.r', 'bdr', 'bd-rip', 'bd.rip', 'bdrip']):
         type += ' BD-R /'
 
-    if any(value in url for value in ['dolby-digital', 'dolby.digital']):
+    if any(value in url for value in ['.dd5.1', 'dolby-digital', 'dolby.digital']):
         type += ' DOLBYDIGITAL /'
 
     if any(value in url for value in ['.ddex', 'dolby-ex', 'dd-ex']):
@@ -170,22 +170,22 @@ def getFileType(url):
     if 'atmos' in url:
         type += ' DOLBY-ATMOS /'
 
-    if '.dts' in url:
+    if '.dts.' in url:
         type += ' DTS /'
 
-    if any(value in url for value in ['.dts-hd', 'dtshd']):
+    if any(value in url for value in ['dts-hd', 'dtshd']):
         type += ' DTS-HD /'
 
-    if any(value in url for value in ['.dts-es', 'dtses']):
+    if any(value in url for value in ['dts-es', 'dtses']):
         type += ' DTS-ES /'
 
-    if any(value in url for value in ['.dts-neo', 'dtsneo']):
+    if any(value in url for value in ['dts-neo', 'dtsneo']):
         type += ' DTS-NEO /'
 
-    if '.thx' in url:
+    if '.thx.' in url:
         type += ' THX /'
 
-    if '.thx-ex' in url:
+    if any(value in url for value in ['.thx-ex', 'thxex']):
         type += ' THX-EX /'
 
     if any(value in url for value in AUDIO_8CH):

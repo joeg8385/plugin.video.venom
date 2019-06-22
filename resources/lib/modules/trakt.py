@@ -4,7 +4,8 @@
     Venom Add-on
 '''
 
-import os, re, imp, json, urlparse, time, threading
+import os, re, imp, json, urlparse
+import time, threading, xbmc
 
 from resources.lib.modules import cache
 from resources.lib.modules import control
@@ -646,9 +647,13 @@ def showCount(imdb, refresh = True, wait = False):
 
 def seasonCount(imdb, refresh = True, wait = False):
     try:
-        if not imdb: return None
-        if not imdb.startswith('tt'): imdb = 'tt' + imdb
+        if not imdb:
+            return None
+
+        if not imdb.startswith('tt'):
+            imdb = 'tt' + imdb
         indicators = cache.cache_existing(_seasonCountRetrieve, imdb)
+
         if refresh:
             # NB: Do not retrieve a fresh count, otherwise loading show/season menus are slow.
             thread = threading.Thread(target = _seasonCountCache, args = (imdb,))
@@ -675,7 +680,7 @@ def _seasonCountRetrieve(imdb):
         else:
             indicators = getTraktAsJson('/shows/%s/progress/watched?specials=false&hidden=false' % imdb)
 
-        # xbmc.log('line 667 from trakt indicators = %s' % str(indicators), 2)
+        # xbmc.log('line 679 from trakt indicators = %s' % str(indicators), 2)
 
         seasons = indicators['seasons']
         return [{'total': season['aired'], 'watched': season['completed'], 'unwatched': season['aired'] - season['completed']} for season in seasons]
@@ -796,7 +801,17 @@ def getEpisodeSummary(id, season, episode, full=True):
             url += '&extended=full'
         return cache.get(getTraktAsJson, 48, url)
     except:
-        # return
+        import traceback
+        traceback.print_exc()
+
+
+def getSeasons(id, full=True):
+    try:
+        url = '/shows/%s/seasons' % (id)
+        if full:
+            url += '&extended=full'
+        return cache.get(getTraktAsJson, 48, url)
+    except:
         import traceback
         traceback.print_exc()
 

@@ -12,6 +12,7 @@ LOGPATH = xbmc.translatePath('special://logpath/')
 
 addonName = "Venom"
 
+
 def log(msg, level = LOGNOTICE):
     debug_enabled = control.setting('addon_debug')
     debug_log = control.setting('debug.location')

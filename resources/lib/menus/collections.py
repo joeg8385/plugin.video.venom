@@ -866,7 +866,8 @@ class Collections:
         total = len(self.list)
 
         self.fanart_tv_headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
-        if not self.fanart_tv_user == '': self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
+        if not self.fanart_tv_user == '':
+            self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 
         for i in range(0, total): self.list[i].update({'metacache': False})
 
@@ -1128,7 +1129,6 @@ class Collections:
                 except: title = i['title']
                 label = '%s (%s)' % (i['title'], i['year'])
 
-                # sysname = urllib.quote_plus('%s (%s)' % (title, year))
                 sysname = urllib.quote_plus(label)
                 systitle = urllib.quote_plus(title)
 
@@ -1146,7 +1146,8 @@ class Collections:
                     plot = plot.strip()
                     if re.match('[a-zA-Z\d]$', plot): plot += ' ...'
                     meta['plot'] = plot
-                except: pass
+                except:
+                    pass
 
                 try: meta.update({'duration': str(int(meta['duration']) * 60)})
                 except: pass
@@ -1197,15 +1198,24 @@ class Collections:
                 if fanart == '0': fanart = addonFanart
 
                 art = {}
-                if not icon == '0' and not icon is None: art.update({'icon' : icon})
-                if not thumb == '0' and not thumb is None: art.update({'thumb' : thumb})
-                if not banner == '0' and not banner is None: art.update({'banner' : banner})
-                if not poster == '0' and not poster is None: art.update({'poster' : poster})
-                if not fanart == '0' and not fanart is None: art.update({'fanart' : fanart})
-                if not clearlogo == '0' and not clearlogo is None: art.update({'clearlogo' : clearlogo})
-                if not clearart == '0' and not clearart is None: art.update({'clearart' : clearart})
-                if not landscape == '0' and not landscape is None: art.update({'landscape' : landscape})
-                if not discart == '0' and not discart is None: art.update({'discart' : discart})
+                if not icon == '0' and not icon is None:
+                    art.update({'icon' : icon})
+                if not thumb == '0' and not thumb is None:
+                    art.update({'thumb' : thumb})
+                if not banner == '0' and not banner is None:
+                    art.update({'banner' : banner})
+                if not poster == '0' and not poster is None:
+                    art.update({'poster' : poster})
+                if not fanart == '0' and not fanart is None:
+                    art.update({'fanart' : fanart})
+                if not clearlogo == '0' and not clearlogo is None:
+                    art.update({'clearlogo' : clearlogo})
+                if not clearart == '0' and not clearart is None:
+                    art.update({'clearart' : clearart})
+                if not landscape == '0' and not landscape is None:
+                    art.update({'landscape' : landscape})
+                if not discart == '0' and not discart is None:
+                    art.update({'discart' : discart})
 
 
 ####-Context Menu and Overlays-####

@@ -90,6 +90,7 @@ deleteFile = xbmcvfs.delete
 listDir = xbmcvfs.listdir
 deleteDir = xbmcvfs.rmdir
 transPath = xbmc.translatePath
+existsPath =  xbmcvfs.exists
 
 key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
 iv = "p2s5v8y/B?E(H+Mb"

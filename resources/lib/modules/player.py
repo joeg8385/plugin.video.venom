@@ -40,7 +40,7 @@ class Player(xbmc.Player):
 
     def play_source(self, title, year, season, episode, imdb, tvdb, url, meta):
         try:
-            # control.sleep(200)
+            control.sleep(200)
             self.media_type = 'movie' if season is None or episode is None else 'episode'
             self.title = title
             self.year = str(year)
