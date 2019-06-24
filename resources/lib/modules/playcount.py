@@ -64,9 +64,12 @@ def getSeasonIndicators(imdb, refresh=False):
         pass
     try:
         if trakt.getTraktIndicatorsInfo() is False: raise Exception()
-        if refresh is False: timeout = 720
-        elif trakt.getWatchedActivity() < trakt.timeoutsyncSeason(imdb = imdb): timeout = 720
-        else: timeout = 0
+        if refresh is False:
+            timeout = 720
+        elif trakt.getWatchedActivity() < trakt.timeoutsyncSeason(imdb = imdb):
+            timeout = 720
+        else:
+            timeout = 0
         indicators = trakt.cachesyncSeason(imdb = imdb, timeout = timeout)
         return indicators
     except:
@@ -115,7 +118,7 @@ def getSeasonOverlay(indicators, imdb, tvdb, season):
 def getEpisodeOverlay(indicators, imdb, tvdb, season, episode):
     try:
         try:
-            playcount = indicators._get_watched_episode({'imdb_id' : imdb, 'season' : season, 'episode': episode, 'premiered' : ''})
+            playcount = indicators._get_watched_episode({'imdb_id': imdb, 'season': season, 'episode': episode, 'premiered': ''})
             return str(playcount)
         except:
             playcount = [i[2] for i in indicators if i[0] == tvdb]
@@ -179,9 +182,12 @@ def getSeasonCount(imdb, season = None, season_special = False, limit = False):
 
 def markMovieDuringPlayback(imdb, watched):
     try:
-        if trakt.getTraktIndicatorsInfo() is False: raise Exception()
-        if int(watched) == 7: trakt.markMovieAsWatched(imdb)
-        else: trakt.markMovieAsNotWatched(imdb)
+        if trakt.getTraktIndicatorsInfo() is False:
+            raise Exception()
+        if int(watched) == 7:
+            trakt.markMovieAsWatched(imdb)
+        else:
+            trakt.markMovieAsNotWatched(imdb)
         trakt.cachesyncMovies()
         if trakt.getTraktAddonMovieInfo() is True:
             trakt.markMovieAsNotWatched(imdb)
@@ -198,9 +204,12 @@ def markMovieDuringPlayback(imdb, watched):
 
 def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
     try:
-        if trakt.getTraktIndicatorsInfo() is False: raise Exception()
-        if int(watched) == 7: trakt.markMovieAsWatched(imdb)
-        else: trakt.markMovieAsNotWatched(imdb)
+        if trakt.getTraktIndicatorsInfo() is False:
+            raise Exception()
+        if int(watched) == 7:
+            trakt.markMovieAsWatched(imdb)
+        else:
+            trakt.markMovieAsNotWatched(imdb)
         trakt.cachesyncMovies()
         if trakt.getTraktAddonMovieInfo() is True:
             trakt.markMovieAsNotWatched(imdb)
@@ -218,8 +227,10 @@ def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
 def movies(imdb, watched):
     try:
         if trakt.getTraktIndicatorsInfo() is False: raise Exception()
-        if int(watched) == 7: trakt.watch(imdb=imdb, refresh=True, notification=False)
-        else: trakt.unwatch(imdb=imdb, refresh=True, notification=False)
+        if int(watched) == 7:
+            trakt.watch(imdb=imdb, refresh=True, notification=False)
+        else:
+            trakt.unwatch(imdb=imdb, refresh=True, notification=False)
     except:
         pass
     try:
@@ -234,9 +245,12 @@ def movies(imdb, watched):
 
 def episodes(imdb, tvdb, season, episode, watched):
     try:
-        if trakt.getTraktIndicatorsInfo() is False: raise Exception()
-        if int(watched) == 7: trakt.watch(imdb = imdb, tvdb = tvdb, season = season, episode = episode, refresh=True, notification=False)
-        else: trakt.unwatch(imdb=imdb, tvdb=tvdb, season=season, episode=episode, refresh=True, notification=False)
+        if trakt.getTraktIndicatorsInfo() is False:
+            raise Exception()
+        if int(watched) == 7:
+            trakt.watch(imdb = imdb, tvdb = tvdb, season = season, episode = episode, refresh=True, notification=False)
+        else:
+            trakt.unwatch(imdb=imdb, tvdb=tvdb, season=season, episode=episode, refresh=True, notification=False)
     except:
         pass
     try:
@@ -245,7 +259,8 @@ def episodes(imdb, tvdb, season, episode, watched):
         metaget.get_meta('tvshow', name='', imdb_id=imdb)
         metaget.get_episode_meta('', imdb_id=imdb, season=season, episode=episode)
         metaget.change_watched('episode', '', imdb_id=imdb, season=season, episode=episode, watched=int(watched))
-        if trakt.getTraktIndicatorsInfo() is False: tvshowsUpdate(imdb=imdb, tvdb=tvdb)
+        if trakt.getTraktIndicatorsInfo() is False:
+            tvshowsUpdate(imdb=imdb, tvdb=tvdb)
     except:
         pass
 
@@ -344,7 +359,7 @@ def tvshowsUpdate(imdb, tvdb):
         metaget.get_seasons('', imdb, seasons.keys()) # Must be called to initialize the database.
         for key, value in seasons.iteritems():
             countEpisode = 0
-            for i in value: countEpisode += int(metaget._get_watched_episode({'imdb_id' : i['imdb'], 'season' : i['season'], 'episode': i['episode'], 'premiered' : ''}) == 7)
+            for i in value: countEpisode += int(metaget._get_watched_episode({'imdb_id': i['imdb'], 'season': i['season'], 'episode': i['episode'], 'premiered': ''}) == 7)
             countSeason += int(countEpisode == len(value))
             metaget.change_watched('season', '', imdb_id = imdb, season = key, watched = 7 if countEpisode == len(value) else 6)
         metaget.change_watched('tvshow', '', imdb_id = imdb, watched = 7 if countSeason == len(seasons.keys()) else 6)

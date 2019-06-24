@@ -241,7 +241,8 @@ def getTraktCredentialsInfo():
     user = control.setting('trakt.user').strip()
     token = control.setting('trakt.token')
     refresh = control.setting('trakt.refresh')
-    if (user == '' or token == '' or refresh == ''): return False
+    if (user == '' or token == '' or refresh == ''):
+        return False
     return True
 
 
@@ -252,25 +253,41 @@ def getTraktIndicatorsInfo():
 
 
 def getTraktAddonMovieInfo():
-    try: scrobble = control.addon('script.trakt').getSetting('scrobble_movie')
-    except: scrobble = ''
-    try: ExcludeHTTP = control.addon('script.trakt').getSetting('ExcludeHTTP')
-    except: ExcludeHTTP = ''
-    try: authorization = control.addon('script.trakt').getSetting('authorization')
-    except: authorization = ''
-    if scrobble == 'true' and ExcludeHTTP == 'false' and not authorization == '': return True
-    else: return False
+    try:
+        scrobble = control.addon('script.trakt').getSetting('scrobble_movie')
+    except:
+        scrobble = ''
+    try:
+        ExcludeHTTP = control.addon('script.trakt').getSetting('ExcludeHTTP')
+    except:
+        ExcludeHTTP = ''
+    try:
+        authorization = control.addon('script.trakt').getSetting('authorization')
+    except:
+        authorization = ''
+    if scrobble == 'true' and ExcludeHTTP == 'false' and not authorization == '':
+        return True
+    else:
+        return False
 
 
 def getTraktAddonEpisodeInfo():
-    try: scrobble = control.addon('script.trakt').getSetting('scrobble_episode')
-    except: scrobble = ''
-    try: ExcludeHTTP = control.addon('script.trakt').getSetting('ExcludeHTTP')
-    except: ExcludeHTTP = ''
-    try: authorization = control.addon('script.trakt').getSetting('authorization')
-    except: authorization = ''
-    if scrobble == 'true' and ExcludeHTTP == 'false' and not authorization == '': return True
-    else: return False
+    try:
+        scrobble = control.addon('script.trakt').getSetting('scrobble_episode')
+    except:
+        scrobble = ''
+    try:
+        ExcludeHTTP = control.addon('script.trakt').getSetting('ExcludeHTTP')
+    except:
+        ExcludeHTTP = ''
+    try:
+        authorization = control.addon('script.trakt').getSetting('authorization')
+    except:
+        authorization = ''
+    if scrobble == 'true' and ExcludeHTTP == 'false' and not authorization == '':
+        return True
+    else:
+        return False
 
 
 def watch(imdb = None, tvdb = None, season = None, episode = None, refresh = True, notification = False):
@@ -532,7 +549,8 @@ def syncMovies():
 
 def watchedMovies():
     try:
-        if getTraktCredentialsInfo() is False: return
+        if getTraktCredentialsInfo() is False:
+            return
         return getTraktAsJson('/users/me/watched/movies?extended=full')
     except:
         pass

@@ -159,11 +159,10 @@ class Episodes:
                     self.list = sorted(self.list, key=lambda k: k['added'], reverse=reverse)
                 elif attribute == 6:
                     for i in range(len(self.list)):
-                        if not 'watched' in self.list[i]: self.list[i]['watched'] = ''
-                    self.list = sorted(self.list, key=lambda k: k['watched'], reverse=reverse)
+                        if not 'lastplayed' in self.list[i]: self.list[i]['lastplayed'] = ''
+                    self.list = sorted(self.list, key=lambda k: k['lastplayed'], reverse=reverse)
             elif reverse:
                 self.list = reversed(self.list)
-            # log_utils.log('from line 165 of episodes.py self.list sorted = %s' % str(self.list), log_utils.LOGDEBUG)
         except:
             import traceback
             traceback.print_exc()
@@ -268,14 +267,9 @@ class Episodes:
                 self.list = self.list[::-1]
 
             elif self.trakt_link in url and url == self.progress_link:
-                # log_utils.log('from line 270 of episodes.py', log_utils.LOGDEBUG)
                 self.blist = cache.get(self.trakt_progress_list, 720, url, self.trakt_user, self.lang)
-                # log_utils.log('from line 272 of episodes.py number of items = %s' % str(len(self.blist)), log_utils.LOGDEBUG)
-                # log_utils.log('from line 273 of episodes.py self.blist = %s' % str(self.blist), log_utils.LOGDEBUG)
-
                 self.list = []
                 self.list = cache.get(self.trakt_progress_list, 0.2, url, self.trakt_user, self.lang)
-                # log_utils.log('from line 277 of episodes.py self.list = %s' % str(self.list), log_utils.LOGDEBUG)
                 self.sort()
 
             elif self.trakt_link in url and url == self.mycalendar_link:
@@ -457,9 +451,21 @@ class Episodes:
                     imdb = '0'
 
                 try:
+                    tmdb = item['show']['ids']['tmdb']
+                    if tmdb is None or tmdb == '':
+                        tmdb = '0'
+                    else:
+                        tmdb = re.sub('[^0-9]', '', str(tmdb))
+                    tmdb = tmdb.encode('utf-8')
+                except:
+                    tmdb = '0'
+
+                try:
                     tvdb = item['show']['ids']['tvdb']
-                    #                    if tvdb is None or tvdb == '': raise Exception()
-                    tvdb = re.sub('[^0-9]', '', str(tvdb))
+                    if tvdb is None or tvdb == '':
+                        tvdb = '0'
+                    else:
+                        tvdb = re.sub('[^0-9]', '', str(tvdb))
                     tvdb = tvdb.encode('utf-8')
                 except:
                     tvdb = '0'
@@ -485,9 +491,9 @@ class Episodes:
                     added = None
 
                 try:
-                    watched = item['show']['last_watched_at']
+                    lastplayed = item['show']['last_watched_at']
                 except:
-                    watched = None
+                    lastplayed = None
 
                 studio = item['show']['network']
                 if studio is None: studio = '0'
@@ -540,10 +546,10 @@ class Episodes:
                 plot = client.replaceHTMLCodes(plot)
 
                 values = {'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle,
-                          'year': year, 'premiered': premiered, 'added': added, 'watched': watched,
-                          'status': 'Continuing', 'studio': studio, 'genre': genre, 'duration': duration,
-                          'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb,
-                          'progress': progress, 'episodeIDS': episodeIDS}
+                            'year': year, 'premiered': premiered, 'added': added, 'lastplayed': lastplayed,
+                            'status': 'Continuing', 'studio': studio, 'genre': genre, 'duration': duration,
+                            'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb,
+                            'tvdb': tvdb, 'progress': progress, 'episodeIDS': episodeIDS}
 
                 if 'airday' in item and not item['airday'] is None and not item['airday'] == '':
                     values['airday'] = item['airday']
@@ -579,7 +585,6 @@ class Episodes:
             url += '?extended=full'
             result = trakt.getTrakt(url)
             result = json.loads(result)
-            # log_utils.log('from line 583 of episodes.py result = %s' % str(result), log_utils.LOGDEBUG)
             items = []
         except:
             return
@@ -610,17 +615,36 @@ class Episodes:
                 if int(year) > int(self.datetime.strftime('%Y')):
                     raise Exception()
 
-                imdb = item['show']['ids']['imdb']
-                if imdb is None or imdb == '':
+                try:
+                    imdb = item['show']['ids']['imdb']
+                    if imdb is None or imdb == '':
+                        imdb = '0'
+                    else:
+                        imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
+                    imdb = imdb.encode('utf-8')
+                except:
                     imdb = '0'
-                imdb = imdb.encode('utf-8')
 
-                tvdb = item['show']['ids']['tvdb']
-                if tvdb is None or tvdb == '':
-                    # raise Exception()
-                    imdb = '0'
-                tvdb = re.sub('[^0-9]', '', str(tvdb))
-                tvdb = tvdb.encode('utf-8')
+                try:
+                    tmdb = item['show']['ids']['tmdb']
+                    if tmdb is None or tmdb == '':
+                        tmdb = '0'
+                    else:
+                        tmdb = re.sub('[^0-9]', '', str(tmdb))
+                    tmdb = tmdb.encode('utf-8')
+                except:
+                    tmdb = '0'
+
+                try:
+                    tvdb = item['show']['ids']['tvdb']
+                    if tvdb is None or tvdb == '':
+                        tvdb = '0'
+                    else:
+                        tvdb = re.sub('[^0-9]', '', str(tvdb))
+                    tvdb = tvdb.encode('utf-8')
+                except:
+                    tvdb = '0'
+
 
 ### episode IDS
                 try:
@@ -629,24 +653,25 @@ class Episodes:
                 except:
                     episodeIDS = {}
 ##------------------
-
-                # log_utils.log('from line 637 of episodes.py episodeIDS = %s' % str(episodeIDS), log_utils.LOGDEBUG)
                 try:
                     added = item['show']['updated_at']
                 except:
                     added = None
 
                 try:
-                    watched = item['show']['last_watched_at']
+                    lastplayed = item['show']['last_watched_at']
                 except:
                     try:
-                        watched = item['last_watched_at']
+                        lastplayed = item['last_watched_at']
                     except:
-                        watched = None
+                        lastplayed = None
 
-                values = {'imdb': imdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year, 'snum': season,
-                              'enum': episode, 'added': added, 'watched': watched, 'episodeIDS': episodeIDS}
-                # log_utils.log('from line 653 of episodes.py values = %s' % str(values), log_utils.LOGDEBUG)
+                # values = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year, 'snum': season,
+                              # 'enum': episode, 'added': added, 'watched': watched, 'episodeIDS': episodeIDS}
+                values = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year, 'snum': season,
+                              'enum': episode, 'added': added, 'lastplayed': lastplayed, 'episodeIDS': episodeIDS}
+
+
                 try:
                     air = item['show']['airs']
                     values['airday'] = air['day'].strip()
@@ -669,9 +694,11 @@ class Episodes:
 
         def items_list(i):
             try:
-                item = \
-                    [x for x in self.blist if
-                     x['tvdb'] == i['tvdb'] and x['snum'] == i['snum'] and x['enum'] == i['enum']][0]
+                item = [x for x in self.blist if x['tvdb'] == i['tvdb'] and x['snum'] == i['snum'] and x['enum'] == i['enum']][0]
+
+                # item = \
+                    # [x for x in self.blist if
+                     # x['tvdb'] == i['tvdb'] and x['snum'] == i['snum'] and x['enum'] == i['enum']][0]
                 item['action'] = 'episodes'
                 self.list.append(item)
                 return
@@ -680,9 +707,8 @@ class Episodes:
 
             try:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
-                # log_utils.log('from line 687 of episodes.py url = %s' % str(url), log_utils.LOGDEBUG)
                 data = urllib2.urlopen(url, timeout=10).read()
-                # log_utils.log('from line 689 of episodes.py data = %s' % str(data), log_utils.LOGDEBUG)
+
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('%s.xml' % lang)
                 artwork = zip.read('banners.xml')
@@ -702,16 +728,15 @@ class Episodes:
                     premiered = '0'
                 premiered = client.replaceHTMLCodes(premiered)
                 premiered = premiered.encode('utf-8')
-                # log_utils.log('from line 709 of episodes.py premiered = %s' % str(premiered), log_utils.LOGDEBUG)
                 try:
                     added = i['added']
                 except:
                     added = None
 
                 try:
-                    watched = i['watched']
+                    lastplayed = i['lastplayed']
                 except:
-                    watched = None
+                    lastplayed = None
 
                 try:
                     status = client.parseDOM(item2, 'Status')[0]
@@ -721,7 +746,6 @@ class Episodes:
                     status = 'Ended'
                 status = client.replaceHTMLCodes(status)
                 status = status.encode('utf-8')
-                # log_utils.log('from line 728 of episodes.py status = %s' % str(status), log_utils.LOGDEBUG)
                 unaired = ''
                 if status == 'Ended':
                     pass
@@ -737,19 +761,15 @@ class Episodes:
                     title = '0'
                 title = client.replaceHTMLCodes(title)
                 title = title.encode('utf-8')
-                # log_utils.log('from line 744 of episodes.py title = %s' % str(title), log_utils.LOGDEBUG)
                 season = client.parseDOM(item, 'SeasonNumber')[0]
                 season = '%01d' % int(season)
                 season = season.encode('utf-8')
-                # log_utils.log('from line 748 of episodes.py season = %s' % str(season), log_utils.LOGDEBUG)
                 episode = client.parseDOM(item, 'EpisodeNumber')[0]
                 episode = re.sub('[^0-9]', '', '%01d' % int(episode))
                 episode = episode.encode('utf-8')
-                # log_utils.log('from line 752 of episodes.py episode = %s' % str(episode), log_utils.LOGDEBUG)
                 seasoncount = seasons.Seasons.seasonCountParse(season=season, items=result)
-                # log_utils.log('from line 754 of episodes.py seasoncount = %s' % str(seasoncount), log_utils.LOGDEBUG)
                 tvshowtitle = i['tvshowtitle']
-                imdb, tvdb = i['imdb'], i['tvdb']
+                imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
 
 ### episode IDS
                 try:
@@ -764,7 +784,6 @@ class Episodes:
                     year = year.encode('utf-8')
                 except:
                     pass
-                # log_utils.log('from line 774 of episodes.py year = %s' % str(year), log_utils.LOGDEBUG)
                 tvshowyear = '0'
                 tvshowyear = i['year']
                 try:
@@ -775,7 +794,6 @@ class Episodes:
                     tvshowyear = tvshowyear.encode('utf-8')
                 except:
                     pass
-                # log_utils.log('from line 785 of episodes.py tvshowyear = %s' % str(tvshowyear), log_utils.LOGDEBUG)
                 try:
                     poster = client.parseDOM(item2, 'poster')[0]
                 except:
@@ -786,7 +804,6 @@ class Episodes:
                     poster = '0'
                 poster = client.replaceHTMLCodes(poster)
                 poster = poster.encode('utf-8')
-                # log_utils.log('from line 796 of episodes.py poster = %s' % str(poster), log_utils.LOGDEBUG)
                 try:
                     banner = client.parseDOM(item2, 'banner')[0]
                 except:
@@ -797,7 +814,6 @@ class Episodes:
                     banner = '0'
                 banner = client.replaceHTMLCodes(banner)
                 banner = banner.encode('utf-8')
-                # log_utils.log('from line 807 of episodes.py banner = %s' % str(banner), log_utils.LOGDEBUG)
                 try:
                     fanart = client.parseDOM(item2, 'fanart')[0]
                 except:
@@ -808,7 +824,6 @@ class Episodes:
                     fanart = '0'
                 fanart = client.replaceHTMLCodes(fanart)
                 fanart = fanart.encode('utf-8')
-                # log_utils.log('from line 818 of episodes.py fanart = %s' % str(fanart), log_utils.LOGDEBUG)
                 try:
                     thumb = client.parseDOM(item, 'filename')[0]
                 except:
@@ -819,7 +834,6 @@ class Episodes:
                     thumb = '0'
                 thumb = client.replaceHTMLCodes(thumb)
                 thumb = thumb.encode('utf-8')
-                # log_utils.log('from line 829 of episodes.py thumb = %s' % str(thumb), log_utils.LOGDEBUG)
                 if not poster == '0':
                     pass
                 elif not fanart == '0':
@@ -848,7 +862,6 @@ class Episodes:
                 if studio == '': studio = '0'
                 studio = client.replaceHTMLCodes(studio)
                 studio = studio.encode('utf-8')
-                # log_utils.log('from line 858 of episodes.py studio = %s' % str(studio), log_utils.LOGDEBUG)
                 try:
                     genre = client.parseDOM(item2, 'Genre')[0]
                 except:
@@ -858,7 +871,6 @@ class Episodes:
                 if genre == '': genre = '0'
                 genre = client.replaceHTMLCodes(genre)
                 genre = genre.encode('utf-8')
-                # log_utils.log('from line 868 of episodes.py genre = %s' % str(genre), log_utils.LOGDEBUG)
                 if 'duration' in i and not i['duration'] is None and not i['duration'] == '':
                     duration = i['duration']
                 else:
@@ -869,7 +881,6 @@ class Episodes:
                     if duration == '': duration = '0'
                     duration = client.replaceHTMLCodes(duration)
                     duration = duration.encode('utf-8')
-                # log_utils.log('from line 879 of episodes.py duration = %s' % str(duration), log_utils.LOGDEBUG)
                 try:
                     rating = client.parseDOM(item, 'Rating')[0]
                 except:
@@ -877,7 +888,6 @@ class Episodes:
                 if rating == '': rating = '0'
                 rating = client.replaceHTMLCodes(rating)
                 rating = rating.encode('utf-8')
-                # log_utils.log('from line 887 of episodes.py rating = %s' % str(rating), log_utils.LOGDEBUG)
                 try:
                     votes = client.parseDOM(item2, 'RatingCount')[0]
                 except:
@@ -885,7 +895,6 @@ class Episodes:
                 if votes == '': votes = '0'
                 votes = client.replaceHTMLCodes(votes)
                 votes = votes.encode('utf-8')
-                # log_utils.log('from line 895 of episodes.py votes = %s' % str(votes), log_utils.LOGDEBUG)
                 if 'mpaa' in i and not i['mpaa'] is None and not i['mpaa'] == '':
                     mpaa = i['mpaa']
                 else:
@@ -896,7 +905,6 @@ class Episodes:
                     if mpaa == '': mpaa = '0'
                     mpaa = client.replaceHTMLCodes(mpaa)
                     mpaa = mpaa.encode('utf-8')
-                # log_utils.log('from line 906 of episodes.py mpaa = %s' % str(mpaa), log_utils.LOGDEBUG)
                 try:
                     director = client.parseDOM(item, 'Director')[0]
                 except:
@@ -906,7 +914,6 @@ class Episodes:
                 if director == '': director = '0'
                 director = client.replaceHTMLCodes(director)
                 director = director.encode('utf-8')
-                # log_utils.log('from line 916 of episodes.py director = %s' % str(director), log_utils.LOGDEBUG)
                 try:
                     writer = client.parseDOM(item, 'Writer')[0]
                 except:
@@ -916,7 +923,6 @@ class Episodes:
                 if writer == '': writer = '0'
                 writer = client.replaceHTMLCodes(writer)
                 writer = writer.encode('utf-8')
-                # log_utils.log('from line 926 of episodes.py writer = %s' % str(writer), log_utils.LOGDEBUG)
                 try:
                     cast = client.parseDOM(item2, 'Actors')[0]
                 except:
@@ -926,7 +932,6 @@ class Episodes:
                     cast = [(x.encode('utf-8'), '') for x in cast]
                 except:
                     cast = []
-                # log_utils.log('from line 936 of episodes.py cast = %s' % str(cast), log_utils.LOGDEBUG)
                 try:
                     plot = client.parseDOM(item, 'Overview')[0]
                 except:
@@ -939,14 +944,23 @@ class Episodes:
                 if plot == '': plot = '0'
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
-                # log_utils.log('from line 949 of episodes.py plot = %s' % str(plot), log_utils.LOGDEBUG)
+                # values = {'title': title, 'seasoncount': seasoncount, 'season': season, 'episode': episode,
+                          # 'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
+                          # 'added': added, 'watched': watched, 'status': status, 'studio': studio, 'genre': genre,
+                          # 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
+                          # 'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
+                          # 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'],
+                          # 'unaired': unaired, 'episodeIDS': episodeIDS}
+
                 values = {'title': title, 'seasoncount': seasoncount, 'season': season, 'episode': episode,
                           'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
-                          'added': added, 'watched': watched, 'status': status, 'studio': studio, 'genre': genre,
+                          'added': added, 'lastplayed': lastplayed, 'status': status, 'studio': studio, 'genre': genre,
                           'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
-                          'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster,
+                          'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
                           'banner': banner, 'fanart': fanart, 'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'],
                           'unaired': unaired, 'episodeIDS': episodeIDS}
+
+
                 values['action'] = 'episodes'
                 if 'airday' in i and not i['airday'] is None and not i['airday'] == '':
                     values['airday'] = i['airday']
@@ -955,7 +969,6 @@ class Episodes:
                 if 'airzone' in i and not i['airzone'] is None and not i['airzone'] == '':
                     values['airzone'] = i['airzone']
                 self.list.append(values)
-                # log_utils.log('from line 965 of episodes.py values = %s' % str(values), log_utils.LOGDEBUG)
             except:
                 pass
 
@@ -975,8 +988,9 @@ class Episodes:
 
         def items_list(i):
             try:
-                item = [x for x in self.blist if
-                        x['tvdb'] == i['tvdb'] and x['season'] == i['season'] and x['episode'] == i['episode']][0]
+                item = [x for x in self.blist if x['tvdb'] == i['tvdb'] and x['season'] == i['season'] and x['episode'] == i['episode']][0]
+                # item = [x for x in self.blist if
+                        # x['tvdb'] == i['tvdb'] and x['season'] == i['season'] and x['episode'] == i['episode']][0]
                 if item['poster'] == '0': raise Exception()
                 self.list.append(item)
                 return
@@ -1027,15 +1041,12 @@ class Episodes:
                 seasoncount = seasons.Seasons.seasonCountParse(season=season, items=result)
 
                 tvshowtitle = i['tvshowtitle']
-                imdb, tvdb = i['imdb'], i['tvdb']
+                imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
 
 ### episode IDS
                 try:
                     episodeIDS = trakt.getEpisodeSummary(imdb, season, episode, full=False)
-                    # episodeIDS = episodeIDS.get('ids', {}).get('imdb', '0')
                     episodeIDS = episodeIDS.get('ids', {})
-                    # episodeInfo = 'tt' + re.sub('[^0-9]', '', str(episodeInfo))
-                    # if not episodeInfo: episodeInfo = '0'
                 except:
                     episodeIDS = {}
 ##------------------
@@ -1154,10 +1165,11 @@ class Episodes:
                     rating = client.parseDOM(item, 'Rating')[0]
                 except:
                     rating = ''
-                if rating == '': rating = '0'
+                if rating == '':
+                    rating = '0'
                 rating = client.replaceHTMLCodes(rating)
                 rating = rating.encode('utf-8')
-                # xbmc.log('line 1152 from episodes.py rating = %s' % rating, 2)
+
                 try:
                     votes = client.parseDOM(item2, 'RatingCount')[0]
                 except:
@@ -1173,7 +1185,8 @@ class Episodes:
                         mpaa = client.parseDOM(item2, 'ContentRating')[0]
                     except:
                         mpaa = ''
-                    if mpaa == '': mpaa = '0'
+                    if mpaa == '':
+                        mpaa = '0'
                     mpaa = client.replaceHTMLCodes(mpaa)
                     mpaa = mpaa.encode('utf-8')
 
@@ -1183,7 +1196,8 @@ class Episodes:
                     director = ''
                 director = [x for x in director.split('|') if not x == '']
                 director = ' / '.join(director)
-                if director == '': director = '0'
+                if director == '':
+                    director = '0'
                 director = client.replaceHTMLCodes(director)
                 director = director.encode('utf-8')
 
@@ -1224,7 +1238,7 @@ class Episodes:
                           'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
                           'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
                           'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast,
-                          'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
+                          'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
                           'fanart': fanart, 'thumb': thumb, 'episodeIDS': episodeIDS}
 
                 if 'airday' in i and not i['airday'] is None and not i['airday'] == '':
@@ -1333,25 +1347,41 @@ class Episodes:
                 except:
                     tvshowyear = year
 
-                imdb = item['show']['externals']['imdb']
-                if imdb is None or imdb == '':
-                    imdb = '0'
-                else:
-                    imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
-                imdb = imdb.encode('utf-8')
 
-                tvdb = item['show']['externals']['thetvdb']
-                if tvdb is None or tvdb == '': raise Exception()
-                tvdb = re.sub('[^0-9]', '', str(tvdb))
-                tvdb = tvdb.encode('utf-8')
+                try:
+                    imdb = item['show']['externals']['imdb']
+                    if imdb is None or imdb == '':
+                        imdb = '0'
+                    else:
+                        imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
+                    imdb = imdb.encode('utf-8')
+                except:
+                    imdb = '0'
+
+                try:
+                    tmdb = item['show']['ids']['tmdb']
+                    if tmdb is None or tmdb == '':
+                        tmdb = '0'
+                    else:
+                        tmdb = re.sub('[^0-9]', '', str(tmdb))
+                    tmdb = tmdb.encode('utf-8')
+                except:
+                    tmdb = '0'
+
+                try:
+                    tvdb = item['show']['externals']['thetvdb']
+                    if tvdb is None or tvdb == '':
+                        tvdb = '0'
+                    else:
+                        tvdb = re.sub('[^0-9]', '', str(tvdb))
+                    tvdb = tvdb.encode('utf-8')
+                except:
+                    tvdb = '0'
 
 ### episode IDS
                 try:
                     episodeIDS = trakt.getEpisodeSummary(imdb, season, episode, full=False)
-                    # episodeIDS = episodeIDS.get('ids', {}).get('imdb', '0')
                     episodeIDS = episodeIDS.get('ids', {})
-                    # episodeInfo = 'tt' + re.sub('[^0-9]', '', str(episodeInfo))
-                    # if not episodeInfo: episodeInfo = '0'
                 except:
                     episodeIDS = {}
 ##------------------
@@ -1417,15 +1447,17 @@ class Episodes:
                     rating = item['show']['rating']['average']
                 except:
                     rating = '0'
-                if rating is None or rating == '0.0': rating = '0'
+                if rating is None or rating == '0.0':
+                    rating = '0'
                 rating = str(rating)
                 rating = rating.encode('utf-8')
-                # xbmc.log('line 1416 from episodes.py rating = %s' % rating, 2)
+
                 try:
                     plot = item['show']['summary']
                 except:
                     plot = '0'
-                if plot is None: plot = '0'
+                if plot is None:
+                    plot = '0'
                 plot = re.sub('<.+?>|</.+?>|\n', '', plot)
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
@@ -1433,7 +1465,7 @@ class Episodes:
                 values = {'title': title, 'season': season, 'episode': episode, 'year': year,
                             'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
                             'status': 'Continuing', 'studio': studio, 'genre': genre, 'duration': duration,
-                            'rating': rating, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster,
+                            'rating': rating, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
                             'thumb': thumb, 'episodeIDS': episodeIDS}
 
                 if 'airday' in item and not item['airday'] is None and not item['airday'] == '':
@@ -1484,6 +1516,8 @@ class Episodes:
                 for i in range(len(self.list)):
                     self.list[i] = dict(show.list[i].items() + self.list[i].items())
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         if isinstance(items, dict) and 'value' in items:
@@ -1532,17 +1566,15 @@ class Episodes:
             airBold = control.setting('tvshows.air.bold')
             airLabel = '[B]' + control.lang(35032).encode('utf-8') + '[/B]' + ': '
 
-        try:
-            isOld = False;
-            control.item().getArt('type')
-        except:
-            isOld = True
-
+        # try:
+            # isOld = False;
+            # control.item().getArt('type')
+        # except:
+            # isOld = True
         if control.setting('hosts.mode') == '2' or control.setting('enable.upnext') == 'true':
             playbackMenu = control.lang(32063).encode('utf-8')
         else:
             playbackMenu = control.lang(32064).encode('utf-8')
-
         if trakt.getTraktIndicatorsInfo() is True:
             watchedMenu = control.lang(32068).encode('utf-8')
             unwatchedMenu = control.lang(32069).encode('utf-8')
@@ -1559,7 +1591,8 @@ class Episodes:
         for i in items:
             try:
                 imdb, tvdb, year, season, episode, premiered = i['imdb'], i['tvdb'], i['year'], i['season'], i['episode'], i['premiered']
-                if not 'label' in i: i['label'] = i['title']
+                if not 'label' in i:
+                    i['label'] = i['title']
 
                 if i['label'] == '0':
                     label = '%sx%02d . %s %s' % (i['season'], int(i['episode']), 'Episode', i['episode'])
@@ -1624,7 +1657,6 @@ class Episodes:
                     # Kodi uses the year (the year the show started) as the year for the episode. Change it from the premiered date.
                     meta.update({'tvshowyear': i['year']})
                 except: pass
-
                 if airEnabled == 'true':
                     air = []
                     airday = None
@@ -1736,7 +1768,7 @@ class Episodes:
                     art.update({'clearart': clearart})
 
 
-####-Context Menu and Counters-####
+####-Context Menu-####
                 cm = []
 
                 if traktCredentials is True:
@@ -1755,6 +1787,8 @@ class Episodes:
                         cm.append((watchedMenu, 'RunPlugin(%s?action=episodePlaycount&imdb=%s&tvdb=%s&season=%s&episode=%s&query=7)' % (
                                                 sysaddon, imdb, tvdb, season, episode)))
                 except:
+                    import traceback
+                    traceback.print_exc()
                     pass
 
                 sysmeta = urllib.quote_plus(json.dumps(meta))
@@ -1764,9 +1798,6 @@ class Episodes:
                 url = '%s?action=play&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s&meta=%s&t=%s' % (
                                         sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)
                 sysurl = urllib.quote_plus(url)
-
-                path = '%s?action=play&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s' % (
-                                        sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered)
 
                 if isFolder is True:
                     url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s' % (
@@ -1782,8 +1813,8 @@ class Episodes:
                 if isFolder is False:
                     cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (
                                         sysaddon, sysurl, sysmeta)))
-                if isOld is True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                # if isOld is True:
+                    # cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
                 cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (
                                         sysaddon, systvshowtitle, year, imdb, tvdb)))
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
@@ -1802,11 +1833,12 @@ class Episodes:
                         item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
 
                 total_seasons = trakt.getSeasons(imdb, full=False)
-                total_seasons = [i['number'] for i in total_seasons]
-                total_seasons = len(total_seasons)
-                if control.setting('tv.specials') == 'false' or self.season_special is False:
-                    total_seasons = total_seasons - 1
-                item.setProperty('TotalSeasons', str(total_seasons))
+                if not total_seasons is None:
+                    total_seasons = [i['number'] for i in total_seasons]
+                    total_seasons = len(total_seasons)
+                    if control.setting('tv.specials') == 'false' or self.season_special is False:
+                        total_seasons = total_seasons - 1
+                    item.setProperty('TotalSeasons', str(total_seasons))
 
                 if 'episodeIDS' in i:
                     item.setUniqueIDs(i['episodeIDS'])
@@ -1826,8 +1858,9 @@ class Episodes:
                     control.playlist.add(url=url, listitem=item)
 
             except:
+                import traceback
+                traceback.print_exc()
                 pass
-
         # Show multi as show, in order to display unwatched count.
         if multi:
             control.content(syshandle, 'tvshows')

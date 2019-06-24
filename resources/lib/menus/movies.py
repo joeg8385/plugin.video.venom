@@ -5,7 +5,7 @@
 '''
 
 import os, sys, re, datetime
-import urllib, urlparse, json, xbmc
+import urllib, urlparse, json
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleangenre
@@ -247,8 +247,8 @@ class Movies:
                     self.list = sorted(self.list, key = lambda k: k['added'], reverse = reverse)
                 elif attribute == 6:
                     for i in range(len(self.list)):
-                        if not 'watched' in self.list[i]: self.list[i]['watched'] = ''
-                    self.list = sorted(self.list, key = lambda k: k['watched'], reverse = reverse)
+                        if not 'lastplayed' in self.list[i]: self.list[i]['lastplayed'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['lastplayed'], reverse = reverse)
             elif reverse:
                 self.list = reversed(self.list)
         except:
@@ -853,8 +853,8 @@ class Movies:
                 i.update({'clearlogo': '0', 'clearart': '0'})
 
 
-    def metadataRetrieve(self, imdb):
-        self.list = [{'imdb' : imdb}]
+    def metadataRetrieve(self, imdb, tmdb):
+        self.list = [{'imdb': imdb, 'tmdb': tmdb}]
         self.worker()
         return self.list[0]
 
@@ -1014,7 +1014,7 @@ class Movies:
                 landscape = landscape.encode('utf-8')
             except:
                 landscape = '0'
-##---
+##-------------
 
 
 ##--TMDb artwork
@@ -1040,8 +1040,7 @@ class Movies:
                 fanart2 = self.tmdb_background_path + fanart2[0]
             except:
                 fanart2 = '0'
-
-##---
+##-------------
 
             item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2,
                         'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart,
@@ -1072,8 +1071,8 @@ class Movies:
 
         traktCredentials = trakt.getTraktCredentialsInfo()
 
-        try: isOld = False ; control.item().getArt('type')
-        except: isOld = True
+        # try: isOld = False ; control.item().getArt('type')
+        # except: isOld = True
 
         indicators = playcount.getMovieIndicators()
 
@@ -1206,6 +1205,8 @@ class Movies:
                     if overlay == 7:
                         cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
                         meta.update({'playcount': 1, 'overlay': 7})
+                        # lastplayed = trakt.watchedMoviesTime(imdb)
+                        # meta.update({'lastplayed': lastplayed})
                     else:
                         cm.append((watchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=7)' % (sysaddon, imdb)))
                         meta.update({'playcount': 0, 'overlay': 6})
@@ -1217,15 +1218,14 @@ class Movies:
 
                 url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
                 sysurl = urllib.quote_plus(url)
-                # path = '%s?action=play&title=%s&year=%s&imdb=%s' % (sysaddon, systitle, year, imdb)
 
                 cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=http://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
                 cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
                 cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
 
-                if isOld is True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                # if isOld is True:
+                    # cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))

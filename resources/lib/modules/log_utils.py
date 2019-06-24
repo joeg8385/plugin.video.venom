@@ -1,7 +1,14 @@
 # -*- coding: UTF-8 -*-
 
-import os, time, cProfile, StringIO, pstats, json, xbmc
-from datetime import date, datetime, timedelta
+import cProfile
+import json
+import os
+import pstats
+import StringIO
+import time
+import xbmc
+from datetime import datetime
+
 from resources.lib.modules import control
 
 from xbmc import LOGDEBUG, LOGERROR, LOGFATAL, LOGINFO, LOGNONE, LOGNOTICE, LOGSEVERE, LOGWARNING  # @UnusedImport
@@ -16,16 +23,22 @@ addonName = "Venom"
 def log(msg, level = LOGNOTICE):
     debug_enabled = control.setting('addon_debug')
     debug_log = control.setting('debug.location')
+
     print DEBUGPREFIX + ' Debug Enabled?: ' + str(debug_enabled)
     print DEBUGPREFIX + ' Debug Log?: ' + str(debug_log)
+
     if not control.setting('addon_debug') == 'true':
         return
+
     try:
         if isinstance(msg, unicode):
             msg = '%s (ENCODED)' % (msg.encode('utf-8'))
+
         if not control.setting('debug.location') == '0':
             log_file = os.path.join(LOGPATH, 'venom.log')
-            if not os.path.exists(log_file): f = open(log_file, 'w'); f.close()
+            if not os.path.exists(log_file):
+                f = open(log_file, 'w')
+                f.close()
             with open(log_file, 'a') as f:
                 line = '[%s %s] %s: %s' % (datetime.now().date(), str(datetime.now().time())[:8], DEBUGPREFIX, msg)
                 f.write(line.rstrip('\r\n')+'\n')

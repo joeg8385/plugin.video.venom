@@ -1,8 +1,17 @@
+[B][COLOR red]Update - v2.9.8 - June 24, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed old depreciated infoLabel that effected some
+    menus showing the watched indicator when in fact the
+    episode was not watched. Most notable was Trakt
+    Progress. This made the side panel options work in
+    reverse when flipping watched to unwatched.[/I]
+[COLOR yellow]--[/COLOR][I] Added traceback to a number of new locations.
+
 [B][COLOR red]Update - v2.9.7 - June 22, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed bad key references in metadata.db[/I]
-[COLOR yellow]--[/COLOR][I] fixed multiple issues with provider cache
-    calls from sources.py file, no .commit() and no .close() used for db access.
-    Multiple iterate of Nonetype objects fixed....hope this fixes your Fire OS devices.[/I]
+[COLOR yellow]--[/COLOR][I] fixed multiple issues with provider cache calls from
+    sources.py file, no .commit() and no .close() used for db
+    access.  Multiple iterate of Nonetype objects fixed....hope
+    this fixes your Fire OS devices.[/I]
 [COLOR yellow]--[/COLOR][I] Added SeasonTotals to set.Property(), used
     by some skins[/I]
 
@@ -10,17 +19,20 @@
 [COLOR yellow]--[/COLOR][I] initial release of UpNext integration[/I]
 [COLOR yellow]--[/COLOR][I] Please read the newsinfo for an indepth help on UpNext[/I]
 [COLOR yellow]--[/COLOR][I] fixed listitems and playlist not closing when using "Play from
-    Here" or starting playback from inside the "Playlist Manager"-"View Playlist"[/I]
+    Here" or starting playback from inside the "Playlist Manager"
+    -"View Playlist"[/I]
 [COLOR yellow]--[/COLOR][I] Added new Bookmark cache clear option[/I]
 [COLOR yellow]--[/COLOR][I] Changed resume bookmark to yes-no dialog to deal
     with occasional bug in contextmenu[/I]
 [COLOR yellow]--[/COLOR][I] Added a notification when you stop a movie, or episode,
     that a resume point, and timestamp, was saved if bookmarks are enabled[/I]
 [COLOR yellow]--[/COLOR][I] Changed functionality of Episode counters.  Previously if you
-    watched an entire season the season list would change to a watched indicator only.  Now
-    the episode count will be remain visible regardless of watch count.[/I]
+    watched an entire season the season list would change to
+    a watched indicator only.  Now the episode count will be
+    remain visible regardless of watch count.[/I]
 [COLOR yellow]--[/COLOR][I] Fixed Special Seasons, or Season 0, from not being displayed.
-    Adjusted episode counter to take this Season 0 into account for totals[/I]
+    Adjusted episode counter to take this Season 0 into account for
+    totals[/I]
 
 [B][COLOR red]Update - v2.9.5 - June 2, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Added Movie Collection sorting controlled in settings[/I]

@@ -4,7 +4,7 @@
 Venom
 '''
 
-import os, sys, re, datetime, xbmc
+import os, sys, re, datetime
 import urllib, urlparse, json
 
 from resources.lib.modules import trakt
@@ -710,8 +710,8 @@ class Collections:
                     self.list = sorted(self.list, key = lambda k: k['added'], reverse = reverse)
                 elif attribute == 6:
                     for i in range(len(self.list)):
-                        if not 'watched' in self.list[i]: self.list[i]['watched'] = ''
-                    self.list = sorted(self.list, key = lambda k: k['watched'], reverse = reverse)
+                        if not 'lastplayed' in self.list[i]: self.list[i]['lastplayed'] = ''
+                    self.list = sorted(self.list, key = lambda k: k['lastplayed'], reverse = reverse)
             elif reverse:
                 self.list = reversed(self.list)
         except:
@@ -873,15 +873,17 @@ class Collections:
 
         self.list = metacache.fetch(self.list, self.lang, self.user)
 
-        imdb_t = self.list[i]['imdb']
+        imdb = self.list[i]['imdb']
 
         for r in range(0, total, 40):
             threads = []
             for i in range(r, r + 40):
-                if i <= total and imdb_t != '0': threads.append(workers.Thread(self.super_imdb_info, i))
+                if i <= total and imdb != '0':
+                    threads.append(workers.Thread(self.super_imdb_info, i))
             [i.start() for i in threads]
             [i.join() for i in threads]
-            if self.meta: metacache.insert(self.meta)
+            if self.meta:
+                metacache.insert(self.meta)
 
         self.list = [i for i in self.list]
         # self.list = metacache.local(self.list, self.tmdb_img_link, 'poster3', 'fanart2')
@@ -914,13 +916,16 @@ class Collections:
             tmdb = str(item.get('ids', {}).get('tmdb', 0))
 
             premiered = item.get('released', '0')
-            try: premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-            except: premiered = '0'
+            try:
+                premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
+            except:
+                premiered = '0'
 
             genre = item.get('genres', [])
             genre = [x.title() for x in genre]
             genre = ' / '.join(genre).strip()
-            if not genre: genre = '0'
+            if not genre:
+                genre = '0'
 
             duration = str(item.get('runtime', 0))
 
@@ -1097,10 +1102,8 @@ class Collections:
 
         traktCredentials = trakt.getTraktCredentialsInfo()
 
-        try: isOld = False ; control.item().getArt('type')
-        except: isOld = True
-
-        indicators = playcount.getMovieIndicators()
+        # try: isOld = False ; control.item().getArt('type')
+        # except: isOld = True
 
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
@@ -1142,7 +1145,8 @@ class Collections:
                 try:
                     plot = meta['plot']
                     index = plot.rfind('See full summary')
-                    if index >= 0: plot = plot[:index]
+                    if index >= 0:
+                        plot = plot[:index]
                     plot = plot.strip()
                     if re.match('[a-zA-Z\d]$', plot): plot += ' ...'
                     meta['plot'] = plot
@@ -1224,6 +1228,7 @@ class Collections:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
 
                 try:
+                    indicators = playcount.getMovieIndicators()
                     overlay = int(playcount.getMovieOverlay(indicators, imdb))
                     if overlay == 7:
                         cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
@@ -1246,8 +1251,8 @@ class Collections:
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
                 cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
 
-                if isOld is True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                # if isOld is True:
+                    # cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
@@ -1264,6 +1269,7 @@ class Collections:
                 video_streaminfo = {'codec': 'h264'}
                 item.addStreamInfo('video', video_streaminfo)
                 item.addContextMenuItems(cm)
+                # item.IsFolder(False)
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=False)
             except:
                 pass
