@@ -485,11 +485,6 @@ def autoTraktSubscription(tvshowtitle, year, imdb, tvdb):
     libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
 
 
-def moderator():
-    netloc = [urlparse.urlparse(sys.argv[0]).netloc, '', 'plugin.video.live.streamspro', 'plugin.video.phstreams', 'plugin.video.cpstreams', 'plugin.video.tinklepad', 'script.tvguide.fullscreen', 'script.tvguide.assassins', 'plugin.video.metalliq', 'script.extendedinfo', 'plugin.program.super.favourites', 'plugin.video.openmeta']
-    if not infoLabel('Container.PluginName') in netloc: pass #sys.exit() #<-OLD WAY. changed to pass.
-
-
 def getSettingDefault(id):
     try:
         settings = open(SETTINGS_PATH, 'r')
@@ -500,4 +495,3 @@ def getSettingDefault(id):
         return value
     except:
         return None
-

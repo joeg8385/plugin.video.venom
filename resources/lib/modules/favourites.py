@@ -54,10 +54,11 @@ def addFavourite(meta, content):
         if 'fanart' in meta: item['fanart'] = meta['fanart']
         if 'clearart' in meta: item['clearart'] = meta['clearart']
         if 'clearlogo' in meta: item['clearlogo'] = meta['clearlogo']
+        if 'discart' in meta: item['discart'] = meta['discart']
         if 'imdb' in meta: item['imdb'] = meta['imdb']
         if 'tmdb' in meta: item['tmdb'] = meta['tmdb']
         if 'tvdb' in meta: item['tvdb'] = meta['tvdb']
-        if 'tvrage' in meta: item['tvrage'] = meta['tvrage']
+
         control.makeFile(dataPath)
         dbcon = database.connect(favouritesFile)
         dbcur = dbcon.cursor()
@@ -95,7 +96,6 @@ def addEpisodes(meta, content):
         if 'imdb' in meta: item['imdb'] = meta['imdb']
         if 'tmdb' in meta: item['tmdb'] = meta['tmdb']
         if 'tvdb' in meta: item['tvdb'] = meta['tvdb']
-        if 'tvrage' in meta: item['tvrage'] = meta['tvrage']
         if 'episodeIDS' in meta: item['episodeIDS'] = meta['episodeIDS']
         if 'episode' in meta: item['episode'] = meta['episode']
         if 'season' in meta: item['season'] = meta['season']

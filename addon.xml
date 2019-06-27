@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="2.9.8" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="2.9.9" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,13 +36,11 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v2.9.8 - June 24, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed old depreciated infoLabel that effected some
-    menus showing the watched indicator when in fact the
-    episode was not watched. Most notable was Trakt
-    Progress. This made the side panel options work in
-    reverse when flipping watched to unwatched.[/I]
-[COLOR yellow]--[/COLOR][I] Added traceback to a number of new locations.
+[B][COLOR red]Update - v2.9.9 - June 27, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed dict key preventing player from starting in OpenMeta.[/I]
+[COLOR yellow]--[/COLOR][I] Changed all movie menus to use new fanarttv indexer.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed some shows from being dropped from TVShows
+    calendar.[/I].
 		</news>
 	</extension>
 

@@ -34,30 +34,22 @@ class Collections:
         self.month_date = (self.datetime - datetime.timedelta(days = 30)).strftime('%Y-%m-%d')
         self.year_date = (self.datetime - datetime.timedelta(days = 365)).strftime('%Y-%m-%d')
 
-        self.imdb_link = 'https://www.imdb.com'
-        self.imdb_user = control.setting('imdb.user').replace('ur', '')
-
         self.lang = control.apiLanguage()['trakt']
+
+        self.imdb_link = 'https://www.imdb.com'
+
+        self.imdb_user = control.setting('imdb.user').replace('ur', '')
+        if self.imdb_user == '' or self.imdb_user is None:
+            self.imdb_user = '98341406'
 
         self.tmdb_key = control.setting('tm.user')
         if self.tmdb_key == '' or self.tmdb_key is None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
+        self.user = str(self.imdb_user) + str(self.tmdb_key)
+
         self.tmdb_link = 'https://api.themoviedb.org'
         self.tmdb_api_link = 'https://api.themoviedb.org/3/list/%s?api_key=%s' % ('%s', '%s')
-        # self.tmdb_info_link = 'https://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,releases,external_ids' % ('%s', self.tmdb_key, self.lang)
-        self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
-        self.tmdb_background_path = 'http://image.tmdb.org/t/p/w1280'
-        self.tmdb_poster_path = "https://image.tmdb.org/t/p/w500"
-
-        # self.tmdb_img_link = 'https://image.tmdb.org/t/p/w%s%s'
-
-        self.fanart_tv_user = control.setting('fanart.tv.user')
-        if self.fanart_tv_user == '' or self.fanart_tv_user is None:
-            self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
-        self.user = str('self.fanart_tv_user') + str(control.setting('tm.user'))
-        self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/movies/%s'
-        self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
 
         self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
         self.imdblist_link = 'https://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
@@ -271,14 +263,14 @@ class Collections:
 
 
 # Boxset Collection Kids
-        self.onehundredonedalmations_link = 'https://api.themoviedb.org/3/list/33182?api_key=%s' % (self.tmdb_key)
-        self.addamsfamily_link = 'https://api.themoviedb.org/3/list/33183?api_key=%s' % (self.tmdb_key)
-        self.aladdin_link = 'https://api.themoviedb.org/3/list/33184?api_key=%s' % (self.tmdb_key)
-        self.alvinandthechipmunks_link = 'https://api.themoviedb.org/3/list/33185?api_key=%s' % (self.tmdb_key)
-        self.atlantis_link = 'https://api.themoviedb.org/3/list/33186?api_key=%s' % (self.tmdb_key)
-        self.babe_link = 'https://api.themoviedb.org/3/list/33187?api_key=%s' % (self.tmdb_key)
-        self.balto_link = 'https://api.themoviedb.org/3/list/33188?api_key=%s' % (self.tmdb_key)
-        self.bambi_link = 'https://api.themoviedb.org/3/list/33189?api_key=%s' % (self.tmdb_key)
+        self.onehundredonedalmations_link = self.tmdb_api_link % ('33182', self.tmdb_key)
+        self.addamsfamily_link = self.tmdb_api_link % ('33183', self.tmdb_key)
+        self.aladdin_link = self.tmdb_api_link % ('33184', self.tmdb_key)
+        self.alvinandthechipmunks_link = self.tmdb_api_link % ('33185', self.tmdb_key)
+        self.atlantis_link = self.tmdb_api_link % ('33186', self.tmdb_key)
+        self.babe_link = self.tmdb_api_link % ('33187', self.tmdb_key)
+        self.balto_link = self.tmdb_api_link % ('33188', self.tmdb_key)
+        self.bambi_link = self.tmdb_api_link % ('33189', self.tmdb_key)
         self.beautyandthebeast_link = 'https://api.themoviedb.org/3/list/33190?api_key=%s' % (self.tmdb_key)
         self.beethoven_link = 'https://api.themoviedb.org/3/list/33191?api_key=%s' % (self.tmdb_key)
         self.brotherbear_link = 'https://api.themoviedb.org/3/list/33192?api_key=%s' % (self.tmdb_key)
@@ -339,7 +331,7 @@ class Collections:
         self.wizardofoz_link = 'https://api.themoviedb.org/3/list/33258?api_key=%s' % (self.tmdb_key)
 
 # Superhero Collection
-        self.avengers_link = 'https://api.themoviedb.org/3/list/33128?api_key=%s' % (self.tmdb_key)
+        self.avengers_link = self.tmdb_api_link % ('33128', self.tmdb_key)
         self.batman_link = 'https://api.themoviedb.org/3/list/33129?api_key=%s' % (self.tmdb_key)
         self.captainamerica_link = 'https://api.themoviedb.org/3/list/33130?api_key=%s' % (self.tmdb_key)
         self.darkknight_link = 'https://api.themoviedb.org/3/list/33132?api_key=%s' % (self.tmdb_key)
@@ -660,22 +652,24 @@ class Collections:
 
             if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = cache.get(tmdb.Movies().tmdb_collections_list, 0, url)
+                self.list = cache.get(tmdb.Movies().tmdb_collections_list, 720, url)
                 self.sort()
 
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
-                self.list = cache.get(tmdb.Movies().tmdb_list, 0, url)
+                self.list = cache.get(tmdb.Movies().tmdb_list, 720, url)
                 self.sort()
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
                 self.list = cache.get(self.imdb_list, 720, url)
-                if idx is True: self.worker()
+                if idx is True:
+                    self.worker()
                 self.sort()
 
             elif u in self.imdb_link:
                 self.list = cache.get(self.imdb_list, 720, url)
-                if idx is True: self.worker()
+                if idx is True:
+                    self.worker()
                 self.sort()
 
             if idx is True: self.movieDirectory(self.list)
@@ -720,7 +714,6 @@ class Collections:
 
 
     def imdb_list(self, url):
-        list = []
         try:
             for i in re.findall('date\[(\d+)\]', url):
                 url = url.replace('date[%s]' % i, (self.datetime - datetime.timedelta(days = int(i))).strftime('%Y-%m-%d'))
@@ -865,20 +858,15 @@ class Collections:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': '9f846e7ec1ea94fad5d8a431d1d26b43'}
-        if not self.fanart_tv_user == '':
-            self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
-
-        for i in range(0, total): self.list[i].update({'metacache': False})
+        for i in range(0, total):
+            self.list[i].update({'metacache': False})
 
         self.list = metacache.fetch(self.list, self.lang, self.user)
-
-        imdb = self.list[i]['imdb']
 
         for r in range(0, total, 40):
             threads = []
             for i in range(r, r + 40):
-                if i <= total and imdb != '0':
+                if i <= total:
                     threads.append(workers.Thread(self.super_imdb_info, i))
             [i.start() for i in threads]
             [i.join() for i in threads]
@@ -886,11 +874,6 @@ class Collections:
                 metacache.insert(self.meta)
 
         self.list = [i for i in self.list]
-        # self.list = metacache.local(self.list, self.tmdb_img_link, 'poster3', 'fanart2')
-
-        if self.fanart_tv_user == '':
-            for i in self.list:
-                i.update({'clearlogo': '0', 'clearart': '0'})
 
 
     def super_imdb_info(self, i):
@@ -910,8 +893,8 @@ class Collections:
             year = item.get('year', 0)
             year = re.sub('[^0-9]', '', str(year))
 
-            imdb = item.get('ids', {}).get('imdb', '0')
-            imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
+            # imdb = item.get('ids', {}).get('imdb', '0')
+            # imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
 
             tmdb = str(item.get('ids', {}).get('tmdb', 0))
 
@@ -925,19 +908,23 @@ class Collections:
             genre = [x.title() for x in genre]
             genre = ' / '.join(genre).strip()
             if not genre:
-                genre = '0'
+                genre = 'NA'
 
             duration = str(item.get('runtime', 0))
 
             rating = item.get('rating', '0')
-            if not rating or rating == '0.0': rating = '0'
+            if not rating or rating == '0.0':
+                rating = '0'
 
             votes = item.get('votes', '0')
-            try: votes = str(format(int(votes), ',d'))
-            except: pass
+            try:
+                votes = str(format(int(votes), ',d'))
+            except:
+                pass
 
             mpaa = item.get('certification', '0')
-            if not mpaa: mpaa = '0'
+            if not mpaa:
+                mpaa = '0'
 
             tagline = item.get('tagline', '0')
 
@@ -967,125 +954,35 @@ class Collections:
             except:
                 pass
 
-###--Fanart.tv artwork
-            try:
-                artmeta = True
-                art = client.request(self.fanart_tv_art_link % imdb, headers = self.fanart_tv_headers, timeout = '10', error = True)
-                try: art = json.loads(art)
-                except: artmeta = False
-            except:
-                pass
+            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'premiered': premiered,
+                        'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
+                        'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'poster': '0', 'poster2': '0', 'poster3': '0',
+                        'banner': '0', 'fanart': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
+                        'metacache': False}
 
-            try:
-                poster2 = art['movieposter']
-                poster2 = [(x['url'], x['likes']) for x in poster2 if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in poster2 if x.get('lang') == '']
-                poster2 = [(x[0], x[1]) for x in poster2]
-                poster2 = sorted(poster2, key=lambda x: int(x[1]), reverse=True)
-                poster2 = [x[0] for x in poster2][0]
-                poster2 = poster2.encode('utf-8')
-            except:
-                poster2 = '0'
+            meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
-            try:
-                if 'moviebackground' in art: fanart = art['moviebackground']
-                else: fanart = art['moviethumb']
-                fanart = [(x['url'], x['likes']) for x in fanart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in fanart if x.get('lang') == '']
-                fanart = [(x[0], x[1]) for x in fanart]
-                fanart = sorted(fanart, key=lambda x: int(x[1]), reverse=True)
-                fanart = [x[0] for x in fanart][0]
-                fanart = fanart.encode('utf-8')
-            except:
-                fanart = '0'
+            # fanart_thread = threading.Thread
+            from resources.lib.indexers import fanarttv
+            fanarttv_art = fanarttv.get_movie_art(imdb)
 
-            try:
-                banner = art['moviebanner']
-                banner = [(x['url'], x['likes']) for x in banner if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in banner if x.get('lang') == '']
-                banner = [(x[0], x[1]) for x in banner]
-                banner = sorted(banner, key=lambda x: int(x[1]), reverse=True)
-                banner = [x[0] for x in banner][0]
-                banner = banner.encode('utf-8')
-            except:
-                banner = '0'
+            if not fanarttv_art is None:
+                item.update(fanarttv_art)
+                meta.update(item)
 
-            try:
-                if 'hdmovielogo' in art: clearlogo = art['hdmovielogo']
-                else: clearlogo = art['movielogo']
-                clearlogo = [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == '']
-                clearlogo = [(x[0], x[1]) for x in clearlogo]
-                clearlogo = sorted(clearlogo, key=lambda x: int(x[1]), reverse=True)
-                clearlogo = [x[0] for x in clearlogo][0]
-                clearlogo = clearlogo.encode('utf-8')
-            except:
-                clearlogo = '0'
+            if item.get('poster2') == '0' or item.get('fanart2') == '0':
+                try:
+                    from resources.lib.indexers.tmdb import Movies
+                    tmdb_art = Movies().tmdb_art(tmdb)
+                except:
+                    import traceback
+                    traceback.print_exc()
+                item.update(tmdb_art)
+                meta.update(item)
 
-            try:
-                if 'hdmovieclearart' in art: clearart = art['hdmovieclearart']
-                else: clearart = art['movieart']
-                clearart = [(x['url'], x['likes']) for x in clearart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in clearart if x.get('lang') == '']
-                clearart = [(x[0], x[1]) for x in clearart]
-                clearart = sorted(clearart, key=lambda x: int(x[1]), reverse=True)
-                clearart = [x[0] for x in clearart][0]
-                clearart = clearart.encode('utf-8')
-            except:
-                clearart = '0'
-
-            try:
-                discart = art['moviedisc']
-                discart = [(x['url'], x['likes']) for x in discart if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in discart if x.get('lang') == '']
-                discart = [(x[0], x[1]) for x in discart]
-                discart = sorted(discart, key=lambda x: int(x[1]), reverse=True)
-                discart = [x[0] for x in discart][0]
-                discart = discart.encode('utf-8')
-            except:
-                discart = '0'
-
-            try:
-                if 'moviethumb' in art: landscape = art['moviethumb']
-                else: landscape = art['moviebackground']
-                landscape = [(x['url'], x['likes']) for x in landscape if x.get('lang') == self.lang] + [(x['url'], x['likes']) for x in landscape if x.get('lang') == '']
-                landscape = [(x[0], x[1]) for x in landscape]
-                landscape = sorted(landscape, key=lambda x: int(x[1]), reverse=True)
-                landscape = [x[0] for x in landscape][0]
-                landscape = landscape.encode('utf-8')
-            except:
-                landscape = '0'
-
-##--TMDb artwork
-            try:
-                if self.tmdb_key == '':
-                    raise Exception()
-                art2 = client.request(self.tmdb_art_link % imdb, timeout='20', error=True)
-                art2 = json.loads(art2)
-            except:
-                pass
-
-            try:
-                poster3 = art2['posters']
-                poster3 = [(x['width'], x['file_path']) for x in poster3]
-                poster3 = [x[1] for x in poster3]
-                poster3 = self.tmdb_poster_path + poster3[0]
-            except:
-                poster3 = '0'
-
-            try:
-                fanart2 = art2['backdrops']
-                fanart2 = [(x['width'], x['file_path']) for x in fanart2]
-                fanart2 = [x[1] for x in fanart2]
-                fanart2 = self.tmdb_background_path + fanart2[0]
-            except:
-                fanart2 = '0'
-##---
-
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2, 'poster3': poster3, 'banner': banner,
-                        'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape, 'premiered': premiered,
-                        'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
             item = dict((k,v) for k, v in item.iteritems() if not v == '0')
             self.list[i].update(item)
 
-            if artmeta is False:
-                raise Exception()
-
-            meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
             self.meta.append(meta)
         except:
             pass
@@ -1101,9 +998,6 @@ class Collections:
         addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
 
         traktCredentials = trakt.getTraktCredentialsInfo()
-
-        # try: isOld = False ; control.item().getArt('type')
-        # except: isOld = True
 
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
@@ -1128,8 +1022,12 @@ class Collections:
         for i in items:
             try:
                 imdb, tmdb, year = i['imdb'], i['tmdb'], i['year']
-                try: title = i['originaltitle']
-                except: title = i['title']
+
+                try:
+                    title = i['originaltitle']
+                except:
+                    title = i['title']
+
                 label = '%s (%s)' % (i['title'], i['year'])
 
                 sysname = urllib.quote_plus(label)
@@ -1180,6 +1078,7 @@ class Collections:
 
                 fanart = '0'
                 if settingFanart:
+                    if fanart == '0' and 'fanart3' in i: fanart = i['fanart3']
                     if fanart == '0' and 'fanart2' in i: fanart = i['fanart2']
                     if fanart == '0' and 'fanart' in i: fanart = i['fanart']
 
@@ -1250,10 +1149,6 @@ class Collections:
                 cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
                 cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
-
-                # if isOld is True:
-                    # cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
-
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
 ####################################

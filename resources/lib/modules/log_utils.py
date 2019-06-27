@@ -1,13 +1,14 @@
 # -*- coding: UTF-8 -*-
 
 import cProfile
+import inspect
 import json
 import os
 import pstats
 import StringIO
 import time
 import xbmc
-from datetime import datetime
+from datetime import date, datetime, timedelta
 
 from resources.lib.modules import control
 
@@ -20,7 +21,7 @@ LOGPATH = xbmc.translatePath('special://logpath/')
 addonName = "Venom"
 
 
-def log(msg, level = LOGNOTICE):
+def log(msg, caller=None, level = LOGNOTICE):
     debug_enabled = control.setting('addon_debug')
     debug_log = control.setting('debug.location')
 
@@ -31,6 +32,12 @@ def log(msg, level = LOGNOTICE):
         return
 
     try:
+        if caller is not None and level == LOGDEBUG:
+            func = inspect.currentframe().f_back.f_code
+            line_number = inspect.currentframe().f_back.f_lineno
+            caller = "%s.%s()" % (caller, func.co_name)
+            msg = 'From func name: %s Line # :%s\n                       msg : %s'%(caller,line_number,msg)
+
         if isinstance(msg, unicode):
             msg = '%s (ENCODED)' % (msg.encode('utf-8'))
 

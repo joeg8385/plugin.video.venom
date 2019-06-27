@@ -243,8 +243,11 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 
 def _basic_request(url, headers=None, post=None, timeout='30', limit=None):
     try:
-        try: headers.update(headers)
-        except: headers = {}
+        try:
+            headers.update(headers)
+        except:
+            headers = {}
+
         request = urllib2.Request(url, data=post)
         _add_request_header(request, headers)
         response = urllib2.urlopen(request, timeout=int(timeout))
@@ -257,8 +260,11 @@ def _add_request_header(_request, headers):
     try:
         if not headers:
             headers = {}
-        try: scheme = _request.get_type()
-        except: scheme = 'http'
+        try:
+            scheme = _request.get_type()
+        except:
+            scheme = 'http'
+
         referer = headers.get('Referer') if 'Referer' in headers else '%s://%s' % (scheme, _request.get_host())
         _request.add_unredirected_header('Host', _request.get_host())
         _request.add_unredirected_header('Referer', referer)

@@ -882,7 +882,7 @@ class Seasons:
                     art.update({'clearart' : clearart})
 
 
-####-Context Menu-####
+####-Context Menu and Overlays-####
                 cm = []
 
                 if traktCredentials is True:

@@ -4,8 +4,8 @@
 Venom
 '''
 
-import re,datetime
-import json,requests
+import re, datetime
+import json, requests, xbmc
 
 from resources.lib.modules import control
 from resources.lib.modules import client
@@ -29,7 +29,8 @@ class Movies:
 
         self.tmdb_link = 'http://api.themoviedb.org'
         self.tmdb_image = 'http://image.tmdb.org/t/p/original'
-        self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
+        # self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
+        self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
         self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
 
         self.tmdb_info_link = 'http://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates,external_ids' % ('%s', self.tmdb_key, self.lang)
@@ -63,9 +64,6 @@ class Movies:
 
     def tmdb_list(self, url):
         next = url
-        # for i in re.findall('date\[(\d+)\]', url):
-            # url = url.replace('date[%s]' % i, (self.datetime - datetime.timedelta(days = int(i))).strftime('%Y-%m-%d'))
-
         try:
             result = self.get_request(url % self.tmdb_key)
             items = result['results']
@@ -113,38 +111,62 @@ class Movies:
                 tmdb = re.sub('[^0-9]', '', str(tmdb))
                 tmdb = tmdb.encode('utf-8')
 
+                # try:
+                    # meta_chk = []
+                    # meta_chk.append({'tmdb': tmdb, 'imdb': '0', 'tvdb': '0'})
+                    # meta_chk = metacache.fetch(meta_chk, self.lang, self.tmdb_key)
+                    # log_utils.log('meta_chk = %s' % str(meta_chk), __name__, log_utils.LOGDEBUG)
+
+                    # for i in meta_chk:
+                        # if 'metacache' in i:
+                            # if i['metacache'] is True:
+                                # item = meta_chk
+                                # log_utils.log('metacache = %s' % i['metacache'], __name__, log_utils.LOGDEBUG)
+                                # raise Exception()
+
                 poster = item['poster_path']
-                if poster == '' or poster is None: poster = '0'
-                if not poster == '0': poster = '%s%s' % (self.tmdb_poster, poster)
+                if poster == '' or poster is None:
+                    poster = '0'
+                if not poster == '0':
+                    poster = '%s%s' % (self.tmdb_poster, poster)
                 poster = poster.encode('utf-8')
 
                 fanart = item['backdrop_path']
-                if fanart == '' or fanart is None: fanart = '0'
-                if not fanart == '0': fanart = '%s%s' % (self.tmdb_image, fanart)
+                if fanart == '' or fanart is None:
+                    fanart = '0'
+                if not fanart == '0':
+                    fanart = '%s%s' % (self.tmdb_image, fanart)
                 fanart = fanart.encode('utf-8')
 
                 premiered = item['release_date']
-                try: premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                except: premiered = '0'
+                try:
+                    premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
+                except:
+                    premiered = '0'
                 premiered = premiered.encode('utf-8')
 
                 try:
                     rating = str(item['vote_average']).encode('utf-8')
-                except: rating = '0'
+                except:
+                    rating = '0'
 
                 try:
                     votes = str(format(int(item['vote_count']),',d')).encode('utf-8')
-                except: votes = '0'
+                except:
+                    votes = '0'
 
                 plot = item['overview']
-                if plot == '' or plot is None: plot = '0'
+                if plot == '' or plot is None:
+                    plot = '0'
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
-                try: tagline = item['tagline']
-                except: tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-                try: tagline = tagline.encode('utf-8')
-                except: tagline = '0'
+                try:
+                    tagline = item['tagline']
+                    tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
+                    tagline = tagline.encode('utf-8')
+                except:
+                    tagline = '0'
 
 ##--TMDb additional info
                 url = self.tmdb_info_link % tmdb
@@ -160,15 +182,17 @@ class Movies:
                 # if studio == '' or studio is None: studio = '0'
                 # studio = studio.encode('utf-8')
 
-                genre = item['genres']
-                try: genre = [x['name'] for x in genre]
-                except: genre = '0'
-                genre = (' / '.join(genre)).encode('utf-8')
-                if not genre: genre = 'NA'
+                try:
+                    genre = item['genres']
+                    genre = [x['name'] for x in genre]
+                    genre = (' / '.join(genre)).encode('utf-8')
+                except:
+                    genre = 'NA'
 
                 try:
                     duration = (str(item['runtime'])).encode('utf-8')
-                except: duration = '0'
+                except:
+                    duration = '0'
 
                 mpaa = item['release_dates']['results']
                 mpaa = [i for i in mpaa if i['iso_3166_1'] == 'US']
@@ -238,6 +262,7 @@ class Movies:
                 self.list.append(item)
                 self.meta.append(meta)
                 metacache.insert(self.meta)
+                # log_utils.log('self.list = %s' % str(self.list), __name__, log_utils.LOGDEBUG)
             except:
                 pass
         return self.list
@@ -413,11 +438,15 @@ class Movies:
 
     def tmdb_art(self, tmdb):
         try:
-            if self.tmdb_key == '': raise Exception()
-            # art3 = client.request(self.tmdb_art_link % tmdb, timeout='20', error=True)
+            if self.tmdb_key == '':
+                raise Exception()
             art3 = self.get_request(self.tmdb_art_link % tmdb)
-            # art3 = json.loads(art3)
-        except: return None
+        except:
+            import traceback
+            traceback.print_exc()
+            return None
+
+        url = (self.tmdb_art_link % tmdb)
 
         try:
             poster3 = art3['posters']
@@ -437,6 +466,7 @@ class Movies:
 
         extended_art = {'extended': True, 'poster3': poster3, 'fanart3': fanart3}
         return extended_art
+
 
 
 class TVshows:
@@ -512,7 +542,8 @@ class TVshows:
             if not 'page=' in url: raise Exception()
             next = '%s&page=%s' % (next.split('&page=', 1)[0], str(page+1))
             next = next.encode('utf-8')
-        except: next = ''
+        except:
+            next = ''
 
         for item in items:
             try:
@@ -832,11 +863,11 @@ class TVshows:
 
     def tmdb_art(self, tmdb):
         try:
-            if self.tmdb_key == '': raise Exception()
-            # art3 = client.request(self.tmdb_art_link % tmdb, timeout='20', error=True)
+            if self.tmdb_key == '':
+                raise Exception()
             art3 = self.get_request(self.tmdb_art_link % tmdb)
-            # art3 = json.loads(art3)
-        except: return None
+        except:
+            return None
 
         try:
             poster3 = art3['posters']

@@ -758,8 +758,10 @@ class TVshows:
                 director = client.replaceHTMLCodes(director)
                 director = director.encode('utf-8')
 
-                try: cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
-                except: cast = '0'
+                try:
+                    cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
+                except:
+                    cast = '0'
                 cast = client.replaceHTMLCodes(cast)
                 cast = cast.encode('utf-8')
                 cast = client.parseDOM(cast, 'a')
@@ -894,7 +896,8 @@ class TVshows:
 
     def super_info(self, i):
         try:
-            # if self.list[i]['metacache'] is True: raise Exception()
+            if self.list[i]['metacache'] is True:
+                raise Exception()
 
             imdb = self.list[i]['imdb'] if 'imdb' in self.list[i] else '0'
             tmdb = self.list[i]['tmdb'] if 'tmdb' in self.list[i] else '0'
@@ -911,6 +914,7 @@ class TVshows:
                             imdb = '0'
                 except:
                     imdb = '0'
+
                 if tmdb == '0':
                     try:
                         tmdb = trakt_ids.get('ids', {}).get('tmdb', '0')
@@ -931,8 +935,8 @@ class TVshows:
                 except: name = '0'
                 dupe = re.findall('[***]Duplicate (\d*)[***]', name)
                 if dupe: tvdb = str(dupe[0])
-                if tvdb == '': tvdb = '0'
-
+                if tvdb == '':
+                    tvdb = '0'
 
 ###--Check TVDb for missing info
             if tvdb == '0' or imdb == '0':
@@ -950,7 +954,9 @@ class TVshows:
 
             url = self.tvdb_info_link % tvdb
             item = client.request(url, timeout = '20', error = True)
-            if item is None: raise Exception()
+
+            if item is None:
+                raise Exception()
 
             if imdb == '0':
                 try: imdb = client.parseDOM(item, 'IMDB_ID')[0]
@@ -1278,7 +1284,7 @@ class TVshows:
                     url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
 
 
-####-Context Menu-####
+####-Context Menu and Overlays-####
                 cm = []
 
                 if traktCredentials is True:

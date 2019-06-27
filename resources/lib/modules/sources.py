@@ -659,56 +659,16 @@ class Sources:
                             progressDialog.update(max(1, percent), line1, line2)
                     except:
                         break
-
                 time.sleep(0.5)
-
             except:
                 import traceback
                 traceback.print_exc()
                 pass
 
-        if control.addonInfo('id') == 'plugin.video.bennu':
-            try:
-                if progressDialog: progressDialog.update(100, control.lang(30726).encode('utf-8'), control.lang(30731).encode('utf-8'))
-                items = self.sourcesFilter()
-                if quality == 'RD':
-                    items = [i for i in items if i['debrid'] != '']
-                elif quality == 'SD': items = [i for i in items if i['quality'] == 'SD' and i['debrid'] == '']
-                elif quality == 'HD': items = [i for i in items if i['quality'] != 'SD']
-                if control.setting('bennu.dev.log') == 'true':
-                    log_utils.log('Sources Returned: %s' % str(items), log_utils.LOGNOTICE)
+        progressDialog.close()
 
-                try:
-                    progressDialog.close()
-                except:
-                    pass
-
-                if quality == 'AUTO': 
-                    u = self.sourcesDirect(items)
-                    return u
-                else:
-                    meta = '{"title": "%s", "year": "%s", "imdb": "%s"}' % (title, year, imdb)
-                    control.window.clearProperty(self.itemProperty)
-                    control.window.setProperty(self.itemProperty, json.dumps(items))
-                    control.window.clearProperty(self.metaProperty)
-                    control.window.setProperty(self.metaProperty, meta)
-                    control.sleep(200)
-                    control.execute('Container.Update(%s?action=addItem&title=%s)' % (sys.argv[0], urllib.quote_plus(title)))
-                    return "DIR"
-            except:
-                try:
-                    progressDialog.close()
-                except:
-                    pass
-                return
-        else: 
-            try:
-                progressDialog.close()
-            except:
-                pass
-
-            self.sourcesFilter()
-            return self.sources
+        self.sourcesFilter()
+        return self.sources
 
 
     def prepareSources(self):
@@ -984,8 +944,6 @@ class Sources:
         # log_utils.log('Removed %s duplicate sources from list' % (len(self.sources) - len(filter)), log_utils.LOGDEBUG)
         # self.sources = filter
 # ##---
-
-
 
         random.shuffle(self.sources)
 

@@ -617,34 +617,24 @@ class Episodes:
 
                 try:
                     imdb = item['show']['ids']['imdb']
-                    if imdb is None or imdb == '':
-                        imdb = '0'
-                    else:
-                        imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
+                    imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
                     imdb = imdb.encode('utf-8')
                 except:
                     imdb = '0'
 
                 try:
                     tmdb = item['show']['ids']['tmdb']
-                    if tmdb is None or tmdb == '':
-                        tmdb = '0'
-                    else:
-                        tmdb = re.sub('[^0-9]', '', str(tmdb))
+                    tmdb = re.sub('[^0-9]', '', str(tmdb))
                     tmdb = tmdb.encode('utf-8')
                 except:
                     tmdb = '0'
 
                 try:
                     tvdb = item['show']['ids']['tvdb']
-                    if tvdb is None or tvdb == '':
-                        tvdb = '0'
-                    else:
-                        tvdb = re.sub('[^0-9]', '', str(tvdb))
+                    tvdb = re.sub('[^0-9]', '', str(tvdb))
                     tvdb = tvdb.encode('utf-8')
                 except:
                     tvdb = '0'
-
 
 ### episode IDS
                 try:
@@ -653,6 +643,7 @@ class Episodes:
                 except:
                     episodeIDS = {}
 ##------------------
+
                 try:
                     added = item['show']['updated_at']
                 except:
@@ -666,11 +657,8 @@ class Episodes:
                     except:
                         lastplayed = None
 
-                # values = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year, 'snum': season,
-                              # 'enum': episode, 'added': added, 'watched': watched, 'episodeIDS': episodeIDS}
                 values = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year, 'snum': season,
                               'enum': episode, 'added': added, 'lastplayed': lastplayed, 'episodeIDS': episodeIDS}
-
 
                 try:
                     air = item['show']['airs']
@@ -695,10 +683,6 @@ class Episodes:
         def items_list(i):
             try:
                 item = [x for x in self.blist if x['tvdb'] == i['tvdb'] and x['snum'] == i['snum'] and x['enum'] == i['enum']][0]
-
-                # item = \
-                    # [x for x in self.blist if
-                     # x['tvdb'] == i['tvdb'] and x['snum'] == i['snum'] and x['enum'] == i['enum']][0]
                 item['action'] = 'episodes'
                 self.list.append(item)
                 return
@@ -944,13 +928,6 @@ class Episodes:
                 if plot == '': plot = '0'
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
-                # values = {'title': title, 'seasoncount': seasoncount, 'season': season, 'episode': episode,
-                          # 'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
-                          # 'added': added, 'watched': watched, 'status': status, 'studio': studio, 'genre': genre,
-                          # 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
-                          # 'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
-                          # 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'],
-                          # 'unaired': unaired, 'episodeIDS': episodeIDS}
 
                 values = {'title': title, 'seasoncount': seasoncount, 'season': season, 'episode': episode,
                           'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
@@ -959,7 +936,6 @@ class Episodes:
                           'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
                           'banner': banner, 'fanart': fanart, 'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'],
                           'unaired': unaired, 'episodeIDS': episodeIDS}
-
 
                 values['action'] = 'episodes'
                 if 'airday' in i and not i['airday'] is None and not i['airday'] == '':
@@ -1309,71 +1285,52 @@ class Episodes:
 
         for item in items:
             try:
-                if not 'english' in item['show']['language'].lower(): raise Exception()
+                if not 'english' in item['show']['language'].lower():
+                    raise Exception()
 
-                if limit is True and not 'scripted' in item['show']['type'].lower(): raise Exception()
+                if limit is True and not 'scripted' in item['show']['type'].lower():
+                    raise Exception()
 
-                title = item['name']
-                if title is None or title == '': raise Exception()
-                title = client.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
+                try:
+                    tvshowtitle = (item.get('show', {}).get('name', 0)).encode('utf-8')
+                except:
+                    raise Exception()
+
+                try:
+                    title = (item.get('name', 0)).encode('utf-8')
+                except:
+                    raise Exception()
 
                 season = item['season']
                 season = re.sub('[^0-9]', '', '%01d' % int(season))
-                if season == '0': raise Exception()
+                if season == '0':
+                    raise Exception()
                 season = season.encode('utf-8')
 
                 episode = item['number']
                 episode = re.sub('[^0-9]', '', '%01d' % int(episode))
-                if episode == '0': raise Exception()
+                if episode == '0':
+                    raise Exception()
                 episode = episode.encode('utf-8')
-
-                tvshowtitle = item['show']['name']
-                if tvshowtitle is None or tvshowtitle == '': raise Exception()
-                tvshowtitle = client.replaceHTMLCodes(tvshowtitle)
-                tvshowtitle = tvshowtitle.encode('utf-8')
 
                 year = item['show']['premiered']
                 year = re.findall('(\d{4})', year)[0]
                 year = year.encode('utf-8')
-
-                tvshowtitle = item['show']['name']
-                if tvshowtitle is None or tvshowtitle == '': raise Exception()
-                tvshowtitle = client.replaceHTMLCodes(tvshowtitle)
-                tvshowtitle = tvshowtitle.encode('utf-8')
 
                 try:
                     tvshowyear = item['show']['year']
                 except:
                     tvshowyear = year
 
-
                 try:
-                    imdb = item['show']['externals']['imdb']
-                    if imdb is None or imdb == '':
-                        imdb = '0'
-                    else:
-                        imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
-                    imdb = imdb.encode('utf-8')
+                    imdb = (item.get('show', {}).get('externals', {}).get('imdb', 0)).encode('utf-8')
                 except:
                     imdb = '0'
 
-                try:
-                    tmdb = item['show']['ids']['tmdb']
-                    if tmdb is None or tmdb == '':
-                        tmdb = '0'
-                    else:
-                        tmdb = re.sub('[^0-9]', '', str(tmdb))
-                    tmdb = tmdb.encode('utf-8')
-                except:
-                    tmdb = '0'
+                tmdb = '0'
 
                 try:
-                    tvdb = item['show']['externals']['thetvdb']
-                    if tvdb is None or tvdb == '':
-                        tvdb = '0'
-                    else:
-                        tvdb = re.sub('[^0-9]', '', str(tvdb))
+                    tvdb = str(item.get('show', {}).get('externals', {}).get('thetvdb', 0))
                     tvdb = tvdb.encode('utf-8')
                 except:
                     tvdb = '0'
@@ -1386,13 +1343,10 @@ class Episodes:
                     episodeIDS = {}
 ##------------------
 
-                poster = '0'
                 try:
-                    poster = item['show']['image']['original']
+                    poster = (item.get('show', {}).get('image', {}).get('original', 0)).encode('utf-8')
                 except:
                     poster = '0'
-                if poster is None or poster == '': poster = '0'
-                poster = poster.encode('utf-8')
 
                 try:
                     thumb1 = item['show']['image']['original']
@@ -1417,11 +1371,9 @@ class Episodes:
                 premiered = premiered.encode('utf-8')
 
                 try:
-                    studio = item['show']['network']['name']
+                    studio = (item.get('show', {}).get('network', {}).get('name', 0)).encode('utf-8')
                 except:
                     studio = '0'
-                if studio is None: studio = '0'
-                studio = studio.encode('utf-8')
 
                 try:
                     genre = item['show']['genres']
@@ -1432,41 +1384,35 @@ class Episodes:
                 genre = ' / '.join(genre)
                 genre = genre.encode('utf-8')
 
-                if 'duration' in item and not item['duration'] is None and not item['duration'] == '':
-                    duration = item['duration']
-                else:
-                    try:
-                        duration = item['show']['runtime']
-                    except:
-                        duration = '0'
-                    if duration is None: duration = '0'
-                    duration = str(duration)
+                try:
+                    duration = str(item.get('show', {}).get('runtime', 0))
                     duration = duration.encode('utf-8')
+                except:
+                    duration = '0'
 
                 try:
-                    rating = item['show']['rating']['average']
+                    rating = str(item.get('show', {}).get('rating', {}).get('average', 0))
+                    rating = rating.encode('utf-8')
                 except:
                     rating = '0'
-                if rating is None or rating == '0.0':
-                    rating = '0'
-                rating = str(rating)
-                rating = rating.encode('utf-8')
 
                 try:
-                    plot = item['show']['summary']
+                    status = str(item.get('show', {}).get('status', 0))
+                    status = status.encode('utf-8')
+                except:
+                    status = '0'
+
+                try:
+                    plot = item.get('show', {}).get('summary', 0)
+                    plot = re.sub('<.+?>|</.+?>|\n', '', plot)
                 except:
                     plot = '0'
-                if plot is None:
-                    plot = '0'
-                plot = re.sub('<.+?>|</.+?>|\n', '', plot)
-                plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
+                # log_utils.log('plot = %s' % plot, __name__, log_utils.LOGDEBUG)
 
-                values = {'title': title, 'season': season, 'episode': episode, 'year': year,
-                            'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
-                            'status': 'Continuing', 'studio': studio, 'genre': genre, 'duration': duration,
-                            'rating': rating, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
-                            'thumb': thumb, 'episodeIDS': episodeIDS}
+                values = {'title': title, 'season': season, 'episode': episode, 'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear,
+                                'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
+                                'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'thumb': thumb, 'episodeIDS': episodeIDS}
 
                 if 'airday' in item and not item['airday'] is None and not item['airday'] == '':
                     values['airday'] = item['airday']
@@ -1768,7 +1714,7 @@ class Episodes:
                     art.update({'clearart': clearart})
 
 
-####-Context Menu-####
+####-Context Menu and Overlays-####
                 cm = []
 
                 if traktCredentials is True:

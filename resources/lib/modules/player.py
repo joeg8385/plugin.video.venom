@@ -74,7 +74,7 @@ class Player(xbmc.Player):
             # item.setProperty("IsPlayable", "true")
 
             if self.media_type == 'episode':
-                self.episodeIDS = meta['episodeIDS']
+                self.episodeIDS = meta.get('episodeIDS')
                 item.setUniqueIDs(self.episodeIDS)
             else:
                 item.setUniqueIDs(self.ids)

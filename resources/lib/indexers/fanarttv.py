@@ -26,7 +26,8 @@ def get_tvshow_art(tvdb):
     try:
         art = client.request(url % tvdb, headers=headers, timeout='30', error=True)
         art = json.loads(art)
-    except: return None
+    except:
+        return None
 
     try:
         poster2 = art['tvposter']
@@ -59,8 +60,11 @@ def get_tvshow_art(tvdb):
         banner2 = '0'
 
     try:
-        if 'hdtvlogo' in art: clearlogo = art['hdtvlogo']
-        else: clearlogo = art['clearlogo']
+        if 'hdtvlogo' in art:
+            clearlogo = art['hdtvlogo']
+        else:
+            clearlogo = art['clearlogo']
+
         clearlogo = [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == lang] + [(x['url'], x['likes']) for x in clearlogo if x.get('lang') == '']
         clearlogo = [(x[0], x[1]) for x in clearlogo]
         clearlogo = sorted(clearlogo, key=lambda x: int(x[1]), reverse=True)
@@ -70,8 +74,11 @@ def get_tvshow_art(tvdb):
         clearlogo = '0'
 
     try:
-        if 'hdclearart' in art: clearart = art['hdclearart']
-        else: clearart = art['clearart']
+        if 'hdclearart' in art:
+            clearart = art['hdclearart']
+        else:
+            clearart = art['clearart']
+
         clearart = [(x['url'], x['likes']) for x in clearart if x.get('lang') == lang] + [(x['url'], x['likes']) for x in clearart if x.get('lang') == '']
         clearart = [(x[0], x[1]) for x in clearart]
         clearart = sorted(clearart, key=lambda x: int(x[1]), reverse=True)
@@ -81,8 +88,11 @@ def get_tvshow_art(tvdb):
         clearart = '0'
 
     try:
-        if 'tvthumb' in art: landscape = art['tvthumb']
-        else: landscape = art['showbackground']
+        if 'tvthumb' in art:
+            landscape = art['tvthumb']
+        else:
+            landscape = art['showbackground']
+
         landscape = [(x['url'], x['likes']) for x in landscape if x.get('lang') == lang] + [(x['url'], x['likes']) for x in landscape if x.get('lang') == '']
         landscape = [(x[0], x[1]) for x in landscape]
         landscape = sorted(landscape, key=lambda x: int(x[1]), reverse=True)
@@ -97,18 +107,11 @@ def get_tvshow_art(tvdb):
 
 def get_movie_art(imdb):
     url = base_url % ('movies', '%s')
-
     try:
-        artmeta = True
         art = client.request(url % imdb, headers=headers, timeout='30', error=True)
-        try:
-            art = json.loads(art)
-        except:
-            artmeta = False
-        if artmeta is False:
-            return None
+        art = json.loads(art)
     except:
-            pass
+        return None
 
     try:
         poster2 = art['movieposter']
