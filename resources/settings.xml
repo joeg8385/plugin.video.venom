@@ -4,6 +4,8 @@
 <!-- General - 0 -->
 	<category label="32310">
 		<setting id="appearance.1" type="select" label="32311" values="Venom|Exodus|Exuary" default="Venom" visible="true" />
+		<setting id="icon.logos" type="select" label="40033" values="Traditional|Meta Provider Logos" default="Traditional" visible="true" />
+		<setting id="index.labels" type="bool" label="40034" default="true" />
 		<setting id="api.language" type="select" label="32316" values="Dutch|English|German|Polish|Spanish|Swedish|Turkish" default="English" />
 		<setting type="lsep" label="32319" />
 		<setting id="fanart" type="bool" label="32318" default="true" />
@@ -21,21 +23,21 @@
 <!-- Navigation - 1 -->
 	<category label="32621">
 		<setting type="lsep" label="32001" />
-		<setting id="navi.movie.imdb.intheater" type="bool" label="32409" default="true" />
-		<setting id="navi.movie.tmdb.nowplaying" type="bool" label="32410" default="true" />
-		<setting id="navi.movie.trakt.anticipated" type="bool" label="32411" default="true" />
-		<setting id="navi.movie.tmdb.upcoming" type="bool" label="32412" default="true" />
-		<setting id="navi.movie.imdb.popular" type="bool" label="32413" default="true" />
-		<setting id="navi.movie.tmdb.popular" type="bool" label="32414" default="true" />
-		<setting id="navi.movie.trakt.popular" type="bool" label="32415" default="true" />
-		<setting id="navi.movie.imdb.boxoffice" type="bool" label="32416" default="true" />
-		<setting id="navi.movie.trakt.boxoffice" type="bool" label="32417" default="true" />
+		<setting id="navi.movie.imdb.intheater" type="bool" label="32421" default="true" />
+		<setting id="navi.movie.tmdb.nowplaying" type="bool" label="32423" default="true" />
+		<setting id="navi.movie.trakt.anticipated" type="bool" label="32425" default="true" />
+		<setting id="navi.movie.tmdb.upcoming" type="bool" label="32427" default="true" />
+		<setting id="navi.movie.imdb.popular" type="bool" label="32429" default="true" />
+		<setting id="navi.movie.tmdb.popular" type="bool" label="32431" default="true" />
+		<setting id="navi.movie.trakt.popular" type="bool" label="32433" default="true" />
+		<setting id="navi.movie.imdb.boxoffice" type="bool" label="32435" default="true" />
+		<setting id="navi.movie.trakt.boxoffice" type="bool" label="32437" default="true" />
 		<setting type="lsep" label="32002" />
-		<setting id="navi.tv.imdb.popular" type="bool" label="32413" default="true" />
-		<setting id="navi.tv.tmdb.popular" type="bool" label="32414" default="true" />
-		<setting id="navi.tv.trakt.popular" type="bool" label="32415" default="true" />
-		<setting id="navi.tv.imdb.mostvoted" type="bool" label="32418" default="true" />
-		<setting id="navi.tv.tmdb.toprated" type="bool" label="32419" default="true" />
+		<setting id="navi.tv.imdb.popular" type="bool" label="32429" default="true" />
+		<setting id="navi.tv.tmdb.popular" type="bool" label="32431" default="true" />
+		<setting id="navi.tv.trakt.popular" type="bool" label="32433" default="true" />
+		<setting id="navi.tv.imdb.mostvoted" type="bool" label="32439" default="true" />
+		<setting id="navi.tv.tmdb.toprated" type="bool" label="32441" default="true" />
 	</category>
 
 

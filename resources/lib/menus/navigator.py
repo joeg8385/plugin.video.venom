@@ -29,32 +29,44 @@ traktIndicators = trakt.getTraktIndicatorsInfo()
 
 class Navigator:
     def root(self):
-        self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'movies.png')
-        self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'tvshows.png')
+        self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'DefaultMovies.png')
+        self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'DefaultTVShows.png')
 
         if self.getMenuEnabled('mylists.widget') is True:
-            self.addDirectoryItem(32003, 'mymovieNavigator', 'mymovies.png', 'mymovies.png')
-            self.addDirectoryItem(32004, 'mytvNavigator', 'mytvshows.png', 'mytvshows.png')
+            self.addDirectoryItem(32003, 'mymovieNavigator', 'mymovies.png','DefaultVideoPlaylists.png')
+            self.addDirectoryItem(32004, 'mytvNavigator', 'mytvshows.png', 'DefaultVideoPlaylists.png')
 
         if not control.setting('newmovies.widget') == '0':
-            self.addDirectoryItem(32005, 'newMovies', 'latest-movies.png', 'latest-movies.png')
+            indexer = 32478
+            indexer_icon = 'imdb.png'
+            setting = control.setting('newmovies.widget')
+            if setting == '2':
+                indexer = 32479
+                indexer_icon = 'trakt.png'
+            self.addDirectoryItem(32477 if control.setting('index.labels') == 'false' else indexer, 'newMovies', 'latest-movies.png' if control.setting('icon.logos') == 'Traditional' else indexer_icon, 'DefaultRecentlyAddedMovies.png')
 
         if (traktIndicators is True and not control.setting('tv.widget.alt') == '0') or (traktIndicators is False and not control.setting('tv.widget') == '0'):
-            self.addDirectoryItem(32006, 'tvWidget', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png')
-            self.addDirectoryItem('Recently Aired', 'calendar&url=added', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png', queue=True)
+            indexer = 32481
+            indexer_icon = 'tvmaze.png'
+            setting = control.setting('tv.widget.alt')
+            if setting == '2' or setting == '3':
+                indexer = 32482
+                indexer_icon = 'trakt.png'
+            self.addDirectoryItem(32480 if control.setting('index.labels') == 'false' else indexer, 'tvWidget', 'latest-episodes.png' if control.setting('icon.logos') == 'Traditional' else indexer_icon, 'DefaultRecentlyAddedEpisodes.png')
+            self.addDirectoryItem(32483 if control.setting('index.labels') == 'false' else 32484, 'calendar&url=added', 'latest-episodes.png' if control.setting('icon.logos') == 'Traditional' else 'tvmaze.png', 'DefaultTVShows.png', queue=True)
 
         if not control.setting('furk.api') == '' or None:
-            self.addDirectoryItem('Furk.net', 'furkNavigator', 'movies.png', 'movies.png')
+            self.addDirectoryItem('Furk.net', 'furkNavigator', 'movies.png',  'DefaultMovies.png')
 
-        self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'search.png')
-        self.addDirectoryItem(32008, 'toolNavigator', 'tools.png', 'tools.png')
+        self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultAddonsSearch.png')
+        self.addDirectoryItem(32008, 'toolNavigator', 'tools.png', 'DefaultAddonService.png')
 
         downloads = True if control.setting('downloads') == 'true' and (len(control.listDir(control.setting('movie.download.path'))[0]) > 0 or len(control.listDir(control.setting('tv.download.path'))[0]) > 0) else False
         if downloads is True:
-            self.addDirectoryItem(32009, 'downloadNavigator', 'downloads.png', 'downloads.png')
+            self.addDirectoryItem(32009, 'downloadNavigator', 'downloads.png', 'DefaultFolder.png')
 
-        self.addDirectoryItem('News and Info!!', 'ShowNews', 'icon.png', 'icon.png')
-        self.addDirectoryItem('Change Log!!', 'ShowChangelog', 'icon.png', 'icon.png')
+        self.addDirectoryItem('News and Info!!', 'ShowNews', 'icon.png', 'DefaultAddonHelper.png')
+        self.addDirectoryItem('Change Log!!', 'ShowChangelog', 'icon.png', 'DefaultAddonsUpdates.png')
         self.endDirectory()
 
 
@@ -73,206 +85,229 @@ class Navigator:
 
     def movies(self, lite=False):
         if self.getMenuEnabled('navi.movie.imdb.intheater') is True:
-            self.addDirectoryItem(32022, 'movies&url=theaters', 'imdb.png', 'in-theaters.png')
+            self.addDirectoryItem(32420 if control.setting('index.labels') == 'false' else 32421, 'movies&url=theaters', 'in-theaters.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultMovies.png')
+
         if self.getMenuEnabled('navi.movie.tmdb.nowplaying') is True:
-            self.addDirectoryItem('Now Playing', 'tmdbmovies&url=tmdb_nowplaying', 'tmdb.png', 'in-theaters.png')
+            self.addDirectoryItem(32422 if control.setting('index.labels') == 'false' else 32423, 'tmdbmovies&url=tmdb_nowplaying', 'in-theaters.png' if control.setting('icon.logos') == 'Traditional' else 'tmdb.png', 'DefaultMovies.png')
+
         if self.getMenuEnabled('navi.movie.trakt.anticipated') is True:
-            self.addDirectoryItem('Anticipated', 'movies&url=traktanticipated', 'trakt.png', 'in-theaters.png')
+            self.addDirectoryItem(32424 if control.setting('index.labels') == 'false' else 32425, 'movies&url=traktanticipated', 'in-theaters.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultMovies.png')
+
         if self.getMenuEnabled('navi.movie.tmdb.upcoming') is True:
-            self.addDirectoryItem('Upcoming', 'tmdbmovies&url=tmdb_upcoming', 'tmdb.png', 'in-theaters.png')
+            self.addDirectoryItem(32426 if control.setting('index.labels') == 'false' else 32427, 'tmdbmovies&url=tmdb_upcoming', 'in-theaters.png' if control.setting('icon.logos') == 'Traditional' else 'tmdb.png', 'DefaultMovies.png')
+
         if self.getMenuEnabled('navi.movie.imdb.popular') is True:
-            self.addDirectoryItem(32018, 'movies&url=mostpopular', 'imdb.png', 'most-popular.png')
+            self.addDirectoryItem(32428 if control.setting('index.labels') == 'false' else 32429, 'movies&url=mostpopular', 'most-popular.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultMovies.png')
+
         if self.getMenuEnabled('navi.movie.tmdb.popular') is True:
-            self.addDirectoryItem('Popular', 'tmdbmovies&url=tmdb_popular', 'tmdb.png', 'most-popular.png')
+            self.addDirectoryItem(32430 if control.setting('index.labels') == 'false' else 32431, 'tmdbmovies&url=tmdb_popular', 'most-popular.png' if control.setting('icon.logos') == 'Traditional' else 'tmdb.png', 'DefaultMovies.png')
+
         if self.getMenuEnabled('navi.movie.trakt.popular') is True:
-            self.addDirectoryItem('Popular', 'movies&url=traktpopular', 'trakt.png', 'most-popular.png')
+            self.addDirectoryItem(32432 if control.setting('index.labels') == 'false' else 32433, 'movies&url=traktpopular', 'most-popular.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultMovies.png')
+
         if self.getMenuEnabled('navi.movie.imdb.boxoffice') is True:
-            self.addDirectoryItem(32020, 'movies&url=imdbboxoffice', 'imdb.png', 'box-office.png')
+            self.addDirectoryItem(32434 if control.setting('index.labels') == 'false' else 32435, 'movies&url=imdbboxoffice', 'box-office.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultMovies.png')
+
         if self.getMenuEnabled('navi.movie.trakt.boxoffice') is True:
-            self.addDirectoryItem('Box Office', 'movies&url=traktboxoffice', 'trakt.png', 'box-office.png')
+            self.addDirectoryItem(32436 if control.setting('index.labels') == 'false' else 32437, 'movies&url=traktboxoffice', 'box-office.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultMovies.png')
 
-        self.addDirectoryItem(32019, 'movies&url=mostvoted', 'imdb.png', 'most-voted.png')
-        self.addDirectoryItem('Top Rated', 'tmdbmovies&url=tmdb_toprated', 'tmdb.png', 'most-voted.png')
-        self.addDirectoryItem(32017, 'movies&url=trakttrending', 'trakt.png', 'most-voted.png')
+        self.addDirectoryItem(32438 if control.setting('index.labels') == 'false' else 32439, 'movies&url=mostvoted', 'most-voted.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultMovies.png')
 
-        self.addDirectoryItem(33662, 'movies&url=traktrecommendations', 'trakt.png', 'people-watching.png')
-        self.addDirectoryItem(32035, 'movies&url=featured', 'imdb.png', 'people-watching.png')
+        self.addDirectoryItem(32440 if control.setting('index.labels') == 'false' else 32441, 'tmdbmovies&url=tmdb_toprated', 'most-voted.png' if control.setting('icon.logos') == 'Traditional' else 'tmdb.png', 'DefaultMovies.png')
+
+        self.addDirectoryItem(32442 if control.setting('index.labels') == 'false' else 32443, 'movies&url=trakttrending', 'trending.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultMovies.png')
+
+        self.addDirectoryItem(32444 if control.setting('index.labels') == 'false' else 32445, 'movies&url=traktrecommendations', 'highly-rated.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultMovies.png')
+
+        self.addDirectoryItem(32446 if control.setting('index.labels') == 'false' else 32447, 'movies&url=featured', 'movies.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultMovies.png')
 
         if not control.setting('newmovies.widget') == '0':
-            self.addDirectoryItem(32005, 'newMovies', 'imdb.png', 'latest-movies.png')
+            self.addDirectoryItem(32477 if control.setting('index.labels') == 'false' else 32478, 'newMovies', 'movies.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultRecentlyAddedMovies.png')
 
-        self.addDirectoryItem(32000, 'collectionsNavigator', 'boxsets.png', 'boxsets.png')
-        self.addDirectoryItem(32021, 'movies&url=oscars', 'imdb.png', 'oscar-winners.png')
-        self.addDirectoryItem(32659, 'movies&url=oscarsnominees', 'imdb.png', 'oscar-winners.png')
-        self.addDirectoryItem(32011, 'movieGenres', 'imdb.png', 'genres.png')
-        self.addDirectoryItem(32012, 'movieYears', 'imdb.png', 'years.png')
-        self.addDirectoryItem(32013, 'moviePersons', 'imdb.png', 'people.png')
-        self.addDirectoryItem(32014, 'movieLanguages', 'imdb.png', 'languages.png')
-        self.addDirectoryItem(32015, 'movieCertificates', 'imdb.png', 'certificates.png')
+        self.addDirectoryItem(32000, 'collectionsNavigator', 'boxsets.png', 'DefaultSets.png')
+
+        self.addDirectoryItem(32451 if control.setting('index.labels') == 'false' else 32452, 'movies&url=oscars', 'oscar-winners.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultMovies.png')
+        self.addDirectoryItem(32453 if control.setting('index.labels') == 'false' else 32454, 'movies&url=oscarsnominees', 'oscar-winners.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultMovies.png')
+
+        self.addDirectoryItem(32455 if control.setting('index.labels') == 'false' else 32456, 'movieGenres', 'genres.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultGenre.png')
+
+        self.addDirectoryItem(32457 if control.setting('index.labels') == 'false' else 32458, 'movieYears', 'years.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultYear.png')
+
+        self.addDirectoryItem(32459 if control.setting('index.labels') == 'false' else 32460, 'moviePersons', 'people.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultActor.png')
+
+        self.addDirectoryItem(32461 if control.setting('index.labels') == 'false' else 32462, 'movieLanguages', 'languages.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultCountry.png')
+
+        self.addDirectoryItem(32463 if control.setting('index.labels') == 'false' else 32464, 'movieCertificates', 'certificates.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultMovies.png')
 
         if lite is False:
             if self.getMenuEnabled('mylists.widget') is True:
-               self.addDirectoryItem(32003, 'mymovieliteNavigator', 'mymovies.png', 'mymovies.png')
-            self.addDirectoryItem(32028, 'moviePerson', 'people-search.png', 'people-search.png')
-            self.addDirectoryItem(32010, 'movieSearch', 'search.png', 'search.png')
+               self.addDirectoryItem(32003, 'mymovieliteNavigator', 'mymovies.png', 'DefaultMovies.png')
+            self.addDirectoryItem(32029, 'moviePerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
+            self.addDirectoryItem(32010, 'movieSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
         self.endDirectory()
 
 
     def mymovies(self, lite=False):
         self.accountCheck()
-        self.addDirectoryItem(32039, 'movieUserlists', 'userlists.png', 'userlists.png')
-        # self.addDirectoryItem(33662, 'movies&url=traktrecommendations', 'trakt.png', 'trakt.png', queue = True)
+        self.addDirectoryItem(32039, 'movieUserlists', 'userlists.png', 'DefaultVideoPlaylists.png')
 
         if traktCredentials is True and imdbCredentials is True:
-            self.addDirectoryItem(32032, 'movies&url=traktcollection', 'trakt.png', 'trakt.png', queue=True, context=(32551, 'moviesToLibrary&url=traktcollection'))
-            self.addDirectoryItem(32033, 'movies&url=traktwatchlist', 'trakt.png', 'trakt.png', queue=True, context=(32551, 'moviesToLibrary&url=traktwatchlist'))
+            self.addDirectoryItem(32032, 'movies&url=traktcollection', 'trakt.png', 'DefaultMovies.png', queue=True, context=(32551, 'moviesToLibrary&url=traktcollection'))
+            self.addDirectoryItem(32033, 'movies&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png', queue=True, context=(32551, 'moviesToLibrary&url=traktwatchlist'))
 
             if traktIndicators is True:
-                self.addDirectoryItem(35308, 'movies&url=traktunfinished', 'trakt.png', 'trakt.png', queue=True)
-                self.addDirectoryItem(32036, 'movies&url=trakthistory', 'trakt.png', 'trakt.png', queue=True)
-                self.addDirectoryItem(32033, 'movies&url=imdbwatchlist2', 'imdb.png', 'imdb.png', queue=True)
+                self.addDirectoryItem(35308, 'movies&url=traktunfinished', 'trakt.png', 'DefaultMovies.png', queue=True)
+                self.addDirectoryItem(32036, 'movies&url=trakthistory', 'trakt.png', 'DefaultMovies.png', queue=True)
+                self.addDirectoryItem(32033, 'movies&url=imdbwatchlist2', 'imdb.png', 'DefaultMovies.png', queue=True)
 
         elif traktCredentials is True:
-            self.addDirectoryItem(32032, 'movies&url=traktcollection', 'trakt.png', 'trakt.png', queue=True, context=(32551, 'moviesToLibrary&url=traktcollection'))
-            self.addDirectoryItem(32033, 'movies&url=traktwatchlist', 'trakt.png', 'trakt.png', queue=True, context=(32551, 'moviesToLibrary&url=traktwatchlist'))
+            self.addDirectoryItem(32032, 'movies&url=traktcollection', 'trakt.png', 'DefaultMovies.png', queue=True, context=(32551, 'moviesToLibrary&url=traktcollection'))
+            self.addDirectoryItem(32033, 'movies&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png', queue=True, context=(32551, 'moviesToLibrary&url=traktwatchlist'))
 
             if traktIndicators is True:
-                self.addDirectoryItem(35308, 'movies&url=traktunfinished', 'trakt.png', 'trakt.png', queue=True)
-                self.addDirectoryItem(32036, 'movies&url=trakthistory', 'trakt.png', 'trakt.png', queue=True)
+                self.addDirectoryItem(35308, 'movies&url=traktunfinished', 'trakt.png', 'DefaultMovies.png', queue=True)
+                self.addDirectoryItem(32036, 'movies&url=trakthistory', 'trakt.png', 'DefaultMovies.png', queue=True)
 
         elif imdbCredentials is True:
-#            self.addDirectoryItem(32032, 'movies&url=imdbwatchlist', 'imdb.png', 'imdb.png', queue=True)
-            self.addDirectoryItem(32033, 'movies&url=imdbwatchlist2', 'imdb.png', 'imdb.png', queue=True)
+#            self.addDirectoryItem(32032, 'movies&url=imdbwatchlist', 'imdb.png', 'DefaultMovies.png', queue=True)
+            self.addDirectoryItem(32033, 'movies&url=imdbwatchlist2', 'imdb.png', 'DefaultMovies.png', queue=True)
 
         if lite is False:
-            self.addDirectoryItem(32031, 'movieliteNavigator', 'movies.png', 'movies.png')
-            self.addDirectoryItem(32028, 'moviePerson', 'people-search.png', 'people-search.png')
-            self.addDirectoryItem(32010, 'movieSearch', 'search.png', 'search.png')
+            self.addDirectoryItem(32031, 'movieliteNavigator', 'movies.png', 'DefaultMovies.png')
+            self.addDirectoryItem(32029, 'moviePerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
+            self.addDirectoryItem(32010, 'movieSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
         self.endDirectory()
 
 
     def tvshows(self, lite=False):
         if self.getMenuEnabled('navi.tv.imdb.popular') is True:
-            self.addDirectoryItem(32050, 'tvshows&url=popular', 'imdb.png', 'most-popular.png')
+            self.addDirectoryItem(32428 if control.setting('index.labels') == 'false' else 32429, 'tvshows&url=popular', 'most-popular.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.tv.tmdb.popular') is True:
-            self.addDirectoryItem(32050, 'tmdbTvshows&url=tmdb_popular', 'tmdb.png', 'most-popular.png')
+            self.addDirectoryItem(32430 if control.setting('index.labels') == 'false' else 32431, 'tmdbTvshows&url=tmdb_popular', 'most-popular.png' if control.setting('icon.logos') == 'Traditional' else 'tmdb.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.tv.trakt.popular') is True:
-            self.addDirectoryItem(32050, 'tvshows&url=traktpopular', 'trakt.png', 'most-popular.png', queue=True)
+            self.addDirectoryItem(32432 if control.setting('index.labels') == 'false' else 32433, 'tvshows&url=traktpopular', 'most-popular.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultTVShows.png', queue=True)
         if self.getMenuEnabled('navi.tv.imdb.mostvoted') is True:
-            self.addDirectoryItem(32019, 'tvshows&url=views', 'imdb.png', 'most-voted.png')
+            self.addDirectoryItem(32438 if control.setting('index.labels') == 'false' else 32439, 'tvshows&url=views', 'most-voted.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.tv.tmdb.toprated') is True:
-            self.addDirectoryItem(32051, 'tmdbTvshows&url=tmdb_toprated', 'tmdb.png', 'most-voted.png')
+            self.addDirectoryItem(32440 if control.setting('index.labels') == 'false' else 32441, 'tmdbTvshows&url=tmdb_toprated', 'most-voted.png' if control.setting('icon.logos') == 'Traditional' else 'tmdb.png', 'DefaultTVShows.png')
 
-        self.addDirectoryItem(32017, 'tvshows&url=trakttrending', 'trakt.png', 'most-voted.png')
-        self.addDirectoryItem(32023, 'tvshows&url=rating', 'imdb.png', 'highly-rated.png')
-        self.addDirectoryItem(33662, 'tvshows&url=traktrecommendations', 'trakt.png', 'highly-rated.png', queue=True)
-        self.addDirectoryItem(32011, 'tvGenres', 'genres.png', 'genres.png')
-        self.addDirectoryItem(32016, 'tvNetworks', 'networks.png', 'networks.png')
-        self.addDirectoryItem(32014, 'tvLanguages', 'languages.png', 'languages.png')
-        self.addDirectoryItem(32015, 'tvCertificates', 'certificates.png', 'certificates.png')
-        self.addDirectoryItem("Trakt On Deck", 'calendar&url=onDeck', 'trakt.png', 'airing-today.png')
-        self.addDirectoryItem(32364, 'tmdbTvshows&url=tmdb_airingtoday', 'tmdb.png', 'airing-today.png')
-        self.addDirectoryItem(32024, 'tvshows&url=airing', 'imdb.png', 'airing-today.png')
-        self.addDirectoryItem(32052, 'tmdbTvshows&url=tmdb_ontheair', 'tmdb.png', 'returning-tvshows.png')
-        self.addDirectoryItem(32025, 'tvshows&url=active', 'imdb.png', 'returning-tvshows.png')
-        self.addDirectoryItem(32026, 'tvshows&url=premiere', 'imdb.png', 'new-tvshows.png')
-        self.addDirectoryItem(32027, 'calendars', 'calendar.png', 'calendar.png')
+        self.addDirectoryItem(32442 if control.setting('index.labels') == 'false' else 32443, 'tvshows&url=trakttrending', 'trending.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultTVShows.png')
+
+        self.addDirectoryItem(32448 if control.setting('index.labels') == 'false' else 32449, 'tvshows&url=rating', 'highly-rated.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultTVShows.png')
+
+        self.addDirectoryItem(32444 if control.setting('index.labels') == 'false' else 32445, 'tvshows&url=traktrecommendations', 'highly-rated.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultTVShows.png', queue=True)
+
+        self.addDirectoryItem(32455 if control.setting('index.labels') == 'false' else 32456, 'tvGenres', 'genres.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultGenre.png')
+
+        self.addDirectoryItem(32469 if control.setting('index.labels') == 'false' else 32470, 'tvNetworks', 'networks.png' if control.setting('icon.logos') == 'Traditional' else 'tvmaze.png', 'DefaultNetwork.png')
+
+        self.addDirectoryItem(32461 if control.setting('index.labels') == 'false' else 32462, 'tvLanguages', 'languages.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultCountry.png')
+
+        self.addDirectoryItem(32463 if control.setting('index.labels') == 'false' else 32464, 'tvCertificates', 'certificates.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultTVShows.png')
+        self.addDirectoryItem(32468, 'calendar&url=onDeck', 'trakt.png', 'DefaultYear.png')
+        self.addDirectoryItem(32465 if control.setting('index.labels') == 'false' else 32467, 'tmdbTvshows&url=tmdb_airingtoday', 'airing-today' if control.setting('icon.logos') == 'Traditional' else 'tmdb.png', 'DefaultRecentlyAddedEpisodes.png')
+        self.addDirectoryItem(32465 if control.setting('index.labels') == 'false' else 32466, 'tvshows&url=airing', 'airing-today.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultRecentlyAddedEpisodes.png')
+        self.addDirectoryItem(32471 if control.setting('index.labels') == 'false' else 32472, 'tmdbTvshows&url=tmdb_ontheair', 'new-tvshows.png' if control.setting('icon.logos') == 'Traditional' else 'tmdb.png', 'DefaultRecentlyAddedEpisodes.png')
+        self.addDirectoryItem(32473 if control.setting('index.labels') == 'false' else 32474, 'tvshows&url=active', 'returning-tvshows.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultRecentlyAddedEpisodes.png')
+        self.addDirectoryItem(32475 if control.setting('index.labels') == 'false' else 32476, 'tvshows&url=premiere', 'new-tvshows.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultRecentlyAddedEpisodes.png')
+
+        self.addDirectoryItem(32027 if control.setting('index.labels') == 'false' else 32450, 'calendars', 'calendar.png' if control.setting('icon.logos') == 'Traditional' else 'tvmaze.png', 'DefaultYear.png')
 
         if (traktIndicators is True and not control.setting('tv.widget.alt') == '0') or (traktIndicators is False and not control.setting('tv.widget') == '0'):
-            self.addDirectoryItem(32006, 'tvWidget', 'latest-episodes.png', 'latest-episodes.png')
+            self.addDirectoryItem(32006, 'tvWidget', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png')
 
         if lite is False:
             if self.getMenuEnabled('mylists.widget') is True:
-               self.addDirectoryItem(32004, 'mytvliteNavigator', 'mytvshows.png', 'mytvshows.png')
+               self.addDirectoryItem(32004, 'mytvliteNavigator', 'mytvshows.png', 'DefaultTVShows.png')
 
-            self.addDirectoryItem(32028, 'tvPerson', 'people-search.png', 'people-search.png')
-            self.addDirectoryItem(32010, 'tvSearch', 'search.png', 'search.png')
+            self.addDirectoryItem(32030, 'tvPerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
+            self.addDirectoryItem(32010, 'tvSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
         self.endDirectory()
 
 
     def mytvshows(self, lite=False):
         self.accountCheck()
-        self.addDirectoryItem(32040, 'tvUserlists', 'userlists.png', 'userlists.png')
+        self.addDirectoryItem(32040, 'tvUserlists', 'userlists.png', 'DefaultVideoPlaylists.png')
         if traktCredentials is True and imdbCredentials is True:
-            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'trakt.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
-            self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'trakt.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
-            self.addDirectoryItem(32041, 'episodesUserlists', 'userlists.png', 'userlists.png')
+            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
+            self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
+            self.addDirectoryItem(32041, 'episodesUserlists', 'userlists.png', 'DefaultVideoPlaylists.png')
 
             if traktIndicators is True:
-                self.addDirectoryItem(35308, 'episodesUnfinished', 'trakt.png', 'trakt.png', queue=True)
-                self.addDirectoryItem(32036, 'calendar&url=trakthistory', 'trakt.png', 'trakt.png', queue=True)
-                self.addDirectoryItem(32037, 'calendar&url=progress', 'trakt.png', 'trakt.png', queue=True)
-                self.addDirectoryItem(32027, 'calendar&url=mycalendar', 'trakt.png', 'calendar.png', queue=True)
-#                self.addDirectoryItem(32032, 'tvshows&url=imdbwatchlist', 'imdb.png', 'imdb.png')  #sorts alphabetical
-                self.addDirectoryItem(32033, 'tvshows&url=imdbwatchlist2', 'imdb.png', 'imdb.png')  # sorts by date added
+                self.addDirectoryItem(35308, 'episodesUnfinished', 'trakt.png', 'DefaultTVShows.png', queue=True)
+                self.addDirectoryItem(32036, 'calendar&url=trakthistory', 'trakt.png', 'DefaultTVShows.png', queue=True)
+                self.addDirectoryItem(32037, 'calendar&url=progress', 'trakt.png', 'DefaultTVShows.png', queue=True)
+                self.addDirectoryItem(32027, 'calendar&url=mycalendar', 'trakt.png', 'DefaultYear.png', queue=True)
+#                self.addDirectoryItem(32032, 'tvshows&url=imdbwatchlist', 'imdb.png', 'DefaultTVShows.png')  #sorts alphabetical
+                self.addDirectoryItem(32033, 'tvshows&url=imdbwatchlist2', 'imdb.png', 'DefaultTVShows.png')  # sorts by date added
 
         elif traktCredentials is True:
-            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'trakt.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
-            self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'trakt.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
-            self.addDirectoryItem(32041, 'episodesUserlists', 'trakt.png', 'trakt.png')
+            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
+            self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
+            self.addDirectoryItem(32041, 'episodesUserlists', 'trakt.png', 'DefaultTVShows.png')
 
             if traktIndicators is True:
-                self.addDirectoryItem(35308, 'episodesUnfinished', 'trakt.png', 'trakt.png', queue=True)
-                self.addDirectoryItem(32036, 'calendar&url=trakthistory', 'trakt.png', 'trakt.png', queue=True)
-                self.addDirectoryItem(32037, 'calendar&url=progress', 'trakt.png', 'trakt.png', queue=True)
-                self.addDirectoryItem(32027, 'calendar&url=mycalendar', 'trakt.png', 'calendar.png', queue=True)
+                self.addDirectoryItem(35308, 'episodesUnfinished', 'trakt.png', 'DefaultTVShows.png', queue=True)
+                self.addDirectoryItem(32036, 'calendar&url=trakthistory', 'trakt.png', 'DefaultTVShows.png', queue=True)
+                self.addDirectoryItem(32037, 'calendar&url=progress', 'trakt.png', 'DefaultTVShows.png.png', queue=True)
+                self.addDirectoryItem(32027, 'calendar&url=mycalendar', 'trakt.png', 'DefaultYear.png', queue=True)
 
         elif imdbCredentials is True:
-#            self.addDirectoryItem(32032, 'tvshows&url=imdbwatchlist', 'imdb.png', 'imdb.png')    #sorts alphabetical
-            self.addDirectoryItem(32033, 'tvshows&url=imdbwatchlist2', 'imdb.png', 'imdb.png')  # sorts by date added
+#            self.addDirectoryItem(32032, 'tvshows&url=imdbwatchlist', 'imdb.png', 'DefaultTVShows.png')    #sorts alphabetical
+            self.addDirectoryItem(32033, 'tvshows&url=imdbwatchlist2', 'imdb.png', 'DefaultTVShows.png')  # sorts by date added
 
         if lite is False:
-            self.addDirectoryItem(32031, 'tvliteNavigator', 'tvshows.png', 'tvshows.png')
-            self.addDirectoryItem(32028, 'tvPerson', 'people-search.png', 'people-search.png')
-            self.addDirectoryItem(32010, 'tvSearch', 'search.png', 'search.png')
+            self.addDirectoryItem(32031, 'tvliteNavigator', 'tvshows.png', 'DefaultTVShows.png')
+            self.addDirectoryItem(32030, 'tvPerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
+            self.addDirectoryItem(32010, 'tvSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
         self.endDirectory()
 
 
     def tools(self):
-        self.addDirectoryItem(32510, 'cfNavigator', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32609, 'urlResolver', 'urlresolver.png', 'urlresolver.png')
+        self.addDirectoryItem(32510, 'cfNavigator', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32609, 'urlResolver', 'urlresolver.png', 'DefaultAddonProgram.png')
         #-- Providers - 4
-        self.addDirectoryItem(32651, 'openscrapersSettings&query=0.0', 'OpenScrapers.png', 'OpenScrapers.png')
+        self.addDirectoryItem(32651, 'openscrapersSettings&query=0.0', 'OpenScrapers.png', 'DefaultAddonProgram.png')
         #-- General - 0
-        self.addDirectoryItem(32043, 'openSettings&query=0.1', 'tools.png', 'tools.png')
+        self.addDirectoryItem(32043, 'openSettings&query=0.1', 'tools.png', 'DefaultAddonProgram.png')
         #-- Navigation - 1
-        self.addDirectoryItem(32362, 'openSettings&query=1.0', 'tools.png', 'tools.png')
+        self.addDirectoryItem(32362, 'openSettings&query=1.0', 'tools.png', 'DefaultAddonProgram.png')
         #-- Playback - 3
-        self.addDirectoryItem(32045, 'openSettings&query=3.0', 'tools.png', 'tools.png')
+        self.addDirectoryItem(32045, 'openSettings&query=3.0', 'tools.png', 'DefaultAddonProgram.png')
         #-- Api-keys - 8
-        self.addDirectoryItem(32044, 'openSettings&query=8.0', 'tools.png', 'tools.png')
+        self.addDirectoryItem(32044, 'openSettings&query=8.0', 'tools.png', 'DefaultAddonProgram.png')
         #-- Downloads - 10
-        self.addDirectoryItem(32048, 'openSettings&query=10.0', 'tools.png', 'tools.png')
+        self.addDirectoryItem(32048, 'openSettings&query=10.0', 'tools.png', 'DefaultAddonProgram.png')
         #-- Subtitles - 11
-        self.addDirectoryItem(32046, 'openSettings&query=11.0', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32361, 'resetViewTypes', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32073, 'authTrakt&opensettings=false', 'trakt.png', 'tools.png')
+        self.addDirectoryItem(32046, 'openSettings&query=11.0', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32361, 'resetViewTypes', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32073, 'authTrakt&opensettings=false', 'trakt.png', 'DefaultAddonProgram.png')
         self.endDirectory()
 
 
     def cf(self):
-        self.addDirectoryItem(32610, 'clearAllCache', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32611, 'clearSources&opensettings=false', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32612, 'clearMetaCache', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32613, 'clearCache', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32614, 'clearCacheSearch', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32615, 'clearBookmarks', 'tools.png', 'tools.png')
+        self.addDirectoryItem(32610, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32611, 'clearSources&opensettings=false', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32612, 'clearMetaCache', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32613, 'clearCache', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32614, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32615, 'clearBookmarks', 'tools.png', 'DefaultAddonProgram.png')
         self.endDirectory()
 
 
     def library(self):
 #-- Library - 9
-        self.addDirectoryItem(32557, 'openSettings&query=9.0', 'tools.png', 'tools.png')
-        self.addDirectoryItem(32558, 'updateLibrary&query=tool', 'library_update.png', 'library_update.png')
-        self.addDirectoryItem(32559, control.setting('library.movie'), 'movies.png', 'movies.png', isAction=False)
-        self.addDirectoryItem(32560, control.setting('library.tv'), 'tvshows.png', 'tvshows.png', isAction=False)
+        self.addDirectoryItem(32557, 'openSettings&query=9.0', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32558, 'updateLibrary&query=tool', 'library_update.png', 'DefaultAddonLibrary.png')
+        self.addDirectoryItem(32559, control.setting('library.movie'), 'movies.png', 'DefaultMovies.png', isAction=False)
+        self.addDirectoryItem(32560, control.setting('library.tv'), 'tvshows.png', 'DefaultTVShows.png', isAction=False)
         if trakt.getTraktCredentialsInfo():
-            self.addDirectoryItem(32561, 'moviesToLibrary&url=traktcollection', 'trakt.png', 'movies.png')
-            self.addDirectoryItem(32562, 'moviesToLibrary&url=traktwatchlist', 'trakt.png', 'movies.png')
-            self.addDirectoryItem(32563, 'tvshowsToLibrary&url=traktcollection', 'trakt.png', 'tvshows.png')
-            self.addDirectoryItem(32564, 'tvshowsToLibrary&url=traktwatchlist', 'trakt.png', 'tvshows.png')
+            self.addDirectoryItem(32561, 'moviesToLibrary&url=traktcollection', 'trakt.png', 'DefaultMovies.png')
+            self.addDirectoryItem(32562, 'moviesToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png')
+            self.addDirectoryItem(32563, 'tvshowsToLibrary&url=traktcollection', 'trakt.png', 'DefaultTVShows.png')
+            self.addDirectoryItem(32564, 'tvshowsToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png')
         self.endDirectory()
 
 
@@ -287,10 +322,10 @@ class Navigator:
 
 
     def search(self):
-        self.addDirectoryItem(32001, 'movieSearch', 'search.png', 'DefaultMovies.png')
-        self.addDirectoryItem(32002, 'tvSearch', 'search.png', 'DefaultTVShows.png')
-        self.addDirectoryItem(32029, 'moviePerson', 'people-search.png', 'DefaultMovies.png')
-        self.addDirectoryItem(32030, 'tvPerson', 'people-search.png', 'DefaultTVShows.png')
+        self.addDirectoryItem(32001, 'movieSearch', 'search.png', 'DefaultAddonsSearch.png')
+        self.addDirectoryItem(32002, 'tvSearch', 'search.png', 'DefaultAddonsSearch.png')
+        self.addDirectoryItem(32029, 'moviePerson', 'people-search.png', 'DefaultAddonsSearch.png')
+        self.addDirectoryItem(32030, 'tvPerson', 'people-search.png', 'DefaultAddonsSearch.png')
         self.endDirectory()
 
 
@@ -475,7 +510,7 @@ class Navigator:
         else:
             item.setProperty('IsPlayable', 'false')
 
-        item.setArt({'icon': icon, 'poster': icon, 'thumb': thumb})
+        item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb})
 
         if not addonFanart is None:
             item.setProperty('Fanart_Image', addonFanart)

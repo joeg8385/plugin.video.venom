@@ -36,7 +36,8 @@ def syncTraktLibrary():
 def syncTraktWatched():
     control.execute('RunPlugin(plugin://%s)' % 'plugin.video.venom/?action=cachesyncTVShows')
     control.execute('RunPlugin(plugin://%s)' % 'plugin.video.venom/?action=cachesyncMovies')
-    control.notification(title = 'default', message = 'Trakt Watched Status Sync Complete', icon='default', time=1, sound=False)
+    # if control.setting('trakt.notifications') == 'true':
+        # control.notification(title = 'default', message = 'Trakt Watched Status Sync Complete', icon='default', time=1, sound=False)
 
 
 if traktCredentials is True:
@@ -45,7 +46,6 @@ if traktCredentials is True:
 
 if control.setting('autoTraktOnStart') == 'true':
     syncTraktLibrary()
-
 
 
 if int(control.setting('schedTraktTime')) > 0:

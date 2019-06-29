@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="2.9.9" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.0.0" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,11 +36,13 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v2.9.9 - June 27, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed dict key preventing player from starting in OpenMeta.[/I]
-[COLOR yellow]--[/COLOR][I] Changed all movie menus to use new fanarttv indexer.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed some shows from being dropped from TVShows
-    calendar.[/I].
+[B][COLOR red]Update - v3.0.0 - June 28, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Removed Trakt sync notice at startup.[/I]
+[COLOR yellow]--[/COLOR][I] New icon and menu label system.  You can now set the icon
+    style based on Traditional icons or Meta Provider Logos.
+    You can also add the Meta Provider label to the menu
+    item .. ex (TMDb).  This helps distinguish between.. ex
+    "Popular (IMDb) and Popular (TMDb)[/I]
 		</news>
 	</extension>
 

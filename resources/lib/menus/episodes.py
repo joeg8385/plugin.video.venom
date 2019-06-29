@@ -320,8 +320,10 @@ class Episodes:
             try:
                 name = (self.datetime - datetime.timedelta(days=i))
                 name = (control.lang(32062) % (name.strftime('%A'), name.strftime('%d %B'))).encode('utf-8')
-                for m in months: name = name.replace(m[1], m[0])
-                for d in days: name = name.replace(d[1], d[0])
+                for m in months:
+                    name = name.replace(m[1], m[0])
+                for d in days:
+                    name = name.replace(d[1], d[0])
                 try:
                     name = name.encode('utf-8')
                 except:

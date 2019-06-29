@@ -306,8 +306,10 @@ def watch(imdb = None, tvdb = None, season = None, episode = None, refresh = Tru
     else:
         markMovieAsWatched(imdb)
         cachesyncMovies()
-    if refresh: control.refresh()
-    if notification: control.notification(title = 32315, message = 35502, icon = 'INFO', sound = False)
+    if refresh:
+        control.refresh()
+    if notification:
+        control.notification(title = 32315, message = 35502, icon = 'INFO', sound = False)
 
 
 def unwatch(imdb = None, tvdb = None, season = None, episode = None, refresh = True, notification = False):
@@ -326,8 +328,10 @@ def unwatch(imdb = None, tvdb = None, season = None, episode = None, refresh = T
     else:
         markMovieAsNotWatched(imdb)
         cachesyncMovies()
-    if refresh: control.refresh()
-    if notification: control.notification(title = 32315, message = 35503, icon = 'INFO', sound = False)
+    if refresh:
+        control.refresh()
+    if notification:
+        control.notification(title = 32315, message = 35503, icon = 'INFO', sound = False)
 
 
 def rate(imdb = None, tvdb = None, season = None, episode = None):

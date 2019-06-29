@@ -226,7 +226,8 @@ def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
 
 def movies(imdb, watched):
     try:
-        if trakt.getTraktIndicatorsInfo() is False: raise Exception()
+        if trakt.getTraktIndicatorsInfo() is False:
+            raise Exception()
         if int(watched) == 7:
             trakt.watch(imdb=imdb, refresh=True, notification=False)
         else:
@@ -238,7 +239,8 @@ def movies(imdb, watched):
         metaget = metahandlers.MetaData(preparezip=False)
         metaget.get_meta('movie', name='', imdb_id=imdb)
         metaget.change_watched('movie', name='', imdb_id=imdb, watched=int(watched))
-        if trakt.getTraktIndicatorsInfo() is False: control.refresh()
+        if trakt.getTraktIndicatorsInfo() is False:
+            control.refresh()
     except:
         pass
 

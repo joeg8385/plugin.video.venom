@@ -211,9 +211,9 @@ class Movies:
     def newMovies(self):
         setting = control.setting('newmovies.widget')
         if setting == '2':
-            self.get(self.trending_link)
+            self.get(self.trakttrending_link)
         elif setting == '3':
-            self.get(self.popular_link)
+            self.get(self.mostpopular_link)
         elif setting == '4':
             self.get(self.theaters_link)
         elif setting == '5':

@@ -240,7 +240,7 @@ class tvshows:
             except requests.exceptions.SSLError:
                 response = requests.get(url, verify=False)
         except requests.exceptions.ConnectionError:
-            control.notification(title='default', message=32028, icon='INFO')
+            control.notification(title='default', message=32024, icon='INFO')
             return
 
         if '200' in str(response):
