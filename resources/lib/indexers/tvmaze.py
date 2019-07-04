@@ -17,12 +17,12 @@ from resources.lib.modules import cleantitle
 networks_this_season = [
             ('A&E', '/networks/29/ae', 'https://i.imgur.com/xLDfHjH.png'),
             ('ABC', '/networks/3/abc', 'https://i.imgur.com/qePLxos.png'),
-            ('Acorn TV', '/webchannels/129/acorn-tv', 'http://static.tvmaze.com/uploads/images/medium_landscape/74/185171.jpg'),
+            ('Acorn TV', '/webchannels/129/acorn-tv', 'https://i.imgur.com/YMtys7n.png'),
             ('Adult Swim', '/networks/10/adult-swim', 'https://i.imgur.com/jCqbRcS.png'),
             ('Amazon', '/webchannels/3/amazon', 'https://i.imgur.com/ru9DDlL.png'),
             ('AMC', '/networks/20/amc', 'https://i.imgur.com/ndorJxi.png'),
             ('Animal Planet', '/networks/92/animal-planet', 'https://i.imgur.com/olKc4RP.png'),
-            ('Apple TV+', '/webchannels/310/apple-tv', 'http://static.tvmaze.com/uploads/images/medium_landscape/189/474058.jpg'),
+            ('Apple TV+', '/webchannels/310/apple-tv', 'https://i.imgur.com/HjEYPad.png'),
             ('AT-X', '/networks/167/at-x', 'https://i.imgur.com/JshJYGN.png'),
             ('Audience', '/networks/31/audience-network', 'https://i.imgur.com/5Q3mo5A.png'),
             ('BBC America', '/networks/15/bbc-america', 'https://i.imgur.com/TUHDjfl.png'),
@@ -31,8 +31,8 @@ networks_this_season = [
             ('BBC Three', '/webchannels/71/bbc-three', 'https://i.imgur.com/SDLeLcn.png'),
             ('BBC Four', '/networks/51/bbc-four', 'https://i.imgur.com/PNDalgw.png'),
             ('BET', '/networks/56/bet', 'https://i.imgur.com/ZpGJ5UQ.png'),
-            ('Blackpills', '/webchannels/186/blackpills', 'http://static.tvmaze.com/uploads/images/medium_landscape/108/270401.jpg'),
-            ('Brat', '/webchannels/274/brat', 'http://static.tvmaze.com/uploads/images/medium_landscape/161/403172.jpg'),
+            ('Blackpills', '/webchannels/186/blackpills', 'https://i.imgur.com/8zzNqqq.png'),
+            ('Brat', '/webchannels/274/brat', 'https://i.imgur.com/x2aPEx1.png'),
             ('Bravo', '/networks/52/bravo', 'https://i.imgur.com/TmEO3Tn.png'),
             ('Cartoon Network', '/networks/11/cartoon-network', 'https://i.imgur.com/zmOLbbI.png'),
             ('CBC', '/networks/36/cbc', 'https://i.imgur.com/unQ7WCZ.png'),
@@ -40,34 +40,33 @@ networks_this_season = [
             ('Channel 4', '/networks/45/channel-4', 'https://i.imgur.com/6ZA9UHR.png'),
             ('Channel 5', '/networks/135/channel-5', 'https://i.imgur.com/5ubnvOh.png'),
             ('Cinemax', '/networks/19/cinemax', 'https://i.imgur.com/zWypFNI.png'),
-            ('CNBC', '/networks/93/cnbc', 'https://static.tvmaze.com/uploads/images/original_untouched/10/27359.jpg'),
-
+            ('CNBC', '/networks/93/cnbc', 'https://i.imgur.com/ENjlkvv.png'),
             ('Comedy Central', '/networks/23/comedy-central', 'https://i.imgur.com/ko6XN77.png'),
             ('Crackle', '/webchannels/4/crackle', 'https://i.imgur.com/53kqZSY.png'),
             ('CTV', '/networks/48/ctv', 'https://i.imgur.com/qUlyVHz.png'),
-            ('CuriosityStream', '/webchannels/188/curiositystream', 'http://static.tvmaze.com/uploads/images/medium_landscape/108/272041.jpg'),
+            ('CuriosityStream', '/webchannels/188/curiositystream', 'https://i.imgur.com/5wJsQdi.png'),
             ('CW', '/networks/5/the-cw', 'https://i.imgur.com/Q8tooeM.png'),
             ('CW Seed', '/webchannels/13/cw-seed', 'https://i.imgur.com/nOdKoEy.png'),
-            ('DC Universe', '/webchannels/187/dc-universe', 'http://static.tvmaze.com/uploads/images/medium_landscape/155/388605.jpg'),
+            ('DC Universe', '/webchannels/187/dc-universe', 'https://i.imgur.com/bhWIubn.png'),
             ('Discovery Channel', '/networks/66/discovery-channel', 'https://i.imgur.com/8UrXnAB.png'),
             ('Discovery ID', '/networks/89/investigation-discovery', 'https://i.imgur.com/07w7BER.png'),
             ('Disney Channel', '/networks/78/disney-channel', 'https://i.imgur.com/ZCgEkp6.png'),
-            ('Disney Junior', '/networks/1039/disney-junior', 'https://static.tvmaze.com/uploads/images/medium_landscape/46/116712.jpg'),
+            ('Disney Junior', '/networks/1039/disney-junior', 'https://i.imgur.com/EqPPq5S.png'),
             ('Disney XD', '/networks/25/disney-xd', 'https://i.imgur.com/PAJJoqQ.png'),
             ('E! Entertainment', '/networks/43/e', 'https://i.imgur.com/3Delf9f.png'),
             ('E4', '/networks/41/e4', 'https://i.imgur.com/frpunK8.png'),
-            # ('Fearnet', '/networks/466/fearnet', 'https://static.tvmaze.com/uploads/images/large_landscape/25/64861.jpg'),
+            # ('Fearnet', '/networks/466/fearnet', 'https://i.imgur.com/CdJ6fZt.png'),
             ('FOX', '/networks/4/fox', 'https://i.imgur.com/6vc0Iov.png'),
             ('Freeform', '/networks/26/freeform', 'https://i.imgur.com/f9AqoHE.png'),
-            ('Fusion', '/networks/187/fusion', 'https://static.tvmaze.com/uploads/images/medium_untouched/11/29630.jpg'),
+            ('Fusion', '/networks/187/fusion', 'https://i.imgur.com/NPxic1M.png'),
             ('FX', '/networks/13/fx', 'https://i.imgur.com/aQc1AIZ.png'),
             ('Hallmark', '/networks/50/hallmark-channel', 'https://i.imgur.com/zXS64I8.png'),
             # ('Hallmark Movies & Mysteries', '/networks/252/hallmark-movies-mysteries', 'https://static.tvmaze.com/uploads/images/original_untouched/13/34664.jpg'),
             ('HBO', '/networks/8/hbo', 'https://i.imgur.com/Hyu8ZGq.png'),
             ('HGTV', '/networks/192/hgtv', 'https://i.imgur.com/INnmgLT.png'),
             ('History Channel', '/networks/53/history', 'https://i.imgur.com/LEMgy6n.png'),
-            # ('H2', '/networks/74/h2', 'https://static.tvmaze.com/uploads/images/medium_landscape/3/9115.jpg'),
-            ('Hulu', '/webchannels/2/hulu', 'https://i.imgur.com/Tf81i9O.png'),
+            # ('H2', '/networks/74/h2', 'https://i.imgur.com/OvkmoDA.png'),
+            ('Hulu', '/webchannels/2/hulu', 'https://i.imgur.com/gvHOZgC.png'),
             ('ITV', '/networks/35/itv', 'https://i.imgur.com/5Hxp5eA.png'),
             ('Lifetime', '/networks/18/lifetime', 'https://i.imgur.com/tvYbhen.png'),
             ('MTV', '/networks/22/mtv', 'https://i.imgur.com/QM6DpNW.png'),
@@ -75,8 +74,8 @@ networks_this_season = [
             ('NBC', '/networks/1/nbc', 'https://i.imgur.com/yPRirQZ.png'),
             ('Netflix', '/webchannels/1/netflix', 'https://i.imgur.com/jI5c3bw.png'),
             ('Nickelodeon', '/networks/27/nickelodeon', 'https://i.imgur.com/OUVoqYc.png'),
-            ('Nicktoons', '/networks/73/nicktoons', 'https://static.tvmaze.com/uploads/images/medium_untouched/25/63394.jpg'),
-            ('Oxygen', '/networks/79/oxygen', 'https://static.tvmaze.com/uploads/images/medium_untouched/116/290882.jpg'),
+            ('Nicktoons', '/networks/73/nicktoons', 'https://i.imgur.com/890wBrw.png'),
+            ('Oxygen', '/networks/79/oxygen', 'https://i.imgur.com/uFCQvbR.png'),
             ('PBS', '/networks/85/pbs', 'https://i.imgur.com/r9qeDJY.png'),
             # ('Playboy TV', '/networks/1035/playboy-tv', 'https://static.tvmaze.com/uploads/images/original_untouched/46/115366.jpg'),
             ('Showtime', '/networks/9/showtime', 'https://i.imgur.com/SawAYkO.png'),
@@ -90,14 +89,12 @@ networks_this_season = [
             ('Travel Channel', '/networks/82/travel-channel', 'https://i.imgur.com/mWXv7SF.png'),
             ('TruTV', '/networks/84/trutv', 'https://i.imgur.com/HnB3zfc.png'),
             ('TV Land', '/networks/57/tvland', 'https://i.imgur.com/1nIeDA5.png'),
-
-            ('TV One', '/networks/224/tv-one', 'https://static.tvmaze.com/uploads/images/original_untouched/25/63413.jpg'),
-
+            ('TV One', '/networks/224/tv-one', 'https://i.imgur.com/gGCTa8s.png'),
             ('USA', '/networks/30/usa-network', 'https://i.imgur.com/Doccw9E.png'),
             ('VH1', '/networks/55/vh1', 'https://i.imgur.com/IUtHYzA.png'),
-            ('Viceland', '/networks/1006/viceland', 'https://static.tvmaze.com/uploads/images/original_untouched/42/105775.jpg'),
+            ('Viceland', '/networks/1006/viceland', 'https://i.imgur.com/sLNNqEY.png'),
             ('WGN', '/networks/28/wgn-america', 'https://i.imgur.com/TL6MzgO.png'),
-            ('WWE Network', '/webchannels/15/wwe-network', 'https://static.tvmaze.com/uploads/images/original_untouched/11/29695.jpg')
+            ('WWE Network', '/webchannels/15/wwe-network', 'https://i.imgur.com/JjbTbb2.png')
             # ('YouTube', '/webchannels/21/youtube', 'https://i.imgur.com/ZfewP1Y.png'),
             # ('YouTube Premium', '/webchannels/43/youtube-premium', 'https://static.tvmaze.com/uploads/images/medium_landscape/160/401362.jpg')
         ]
@@ -105,12 +102,12 @@ networks_this_season = [
 networks_view_all = [
             ('A&E', '/shows?Show[network_id]=29&page=1', 'https://i.imgur.com/xLDfHjH.png'),
             ('ABC', '/shows?Show[network_id]=3&page=1', 'https://i.imgur.com/qePLxos.png'),
-            ('Acorn TV', '/shows?Show[network_id]=129&page=1', 'http://static.tvmaze.com/uploads/images/large_landscape/74/185171.jpg'),
+            ('Acorn TV', '/shows?Show[network_id]=129&page=1', 'https://i.imgur.com/YMtys7n.png'),
             ('Adult Swim', '/shows?Show[network_id]=10&page=1', 'https://i.imgur.com/jCqbRcS.png'),
             ('Amazon', '/shows?Show[webChannel_id]=3&page=1', 'https://i.imgur.com/ru9DDlL.png'),
             ('AMC', '/shows?Show[network_id]=20&page=1', 'https://i.imgur.com/ndorJxi.png'),
             ('Animal Planet', '/shows?Show[network_id]=92&page=1', 'https://i.imgur.com/olKc4RP.png'),
-            ('Apple TV+', '/shows?Show[webChannel_id]=310&page=1', 'http://static.tvmaze.com/uploads/images/large_landscape/189/474058.jpg'),
+            ('Apple TV+', '/shows?Show[webChannel_id]=310&page=1', 'https://i.imgur.com/HjEYPad.png'),
             ('AT-X', '/shows?Show[network_id]=167&page=1', 'https://i.imgur.com/JshJYGN.png'),
             ('Audience', '/shows?Show[network_id]=31&page=1', 'https://i.imgur.com/5Q3mo5A.png'),
             ('BBC America', '/shows?Show[network_id]=15&page=1', 'https://i.imgur.com/TUHDjfl.png'),
@@ -119,44 +116,42 @@ networks_view_all = [
             ('BBC Three', '/shows?Show[network_id]=71&page=1', 'https://i.imgur.com/SDLeLcn.png'),
             ('BBC Four', '/shows?Show[network_id]=51&page=1', 'https://i.imgur.com/PNDalgw.png'),
             ('BET', '/shows?Show[network_id]=56&page=1', 'https://i.imgur.com/ZpGJ5UQ.png'),
-            ('Blackpills', '/shows?Show[webChannel_id]=186&page=1', 'http://static.tvmaze.com/uploads/images/large_landscape/108/270401.jpg'),
-            ('Brat', '/shows?Show[webChannel_id]=274&page=1', 'http://static.tvmaze.com/uploads/images/large_landscape/161/403172.jpg'),
+            ('Blackpills', '/shows?Show[webChannel_id]=186&page=1', 'https://i.imgur.com/8zzNqqq.png'),
+            ('Brat', '/shows?Show[webChannel_id]=274&page=1', 'https://i.imgur.com/x2aPEx1.png'),
             ('Bravo', '/shows?Show[network_id]=52&page=1', 'https://i.imgur.com/TmEO3Tn.png'),
             ('Cartoon Network', '/shows?Show[network_id]=11&page=1', 'https://i.imgur.com/zmOLbbI.png'),
             ('CBC', '/shows?Show[network_id]=36&page=1', 'https://i.imgur.com/unQ7WCZ.png'),
             ('CBS', '/shows?Show[network_id]=2&page=1', 'https://i.imgur.com/8OT8igR.png'),
-            # ('CNBC', '/shows?Show[network_id]=93&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/10/27359.jpg'),
-            ('CNBC', '/shows?Show[network_id]=93&page=1', 'https://vignette.wikia.nocookie.net/logopedia/images/d/d0/Cnbc-hdr-logo2.png/revision/latest?cb=20180730211812'),
+            ('CNBC', '/shows?Show[network_id]=93&page=1', 'https://i.imgur.com/ENjlkvv.png'),
             ('Channel 4', '/shows?Show[network_id]=45&page=1', 'https://i.imgur.com/6ZA9UHR.png'),
             ('Channel 5', '/shows?Show[network_id]=135&page=1', 'https://i.imgur.com/5ubnvOh.png'),
             ('Cinemax', '/shows?Show[network_id]=19&page=1', 'https://i.imgur.com/zWypFNI.png'),
             ('Comedy Central', '/shows?Show[network_id]=23&page=1', 'https://i.imgur.com/ko6XN77.png'),
             ('Crackle', '/shows?Show%5BwebChannel_id%5D=4&page=1', 'https://i.imgur.com/53kqZSY.png'),
             ('CTV', '/shows?Show[network_id]=48&page=1', 'https://i.imgur.com/qUlyVHz.png'),
-            ('CuriosityStream', '/shows?Show[webChannel_id]=188&page=1', 'http://static.tvmaze.com/uploads/images/original_untouched/108/272041.jpg'),
+            ('CuriosityStream', '/shows?Show[webChannel_id]=188&page=1', 'https://i.imgur.com/5wJsQdi.png'),
             ('CW', '/shows?Show[network_id]=5&page=1', 'https://i.imgur.com/Q8tooeM.png'),
             ('CW Seed', '/shows?Show[webChannel_id]=13&page=1', 'https://i.imgur.com/nOdKoEy.png'),
-            ('DC Universe', '/shows?Show%5BwebChannel_id%5D=187&page=1', 'http://static.tvmaze.com/uploads/images/original_untouched/155/388605.jpg'),
+            ('DC Universe', '/shows?Show%5BwebChannel_id%5D=187&page=1', 'https://i.imgur.com/bhWIubn.png'),
             ('Discovery Channel', '/shows?Show[network_id]=66&page=1', 'https://i.imgur.com/8UrXnAB.png'),
             ('Discovery ID', '/shows?Show[network_id]=89&page=1', 'https://i.imgur.com/07w7BER.png'),
             ('Disney Channel', '/shows?Show[network_id]=78&page=1', 'https://i.imgur.com/ZCgEkp6.png'),
-            ('Disney Junior', '/shows?Show[network_id]=1039&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/46/116712.jpg'),
+            ('Disney Junior', '/shows?Show[network_id]=1039&page=1', 'https://i.imgur.com/EqPPq5S.png'),
             ('Disney XD', '/shows?Show[network_id]=25&page=1', 'https://i.imgur.com/PAJJoqQ.png'),
             ('E! Entertainment', '/shows?Show[network_id]=43&page=1', 'https://i.imgur.com/3Delf9f.png'),
             ('E4', '/shows?Show[network_id]=41&page=1', 'https://i.imgur.com/frpunK8.png'),
-            ('Fearnet', '/shows?Show[network_id]=466&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/25/64861.jpg'),
+            ('Fearnet', '/shows?Show[network_id]=466&page=1', 'https://i.imgur.com/CdJ6fZt.png'),
             ('FOX', '/shows?Show[network_id]=4&page=1', 'https://i.imgur.com/6vc0Iov.png'),
             ('Freeform', '/shows?Show[network_id]=26&page=1', 'https://i.imgur.com/f9AqoHE.png'),
-            ('Fusion', '/shows?Show[network_id]=187&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/11/29630.jpg'),
+            ('Fusion', '/shows?Show[network_id]=187&page=1', 'https://i.imgur.com/NPxic1M.png'),
             ('FX', '/shows?Show[network_id]=13&page=1', 'https://i.imgur.com/aQc1AIZ.png'),
             ('Hallmark', '/shows?Show[network_id]=50&page=1', 'https://i.imgur.com/zXS64I8.png'),
             ('Hallmark Movies & Mysteries', '/shows?Show[network_id]=252&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/13/34664.jpg'),
             ('HBO', '/shows?Show[network_id]=8&page=1', 'https://i.imgur.com/Hyu8ZGq.png'),
             ('HGTV', '/shows?Show[network_id]=192&page=1', 'https://i.imgur.com/INnmgLT.png'),
             ('History Channel', '/shows?Show[network_id]=53&page=1', 'https://i.imgur.com/LEMgy6n.png'),
-            # ('H2', '/shows?Show[network_id]=74&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/3/9115.jpg'),
-            ('H2', '/shows?Show[network_id]=74&page=1', 'https://vignette.wikia.nocookie.net/logopedia/images/b/b9/H2hd.png/revision/latest?cb=20120229052144'),
-            ('Hulu', '/shows?Show[webChannel_id]=2&page=1', 'https://i.imgur.com/Tf81i9O.png'),
+            ('H2', '/shows?Show[network_id]=74&page=1', 'https://i.imgur.com/OvkmoDA.png'),
+            ('Hulu', '/shows?Show[webChannel_id]=2&page=1', 'https://i.imgur.com/gvHOZgC.png'),
             ('ITV', '/shows?Show[network_id]=35&page=1', 'https://i.imgur.com/5Hxp5eA.png'),
             ('Lifetime', '/shows?Show[network_id]=18&page=1', 'https://i.imgur.com/tvYbhen.png'),
             ('MTV', '/shows?Show[network_id]=22&page=1', 'https://i.imgur.com/QM6DpNW.png'),
@@ -164,8 +159,8 @@ networks_view_all = [
             ('NBC', '/shows?Show[network_id]=1&page=1', 'https://i.imgur.com/yPRirQZ.png'),
             ('Netflix', '/shows?Show[webChannel_id]=1&page=1', 'https://i.imgur.com/jI5c3bw.png'),
             ('Nickelodeon', '/shows?Show[network_id]=27&page=1', 'https://i.imgur.com/OUVoqYc.png'),
-            ('Nicktoons', '/shows?Show[network_id]=73&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/25/63394.jpg'),
-            ('Oxygen', '/shows?Show[network_id]=79&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/116/290882.jpg'),
+            ('Nicktoons', '/shows?Show[network_id]=73&page=1', 'https://i.imgur.com/890wBrw.png'),
+            ('Oxygen', '/shows?Show[network_id]=79&page=1', 'https://i.imgur.com/uFCQvbR.png'),
             ('PBS', '/shows?Show[network_id]=85&page=1', 'https://i.imgur.com/r9qeDJY.png'),
             ('Showtime', '/shows?Show[network_id]=9&page=1', 'https://i.imgur.com/SawAYkO.png'),
             ('Sky1', '/shows?Show[network_id]=63&page=1', 'https://i.imgur.com/xbgzhPU.png'),
@@ -178,13 +173,12 @@ networks_view_all = [
             ('Travel Channel', '/shows?Show[network_id]=82&page=1', 'https://i.imgur.com/mWXv7SF.png'),
             ('TruTV', '/shows?Show[network_id]=84&page=1', 'https://i.imgur.com/HnB3zfc.png'),
             ('TV Land', '/shows?Show[network_id]=57&page=1', 'https://i.imgur.com/1nIeDA5.png'),
-            ('TV One', '/shows?Show[network_id]=224&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/25/63413.jpg'),
+            ('TV One', '/shows?Show[network_id]=224&page=1', 'https://i.imgur.com/gGCTa8s.png'),
             ('USA', '/shows?Show[network_id]=30&page=1', 'https://i.imgur.com/Doccw9E.png'),
             ('VH1', '/shows?Show[network_id]=55&page=1', 'https://i.imgur.com/IUtHYzA.png'),
-            ('Viceland', '/shows?Show[network_id]=1006&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/42/105775.jpg'),
+            ('Viceland', '/shows?Show[network_id]=1006&page=1', 'https://i.imgur.com/sLNNqEY.png'),
             ('WGN', '/shows?Show[network_id]=28&page=1', 'https://i.imgur.com/TL6MzgO.png'),
-            ('WWE Network', '/shows?Show[webChannel_id]=15&page=1', 'https://static.tvmaze.com/uploads/images/original_untouched/11/29695.jpg')
-
+            ('WWE Network', '/shows?Show[webChannel_id]=15&page=1', 'https://i.imgur.com/JjbTbb2.png')
             # ('YouTube', '/webchannels/21/youtube', 'https://i.imgur.com/ZfewP1Y.png'),
             # ('YouTube Premium', '/webchannels/43/youtube-premium', 'https://static.tvmaze.com/uploads/images/medium_landscape/160/401362.jpg')
         ]
@@ -210,27 +204,17 @@ class tvshows:
         # if self.tvdb_key == '' or self.tvdb_key is None:
             # self.tvdb_key = '1D62F2F90030C444'
         self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+
+        self.imdb_user = control.setting('imdb.user').replace('ur', '')
+        if self.imdb_user == '' or self.imdb_user is None:
+            self.imdb_user = '98341406'
+
+        self.user = str(self.imdb_user) + str(self.tvdb_key)
+
         self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
         self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
         self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
         self.tvdb_image = 'http://thetvdb.com/banners/'
-
-
-        self.tmdb_key = control.setting('tm.user')
-        if self.tmdb_key == '' or self.tmdb_key is None:
-            self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
-        self.tmdb_art_link = 'http://api.themoviedb.org/3/tv/%s/images?api_key=' + self.tmdb_key
-
-        # self.tmdb_info_link = 'http://api.themoviedb.org/3/tv/%s?api_key=%s&language=%s' % ('%s', self.tmdb_key, self.tmdb_lang)
-# ###                                                                                  other "append_to_response" options                                           alternative_titles,videos,images
-
-        self.tmdb_img_link = 'http://image.tmdb.org/t/p/w%s%s'
-
-        self.fanart_tv_user = control.setting('fanart.tv.user')
-        if self.fanart_tv_user == '' or self.fanart_tv_user is None:
-            self.fanart_tv_user = 'cf0ebcc2f7b824bd04cf3a318f15c17d'
-        self.user = self.fanart_tv_user + str('')
-        self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
 
 
     def get_TMDb_request(self, url):
@@ -316,17 +300,23 @@ class tvshows:
 
                 try:
                     imdb = item['externals']['imdb']
-                    if imdb is None or imdb == '': imdb = '0'
-                    else: imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
+                    if imdb is None or imdb == '':
+                        imdb = '0'
+                    else:
+                        imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
                     imdb = imdb.encode('utf-8')
-                except: imdb = '0'
+                except:
+                    imdb = '0'
 
                 try:
                     tvdb = item['externals']['thetvdb']
-                    if tvdb is None or tvdb == '': tvdb = '0'
-                    else: tvdb = re.sub('[^0-9]', '', str(tvdb))
+                    if tvdb is None or tvdb == '':
+                        tvdb = '0'
+                    else:
+                        tvdb = re.sub('[^0-9]', '', str(tvdb))
                     tvdb = tvdb.encode('utf-8')
-                except: tvdb = '0'
+                except:
+                    tvdb = '0'
 
                 tmdb = '0'
 
@@ -405,7 +395,8 @@ class tvshows:
                         except: imdb = '0'
 
                 try:
-                    if self.tvdb_key == '' or tvdb == '0': raise Exception()
+                    if self.tvdb_key == '' or tvdb == '0':
+                        raise Exception()
                     url = self.tvdb_info_link % tvdb
                     item3 = client.request(url, timeout='20', error=True)
                 except: item3 = None ; fanart = '0'

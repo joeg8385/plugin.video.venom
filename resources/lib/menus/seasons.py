@@ -37,6 +37,7 @@ class Seasons:
         # self.tvdb_key = control.setting('tvdb.user')
         # if self.tvdb_key == '' or self.tvdb_key is None:
         self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
+
         self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
         self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
         self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
@@ -740,11 +741,6 @@ class Seasons:
 
         traktCredentials = trakt.getTraktCredentialsInfo()
 
-        # try:
-            # isOld = False ; control.item().getArt('type')
-        # except:
-            # isOld = True
-
         if trakt.getTraktIndicatorsInfo() is True:
             watchedMenu = control.lang(32068).encode('utf-8')
             unwatchedMenu = control.lang(32069).encode('utf-8')
@@ -867,19 +863,19 @@ class Seasons:
 
                 art = {}
                 if not poster == '0' and not poster is None:
-                    art.update({'poster' : poster, 'tvshow.poster' : poster, 'season.poster' : poster})
+                    art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
                 if not fanart == '0' and not fanart is None:
-                    art.update({'fanart' : fanart})
+                    art.update({'fanart': fanart})
                 if not icon == '0' and not icon is None:
-                    art.update({'icon' : icon})
+                    art.update({'icon': icon})
                 if not thumb == '0' and not thumb is None:
-                    art.update({'thumb' : thumb})
+                    art.update({'thumb': thumb})
                 if not banner == '0' and not banner is None:
-                    art.update({'banner' : banner})
+                    art.update({'banner': banner})
                 if not clearlogo == '0' and not clearlogo is None:
-                    art.update({'clearlogo' : clearlogo})
+                    art.update({'clearlogo': clearlogo})
                 if not clearart == '0' and not clearart is None:
-                    art.update({'clearart' : clearart})
+                    art.update({'clearart': clearart})
 
 
 ####-Context Menu and Overlays-####
@@ -913,8 +909,6 @@ class Seasons:
                 cm.append((showPlaylistMenu, 'RunPlugin(%s?action=showPlaylist)' % sysaddon))
                 cm.append((clearPlaylistMenu, 'RunPlugin(%s?action=clearPlaylist)' % sysaddon))
 
-                # if isOld is True:
-                    # cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
                 cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tvdb)))
                 cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
 ####################################
@@ -943,8 +937,10 @@ class Seasons:
                     item.setUniqueIDs(i['episodeIDS'])
                 if 'cast' in i:
                     item.setCast(i['cast'])
-                if not fanart == '0' and not fanart is None:
-                    item.setProperty('Fanart_Image', fanart)
+
+                # if not fanart == '0' and not fanart is None:
+                    # item.setProperty('Fanart_Image', fanart)
+
                 item.setArt(art)
                 item.setInfo(type='video', infoLabels=control.metadataClean(meta))
                 item.addContextMenuItems(cm)

@@ -29,8 +29,11 @@ class Sources:
     def play(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select):
         try:
             url = None
-            items = cache.get(self.getSources, 24, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+            items = cache.get(self.getSources, 12, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
             # items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+
+            if items is None:
+                return self.errorForSources()
 
             if select is None:
                 if not episode is None and control.setting('enable.upnext') == 'true':
@@ -451,15 +454,20 @@ class Sources:
         for i in range(0, 4 * timeout):
             if str(pre_emp) == 'true':
                 if quality in ['0','1']:
-                    if (source_4k + d_source_4k) >= int(pre_emp_limit): break
+                    if (source_4k + d_source_4k) >= int(pre_emp_limit):
+                        break
                 elif quality in ['1']:
-                    if (source_1080 + d_source_1080) >= int(pre_emp_limit): break
+                    if (source_1080 + d_source_1080) >= int(pre_emp_limit):
+                        break
                 elif quality in ['2']:
-                    if (source_720 + d_source_720) >= int(pre_emp_limit): break
+                    if (source_720 + d_source_720) >= int(pre_emp_limit):
+                        break
                 elif quality in ['3']:
-                    if (source_sd + d_source_sd) >= int(pre_emp_limit): break
+                    if (source_sd + d_source_sd) >= int(pre_emp_limit):
+                        break
                 else:
-                    if (source_sd + d_source_sd) >= int(pre_emp_limit): break
+                    if (source_sd + d_source_sd) >= int(pre_emp_limit):
+                        break
             try:
                 if xbmc.abortRequested is True:
                     return sys.exit()
@@ -756,7 +764,7 @@ class Sources:
                 dbcur.execute("DELETE FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
                 dbcur.execute("INSERT INTO rel_src Values (?, ?, ?, ?, ?, ?)", (source, imdb, '', '', repr(sources), datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
                 dbcur.connection.commit()
-                dbcon.close()
+            dbcon.close()
         except:
             import traceback
             traceback.print_exc()
@@ -845,7 +853,7 @@ class Sources:
                 dbcur.execute("DELETE FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
                 dbcur.execute("INSERT INTO rel_src Values (?, ?, ?, ?, ?, ?)", (source, imdb, season, episode, repr(sources), datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
                 dbcur.connection.commit()
-                dbcon.close()
+            dbcon.close()
         except:
             import traceback
             traceback.print_exc()

@@ -24,27 +24,27 @@ class Trailer:
     def play(self, name='', url='', windowedtrailer=0):
         try:
             url = self.worker(name, url)
-            if not url:return
+            if not url:
+                return
 
             title = control.infoLabel('ListItem.Title')
-            if not title: title = control.infoLabel('ListItem.Label')
+            if not title:
+                title = control.infoLabel('ListItem.Label')
 
             icon = control.infoLabel('ListItem.Icon')
 
             item = control.item(label=title, iconImage=icon, thumbnailImage=icon, path=url)
             item.setInfo(type="video", infoLabels={'title': title})
             item.setProperty('IsPlayable', 'true')
+
+            control.refresh()
             control.resolve(handle=int(sys.argv[1]), succeeded=True, listitem=item)
+
             if windowedtrailer == 1:
-                # The call to the play() method is non-blocking. So we delay further script execution to keep the script alive at this spot.
-                # Otherwise this script will continue and probably already be garbage collected by the time the trailer has ended.
-                control.sleep(1000)  # Wait until playback starts. Less than 900ms is too short (on my box). Make it one second.
+                control.sleep(1000)
                 while control.player.isPlayingVideo():
                     control.sleep(1000)
-                # Close the dialog.
-                # Same behaviour as the fullscreenvideo window when :
-                # the media plays to the end,
-                # or the user pressed one of X, ESC, or Backspace keys on the keyboard/remote to stop playback.
+
                 control.execute("Dialog.Close(%s, true)" % control.getCurrentDialogId)
         except:
             import traceback
@@ -55,12 +55,15 @@ class Trailer:
         try:
             if url.startswith(self.base_link):
                 url = self.resolve(url)
-                if not url: raise Exception()
+                if not url:
+                    raise Exception()
                 return url
-            elif not url.startswith('http:'):
+            # elif not url.startswith('http:'):
+            elif not url.startswith('http'):
                 url = self.youtube_watch % url
                 url = self.resolve(url)
-                if not url: raise Exception()
+                if not url:
+                    raise Exception()
                 return url
             else:
                 raise Exception()
@@ -76,8 +79,10 @@ class Trailer:
             if apiLang != 'en':
                 url += "&relevanceLanguage=%s" % apiLang
             result = client.request(url)
+
             items = json.loads(result).get('items', [])
             items = [i.get('id', {}).get('videoId') for i in items]
+
             for vid_id in items:
                 url = self.resolve(vid_id)
                 if url:
@@ -91,11 +96,16 @@ class Trailer:
         try:
             id = url.split('?v=')[-1].split('/')[-1].split('?')[0].split('&')[0]
             result = client.request(self.youtube_watch % id)
+
             message = client.parseDOM(result, 'div', attrs={'id': 'unavailable-submessage'})
             message = ''.join(message)
+
             alert = client.parseDOM(result, 'div', attrs={'id': 'watch7-notification-area'})
-            if len(alert) > 0: raise Exception()
-            if re.search('[a-zA-Z]', message): raise Exception()
+            if len(alert) > 0:
+                raise Exception()
+
+            if re.search('[a-zA-Z]', message):
+                raise Exception()
             url = 'plugin://plugin.video.youtube/play/?video_id=%s' % id
             return url
         except:

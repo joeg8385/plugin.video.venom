@@ -257,7 +257,7 @@ def metaFile():
     # rid this fucking thing already!!
     #    if condVisibility('System.HasAddon(script.venom.metadata)'):
     #        return os.path.join(xbmcaddon.Addon('script.venom.metadata').getAddonInfo('path'), 'resources', 'data', 'meta.db')
-    os.path.join(dataPath, 'metadata.db')
+    return os.path.join(dataPath, 'metadata.db')
 
 
 def metadataClean(metadata):
@@ -291,23 +291,28 @@ def infoDialog(message, heading=addonInfo('name'), icon='', time=3000, sound=Fal
 
 
 def notification(title=None, message=None, icon=None, time=3000, sound=False):
-    if title == 'default' or None: title = addonName()
+    if title == 'default' or title == None:
+        title = addonName()
+
     if isinstance(title, (int, long)):
         heading = lang(title).encode('utf-8')
     else:
-        # heading = str(title).encode('utf-8')
         heading = str(title)
+
     if isinstance(message, (int, long)):
         body = lang(message).encode('utf-8')
     else:
-        # body = str(message).encode('utf-8')
         body = str(message)
+
     if icon is None or 'icon' or 'default':
         icon = addonIcon()
+
     elif icon == 'INFO':
         icon = xbmcgui.NOTIFICATION_INFO
+
     elif icon == 'WARNING':
         icon = xbmcgui.NOTIFICATION_WARNING
+
     elif icon == 'ERROR':
         icon = xbmcgui.NOTIFICATION_ERROR
     dialog.notification(heading, body, icon, time, sound=sound)
@@ -322,17 +327,19 @@ def selectDialog(list, heading=addonInfo('name')):
 
 
 def okDialog(title=None, message=None):
-    if title == 'default' or None: title = addonName()
+    if title == 'default' or title == None:
+        title = addonName()
+
     if isinstance(title, (int, long)):
         heading = lang(title).encode('utf-8')
     else:
-        # heading = str(title).encode('utf-8')
         heading = str(title)
+
     if isinstance(message, (int, long)):
         body = lang(message).encode('utf-8')
     else:
-        # body = str(message).encode('utf-8')
         body = str(message)
+
     return dialog.ok(heading, body)
 
 

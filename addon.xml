@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.0.0" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.0.1" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,13 +36,18 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.0.0 - June 28, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Removed Trakt sync notice at startup.[/I]
-[COLOR yellow]--[/COLOR][I] New icon and menu label system.  You can now set the icon
-    style based on Traditional icons or Meta Provider Logos.
-    You can also add the Meta Provider label to the menu
-    item .. ex (TMDb).  This helps distinguish between.. ex
-    "Popular (IMDb) and Popular (TMDb)[/I]
+[COLOR yellow]--[/COLOR][I] Fixed two missing Default icons from last update.  Also
+    added a bunch more to now use skin Default styles.
+    Best seen with Aura skin.[/I]
+[COLOR yellow]--[/COLOR][I] Added new setting option "Page Item Limit".  You can now
+    set the number of list items per page for Movies and
+    TV Shows. Note TMDb api default left at 20 so this
+    new option works for IMDb and Trakt lists[/I]
+[COLOR yellow]--[/COLOR][I] Fixed occasional File Lock issue under
+    some conditions.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed query jump to ResolveURL settings page for PM
+    and RD
+    due to new snappylink added to ResolveURL.[/I]
 		</news>
 	</extension>
 

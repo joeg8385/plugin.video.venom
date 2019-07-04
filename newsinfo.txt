@@ -1,7 +1,7 @@
 [B][COLOR red]June 19, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] UpNext integration info.
 [COLOR yellow]--[/COLOR][I] Please note this release requires the latest release of UpNext,
-    version 1.0.1, that can be found in the Kodi repo and was released on June 18, 2019.
+    version 1.0.1, that can be found in the Kodi repo and was released on un 18, 2019.
     Version 1.0.0 has a few communication issues that were esolved in 1.0.1.  You will
     notice occasional missing UpNext notifications with v1.0.0 so please be sure to
     check this.  Thank you Ian for resolving this issue!![/I]

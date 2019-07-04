@@ -23,12 +23,16 @@ class movies:
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
+        if self.imdb_user == '' or self.imdb_user is None:
+            self.imdb_user = '98341406'
 
         self.lang = control.apiLanguage()['trakt']
 
         self.tmdb_key = control.setting('tm.user')
         if self.tmdb_key == '' or self.tmdb_key is None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
+
+        self.user = str(self.imdb_user) + str(self.tmdb_key)
 
         self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
         self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
@@ -255,7 +259,8 @@ class movies:
             result = client.request(url)
             result = result.decode('iso-8859-1').encode('utf-8')
             items = client.parseDOM(result, 'li', attrs = {'class': 'ipl-zebra-list__item user-list'})
-#            items = client.parseDOM(result, 'div', attrs = {'class': 'list_name'})
+            # Gaia uses this but seems to break the user list
+            # items = client.parseDOM(result, 'div', attrs = {'class': 'list_name'})
         except:
             pass
 

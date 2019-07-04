@@ -195,8 +195,8 @@ class documentary:
         item = control.item(label=name)
         item.addContextMenuItems(cm)
         item.setArt({'icon': thumb, 'thumb': thumb})
-        if not addonFanart is None:
-            item.setProperty('Fanart_Image', addonFanart)
+        # if not addonFanart is None:
+            # item.setProperty('Fanart_Image', addonFanart)
         control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
 
     def endDirectory(self):
@@ -247,8 +247,8 @@ class documentary:
                     item.setInfo("audio", '')
 
                 item.setArt({'icon': thumb, 'thumb': thumb})
-                if not addonFanart is None:
-                    item.setProperty('Fanart_Image', addonFanart)
+                # if not addonFanart is None:
+                    # item.setProperty('Fanart_Image', addonFanart)
 
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
             except:

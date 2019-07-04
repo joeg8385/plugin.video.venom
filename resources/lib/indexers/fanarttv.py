@@ -110,8 +110,11 @@ def get_movie_art(imdb):
     try:
         art = client.request(url % imdb, headers=headers, timeout='30', error=True)
         art = json.loads(art)
+        # log_utils.log('imdb for art %s = %s' % (imdb, art), __name__, log_utils.LOGDEBUG)
     except:
         return None
+
+
 
     try:
         poster2 = art['movieposter']

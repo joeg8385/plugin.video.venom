@@ -31,14 +31,14 @@ class youtube_menu(object):
         u=sys.argv[0] + "?action=" + action + "&subid=" + subid
         liz=control.item(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
         liz.setInfo(type='video', infoLabels={'title': name, 'plot': description})
-        liz.setProperty('Fanart_Image', fanart)
+        # liz.setProperty('Fanart_Image', fanart)
         control.addItem(handle=syshandle, url=u, listitem=liz, isFolder=isFolder)
 
 
     def addSectionItem(self, name, iconimage, fanart):
         u=sys.argv[0]+"?action=sectionItem"
         liz=control.item(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-        liz.setProperty('Fanart_Image', fanart)
+        # liz.setProperty('Fanart_Image', fanart)
         control.addItem(handle=syshandle, url=u, listitem=liz, isFolder=False)
 
 
@@ -46,7 +46,7 @@ class youtube_menu(object):
         work_url = "plugin://plugin.video.youtube/kodion/search/query/?q="+search_id+"/"
         liz=control.item(name)
         liz.setInfo( type='video', infoLabels={'title': name})
-        liz.setArt({'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart})
+        liz.setArt({'thumb': icon, 'banner': 'DefaultVideo.png', 'fanart': fanart})
         control.addItem(handle=syshandle, url=work_url, listitem=liz, isFolder=True)
 
 
@@ -54,7 +54,7 @@ class youtube_menu(object):
         work_url = "plugin://plugin.video.youtube/channel/"+channel_id+"/"
         liz=control.item(name)
         liz.setInfo( type='video', infoLabels={'title': name})
-        liz.setArt({'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart})
+        liz.setArt({'thumb': icon, 'banner': 'DefaultVideo.png', 'fanart': fanart})
         control.addItem(handle=syshandle, url=work_url, listitem=liz, isFolder=True)
 
 
@@ -62,7 +62,7 @@ class youtube_menu(object):
         work_url = "plugin://plugin.video.youtube/playlist/"+playlist_id+"/"
         liz=control.item(name)
         liz.setInfo( type='video', infoLabels={'title': name})
-        liz.setArt({'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart})
+        liz.setArt({'thumb': icon, 'banner': 'DefaultVideo.png', 'fanart': fanart})
         control.addItem(handle=syshandle, url=work_url, listitem=liz, isFolder=True)
 
 
@@ -70,7 +70,7 @@ class youtube_menu(object):
         work_url = "plugin://plugin.video.youtube/play/?video_id="+video_id
         liz=control.item(name)
         liz.setInfo( type='video', infoLabels={'title': name})
-        liz.setArt({ 'thumb': icon, 'banner' : 'DefaultVideo.png', 'fanart': fanart })
+        liz.setArt({ 'thumb': icon, 'banner': 'DefaultVideo.png', 'fanart': fanart })
         liz.setProperty('IsPlayable', 'true')
         control.addItem(handle=syshandle, url=work_url, listitem=liz, isFolder=True)
 

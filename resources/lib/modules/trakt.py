@@ -373,7 +373,7 @@ def _rating(action, imdb = None, tvdb = None, season = None, episode = None):
                 data['dbid'] = 4
             script = os.path.join(control.addonPath(addon), 'resources', 'lib', 'sqlitequeue.py')
             sqlitequeue = imp.load_source('sqlitequeue', script)
-            data = {'action' : 'manualRating', 'ratingData' : data}
+            data = {'action': 'manualRating', 'ratingData': data}
             sqlitequeue.SqliteQueue().append(data)
         else:
             control.notification(title = 32315, message = 33659, icon = 'INFO', sound = False)
@@ -414,11 +414,11 @@ def manager(name, imdb = None, tvdb = None, season = None, episode = None, refre
         if select >= 0:
             if select == 0:
                 control.busy()
-                watch(imdb = imdb, tvdb = tvdb, season = season, episode = episode, refresh = refresh, notification = True)
+                watch(imdb = imdb, tvdb = tvdb, season = season, episode = episode, refresh = refresh, notification = False)
                 control.hide()
             elif select == 1:
                 control.busy()
-                unwatch(imdb = imdb, tvdb = tvdb, season = season, episode = episode, refresh = refresh, notification = True)
+                unwatch(imdb = imdb, tvdb = tvdb, season = season, episode = episode, refresh = refresh, notification = False)
                 control.hide()
             elif select == 2:
                 control.busy()
@@ -656,7 +656,7 @@ def showCount(imdb, refresh = True, wait = False):
     try:
         if not imdb:
             return None
-        result = {'total' : 0, 'watched' : 0, 'unwatched' : 0}
+        result = {'total': 0, 'watched': 0, 'unwatched': 0}
         indicators = seasonCount(imdb = imdb, refresh = refresh, wait = wait)
         for indicator in indicators:
             result['total'] += indicator['total']
@@ -712,31 +712,36 @@ def _seasonCountRetrieve(imdb):
 
 
 def markMovieAsWatched(imdb):
-    if not imdb.startswith('tt'): imdb = 'tt' + imdb
+    if not imdb.startswith('tt'):
+        imdb = 'tt' + imdb
     return getTrakt('/sync/history', {"movies": [{"ids": {"imdb": imdb}}]})[0]
 
 
 def markMovieAsNotWatched(imdb):
-    if not imdb.startswith('tt'): imdb = 'tt' + imdb
+    if not imdb.startswith('tt'):
+        imdb = 'tt' + imdb
     return getTrakt('/sync/history/remove', {"movies": [{"ids": {"imdb": imdb}}]})[0]
 
 
 def markTVShowAsWatched(imdb, tvdb):
-    if imdb and not imdb.startswith('tt'): imdb = 'tt' + imdb
+    if imdb and not imdb.startswith('tt'):
+        imdb = 'tt' + imdb
     result = getTrakt('/sync/history', {"shows": [{"ids": {"tvdb": tvdb}}]})
     seasonCount(imdb)
     return result
 
 
 def markTVShowAsNotWatched(imdb, tvdb):
-    if imdb and not imdb.startswith('tt'): imdb = 'tt' + imdb
+    if imdb and not imdb.startswith('tt'):
+        imdb = 'tt' + imdb
     result = getTrakt('/sync/history/remove', {"shows": [{"ids": {"tvdb": tvdb}}]})
     seasonCount(imdb)
     return result
 
 
 def markSeasonAsWatched(imdb, tvdb, season):
-    if imdb and not imdb.startswith('tt'): imdb = 'tt' + imdb
+    if imdb and not imdb.startswith('tt'):
+        imdb = 'tt' + imdb
     season = int('%01d' % int(season))
     result = getTrakt('/sync/history', {"shows": [{"seasons": [{"number": season}], "ids": {"tvdb": tvdb}}]})
     seasonCount(imdb)
@@ -744,7 +749,8 @@ def markSeasonAsWatched(imdb, tvdb, season):
 
 
 def markSeasonAsNotWatched(imdb, tvdb, season):
-    if imdb and not imdb.startswith('tt'): imdb = 'tt' + imdb
+    if imdb and not imdb.startswith('tt'):
+        imdb = 'tt' + imdb
     season = int('%01d' % int(season))
     result = getTrakt('/sync/history/remove', {"shows": [{"seasons": [{"number": season}], "ids": {"tvdb": tvdb}}]})
     seasonCount(imdb)
@@ -752,7 +758,8 @@ def markSeasonAsNotWatched(imdb, tvdb, season):
 
 
 def markEpisodeAsWatched(imdb, tvdb, season, episode):
-    if imdb and not imdb.startswith('tt'): imdb = 'tt' + imdb
+    if imdb and not imdb.startswith('tt'):
+        imdb = 'tt' + imdb
     season, episode = int('%01d' % int(season)), int('%01d' % int(episode))
     result = getTrakt('/sync/history', {"shows": [{"seasons": [{"episodes": [{"number": episode}], "number": season}], "ids": {"tvdb": tvdb}}]})
     seasonCount(imdb)
@@ -760,7 +767,8 @@ def markEpisodeAsWatched(imdb, tvdb, season, episode):
 
 
 def markEpisodeAsNotWatched(imdb, tvdb, season, episode):
-    if imdb and not imdb.startswith('tt'): imdb = 'tt' + imdb
+    if imdb and not imdb.startswith('tt'):
+        imdb = 'tt' + imdb
     season, episode = int('%01d' % int(season)), int('%01d' % int(episode))
     result = getTrakt('/sync/history/remove', {"shows": [{"seasons": [{"episodes": [{"number": episode}], "number": season}], "ids": {"tvdb": tvdb}}]})
     seasonCount(imdb)
@@ -788,14 +796,6 @@ def getTVShowTranslation(id, lang, season=None, episode=None, full=False):
         return None if result == 'none' else result
     except:
         pass
-
-
-# def getMovieSummary(id):
-    # return cache.get(getTraktAsJson, 48, '/movies/%s' % id)
-
-
-# def getTVShowSummary(id):
-    # return cache.get(getTraktAsJson, 48, '/shows/%s' % id)
 
 
 def getMovieSummary(id, full=True):
@@ -992,8 +992,8 @@ def scrobbleUpdate(action, type, imdb = None, tvdb = None, season = None, episod
                     link = '/scrobble/' + action
                     data = {
                         type : item,
-                        'progress' : progress,
-                        'app_version' : control.addonVersion(addon='plugin.video.venom'),
+                        'progress': progress,
+                        'app_version': control.addonVersion(addon='plugin.video.venom'),
                     }
                     result = getTrakt(url = link, post = data)
                     return 'progress' in result

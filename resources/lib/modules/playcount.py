@@ -5,6 +5,8 @@ import json, sys
 from resources.lib.modules import control
 from resources.lib.modules import trakt
 
+trakt.notification = False if control.setting('trakt.notifications') == 'false' else True
+
 
 def getMovieIndicators(refresh=False):
     try:
@@ -146,7 +148,7 @@ def getShowCount(indicators, imdb, tvdb, limit = False):
                     watched = len(indicator[2])
                     unwatched = total - watched
                     if limit: unwatched = min(99, unwatched)
-                    return {'total' : total, 'watched' : watched, 'unwatched' : unwatched}
+                    return {'total': total, 'watched': watched, 'unwatched': unwatched}
         except:
             pass
         return None
@@ -229,9 +231,9 @@ def movies(imdb, watched):
         if trakt.getTraktIndicatorsInfo() is False:
             raise Exception()
         if int(watched) == 7:
-            trakt.watch(imdb=imdb, refresh=True, notification=False)
+            trakt.watch(imdb=imdb, refresh=True, notification=trakt.notification)
         else:
-            trakt.unwatch(imdb=imdb, refresh=True, notification=False)
+            trakt.unwatch(imdb=imdb, refresh=True, notification=trakt.notification)
     except:
         pass
     try:
@@ -250,9 +252,9 @@ def episodes(imdb, tvdb, season, episode, watched):
         if trakt.getTraktIndicatorsInfo() is False:
             raise Exception()
         if int(watched) == 7:
-            trakt.watch(imdb = imdb, tvdb = tvdb, season = season, episode = episode, refresh=True, notification=False)
+            trakt.watch(imdb = imdb, tvdb = tvdb, season = season, episode = episode, refresh=True, notification=trakt.notification)
         else:
-            trakt.unwatch(imdb=imdb, tvdb=tvdb, season=season, episode=episode, refresh=True, notification=False)
+            trakt.unwatch(imdb=imdb, tvdb=tvdb, season=season, episode=episode, refresh=True, notification=trakt.notification)
     except:
         pass
     try:
@@ -327,9 +329,9 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
         if trakt.getTraktIndicatorsInfo() is False:
             raise Exception()
         if watched == 7:
-            trakt.watch(imdb = imdb, tvdb = tvdb, season = season, refresh = True, notification = False)
+            trakt.watch(imdb = imdb, tvdb = tvdb, season = season, refresh = True, notification = trakt.notification)
         else:
-            trakt.unwatch(imdb = imdb, tvdb = tvdb, season = season, refresh = True, notification = False)
+            trakt.unwatch(imdb = imdb, tvdb = tvdb, season = season, refresh = True, notification = trakt.notification)
     except:
         import traceback
         traceback.print_exc()
