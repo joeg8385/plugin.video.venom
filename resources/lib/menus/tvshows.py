@@ -17,7 +17,7 @@ from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
-from resources.lib.modules import utils, log_utils
+from resources.lib.modules import utils
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -950,7 +950,7 @@ class TVshows:
                 try:
                     trakt_ids = trakt.SearchTVShow(urllib.quote_plus(self.list[i]['title']), self.list[i]['year'], full = False)[0]
                     trakt_ids = trakt_ids.get('show', '0')
-                    log_utils.log('trakt_ids = %s' % str(trakt_ids), __name__, log_utils.LOGDEBUG)
+                    # log_utils.log('trakt_ids = %s' % str(trakt_ids), __name__, log_utils.LOGDEBUG)
                     if imdb == '0':
                         imdb = trakt_ids.get('ids', {}).get('imdb', '0')
                         imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))

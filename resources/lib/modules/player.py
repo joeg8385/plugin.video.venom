@@ -10,7 +10,7 @@ try:
 except:
     pass
 
-from resources.lib.modules import cleantitle, control, playcount
+from resources.lib.modules import cleantitle, control, playcount, log_utils
 
 try:
     sysaddon = sys.argv[0]
@@ -66,7 +66,6 @@ class Player(xbmc.Player):
 
             self.meta = meta
             self.offset = Bookmarks().get(self.name, self.year)
-            # xbmc.log('line 69 self.offset = %s' % self.offset, 2)
             poster, thumb, fanart, clearart, clearlogo, discart, meta = self.getMeta(meta)
 
             item = control.item(path=url)
@@ -92,12 +91,12 @@ class Player(xbmc.Player):
             traceback.print_exc()
 
 
-    def play_playlist(self, title, year, season, episode, imdb, tvdb, url, meta):
+    def play_playlist(self):
         try:
             playlist = control.playlist.getPlayListId()
-            # xbmc.log('playlist = %d' % playlist, 2)
+            log_utils.log('playlist = %s' % playlist, __name__, log_utils.LOGDEBUG)
             playlistSize = control.playlist.size()
-            # xbmc.log('playlistSize = %d' % playlistSize, 2)
+            log_utils.log('playlistSize = %s' % str(playlistSize), __name__, log_utils.LOGDEBUG)
             control.player.play(control.playlist)
             xbmc.sleep(2000)
             # control.closeAll()
@@ -111,28 +110,32 @@ class Player(xbmc.Player):
     def getMeta(self, meta):
         try:
             poster = '0'
-            if 'poster3' in meta: poster = meta['poster3']
-            elif 'poster2' in meta: poster = meta['poster2']
-            elif 'poster' in meta: poster = meta['poster']
+            if 'poster3' in meta: poster = meta.get('poster3')
+            elif 'poster2' in meta: poster = meta.get('poster2')
+            elif 'poster' in meta: poster = meta.get('poster')
 
             thumb = '0'
-            if 'thumb3' in meta: thumb = meta['thumb3']
-            elif 'thumb2' in meta: thumb = meta['thumb2']
-            elif 'thumb' in meta: thumb = meta['thumb']
+            if 'thumb3' in meta: thumb = meta.get('thumb3')
+            elif 'thumb2' in meta: thumb = meta.get('thumb2')
+            elif 'thumb' in meta: thumb = meta.get('thumb')
 
             fanart = '0'
-            if 'fanart3' in meta: fanart = meta['fanart3']
-            elif 'fanart2' in meta: fanart = meta['fanart2']
-            elif 'fanart' in meta: fanart = meta['fanart']
+            if 'fanart3' in meta: fanart = meta.get('fanart3')
+            elif 'fanart2' in meta: fanart = meta.get('fanart2')
+            elif 'fanart' in meta: fanart = meta.get('fanart')
+
+            # banner == '0':
+            # if 'banner' in meta: banner = meta.get('banner')
+            # if banner == '0': banner = poster
 
             clearart = '0'
-            if 'clearart' in meta: clearart = meta['clearart']
+            if 'clearart' in meta: clearart = meta.get('clearart')
 
             clearlogo = '0'
-            if 'clearlogo' in meta: clearlogo = meta['clearlogo']
+            if 'clearlogo' in meta: clearlogo = meta.get('clearlogo')
 
             discart = '0'
-            if 'discart' in meta: discart = meta['discart']
+            if 'discart' in meta: discart = meta.get('discart')
 
             if poster == '0': poster = control.addonPoster()
             if thumb == '0': thumb = control.addonThumb()
@@ -173,9 +176,9 @@ class Player(xbmc.Player):
                         meta[k] = str(v)
 
             if 'plugin' not in control.infoLabel('Container.PluginName'):
-                self.DBID = meta['movieid']
+                self.DBID = meta.get('movieid')
 
-            poster = thumb = meta['thumbnail']
+            poster = thumb = meta.get('thumbnail')
             # return (poster, thumb, meta)
             return (poster, thumb, '', '', '', '', meta)
         except:
@@ -194,8 +197,8 @@ class Player(xbmc.Player):
             t = cleantitle.get(self.title)
             meta = [i for i in meta if self.year == str(i['year']) and t == cleantitle.get(i['title'])][0]
 
-            tvshowid = meta['tvshowid']
-            poster = meta['thumbnail']
+            tvshowid = meta.get('tvshowid')
+            poster = meta.get('thumbnail')
 
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params":{ "tvshowid": %d, "filter":{"and": [{"field": "season", "operator": "is", "value": "%s"}, {"field": "episode", "operator": "is", "value": "%s"}]}, "properties": ["title", "season", "episode", "showtitle", "firstaired", "runtime", "rating", "director", "writer", "plot", "thumbnail", "file"]}, "id": 1}' % (tvshowid, self.season, self.episode))
             meta = unicode(meta, 'utf-8', errors = 'ignore')
@@ -216,9 +219,9 @@ class Player(xbmc.Player):
                         meta[k] = str(v)
 
             if 'plugin' not in control.infoLabel('Container.PluginName'):
-                self.DBID = meta['episodeid']
+                self.DBID = meta.get('episodeid')
 
-            thumb = meta['thumbnail']
+            thumb = meta.get('thumbnail')
 
             return (poster, thumb, '', '', '', '', meta)
             # return (poster, thumb, meta)
@@ -487,31 +490,28 @@ class Player(xbmc.Player):
 
     def next_info(self):
         current_info = self.meta
-        # xbmc.log('line 507 current_info = %s' % current_info, 2)
         current_episode = {}
-        current_episode["episodeid"] = current_info['episodeIDS']['trakt']
-        current_episode["tvshowid"] = current_info['tvdb']
-        current_episode["title"] = current_info['title']
+        current_episode["episodeid"] = current_info.get('episodeIDS', {}).get('trakt')
+        current_episode["tvshowid"] = current_info.get('tvdb')
+        current_episode["title"] = current_info.get('title')
         current_episode["art"] = {}
-        current_episode["art"]["tvshow.poster"] = current_info['poster']
-        current_episode["art"]["thumb"] = current_info['thumb']
-        current_episode["art"]["tvshow.fanart"] = current_info['fanart']
-        current_episode["art"]["tvshow.landscape"] = current_info['fanart']
-        current_episode["art"]["tvshow.clearart"] = current_info['clearart']
-        current_episode["art"]["tvshow.clearlogo"] = current_info['clearlogo']
-        current_episode["plot"] = current_info['plot']
-        current_episode["showtitle"] = current_info['tvshowtitle']
-        current_episode["playcount"] = current_info['playcount']
-        current_episode["season"] = current_info['season']
-        current_episode["episode"] = current_info['episode']
-        current_episode["rating"] = current_info['rating']
-        current_episode["firstaired"] = current_info['tvshowyear']
-        # xbmc.log('line 527 current_episode = %s' % current_episode, 2)
+        current_episode["art"]["tvshow.poster"] = current_info.get('poster')
+        current_episode["art"]["thumb"] = current_info.get('thumb')
+        current_episode["art"]["tvshow.fanart"] = current_info.get('fanart')
+        current_episode["art"]["tvshow.landscape"] = current_info.get('fanart')
+        current_episode["art"]["tvshow.clearart"] = current_info.get('clearart')
+        current_episode["art"]["tvshow.clearlogo"] = current_info.get('clearlogo')
+        current_episode["plot"] = current_info.get('plot')
+        current_episode["showtitle"] = current_info.get('tvshowtitle')
+        current_episode["playcount"] = current_info.get('playcount')
+        current_episode["season"] = current_info.get('season')
+        current_episode["episode"] = current_info.get('episode')
+        current_episode["rating"] = current_info.get('rating')
+        current_episode["firstaired"] = current_info.get('tvshowyear')
+        # log_utils.log('current_episode = %s' % current_episode, __name__, log_utils.LOGDEBUG)
 
         current_position = control.playlist.getposition()
-        # xbmc.log('line 529 current_position = %s' % current_position, 2)
         next_url = control.playlist[current_position + 1].getPath()
-        # xbmc.log('line 532 next_url = %s' % next_url, 2)
 
         try:
             from urlparse import parse_qsl
@@ -521,27 +521,26 @@ class Player(xbmc.Player):
         next_info = json.loads(params.get('meta'))
 
         next_episode = {}
-        next_episode["episodeid"] = next_info['episodeIDS']['trakt']
-        next_episode["tvshowid"] = next_info['tvdb']
-        next_episode["title"] = next_info['title']
+        next_episode["episodeid"] = next_info.get('episodeIDS', {}).get('trakt')
+        next_episode["tvshowid"] = next_info.get('tvdb')
+        next_episode["title"] = next_info.get('title')
         next_episode["art"] = {}
-        next_episode["art"]["tvshow.poster"] = next_info['poster']
-        next_episode["art"]["thumb"] = next_info['thumb']
-        next_episode["art"]["tvshow.fanart"] = next_info['fanart']
-        next_episode["art"]["tvshow.landscape"] = next_info['fanart']
-        next_episode["art"]["tvshow.clearart"] = next_info['clearart']
-        next_episode["art"]["tvshow.clearlogo"] = next_info['clearlogo']
-        next_episode["plot"] = next_info['plot']
-        next_episode["showtitle"] = next_info['tvshowtitle']
-        next_episode["playcount"] = next_info['playcount']
-        next_episode["season"] = next_info['season']
-        next_episode["episode"] = next_info['episode']
-        next_episode["rating"] = next_info['rating']
-        next_episode["firstaired"] = next_info['tvshowyear']
-        # xbmc.log('line 562 next_episode = %s' % next_episode, 2)
+        next_episode["art"]["tvshow.poster"] = next_info.get('poster')
+        next_episode["art"]["thumb"] = next_info.get('thumb')
+        next_episode["art"]["tvshow.fanart"] = next_info.get('fanart')
+        next_episode["art"]["tvshow.landscape"] = next_info.get('fanart')
+        next_episode["art"]["tvshow.clearart"] = next_info.get('clearart')
+        next_episode["art"]["tvshow.clearlogo"] = next_info.get('clearlogo')
+        next_episode["plot"] = next_info.get('plot')
+        next_episode["showtitle"] = next_info.get('tvshowtitle')
+        next_episode["playcount"] = next_info.get('playcount')
+        next_episode["season"] = next_info.get('season')
+        next_episode["episode"] = next_info.get('episode')
+        next_episode["rating"] = next_info.get('rating')
+        next_episode["firstaired"] = next_info.get('tvshowyear')
 
         play_info = {}
-        play_info["item_id"] = current_info['episodeIDS']['trakt']
+        play_info["item_id"] = current_info.get('episodeIDS', {}).get('trakt')
 
         next_info = {
             "current_episode": current_episode,
@@ -679,15 +678,9 @@ class Bookmarks:
             label = (control.lang(32502) % label).encode('utf-8')
 
             if control.setting('bookmarks.auto') == 'false':
-                # try:
-                # yes = control.context(labels=[label, control.lang(32501).encode('utf-8'), ])
-                    # yes = control.dialog.contextmenu([label, control.lang(32501).encode('utf-8'), ])
-                # except:
-                    # import traceback
-                    # traceback.print_exc()
-                yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503).encode('utf-8'), control.lang(32501).encode('utf-8'))
                 # if xbmc.abortRequested is True:
                     # return sys.exit()
+                yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503).encode('utf-8'), control.lang(32501).encode('utf-8'))
                 if yes:
                     self.offset = '0'
 

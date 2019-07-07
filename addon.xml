@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.0.2" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.0.3" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,18 +36,17 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.0.2 - July 06, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed IMDb user key issue[/I]
-[COLOR yellow]--[/COLOR][I] Added new option to "Disable Extended artwork(fanart.tv).
-    This helps shorten some menu load times at the loss
-    of extra poster, extra fanart, clearart and discart.  I've
-    set this up to gather at a min poster and fanart from
-    either IMDb, TMDb, or TVDb.[/I]
-[COLOR yellow]--[/COLOR][I] Changed some setting options from "enum" type to
-    "select" type.  Instead of having to arrow through the
-    options you will now have a pop up list to show you
-    all available options in one shot. Options with only
-    2 items I left as "enum" type.[/I]
+[B][COLOR red]Update - v3.0.3 - July 07, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed UpNext broken if using new option to "Disable
+    Extended artwork".[/I]
+[COLOR yellow]--[/COLOR][I] Fixed fanart.tv request when using IMDb.  It seems fanart.tv
+    has been dropping some title ID's so the response
+    would not return any artwork.  Perfect example is
+    Bohemian Rhapody.  Two weeks ago this title had
+    plenty of extended artwork and now it's gone.  Upon
+    reviewing the api call the TMDb_ID is still there but
+    IMDb has been removed.  Now I check for this and
+    pass TMDb ID if "error" in api response.[/I]
 		</news>
 	</extension>
 

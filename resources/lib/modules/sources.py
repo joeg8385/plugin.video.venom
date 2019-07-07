@@ -77,7 +77,7 @@ class Sources:
             if control.playlist.size() != 0:
                 # playlist = control.playlist.getPlayListId()
                 # control.player2().play(control.playlist)
-                # player.Player().play_playlist(title, year, season, episode, imdb, tvdb, url, meta)
+                # player.Player().play_playlist()
                 player.Player().play_source(title, year, season, episode, imdb, tvdb, url, meta)
             else:
                 player.Player().play_source(title, year, season, episode, imdb, tvdb, url, meta)
@@ -117,32 +117,33 @@ class Sources:
         elif 'year' in meta:
             sysname += urllib.quote_plus(' (%s)' % meta['year'])
 
+        poster = '0'
+        if 'poster3' in meta: poster = meta.get('poster3')
+        elif 'poster2' in meta: poster = meta.get('poster2')
+        elif 'poster' in meta: poster = meta.get('poster')
 
-        poster = meta['poster3'] if 'poster3' in meta else '0'
-        if poster == '0':
-            poster = meta['poster2'] if 'poster2' in meta else '0'
-        if poster == '0':
-            poster = meta['poster'] if 'poster' in meta else '0'
+        thumb = '0'
+        if 'thumb3' in meta: thumb = meta.get('thumb3')
+        elif 'thumb2' in meta: thumb = meta.get('thumb2')
+        elif 'thumb' in meta: thumb = meta.get('thumb')
 
-        fanart = meta['fanart3'] if 'fanart3' in meta else '0'
-        if fanart == '0':
-            fanart = meta['fanart2'] if 'fanart2' in meta else '0'
-        if fanart == '0':
-            fanart = meta['fanart'] if 'fanart' in meta else '0'
+        fanart = '0'
+        if 'fanart3' in meta: fanart = meta.get('fanart3')
+        elif 'fanart2' in meta: fanart = meta.get('fanart2')
+        elif 'fanart' in meta: fanart = meta.get('fanart')
 
-        thumb = meta['thumb'] if 'thumb' in meta else '0'
-        if thumb == '0':
-            thumb = poster
-        if thumb == '0':
-            thumb = fanart
+        banner = '0'
+        if 'banner' in meta: banner = meta.get('banner')
+        if banner == '0': banner = poster
 
-        banner = meta['banner'] if 'banner' in meta else '0'
-        if banner == '0':
-            banner = poster
+        clearart = '0'
+        if 'clearart' in meta: clearart = meta.get('clearart')
 
-        clearart = meta['clearart'] if 'clearart' in meta else '0'
-        clearlogo = meta['clearlogo'] if 'clearlogo' in meta else '0'
-        discart = meta['discart'] if 'discart' in meta else '0'
+        clearlogo = '0'
+        if 'clearlogo' in meta: clearlogo = meta.get('clearlogo')
+
+        discart = '0'
+        if 'discart' in meta: discart = meta.get('discart')
 
         if poster == '0':
             poster = control.addonPoster()

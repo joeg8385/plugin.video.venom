@@ -472,6 +472,8 @@ elif action == 'queueItem':
 elif action == 'play':
     from resources.lib.modules import sources
     sources.Sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select)
+    # from resources.lib.modules import control
+    # control.player.play(control.playlist)
 
 elif action == 'playItem':
     from resources.lib.modules import sources

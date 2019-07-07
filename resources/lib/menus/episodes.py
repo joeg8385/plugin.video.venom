@@ -17,7 +17,7 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import metacache
-from resources.lib.modules import utils
+from resources.lib.modules import utils, log_utils
 from resources.lib.extensions import tools
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
@@ -298,7 +298,6 @@ class Episodes:
 
             # if self.trakt_link in url and url == self.onDeck_link:
                 # self.list = cache.get(self.trakt_episodes_list, 1, url, self.trakt_user, self.lang)
-
 
             # elif self.trakt_link in url and url == self.progress_link:
                 # self.list = cache.get(self.trakt_progress_list, 0.3, url, self.trakt_user, self.lang)
@@ -1640,9 +1639,11 @@ class Episodes:
                 try:
                     plot = meta['plot']
                     index = plot.rfind('See full summary')
-                    if index >= 0: plot = plot[:index]
+                    if index >= 0:
+                        plot = plot[:index]
                     plot = plot.strip()
-                    if re.match('[a-zA-Z\d]$', plot): plot += ' ...'
+                    if re.match('[a-zA-Z\d]$', plot):
+                        plot += ' ...'
                     meta['plot'] = plot
                 except:
                     pass

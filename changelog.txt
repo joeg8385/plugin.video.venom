@@ -1,3 +1,15 @@
+[B][COLOR red]Update - v3.0.3 - July 07, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed UpNext broken if using new option to "Disable
+    Extended artwork".[/I]
+[COLOR yellow]--[/COLOR][I] Fixed fanart.tv request when using IMDb.  It seems fanart.tv
+    has been dropping some title ID's so the response
+    would not return any artwork.  Perfect example is
+    Bohemian Rhapody.  Two weeks ago this title had
+    plenty of extended artwork and now it's gone.  Upon
+    reviewing the api call the TMDb_ID is still there but
+    IMDb has been removed.  Now I check for this and
+    pass TMDb ID if "error" in api response.[/I]
+
 [B][COLOR red]Update - v3.0.2 - July 06, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed IMDb user key issue[/I]
 [COLOR yellow]--[/COLOR][I] Added new option to "Disable Extended artwork(fanart.tv).
