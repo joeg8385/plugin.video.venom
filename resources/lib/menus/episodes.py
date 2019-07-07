@@ -163,32 +163,6 @@ class Episodes:
             traceback.print_exc()
 
 
-    # def get(self, tvshowtitle, year, imdb, tvdb, season=None, episode=None, idx=True):
-        # from resources.lib.menus import seasons
-        # try:
-            # if idx is True:
-                # if season is None and episode is None:
-                    # self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, '-1')
-                # elif episode is None:
-                    # self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, season)
-                # else:
-                    # self.list = cache.get(seasons.Seasons().tvdb_list, 1, tvshowtitle, year, imdb, tvdb, self.lang, '-1')
-                    # num = [x for x, y in enumerate(self.list) if y['season'] == str(season) and y['episode'] == str(episode)][-1]
-                    # self.list = [y for x, y in enumerate(self.list) if x >= num]
-
-                # self.episodeDirectory(self.list)
-                # return self.list
-            # else:
-                # self.list = seasons.Seasons().tvdb_list(tvshowtitle, year, imdb, tvdb, 'en', '-1')
-
-                # if not season is None:
-                    # self.list = [i for i in self.list if i['season'] == season]
-                # if not episode is None:
-                    # self.list = [i for i in self.list if i['episode'] == episode]
-                # return self.list
-        # except:
-            # pass
-
     def get(self, tvshowtitle, year, imdb, tvdb, season=None, episode=None, idx=True):
         from resources.lib.menus import seasons
         try:
@@ -315,6 +289,45 @@ class Episodes:
         except:
             pass
 
+    # def calendar(self, url):
+        # try:
+            # try:
+                # url = getattr(self, url + '_link')
+            # except:
+                # pass
+
+            # if self.trakt_link in url and url == self.onDeck_link:
+                # self.list = cache.get(self.trakt_episodes_list, 1, url, self.trakt_user, self.lang)
+
+
+            # elif self.trakt_link in url and url == self.progress_link:
+                # self.list = cache.get(self.trakt_progress_list, 0.3, url, self.trakt_user, self.lang)
+                # self.sort()
+
+            # elif self.trakt_link in url and url == self.mycalendar_link:
+                # self.list = cache.get(self.trakt_episodes_list, 0.1, url, self.trakt_user, self.lang)
+                # self.sort(dateSort=True)
+
+            # elif self.trakt_link in url and '/users/' in url:
+                # self.list = cache.get(self.trakt_list, 0.1, url, self.trakt_user, True)
+                # self.list = self.list[::-1]
+
+            # elif self.trakt_link in url and not url == self.onDeck_link:
+                # self.list = cache.get(self.trakt_list, 1, url, self.trakt_user, True)
+
+            # elif self.tvmaze_link in url and url == self.added_link:
+                # urls = [i['url'] for i in self.calendars(idx=False)][:5]
+                # self.list = []
+                # for url in urls:
+                    # self.list += cache.get(self.tvmaze_list, 720, url, True)
+
+            # elif self.tvmaze_link in url:
+                # self.list = cache.get(self.tvmaze_list, 1, url, False)
+
+            # self.episodeDirectory(self.list)
+            # return self.list
+        # except:
+            # pass
 
     def calendars(self, idx=True):
         m = control.lang(32060).encode('utf-8').split('|')
@@ -1002,7 +1015,6 @@ class Episodes:
                 pass
 
         items = items[:100]
-
         threads = []
         for i in items:
             threads.append(workers.Thread(items_list, i))
@@ -1235,7 +1247,8 @@ class Episodes:
                     writer = ''
                 writer = [x for x in writer.split('|') if not x == '']
                 writer = ' / '.join(writer)
-                if writer == '': writer = '0'
+                if writer == '':
+                    writer = '0'
                 writer = client.replaceHTMLCodes(writer)
                 writer = writer.encode('utf-8')
 

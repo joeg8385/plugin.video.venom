@@ -39,14 +39,14 @@ class Collections:
         self.imdb_link = 'https://www.imdb.com'
 
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
-        if self.imdb_user == '' or self.imdb_user is None:
-            self.imdb_user = '98341406'
 
         self.tmdb_key = control.setting('tm.user')
         if self.tmdb_key == '' or self.tmdb_key is None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
         self.user = str(self.imdb_user) + str(self.tmdb_key)
+
+        self.disable_fanarttv = control.setting('disable.fanarttv')
 
         self.tmdb_link = 'https://api.themoviedb.org'
         self.tmdb_api_link = 'https://api.themoviedb.org/3/list/%s?api_key=%s' % ('%s', '%s')
@@ -56,7 +56,6 @@ class Collections:
         self.imdblist2_link = 'https://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
         self.imdbwatchlist_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
         self.imdbwatchlist2_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
-
 
 # Christmas Movies
         self.xmasmovies_link = 'https://api.themoviedb.org/3/list/32770?api_key=%s' % (self.tmdb_key)
@@ -846,7 +845,7 @@ class Collections:
                 plot = plot.encode('utf-8')
 
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa,
-                                            'director': director, 'cast': cast, 'plot': plot, 'tagline': '0', 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
+                                            'director': director, 'cast': cast, 'plot': plot, 'tagline': '0', 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
             except:
                 pass
 
@@ -927,9 +926,11 @@ class Collections:
             if not mpaa:
                 mpaa = '0'
 
-            tagline = item.get('tagline', '0')
+            # tagline = item.get('tagline', '0')
+            tagline = item.get('tagline')
 
-            plot = item.get('overview', '0')
+            # plot = item.get('overview', '0')
+            plot = item.get('overview')
 
             people = trakt.getPeople(imdb, 'movies')
 
@@ -957,21 +958,22 @@ class Collections:
 
             item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'premiered': premiered,
                         'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
-                        'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'poster': '0', 'poster2': '0', 'poster3': '0',
-                        'banner': '0', 'fanart': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
+                        'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': '0',
+                        'banner': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
                         'metacache': False}
 
             meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
             # fanart_thread = threading.Thread
-            from resources.lib.indexers import fanarttv
-            fanarttv_art = fanarttv.get_movie_art(imdb)
+            if not self.disable_fanarttv == 'true':
+                from resources.lib.indexers import fanarttv
+                fanarttv_art = fanarttv.get_movie_art(imdb, tmdb)
 
-            if not fanarttv_art is None:
-                item.update(fanarttv_art)
-                meta.update(item)
+                if not fanarttv_art is None:
+                    item.update(fanarttv_art)
+                    meta.update(item)
 
-            if item.get('poster2') == '0' or item.get('fanart2') == '0':
+            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') and self.disable_fanarttv == 'true':
                 try:
                     from resources.lib.indexers.tmdb import Movies
                     tmdb_art = Movies().tmdb_art(tmdb)

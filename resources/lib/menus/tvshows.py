@@ -17,7 +17,7 @@ from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
-from resources.lib.modules import utils
+from resources.lib.modules import utils, log_utils
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -45,10 +45,10 @@ class TVshows:
         self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
 
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
-        if self.imdb_user == '' or self.imdb_user is None:
-            self.imdb_user = '98341406'
 
         self.user = str(self.imdb_user) + str(self.tvdb_key)
+
+        self.disable_fanarttv = control.setting('disable.fanarttv')
 
         self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
         self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
@@ -79,7 +79,7 @@ class TVshows:
 
         self.trakt_user = control.setting('trakt.user').strip()
         self.trakt_link = 'http://api.trakt.tv'
-        self.search_link = 'http://api.trakt.tv/search/show?limit=20&page=1&query='
+        self.search_link = 'http://api.trakt.tv/search/show?limit=%d&page=1&query=' % self.count
 
         self.trakttrending_link = 'http://api.trakt.tv/shows/trending?page=1&limit=%d' % self.count
         self.traktpopular_link = 'http://api.trakt.tv/shows/popular?page=1&limit=%d' % self.count
@@ -894,8 +894,8 @@ class TVshows:
             except:
                 pass
 
-        self.list = sorted(self.list, key=lambda k: utils.title_key(k['name']))
-        return self.list
+        # self.list = sorted(self.list, key=lambda k: utils.title_key(k['name']))
+        # return self.list
 
         self.list = sorted(self.list, key=lambda k: re.sub('(^the |^a |^an )', '', k['name'].lower()))
         return self.list
@@ -946,10 +946,11 @@ class TVshows:
             tmdb = self.list[i]['tmdb'] if 'tmdb' in self.list[i] else '0'
             tvdb = self.list[i]['tvdb'] if 'tvdb' in self.list[i] else '0'
 
-            if imdb == '0' or tmdb == '0':
+            if imdb == '0' or tmdb == '0' or tvdb == '0':
                 try:
                     trakt_ids = trakt.SearchTVShow(urllib.quote_plus(self.list[i]['title']), self.list[i]['year'], full = False)[0]
                     trakt_ids = trakt_ids.get('show', '0')
+                    log_utils.log('trakt_ids = %s' % str(trakt_ids), __name__, log_utils.LOGDEBUG)
                     if imdb == '0':
                         imdb = trakt_ids.get('ids', {}).get('imdb', '0')
                         imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
@@ -966,6 +967,18 @@ class TVshows:
                             tmdb = '0'
                     except:
                         tmdb = '0'
+                # log_utils.log('tmdb = %s' % str(tmdb), __name__, log_utils.LOGDEBUG)
+
+                if tvdb == '0':
+                    try:
+                        tvdb = trakt_ids.get('ids', {}).get('tvdb', '0')
+                        tvdb = re.sub('[^0-9]', '', str(tvdb))
+                        if not tvdb:
+                            tvdb = '0'
+                    except:
+                        tvdb = '0'
+                # log_utils.log('tvdb = %s' % str(tvdb), __name__, log_utils.LOGDEBUG)
+
 
             if tvdb == '0' and not imdb == '0':
                 url = self.tvdb_by_imdb % imdb
@@ -1114,14 +1127,14 @@ class TVshows:
             meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
 
             # fanart_thread = threading.Thread
-            from resources.lib.indexers import fanarttv
-            fanarttv_art = fanarttv.get_tvshow_art(tvdb)
+            if not self.disable_fanarttv == 'true':
+                from resources.lib.indexers import fanarttv
+                fanarttv_art = fanarttv.get_tvshow_art(tvdb)
+                if not fanarttv_art is None:
+                    item.update(fanarttv_art)
+                    meta.update(item)
 
-            if not fanarttv_art is None:
-                item.update(fanarttv_art)
-                meta.update(item)
-
-            if item.get('poster2') == '0' or item.get('fanart2') == '0' and not tmdb == '0':
+            if (poster == '0' or 'fanart' == '0') and self.disable_fanarttv == 'true' and not tmdb == '0':
                 try:
                     from resources.lib.indexers.tmdb import TVshows
                     tmdb_art = TVshows().tmdb_art(tmdb)

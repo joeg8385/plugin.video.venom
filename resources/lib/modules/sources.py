@@ -190,7 +190,7 @@ class Sources:
 
                 item = control.item(label=label)
                 item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'banner': banner, 'clearart': clearart, 'clearlogo': clearlogo, 'discart': discart})
-                # item.setProperty('IsPlayable', isPlayable)
+                # item.setProperty('IsPlayable', 'true')
 
                 if not fanart == '0' and not fanart is None:
                     item.setProperty('Fanart_Image', fanart)

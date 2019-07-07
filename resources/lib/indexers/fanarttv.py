@@ -5,7 +5,7 @@
 '''
 import json
 
-from resources.lib.modules import client
+from resources.lib.modules import client, log_utils
 from resources.lib.modules import control
 
 
@@ -105,16 +105,25 @@ def get_tvshow_art(tvdb):
     return extended_art
 
 
-def get_movie_art(imdb):
+def get_movie_art(imdb, tmdb):
     url = base_url % ('movies', '%s')
     try:
-        art = client.request(url % imdb, headers=headers, timeout='30', error=True)
+        art = client.request(url % imdb, headers=headers, timeout='10', error=True)
         art = json.loads(art)
         # log_utils.log('imdb for art %s = %s' % (imdb, art), __name__, log_utils.LOGDEBUG)
     except:
         return None
 
-
+    # Some Fanart items do not have an IMDb ID. In such a case try to use the TMDb ID.
+    try:
+        if 'error message' in art and art['error message'].lower() == 'not found' and tmdb and not tmdb == '0':
+            art = client.request(url % tmdb, headers=headers, timeout='10', error=True)
+            try:
+                art = json.loads(art)
+            except:
+                artmeta = False
+    except:
+        pass
 
     try:
         poster2 = art['movieposter']

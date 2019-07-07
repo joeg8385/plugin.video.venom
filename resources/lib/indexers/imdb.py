@@ -23,8 +23,6 @@ class movies:
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
-        if self.imdb_user == '' or self.imdb_user is None:
-            self.imdb_user = '98341406'
 
         self.lang = control.apiLanguage()['trakt']
 
@@ -207,7 +205,7 @@ class movies:
 
                 # fanart_thread = threading.Thread
                 from resources.lib.indexers import fanarttv
-                extended_art = fanarttv.get_movie_art(tmdb)
+                extended_art = fanarttv.get_movie_art(imdb, tmdb)
                 if not extended_art is None:
                     item.update(extended_art)
                     meta.update(item)

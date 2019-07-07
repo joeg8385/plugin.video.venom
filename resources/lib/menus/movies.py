@@ -44,14 +44,14 @@ class Movies:
         self.lang = control.apiLanguage()['trakt']
 
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
-        if self.imdb_user == '' or self.imdb_user is None:
-            self.imdb_user = '98341406'
 
         self.tmdb_key = control.setting('tm.user')
         if self.tmdb_key == '' or self.tmdb_key is None:
             self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
         self.user = str(self.imdb_user) + str(self.tmdb_key)
+
+        self.disable_fanarttv = control.setting('disable.fanarttv')
 
         self.hidecinema = control.setting('hidecinema')
         self.hidecinema_rollback = int(control.setting('hidecinema.rollback'))
@@ -788,7 +788,7 @@ class Movies:
 
                 list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating,
                                             'votes': votes, 'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'imdb': imdb,
-                                            'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
+                                            'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
             except:
                 pass
 
@@ -914,8 +914,9 @@ class Movies:
             year = item.get('year', 0)
             year = re.sub('[^0-9]', '', str(year))
 
-            # imdb = item.get('ids', {}).get('imdb', '0')
-            # imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
+            if imdb == '0':
+                imdb = item.get('ids', {}).get('imdb', '0')
+                imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
 
             tmdb = str(item.get('ids', {}).get('tmdb', 0))
 
@@ -977,27 +978,27 @@ class Movies:
 
             item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'premiered': premiered,
                         'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
-                        'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'poster': '0', 'poster2': '0', 'poster3': '0',
-                        'banner': '0', 'banner2': '0', 'fanart': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
+                        'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': '0',
+                        'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
                         'discart': '0', 'metacache': False}
 
             meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
             # fanart_thread = threading.Thread
-            from resources.lib.indexers import fanarttv
-            fanarttv_art = fanarttv.get_movie_art(imdb)
-            if not fanarttv_art is None:
-                item.update(fanarttv_art)
-                meta.update(item)
+            if not self.disable_fanarttv == 'true':
+                from resources.lib.indexers import fanarttv
+                fanarttv_art = fanarttv.get_movie_art(imdb, tmdb)
+                if not fanarttv_art is None:
+                    item.update(fanarttv_art)
+                    meta.update(item)
 
-            if item.get('poster2') == '0' or item.get('fanart2') == '0':
+            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') and self.disable_fanarttv == 'true':
                 try:
                     from resources.lib.indexers.tmdb import Movies
                     tmdb_art = Movies().tmdb_art(tmdb)
                 except:
                     import traceback
                     traceback.print_exc()
-
                 item.update(tmdb_art)
                 meta.update(item)
 

@@ -71,7 +71,6 @@ class Player(xbmc.Player):
 
             item = control.item(path=url)
             item.setArt({'clearart': clearart, 'clearlogo': clearlogo, 'discart': discart, 'thumb': thumb, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart})
-            # item.setProperty("IsPlayable", "true")
 
             if self.media_type == 'episode':
                 self.episodeIDS = meta.get('episodeIDS')
@@ -138,62 +137,96 @@ class Player(xbmc.Player):
             if poster == '0': poster = control.addonPoster()
             if thumb == '0': thumb = control.addonThumb()
             if fanart == '0': fanart = control.addonFanart()
-            if clearart == '0': clearlart = control.addonThumb()
-            if clearlogo == '0': clearlogo = control.addonThumb()
+
+            if not 'mediatype' in meta:
+                meta.update({'mediatype': 'episode' if 'episode' in meta and meta['episode'] else 'movie'})
 
             return (poster, thumb, fanart, clearart, clearlogo, discart, meta)
         except:
+            import traceback
+            traceback.print_exc()
             pass
+
         try:
             if not self.media_type == 'movie':
                 raise Exception()
+
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["title", "originaltitle", "year", "genre", "studio", "country", "runtime", "rating", "votes", "mpaa", "director", "writer", "plot", "plotoutline", "tagline", "thumbnail", "file"]}, "id": 1}' % (self.year, str(int(self.year) + 1), str(int(self.year) - 1)))
             meta = unicode(meta, 'utf-8', errors = 'ignore')
             meta = json.loads(meta)['result']['movies']
+
             t = cleantitle.get(self.title)
             meta = [i for i in meta if self.year == str(i['year']) and (t == cleantitle.get(i['title']) or t == cleantitle.get(i['originaltitle']))][0]
+            if not 'mediatype' in meta:
+                meta.update({'mediatype': 'movie'})
+
             for k, v in meta.iteritems():
                 if type(v) == list:
-                    try: meta[k] = str(' / '.join([i.encode('utf-8') for i in v]))
-                    except: meta[k] = ''
+                    try:
+                        meta[k] = str(' / '.join([i.encode('utf-8') for i in v]))
+                    except:
+                        meta[k] = ''
                 else:
-                    try: meta[k] = str(v.encode('utf-8'))
-                    except: meta[k] = str(v)
+                    try:
+                        meta[k] = str(v.encode('utf-8'))
+                    except:
+                        meta[k] = str(v)
+
             if 'plugin' not in control.infoLabel('Container.PluginName'):
                 self.DBID = meta['movieid']
+
             poster = thumb = meta['thumbnail']
-            return (poster, thumb, meta)
+            # return (poster, thumb, meta)
+            return (poster, thumb, '', '', '', '', meta)
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         try:
             if not self.media_type == 'episode':
                 raise Exception()
+
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["title", "year", "thumbnail", "file"]}, "id": 1}' % (self.year, str(int(self.year) + 1), str(int(self.year) - 1)))
             meta = unicode(meta, 'utf-8', errors = 'ignore')
             meta = json.loads(meta)['result']['tvshows']
+
             t = cleantitle.get(self.title)
             meta = [i for i in meta if self.year == str(i['year']) and t == cleantitle.get(i['title'])][0]
-            tvshowid = meta['tvshowid'] ; poster = meta['thumbnail']
+
+            tvshowid = meta['tvshowid']
+            poster = meta['thumbnail']
+
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params":{ "tvshowid": %d, "filter":{"and": [{"field": "season", "operator": "is", "value": "%s"}, {"field": "episode", "operator": "is", "value": "%s"}]}, "properties": ["title", "season", "episode", "showtitle", "firstaired", "runtime", "rating", "director", "writer", "plot", "thumbnail", "file"]}, "id": 1}' % (tvshowid, self.season, self.episode))
             meta = unicode(meta, 'utf-8', errors = 'ignore')
             meta = json.loads(meta)['result']['episodes'][0]
+            if not 'mediatype' in meta:
+                meta.update({'mediatype': 'episode'})
+
             for k, v in meta.iteritems():
                 if type(v) == list:
-                    try: meta[k] = str(' / '.join([i.encode('utf-8') for i in v]))
-                    except: meta[k] = ''
+                    try:
+                        meta[k] = str(' / '.join([i.encode('utf-8') for i in v]))
+                    except:
+                        meta[k] = ''
                 else:
-                    try: meta[k] = str(v.encode('utf-8'))
-                    except: meta[k] = str(v)
+                    try:
+                        meta[k] = str(v.encode('utf-8'))
+                    except:
+                        meta[k] = str(v)
+
             if 'plugin' not in control.infoLabel('Container.PluginName'):
                 self.DBID = meta['episodeid']
-            thumb = meta['thumbnail']
-            return (poster, thumb, meta)
-        except:
-            pass
 
-        poster, thumb, meta = '', '', {'title': self.name}
-        return (poster, thumb, meta)
+            thumb = meta['thumbnail']
+
+            return (poster, thumb, '', '', '', '', meta)
+            # return (poster, thumb, meta)
+        except:
+            import traceback
+            traceback.print_exc()
+            poster, thumb, fanart, clearart, clearlogo, discart, meta = '', '', '', '', '', '', {'title': self.name}
+            return (poster, thumb, fanart, clearart, clearlogo, discart, meta)
 
 
     def getWatchedPercent(self):
@@ -552,14 +585,16 @@ class Subtitles:
                 raise Exception()
 
             server = xmlrpclib.Server('http://api.opensubtitles.org/xml-rpc', verbose=0)
-            token = server.LogIn('', '', 'en', 'XBMC_Subtitles_v1')['token']
-            sublanguageid = ','.join(langs) ; imdbid = re.sub('[^0-9]', '', imdb)
+            token = server.LogIn('', '', 'en', 'XBMC_Subtitles_v1')
+            token = token['token']
+            sublanguageid = ','.join(langs)
+            imdbid = re.sub('[^0-9]', '', imdb)
+
             if not (season is None or episode is None):
                 result = server.SearchSubtitles(token, [{'sublanguageid': sublanguageid, 'imdbid': imdbid, 'season': season, 'episode': episode}])['data']
                 fmt = ['hdtv']
             else:
                 result = server.SearchSubtitles(token, [{'sublanguageid': sublanguageid, 'imdbid': imdbid}])['data']
-
                 try:
                     vidPath = xbmc.Player().getPlayingFile()
                 except:
@@ -575,8 +610,12 @@ class Subtitles:
                 filter += [i for i in result if i['SubLanguageID'] == lang and any(x in i['MovieReleaseName'].lower() for x in fmt)]
                 filter += [i for i in result if i['SubLanguageID'] == lang and any(x in i['MovieReleaseName'].lower() for x in quality)]
                 filter += [i for i in result if i['SubLanguageID'] == lang]
-            try: lang = xbmc.convertLanguage(filter[0]['SubLanguageID'], xbmc.ISO_639_1)
-            except: lang = filter[0]['SubLanguageID']
+
+            try:
+                lang = xbmc.convertLanguage(filter[0]['SubLanguageID'], xbmc.ISO_639_1)
+            except:
+                lang = filter[0]['SubLanguageID']
+
             content = [filter[0]['IDSubtitleFile'],]
             content = server.DownloadSubtitles(token, content)
             content = base64.b64decode(content['data'][0]['data'])

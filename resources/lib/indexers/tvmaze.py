@@ -206,8 +206,6 @@ class tvshows:
         self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
 
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
-        if self.imdb_user == '' or self.imdb_user is None:
-            self.imdb_user = '98341406'
 
         self.user = str(self.imdb_user) + str(self.tvdb_key)
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.0.1" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.0.2" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,18 +36,18 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[COLOR yellow]--[/COLOR][I] Fixed two missing Default icons from last update.  Also
-    added a bunch more to now use skin Default styles.
-    Best seen with Aura skin.[/I]
-[COLOR yellow]--[/COLOR][I] Added new setting option "Page Item Limit".  You can now
-    set the number of list items per page for Movies and
-    TV Shows. Note TMDb api default left at 20 so this
-    new option works for IMDb and Trakt lists[/I]
-[COLOR yellow]--[/COLOR][I] Fixed occasional File Lock issue under
-    some conditions.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed query jump to ResolveURL settings page for PM
-    and RD
-    due to new snappylink added to ResolveURL.[/I]
+[B][COLOR red]Update - v3.0.2 - July 06, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed IMDb user key issue[/I]
+[COLOR yellow]--[/COLOR][I] Added new option to "Disable Extended artwork(fanart.tv).
+    This helps shorten some menu load times at the loss
+    of extra poster, extra fanart, clearart and discart.  I've
+    set this up to gather at a min poster and fanart from
+    either IMDb, TMDb, or TVDb.[/I]
+[COLOR yellow]--[/COLOR][I] Changed some setting options from "enum" type to
+    "select" type.  Instead of having to arrow through the
+    options you will now have a pop up list to show you
+    all available options in one shot. Options with only
+    2 items I left as "enum" type.[/I]
 		</news>
 	</extension>
 

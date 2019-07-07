@@ -1,3 +1,16 @@
+[B][COLOR red]Update - v3.0.2 - July 06, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed IMDb user key issue[/I]
+[COLOR yellow]--[/COLOR][I] Added new option to "Disable Extended artwork(fanart.tv).
+    This helps shorten some menu load times at the loss
+    of extra poster, extra fanart, clearart and discart.  I've
+    set this up to gather at a min poster and fanart from
+    either IMDb, TMDb, or TVDb.[/I]
+[COLOR yellow]--[/COLOR][I] Changed some setting options from "enum" type to
+    "select" type.  Instead of having to arrow through the
+    options you will now have a pop up list to show you
+    all available options in one shot. Options with only
+    2 items I left as "enum" type.[/I]
+
 [B][COLOR red]Update - v3.0.1 - July 03, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Removed caching of Trakt Progress list. Data should now
     refresh and be current instantly[/I]

@@ -80,7 +80,7 @@ msgid "Page Item Limit"
 msgstr ""
 
 msgctxt "#32012"
-msgid ""
+msgid "Disable Extended artwork(fanart.tv)"
 msgstr ""
 
 msgctxt "#32013"
