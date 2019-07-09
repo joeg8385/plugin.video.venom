@@ -11,10 +11,10 @@
 		<setting id="page.item.limit" type="slider" label="32011" default="20" range="10,60" option="int" />
 		<setting id="fanart" type="bool" label="32318" default="true" />
 		<setting id="disable.fanarttv" type="bool" label="32012" default="false" />
+		<setting id="disable.fanarttv.notice" type="text" label="  Clear Metadata cache if changed" default="" enable="false" />
 		<setting id="hidecinema" type="bool" label="32571" default="false" />
 		<setting id="hidecinema.rollback" type="slider" label="40063" enable="eq(-1,true)" default="6" range="1,12" option="int" />
 		<setting id="navi.xmascollections" type="bool" label="40064" default="false" />
-<!-- 		<setting id="newmovies.widget" type="enum" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="5" /> -->
 		<setting id="newmovies.widget" type="select" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="5" />
 		<setting id="mylists.widget" type="bool" label="32329" default="true" />
 		<setting label="My Movies and Collections" type="lsep" />
@@ -56,7 +56,7 @@
 		<setting type="lsep" label="40025" />
 		<setting type="action" action="InstallAddon(service.upnext)" label="40027" option="close" visible="!System.HasAddon(service.upnext)"/>
 		<setting type="bool" id="enable.upnext" default="false" label="40028" visible="System.HasAddon(service.upnext)" />
-		<setting id="upnext.notice" type="text" label="If enabled Episodes are hard coded to Auto play" default="" enable="false" />   
+		<setting id="upnext.notice" type="text" label="  If enabled Episodes are hard coded to Auto play" default="" enable="false" />
 		<setting type="slider" id="upnext.time" enable="eq(-2,true)" visible="eq(-2,true)" default="60" label="40029" option="int" range="10,60" />
 		<setting id="auto.playlistcreate" type="bool" label="40030" default="true" />
 		<!-- <setting id="tvshows.unwatched.enabled" type="bool" label="33891" default="true" /> -->

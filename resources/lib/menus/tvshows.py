@@ -1235,7 +1235,7 @@ class TVshows:
                 if thumb == '0' and 'thumb' in i: thumb = i['thumb']
 
                 banner = '0'
-                # if banner == '0' and 'banner3' in i: banner = i['banner3']
+                if banner == '0' and 'banner3' in i: banner = i['banner3']
                 if banner == '0' and 'banner2' in i: banner = i['banner2']
                 if banner == '0' and 'banner' in i: banner = i['banner']
 

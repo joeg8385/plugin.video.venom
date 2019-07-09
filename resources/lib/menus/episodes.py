@@ -17,7 +17,7 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import metacache
-from resources.lib.modules import utils, log_utils
+from resources.lib.modules import utils
 from resources.lib.extensions import tools
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
@@ -1752,6 +1752,9 @@ class Episodes:
                 clearart = '0'
                 if clearart == '0' and 'clearart' in i: clearart = i['clearart']
 
+                landscape = '0'
+                if landscape == '0' and 'landscape' in i: landscape = i['landscape']
+
                 if poster == '0': poster = addonPoster
                 if icon == '0': icon = poster
                 if thumb == '0': thumb = poster
@@ -1773,7 +1776,8 @@ class Episodes:
                     art.update({'clearlogo': clearlogo})
                 if not clearart == '0' and not clearart is None:
                     art.update({'clearart': clearart})
-
+                if not landscape == '0' and not landscape is None:
+                    art.update({'landscape': landscape})
 
 ####-Context Menu and Overlays-####
                 cm = []

@@ -1098,19 +1098,24 @@ class Movies:
                 poster = poster[0] if poster else addonPoster
                 meta.update({'poster': poster})
 
+                poster = '0'
+                if poster == '0' and 'poster3' in i: poster = i['poster3']
+                if poster == '0' and 'poster2' in i: poster = i['poster2']
+                if poster == '0' and 'poster' in i: poster = i['poster']
+
                 icon = '0'
                 if icon == '0' and 'icon' in i: icon = i['icon']
 
                 thumb = '0'
                 if thumb == '0' and 'thumb' in i: thumb = i['thumb']
 
-                banner = '0'
-                if banner == '0' and 'banner' in i: banner = i['banner']
+                # thumb = '0'
+                # if thumb == '0' and 'landscape' in i: thumb = i['landscape']
 
-                poster = '0'
-                if poster == '0' and 'poster3' in i: poster = i['poster3']
-                if poster == '0' and 'poster2' in i: poster = i['poster2']
-                if poster == '0' and 'poster' in i: poster = i['poster']
+                banner = '0'
+                if banner == '0' and 'banner3' in i: banner = i['banner3']
+                if banner == '0' and 'banner2' in i: banner = i['banner2']
+                if banner == '0' and 'banner' in i: banner = i['banner']
 
                 fanart = '0'
                 if settingFanart:

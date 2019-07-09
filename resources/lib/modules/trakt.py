@@ -706,8 +706,10 @@ def _seasonCountRetrieve(imdb):
 
         seasons = indicators['seasons']
         return [{'total': season['aired'], 'watched': season['completed'], 'unwatched': season['aired'] - season['completed']} for season in seasons]
-
+        # return [{season['number']: {'total': season['aired'], 'watched': season['completed'], 'unwatched': season['aired'] - season['completed']} for season in seasons}]
     except:
+        import traceback
+        traceback.print_exc()
         return None
 
 
@@ -726,7 +728,7 @@ def markMovieAsNotWatched(imdb):
 def markTVShowAsWatched(imdb, tvdb):
     if imdb and not imdb.startswith('tt'):
         imdb = 'tt' + imdb
-    result = getTrakt('/sync/history', {"shows": [{"ids": {"tvdb": tvdb}}]})
+    result = getTrakt('/sync/history', {"shows": [{"ids": {"tvdb": tvdb}}]})[0]
     seasonCount(imdb)
     return result
 
@@ -734,7 +736,7 @@ def markTVShowAsWatched(imdb, tvdb):
 def markTVShowAsNotWatched(imdb, tvdb):
     if imdb and not imdb.startswith('tt'):
         imdb = 'tt' + imdb
-    result = getTrakt('/sync/history/remove', {"shows": [{"ids": {"tvdb": tvdb}}]})
+    result = getTrakt('/sync/history/remove', {"shows": [{"ids": {"tvdb": tvdb}}]})[0]
     seasonCount(imdb)
     return result
 
@@ -743,7 +745,7 @@ def markSeasonAsWatched(imdb, tvdb, season):
     if imdb and not imdb.startswith('tt'):
         imdb = 'tt' + imdb
     season = int('%01d' % int(season))
-    result = getTrakt('/sync/history', {"shows": [{"seasons": [{"number": season}], "ids": {"tvdb": tvdb}}]})
+    result = getTrakt('/sync/history', {"shows": [{"seasons": [{"number": season}], "ids": {"tvdb": tvdb}}]})[0]
     seasonCount(imdb)
     return result
 
@@ -752,7 +754,7 @@ def markSeasonAsNotWatched(imdb, tvdb, season):
     if imdb and not imdb.startswith('tt'):
         imdb = 'tt' + imdb
     season = int('%01d' % int(season))
-    result = getTrakt('/sync/history/remove', {"shows": [{"seasons": [{"number": season}], "ids": {"tvdb": tvdb}}]})
+    result = getTrakt('/sync/history/remove', {"shows": [{"seasons": [{"number": season}], "ids": {"tvdb": tvdb}}]})[0]
     seasonCount(imdb)
     return result
 
@@ -761,7 +763,7 @@ def markEpisodeAsWatched(imdb, tvdb, season, episode):
     if imdb and not imdb.startswith('tt'):
         imdb = 'tt' + imdb
     season, episode = int('%01d' % int(season)), int('%01d' % int(episode))
-    result = getTrakt('/sync/history', {"shows": [{"seasons": [{"episodes": [{"number": episode}], "number": season}], "ids": {"tvdb": tvdb}}]})
+    result = getTrakt('/sync/history', {"shows": [{"seasons": [{"episodes": [{"number": episode}], "number": season}], "ids": {"tvdb": tvdb}}]})[0]
     seasonCount(imdb)
     return result
 
@@ -770,7 +772,7 @@ def markEpisodeAsNotWatched(imdb, tvdb, season, episode):
     if imdb and not imdb.startswith('tt'):
         imdb = 'tt' + imdb
     season, episode = int('%01d' % int(season)), int('%01d' % int(episode))
-    result = getTrakt('/sync/history/remove', {"shows": [{"seasons": [{"episodes": [{"number": episode}], "number": season}], "ids": {"tvdb": tvdb}}]})
+    result = getTrakt('/sync/history/remove', {"shows": [{"seasons": [{"episodes": [{"number": episode}], "number": season}], "ids": {"tvdb": tvdb}}]})[0]
     seasonCount(imdb)
     return result
 

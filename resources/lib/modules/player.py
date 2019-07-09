@@ -94,9 +94,9 @@ class Player(xbmc.Player):
     def play_playlist(self):
         try:
             playlist = control.playlist.getPlayListId()
-            log_utils.log('playlist = %s' % playlist, __name__, log_utils.LOGDEBUG)
+            # log_utils.log('playlist = %s' % playlist, __name__, log_utils.LOGDEBUG)
             playlistSize = control.playlist.size()
-            log_utils.log('playlistSize = %s' % str(playlistSize), __name__, log_utils.LOGDEBUG)
+            # log_utils.log('playlistSize = %s' % str(playlistSize), __name__, log_utils.LOGDEBUG)
             control.player.play(control.playlist)
             xbmc.sleep(2000)
             # control.closeAll()
@@ -272,11 +272,9 @@ class Player(xbmc.Player):
         else:
             overlay = '6'
 
-        if self.playback_resumed is True:
-            self.offset = '0'
-
         for i in range(0, 240):
-            if self.isPlayback(): break
+            if self.isPlayback():
+                break
             xbmc.sleep(1000)
 
         while self.isPlayingVideo():
@@ -288,13 +286,13 @@ class Player(xbmc.Player):
                 if not self.playback_started:
                     self.start_playback()
 
-                if not self.offset == '0' and self.playback_resumed is False:
-                # if not self.offset == '0':
+                # if not self.offset == '0' and self.playback_resumed is False:
+                # # if not self.offset == '0':
                     # from resources.lib.modules import log_utils
-                    # log_utils.log2("Seeking %s seconds" % self.offset, 'info')
-                    self.seekTime(float(self.offset))
-                    self.offset = '0'
-                    self.playback_resumed = True
+                    # log_utils.log('Seeking %s seconds' % self.offset, __name__, log_utils.LOGDEBUG)
+                    # self.seekTime(float(self.offset))
+                    # self.offset = '0'
+                    # self.playback_resumed = True
 
                 try:
                     self.current_time = self.getTime()
@@ -314,9 +312,8 @@ class Player(xbmc.Player):
                             control.window.setProperty(pname, '6')
                             playcount.markMovieDuringPlayback(self.imdb, '6')
                     except:
-                        import traceback
-                        traceback.print_exc()
                         continue
+                    xbmc.sleep(2000)
 
                 elif self.media_type == 'episode':
                     try:
@@ -327,9 +324,8 @@ class Player(xbmc.Player):
                             control.window.setProperty(pname, '6')
                             playcount.markEpisodeDuringPlayback(self.imdb, self.tvdb, self.season, self.episode, '6')
                     except:
-                        import traceback
-                        traceback.print_exc()
                         continue
+                    xbmc.sleep(2000)
 
             except:
                 import traceback
@@ -337,10 +333,9 @@ class Player(xbmc.Player):
                 xbmc.sleep(1000)
                 continue
 
-            xbmc.sleep(3000)
-
+        xbmc.sleep(3000)
         control.window.clearProperty(pname)
-        self.onPlayBackEnded()
+        # self.onPlayBackEnded()
 
 
     def start_playback(self):
@@ -356,14 +351,19 @@ class Player(xbmc.Player):
             self.media_length = self.getTotalTime()
 
             if self.media_type == 'episode' and control.setting('enable.upnext') == 'true':
+                if int(control.playlist.getposition()) == -1:
+                    control.playlist.clear()
+                    return
                 source_id = 'plugin.video.venom'
                 return_id = 'plugin.video.venom_play_action'
+
                 try:
+                    # if int(control.playlist.getposition()) < (control.playlist.size() - 1) and not int(control.playlist.getposition()) == -1:
                     if int(control.playlist.getposition()) < (control.playlist.size() - 1):
+                        # log_utils.log('playlist.getposition = %s' % int(control.playlist.getposition()), __name__, log_utils.LOGDEBUG)
                         if self.media_type is None:
                             return
                         next_info = self.next_info()
-                        # xbmc.log('line 469 next_info = %s' % next_info, 2)
                         AddonSignals.sendSignal('upnext_data', next_info, source_id)
                         AddonSignals.registerSlot('upnextprovider', return_id, self.signals_callback)
                 except:
@@ -382,9 +382,9 @@ class Player(xbmc.Player):
             return
         try:
             if self.media_type == 'movie':
-                rpc = '{"jsonrpc": "2.0", "method": "VideoLibrary.SetMovieDetails", "params": {"movieid" : %s, "playcount" : 1 }, "id": 1 }' % str(self.DBID)
+                rpc = '{"jsonrpc": "2.0", "method": "VideoLibrary.SetMovieDetails", "params": {"movieid": %s, "playcount": 1 }, "id": 1 }' % str(self.DBID)
             elif self.media_type == 'episode':
-                rpc = '{"jsonrpc": "2.0", "method": "VideoLibrary.SetEpisodeDetails", "params": {"episodeid" : %s, "playcount" : 1 }, "id": 1 }' % str(self.DBID)
+                rpc = '{"jsonrpc": "2.0", "method": "VideoLibrary.SetEpisodeDetails", "params": {"episodeid": %s, "playcount": 1 }, "id": 1 }' % str(self.DBID)
             control.jsonrpc(rpc)
             control.refresh()
         except:
@@ -416,11 +416,13 @@ class Player(xbmc.Player):
                 xbmc.sleep(1000)
 
         if not self.offset == '0' and self.playback_resumed is False:
+            log_utils.log('Seeking %.2f minutes' % (float(self.offset) / 60), __name__, log_utils.LOGDEBUG)
             self.seekTime(float(self.offset))
             self.playback_resumed = True
 
         if control.setting('subtitles') == 'true':
             Subtitles().get(self.name, self.imdb, self.season, self.episode)
+
         self.start_playback()
         xbmc.log('onAVStarted callback', 2)
 
@@ -435,16 +437,19 @@ class Player(xbmc.Player):
                 xbmc.sleep(1000)
 
         if not self.offset == '0' and self.playback_resumed is False:
+            log_utils.log('Seeking %.2f minutes' % (float(self.offset) / 60), __name__, log_utils.LOGDEBUG)
             self.seekTime(float(self.offset))
             self.playback_resumed = True
 
         if control.setting('subtitles') == 'true':
             Subtitles().get(self.name, self.imdb, self.season, self.episode)
+
         self.start_playback()
         xbmc.log('onPlayBackStarted callback', 2)
 
 
     def onPlayBackStopped(self):
+        xbmc.sleep(3000)
         Bookmarks().reset(self.current_time, self.media_length, self.name, self.year)
         if control.setting('crefresh') == 'true':
             xbmc.executebuiltin('Container.Refresh')
@@ -459,8 +464,8 @@ class Player(xbmc.Player):
 
 
     def onPlayBackEnded(self):
+        Bookmarks().reset(self.current_time, self.media_length, self.name, self.year)
         self.libForPlayback()
-        # self.onPlayBackStopped()
         if control.setting('crefresh') == 'true':
             xbmc.executebuiltin('Container.Refresh')
         xbmc.log('onPlayBackEnded callback', 2)
@@ -475,7 +480,6 @@ class Player(xbmc.Player):
 
 
     def signals_callback(self, data):
-        # xbmc.log('line 491 from UpNext data = %s' % data, 2)
         if not self.play_next_triggered:
             if not self.scrobbled:
                 try:
@@ -692,9 +696,9 @@ class Bookmarks:
 
 
     def reset(self, current_time, media_length, name, year='0'):
-        xbmc.log('line 665 Bookmarks reset call', 2)
-        xbmc.log('line 666 current_time = %s' % current_time, 2)
-        xbmc.log('line 667 media_length = %s' % media_length, 2)
+        log_utils.log('Bookmarks reset call', __name__, log_utils.LOGDEBUG)
+        log_utils.log('current_time = %s' % str(float(current_time / 60)), __name__, log_utils.LOGDEBUG)
+        log_utils.log('media_length = %s' % str(float(media_length / 60)), __name__, log_utils.LOGDEBUG)
         try:
             if not control.setting('bookmarks') == 'true' or media_length == 0 or current_time == 0:
                 return

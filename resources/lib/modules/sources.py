@@ -122,15 +122,19 @@ class Sources:
         elif 'poster2' in meta: poster = meta.get('poster2')
         elif 'poster' in meta: poster = meta.get('poster')
 
-        thumb = '0'
-        if 'thumb3' in meta: thumb = meta.get('thumb3')
-        elif 'thumb2' in meta: thumb = meta.get('thumb2')
-        elif 'thumb' in meta: thumb = meta.get('thumb')
-
         fanart = '0'
         if 'fanart3' in meta: fanart = meta.get('fanart3')
         elif 'fanart2' in meta: fanart = meta.get('fanart2')
         elif 'fanart' in meta: fanart = meta.get('fanart')
+
+        thumb = '0'
+        if 'thumb3' in meta: thumb = meta.get('thumb3')
+        elif 'thumb2' in meta: thumb = meta.get('thumb2')
+        elif 'thumb' in meta: thumb = meta.get('thumb')
+        if thumb == '0':
+            thumb = poster
+        if thumb == '0':
+            thumb = fanart
 
         banner = '0'
         if 'banner' in meta: banner = meta.get('banner')

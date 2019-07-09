@@ -3,9 +3,10 @@
 '''
     Venom Add-on
 '''
+
 import json
 
-from resources.lib.modules import client, log_utils
+from resources.lib.modules import client
 from resources.lib.modules import control
 
 
@@ -23,10 +24,11 @@ lang = control.apiLanguage()['trakt']
 
 def get_tvshow_art(tvdb):
     url = base_url % ('tv', '%s')
-    try:
-        art = client.request(url % tvdb, headers=headers, timeout='30', error=True)
-        art = json.loads(art)
-    except:
+
+    art = client.request(url % tvdb, headers=headers, timeout='30', error=True)
+    art = json.loads(art)
+    # log_utils.log('tvdb for art %s = %s' % (tvdb, art), __name__, log_utils.LOGDEBUG)
+    if 'error message' in art and art['error message'].lower() == 'not found':
         return None
 
     try:
@@ -107,23 +109,19 @@ def get_tvshow_art(tvdb):
 
 def get_movie_art(imdb, tmdb):
     url = base_url % ('movies', '%s')
-    try:
-        art = client.request(url % imdb, headers=headers, timeout='10', error=True)
-        art = json.loads(art)
-        # log_utils.log('imdb for art %s = %s' % (imdb, art), __name__, log_utils.LOGDEBUG)
-    except:
-        return None
+
+    art = client.request(url % imdb, headers=headers, timeout='10', error=True)
+    art = json.loads(art)
+    # log_utils.log('imdb for art %s = %s' % (imdb, art), __name__, log_utils.LOGDEBUG)
+    # log_utils.log('imdb = %s and tmdb = %s' % (imdb, tmdb), __name__, log_utils.LOGDEBUG)
 
     # Some Fanart items do not have an IMDb ID. In such a case try to use the TMDb ID.
-    try:
-        if 'error message' in art and art['error message'].lower() == 'not found' and tmdb and not tmdb == '0':
-            art = client.request(url % tmdb, headers=headers, timeout='10', error=True)
-            try:
-                art = json.loads(art)
-            except:
-                artmeta = False
-    except:
-        pass
+    if 'error message' in art and art['error message'].lower() == 'not found' and tmdb and not tmdb == '0':
+        art = client.request(url % tmdb, headers=headers, timeout='10', error=True)
+        art = json.loads(art)
+        # log_utils.log('tmdb for art %s = %s' % (tmdb, art), __name__, log_utils.LOGDEBUG)
+        if 'error message' in art and art['error message'].lower() == 'not found':
+            return None
 
     try:
         poster2 = art['movieposter']
