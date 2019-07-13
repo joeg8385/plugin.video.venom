@@ -139,6 +139,7 @@ def cache_clear_all():
     cache_clear_search()
     cache_clear_bookmarks()
 
+
 def cache_clear_providers():
     try:
         cursor = _get_connection_cursor_providers()

@@ -415,16 +415,12 @@ class Movies:
 
         try:
             poster3 = art3['posters']
-            log_utils.log('poster3 = %s' % str(poster3), __name__, log_utils.LOGDEBUG)
             poster3 = [(x['width'], x['file_path']) for x in poster3]
-            log_utils.log('poster3 = %s' % str(poster3), __name__, log_utils.LOGDEBUG)
             poster3 = [x[1] for x in poster3]
-            log_utils.log('poster3 = %s' % str(poster3), __name__, log_utils.LOGDEBUG)
             poster3 = self.tmdb_poster + poster3[0]
-            log_utils.log('poster3 = %s' % str(poster3), __name__, log_utils.LOGDEBUG)
         except:
             poster3 = '0'
-            log_utils.log('poster3 = %s' % str(poster3), __name__, log_utils.LOGDEBUG)
+
         try:
             fanart3 = art3['backdrops']
             fanart3 = [(x['width'], x['file_path']) for x in fanart3]
@@ -812,16 +808,12 @@ class TVshows:
 
         try:
             poster3 = art3['posters']
-            log_utils.log('poster3 = %s' % str(poster3), __name__, log_utils.LOGDEBUG)
             poster3 = [(x['width'], x['file_path']) for x in poster3]
-            log_utils.log('poster3 = %s' % str(poster3), __name__, log_utils.LOGDEBUG)
             poster3 = [x[1] for x in poster3]
-            log_utils.log('poster3 = %s' % str(poster3), __name__, log_utils.LOGDEBUG)
             poster3 = self.tmdb_poster + poster3[0]
-            log_utils.log('poster3 = %s' % str(poster3), __name__, log_utils.LOGDEBUG)
         except:
             poster3 = '0'
-            log_utils.log('poster3 = %s' % str(poster3), __name__, log_utils.LOGDEBUG)
+
         try:
             fanart3 = art3['backdrops']
             fanart3 = [(x['width'], x['file_path']) for x in fanart3]

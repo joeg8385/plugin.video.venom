@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.0.4" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.0.5" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,13 +36,9 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.0.4 - July 09, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed poster art in source select list.[/I]
-[COLOR yellow]--[/COLOR][I] Watched indicator improvements.  Still it seems Kodi has
-    random failures causing you to back out and go
-    back in. Episode watched indicators were
-    previousely broken due to some typos, that is
-    now fixed.[/I]
+[B][COLOR red]Update - v3.0.5 - July 13, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed fanart.tv for some IMDb lists broken in update that
+added "Disable Extended artwork" option.[/I]
 		</news>
 	</extension>
 

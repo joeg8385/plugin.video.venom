@@ -713,6 +713,7 @@ class Movies:
                 poster = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
                 poster = client.replaceHTMLCodes(poster)
                 poster = poster.encode('utf-8')
+                # log_utils.log('poster = %s' % str(poster), __name__, log_utils.LOGDEBUG)
 
                 try: genre = client.parseDOM(item, 'span', attrs = {'class': 'genre'})[0]
                 except: genre = '0'
@@ -992,10 +993,11 @@ class Movies:
                     item.update(fanarttv_art)
                     meta.update(item)
 
-            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') and self.disable_fanarttv == 'true':
+            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') or (self.disable_fanarttv == 'true' and tmdb != '0'):
                 try:
                     from resources.lib.indexers.tmdb import Movies
                     tmdb_art = Movies().tmdb_art(tmdb)
+                    # log_utils.log('tmdb_art = %s' % str(tmdb_art), __name__, log_utils.LOGDEBUG)
                 except:
                     import traceback
                     traceback.print_exc()

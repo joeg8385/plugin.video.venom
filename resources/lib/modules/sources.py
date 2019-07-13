@@ -149,15 +149,15 @@ class Sources:
         discart = '0'
         if 'discart' in meta: discart = meta.get('discart')
 
-        if poster == '0':
+        if poster == '0' or poster is None:
             poster = control.addonPoster()
-        if banner == '0':
+        if banner == '0'or banner is None:
             banner = control.addonBanner()
         if not control.setting('fanart') == 'true':
             fanart = '0'
-        if fanart == '0':
+        if fanart == '0' or fanart is None:
             fanart = control.addonFanart()
-        if thumb == '0':
+        if thumb == '0' or fanart is None:
             thumb = control.addonFanart()
 
         sysimage = urllib.quote_plus(poster.encode('utf-8'))

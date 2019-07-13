@@ -112,8 +112,7 @@ def get_movie_art(imdb, tmdb):
 
     art = client.request(url % imdb, headers=headers, timeout='10', error=True)
     art = json.loads(art)
-    # log_utils.log('imdb for art %s = %s' % (imdb, art), __name__, log_utils.LOGDEBUG)
-    # log_utils.log('imdb = %s and tmdb = %s' % (imdb, tmdb), __name__, log_utils.LOGDEBUG)
+    # log_utils.log('imdb for art %s = %s' % (imdb, str(art)), __name__, log_utils.LOGDEBUG)
 
     # Some Fanart items do not have an IMDb ID. In such a case try to use the TMDb ID.
     if 'error message' in art and art['error message'].lower() == 'not found' and tmdb and not tmdb == '0':

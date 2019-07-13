@@ -1134,7 +1134,7 @@ class TVshows:
                     item.update(fanarttv_art)
                     meta.update(item)
 
-            if (poster == '0' or 'fanart' == '0') and self.disable_fanarttv == 'true' and not tmdb == '0':
+            if (poster == '0' or 'fanart' == '0') or (self.disable_fanarttv == 'true' and tmdb != '0'):
                 try:
                     from resources.lib.indexers.tmdb import TVshows
                     tmdb_art = TVshows().tmdb_art(tmdb)
