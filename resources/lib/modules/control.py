@@ -143,7 +143,8 @@ def get_plugin_url(queries):
                 queries[k] = queries[k].encode('utf-8')
         query = urllib.urlencode(queries)
     addon_id = sys.argv[0]
-    if not addon_id: addon_id = addonId()
+    if not addon_id:
+        addon_id = addonId()
     return addon_id + '?' + query
 
 

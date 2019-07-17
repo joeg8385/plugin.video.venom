@@ -62,7 +62,7 @@ class Player(xbmc.Player):
             self.imdb = imdb if imdb is not None else '0'
             self.tvdb = tvdb if tvdb is not None else '0'
             self.ids = {'imdb': self.imdb, 'tvdb': self.tvdb}
-            self.ids = dict((k, v) for k, v in self.ids.iteritems() if not v == '0')
+            self.ids = dict((k, v) for k, v in self.ids.iteritems() if v != '0')
 
             self.meta = meta
             self.offset = Bookmarks().get(self.name, self.year)
@@ -79,10 +79,15 @@ class Player(xbmc.Player):
 
             item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 
-            control.player.play(url, item)
+            if 'plugin' in control.infoLabel('Container.PluginName'):
+                control.player.play(url, item)
+
             xbmc.sleep(2000)
             control.closeAll()
-            control.resolve(syshandle, True, item)
+
+            if 'plugin' not in control.infoLabel('Container.PluginName'):
+                control.resolve(syshandle, True, item)
+
             control.window.setProperty('script.trakt.ids', json.dumps(self.ids))
             self.keepAlive()
             control.window.clearProperty('script.trakt.ids')
@@ -141,7 +146,7 @@ class Player(xbmc.Player):
             if thumb == '0': thumb = control.addonThumb()
             if fanart == '0': fanart = control.addonFanart()
 
-            if not 'mediatype' in meta:
+            if 'mediatype' not in meta:
                 meta.update({'mediatype': 'episode' if 'episode' in meta and meta['episode'] else 'movie'})
 
             return (poster, thumb, fanart, clearart, clearlogo, discart, meta)
@@ -151,7 +156,7 @@ class Player(xbmc.Player):
             pass
 
         try:
-            if not self.media_type == 'movie':
+            if self.media_type != 'movie':
                 raise Exception()
 
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["title", "originaltitle", "year", "genre", "studio", "country", "runtime", "rating", "votes", "mpaa", "director", "writer", "plot", "plotoutline", "tagline", "thumbnail", "file"]}, "id": 1}' % (self.year, str(int(self.year) + 1), str(int(self.year) - 1)))
@@ -160,7 +165,7 @@ class Player(xbmc.Player):
 
             t = cleantitle.get(self.title)
             meta = [i for i in meta if self.year == str(i['year']) and (t == cleantitle.get(i['title']) or t == cleantitle.get(i['originaltitle']))][0]
-            if not 'mediatype' in meta:
+            if 'mediatype' not in meta:
                 meta.update({'mediatype': 'movie'})
 
             for k, v in meta.iteritems():
@@ -187,7 +192,7 @@ class Player(xbmc.Player):
             pass
 
         try:
-            if not self.media_type == 'episode':
+            if self.media_type != 'episode':
                 raise Exception()
 
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["title", "year", "thumbnail", "file"]}, "id": 1}' % (self.year, str(int(self.year) + 1), str(int(self.year) - 1)))
@@ -203,7 +208,7 @@ class Player(xbmc.Player):
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params":{ "tvshowid": %d, "filter":{"and": [{"field": "season", "operator": "is", "value": "%s"}, {"field": "episode", "operator": "is", "value": "%s"}]}, "properties": ["title", "season", "episode", "showtitle", "firstaired", "runtime", "rating", "director", "writer", "plot", "thumbnail", "file"]}, "id": 1}' % (tvshowid, self.season, self.episode))
             meta = unicode(meta, 'utf-8', errors = 'ignore')
             meta = json.loads(meta)['result']['episodes'][0]
-            if not 'mediatype' in meta:
+            if 'mediatype' not in meta:
                 meta.update({'mediatype': 'episode'})
 
             for k, v in meta.iteritems():
@@ -305,10 +310,10 @@ class Player(xbmc.Player):
 
                 if self.media_type == 'movie':
                     try:
-                        if watcher is True and not property == '7':
+                        if watcher is True and property != '7':
                             control.window.setProperty(pname, '7')
                             playcount.markMovieDuringPlayback(self.imdb, '7')
-                        elif watcher is False and not property == '6':
+                        elif watcher is False and property != '6':
                             control.window.setProperty(pname, '6')
                             playcount.markMovieDuringPlayback(self.imdb, '6')
                     except:
@@ -317,10 +322,10 @@ class Player(xbmc.Player):
 
                 elif self.media_type == 'episode':
                     try:
-                        if watcher is True and not property == '7':
+                        if watcher is True and property != '7':
                             control.window.setProperty(pname, '7')
                             playcount.markEpisodeDuringPlayback(self.imdb, self.tvdb, self.season, self.episode, '7')
-                        elif watcher is False and not property == '6':
+                        elif watcher is False and property != '6':
                             control.window.setProperty(pname, '6')
                             playcount.markEpisodeDuringPlayback(self.imdb, self.tvdb, self.season, self.episode, '6')
                     except:
@@ -333,7 +338,7 @@ class Player(xbmc.Player):
                 xbmc.sleep(1000)
                 continue
 
-        xbmc.sleep(3000)
+        # xbmc.sleep(3000)
         control.window.clearProperty(pname)
         # self.onPlayBackEnded()
 
@@ -415,7 +420,7 @@ class Player(xbmc.Player):
             else:
                 xbmc.sleep(1000)
 
-        if not self.offset == '0' and self.playback_resumed is False:
+        if self.offset != '0' and self.playback_resumed is False:
             log_utils.log('Seeking %.2f minutes' % (float(self.offset) / 60), __name__, log_utils.LOGDEBUG)
             self.seekTime(float(self.offset))
             self.playback_resumed = True
@@ -436,7 +441,7 @@ class Player(xbmc.Player):
             else:
                 xbmc.sleep(1000)
 
-        if not self.offset == '0' and self.playback_resumed is False:
+        if self.offset != '0' and self.playback_resumed is False:
             log_utils.log('Seeking %.2f minutes' % (float(self.offset) / 60), __name__, log_utils.LOGDEBUG)
             self.seekTime(float(self.offset))
             self.playback_resumed = True
@@ -454,7 +459,7 @@ class Player(xbmc.Player):
         if control.setting('crefresh') == 'true':
             xbmc.executebuiltin('Container.Refresh')
         try:
-            if not self.current_time == 0 and self.media_length == 0:
+            if self.current_time != 0 and self.media_length == 0:
                 if (self.current_time / self.media_length) >= .90:
                     self.libForPlayback()
         except:
@@ -650,7 +655,7 @@ class Bookmarks:
 
     def get(self, name, year='0'):
         try:
-            if not control.setting('bookmarks') == 'true':
+            if control.setting('bookmarks') != 'true':
                 return self.offset
 
             idFile = hashlib.md5()
@@ -696,11 +701,11 @@ class Bookmarks:
 
 
     def reset(self, current_time, media_length, name, year='0'):
-        log_utils.log('Bookmarks reset call', __name__, log_utils.LOGDEBUG)
-        log_utils.log('current_time = %s' % str(float(current_time / 60)), __name__, log_utils.LOGDEBUG)
-        log_utils.log('media_length = %s' % str(float(media_length / 60)), __name__, log_utils.LOGDEBUG)
+        # log_utils.log('Bookmarks reset call', __name__, log_utils.LOGDEBUG)
+        # log_utils.log('current_time = %s' % str(float(current_time / 60)), __name__, log_utils.LOGDEBUG)
+        # log_utils.log('media_length = %s' % str(float(media_length / 60)), __name__, log_utils.LOGDEBUG)
         try:
-            if not control.setting('bookmarks') == 'true' or media_length == 0 or current_time == 0:
+            if control.setting('bookmarks') != 'true' or media_length == 0 or current_time == 0:
                 return
 
             try:

@@ -44,7 +44,8 @@ def getTrakt(url, post = None, cache = True, check = True, timestamp = None, ext
 
         headers = {'Content-Type': 'application/json', 'trakt-api-key': V2_API_KEY, 'trakt-api-version': '2'}
 
-        if not post is None: post = json.dumps(post)
+        if post is not None:
+            post = json.dumps(post)
 
         if direct or not valid:
             result = client.request(url, post = post, headers = headers)
@@ -131,7 +132,7 @@ def _cache(url, post = None, timestamp = None):
         data = database.Database(databaseName, connect = True)
         _cacheCreate(data)
         # post parameter already json.dumps from getTrakt.
-        post = ('"%s"' % post.replace('"', '""').replace("'", "''")) if not post is None else data._null()
+        post = ('"%s"' % post.replace('"', '""').replace("'", "''")) if post is not None else data._null()
         if timestamp is None:
             timestamp = int(time.time())
         data._insert('''
@@ -176,7 +177,8 @@ def _cacheProcess():
             # Execute the select and delete as atomic operations.
             data._lock()
             result = data._selectSingle('SELECT id, time, link, data FROM %s ORDER BY time ASC LIMIT 1;' % (databaseTable))
-            if not result: raise Exception()
+            if not result:
+                raise Exception()
             data._delete('DELETE FROM %s WHERE id IS %d;' % (databaseTable, result[0]), commit = True)
             data._unlock()
             result = getTrakt(url = result[2], post = json.loads(result[3]) if result[3] else None, cache = True, check = False, timestamp = result[1])
@@ -204,6 +206,7 @@ def authTrakt():
                 control.setSetting(id='trakt.token', value='')
                 control.setSetting(id='trakt.refresh', value='')
             raise Exception()
+
         result = getTraktAsJson('/oauth/device/code', {'client_id': V2_API_KEY})
         verification_url = (control.lang(32513) % result['verification_url']).encode('utf-8')
         user_code = (control.lang(32514) % result['user_code']).encode('utf-8')
@@ -212,22 +215,32 @@ def authTrakt():
         interval = result['interval']
         progressDialog = control.progressDialog
         progressDialog.create('Trakt', verification_url, user_code)
+
         for i in range(0, expires_in):
             try:
                 if progressDialog.iscanceled(): break
                 time.sleep(1)
-                if not float(i) % interval == 0: raise Exception()
+                if not float(i) % interval == 0:
+                    raise Exception()
                 r = getTraktAsJson('/oauth/device/token', {'client_id': V2_API_KEY, 'client_secret': CLIENT_SECRET, 'code': device_code})
-                if 'access_token' in r: break
+                if 'access_token' in r:
+                    break
             except:
                 pass
-        try: progressDialog.close()
-        except: pass
+
+        try:
+            progressDialog.close()
+        except:
+            pass
+
         token, refresh = r['access_token'], r['refresh_token']
         headers = {'Content-Type': 'application/json', 'trakt-api-key': V2_API_KEY, 'trakt-api-version': 2, 'Authorization': 'Bearer %s' % token}
+
         result = client.request(urlparse.urljoin(BASE_URL, '/users/me'), headers=headers)
         result = utils.json_loads_as_str(result)
+
         user = result['username']
+
         control.setSetting(id='trakt.user', value=user)
         control.setSetting(id='trakt.userHidden', value=user)
         control.setSetting(id='trakt.token', value=token)
@@ -265,7 +278,7 @@ def getTraktAddonMovieInfo():
         authorization = control.addon('script.trakt').getSetting('authorization')
     except:
         authorization = ''
-    if scrobble == 'true' and ExcludeHTTP == 'false' and not authorization == '':
+    if scrobble == 'true' and ExcludeHTTP == 'false' and authorization != '':
         return True
     else:
         return False
@@ -284,7 +297,7 @@ def getTraktAddonEpisodeInfo():
         authorization = control.addon('script.trakt').getSetting('authorization')
     except:
         authorization = ''
-    if scrobble == 'true' and ExcludeHTTP == 'false' and not authorization == '':
+    if scrobble == 'true' and ExcludeHTTP == 'false' and authorization != '':
         return True
     else:
         return False
@@ -294,13 +307,13 @@ def watch(imdb = None, tvdb = None, season = None, episode = None, refresh = Tru
     if tvdb is None:
         markMovieAsWatched(imdb)
         cachesyncMovies()
-    elif not episode is None:
+    elif episode is not None:
         markEpisodeAsWatched(imdb, tvdb, season, episode)
         cachesyncTV(imdb)
-    elif not season is None:
+    elif season is not None:
         markSeasonAsWatched(imdb, tvdb, season)
         cachesyncTV(imdb)
-    elif not tvdb is None:
+    elif tvdb is not None:
         markTVShowAsWatched(imdb, tvdb)
         cachesyncTV(imdb)
     else:
@@ -316,13 +329,13 @@ def unwatch(imdb = None, tvdb = None, season = None, episode = None, refresh = T
     if tvdb is None:
         markMovieAsNotWatched(imdb)
         cachesyncMovies()
-    elif not episode is None:
+    elif episode is not None:
         markEpisodeAsNotWatched(imdb, tvdb, season, episode)
         cachesyncTV(imdb)
-    elif not season is None:
+    elif season is not None:
         markSeasonAsNotWatched(imdb, tvdb, season)
         cachesyncTV(imdb)
-    elif not tvdb is None:
+    elif tvdb is not None:
         markTVShowAsNotWatched(imdb, tvdb)
         cachesyncTV(imdb)
     else:
@@ -353,14 +366,14 @@ def _rating(action, imdb = None, tvdb = None, season = None, episode = None):
         if control.condVisibility('System.HasAddon(%s)' % addon):
             data = {}
             data['action'] = action
-            if not tvdb is None:
+            if tvdb is not None:
                 data['video_id'] = tvdb
-                if not episode is None:
+                if episode is not None:
                     data['media_type'] = 'episode'
                     data['dbid'] = 1
                     data['season'] = int(season)
                     data['episode'] = int(episode)
-                elif not season is None:
+                elif season is not None:
                     data['media_type'] = 'season'
                     data['dbid'] = 5
                     data['season'] = int(season)
@@ -384,8 +397,10 @@ def _rating(action, imdb = None, tvdb = None, season = None, episode = None):
 def manager(name, imdb = None, tvdb = None, season = None, episode = None, refresh = True):
     lists = []
     try:
-        if not season is None: season = int(season)
-        if not episode is None: episode = int(episode)
+        if season is not None:
+            season = int(season)
+        if episode is not None:
+            episode = int(episode)
 
         items = [(control.lang(33651).encode('utf-8'), 'watch')]
         items += [(control.lang(33652).encode('utf-8'), 'unwatch')]
@@ -432,10 +447,10 @@ def manager(name, imdb = None, tvdb = None, season = None, episode = None, refre
                 if tvdb is None:
                     post = {"movies": [{"ids": {"imdb": imdb}}]}
                 else:
-                    if not episode is None:
+                    if episode is not None:
                         post = {"shows": [{"ids": {"tvdb": tvdb}, "seasons": [{"number": season, "episodes": [{"number": episode}]}]}]}
                         name = name + ' - ' + '%sx%02d' % (season, episode)
-                    elif not season is None:
+                    elif season is not None:
                         post = {"shows": [{"ids": {"tvdb": tvdb}, "seasons": [{"number": season}]}]}
                         name = name + ' - ' + 'Season %s' % season
                     else:
@@ -443,7 +458,8 @@ def manager(name, imdb = None, tvdb = None, season = None, episode = None, refre
 
                 if select == 8:
                     slug = listAdd(successNotification = True)
-                    if not slug is None: getTrakt(items[select][1] % slug, post = post)[0]
+                    if slug is not None:
+                        getTrakt(items[select][1] % slug, post = post)[0]
                 else:
                     getTrakt(items[select][1], post = post)[0]
 
@@ -646,7 +662,7 @@ def syncSeason(imdb):
 
         indicators = indicators['seasons']
         indicators = [(i['number'], [x['completed'] for x in i['episodes']]) for i in indicators]
-        indicators = ['%01d' % int(i[0]) for i in indicators if not False in i[1]]
+        indicators = ['%01d' % int(i[0]) for i in indicators if False not in i[1]]
         return indicators
     except:
         pass
@@ -937,10 +953,14 @@ def _scrobbleType(type):
 def scrobbleProgress(type, imdb = None, tvdb = None, season = None, episode = None):
     try:
         type = _scrobbleType(type)
-        if not imdb is None: imdb = str(imdb)
-        if not tvdb is None: tvdb = int(tvdb)
-        if not episode is None: episode = int(episode)
-        if not episode is None: episode = int(episode)
+        if imdb is not None:
+            imdb = str(imdb)
+        if tvdb is not None:
+            tvdb = int(tvdb)
+        if episode is not None:
+            episode = int(episode)
+        if episode is not None:
+            episode = int(episode)
         link = '/sync/playback/type'
         items = getTraktAsJson(link)
 
@@ -970,15 +990,26 @@ def scrobbleUpdate(action, type, imdb = None, tvdb = None, season = None, episod
     try:
         if action:
             type = _scrobbleType(type)
-            if not imdb is None: imdb = str(imdb)
-            if not tvdb is None: tvdb = int(tvdb)
-            if not season is None: season = int(season)
-            if not episode is None: episode = int(episode)
+            if imdb is not None:
+                imdb = str(imdb)
+            if tvdb is not None:
+                tvdb = int(tvdb)
+            if season is not None:
+                season = int(season)
+            if episode is not None:
+                episode = int(episode)
 
-            if imdb: link = '/search/imdb/' + str(imdb)
-            elif tvdb: link = '/search/tvdb/' + str(tvdb)
-            if type == 'episode': link += '?type=show'
-            else: link += '?type=movie'
+            if imdb:
+                link = '/search/imdb/' + str(imdb)
+
+            elif tvdb:
+                link = '/search/tvdb/' + str(tvdb)
+
+            if type == 'episode':
+                link += '?type=show'
+            else:
+                link += '?type=movie'
+
             items = cache.get(getTraktAsJson, 760, link)
 
             if len(items) > 0:

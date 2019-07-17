@@ -13,7 +13,7 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 
         handlers = []
 
-        if not proxy is None:
+        if proxy is not None:
             handlers += [urllib2.ProxyHandler({'http':'%s' % (proxy)}), urllib2.HTTPHandler]
             opener = urllib2.build_opener(*handlers)
             opener = urllib2.install_opener(opener)
@@ -56,7 +56,7 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
         elif referer is not None:
             headers['Referer'] = referer
 
-        if not 'Accept-Language' in headers:
+        if 'Accept-Language' not in headers:
             headers['Accept-Language'] = 'en-US'
 
         if 'X-Requested-With' in headers:
@@ -66,7 +66,7 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 
         if 'Cookie' in headers:
             pass
-        elif not cookie is None:
+        elif cookie is not None:
             headers['Cookie'] = cookie
 
         if 'Accept-Encoding' in headers:
@@ -200,10 +200,10 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
                 response.close()
             return result
 
-        if not flare == 'cloudflare':
+        if flare != 'cloudflare':
             if limit == '0':
                 result = response.read(224 * 1024)
-            elif not limit is None:
+            elif limit is not None:
                 result = response.read(int(limit) * 1024)
             else:
                 result = response.read(5242880)
@@ -229,7 +229,7 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 
             if limit == '0':
                 result = response.read(224 * 1024)
-            elif not limit is None:
+            elif limit is not None:
                 result = response.read(int(limit) * 1024)
             else:
                 result = response.read(5242880)
@@ -395,7 +395,7 @@ class cfcookie:
         [i.start() for i in threads]
 
         for i in range(0, 30):
-            if not self.cookie is None:
+            if self.cookie is not None:
                 return self.cookie
             time.sleep(1)
 

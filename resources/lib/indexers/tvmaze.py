@@ -209,6 +209,8 @@ class tvshows:
 
         self.user = str(self.imdb_user) + str(self.tvdb_key)
 
+        self.disable_fanarttv = control.setting('disable.fanarttv')
+
         self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
         self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
         self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
@@ -258,7 +260,8 @@ class tvshows:
                 next = '%s&page=%s' % (next.split('&page=', 1)[0], str(page+1))
 
                 last = client.parseDOM(result, 'li', attrs = {'class': 'last disabled'})
-                if not last == []: next = '0'
+                if last != []:
+                    next = '0'
 
             items = [client.parseDOM(i, 'a', ret='href') for i in items]
             items = [i[0] for i in items if len(i) > 0]
@@ -273,18 +276,18 @@ class tvshows:
                 url = self.tvmaze_info_link % i
                 item = client.request(url)
                 item = json.loads(item)
-                # if control.setting('tvshows.networks.filter') == '0' and not item['status'] == 'Running' or not item['status'] == 'In Development':
+                # if control.setting('tvshows.networks.filter') == '0' and item['status'] != 'Running' or item['status'] != 'In Development':
                     # raise exception()
-                # if control.setting('tvshows.networks.filter') == '1' and not item['status'] == 'Ended':
+                # if control.setting('tvshows.networks.filter') == '1' and item['status'] != 'Ended':
                     # raise exception()
-                # if control.setting('tvshows.networks.filter') == '2' and not item['type'] == 'Documentary':
+                # if control.setting('tvshows.networks.filter') == '2' and item['type'] != 'Documentary':
                     # raise exception()
-                # if control.setting('tvshows.networks.filter') == '3' and not item['type'] == 'talk show':
+                # if control.setting('tvshows.networks.filter') == '3' and item['type'] != 'talk show':
                     # raise exception()
-                # if control.setting('tvshows.networks.filter') == '4' and not item['status'] == 'Running' or not item['status'] == 'In Development' or not item['status'] == 'Ended':
+                # if control.setting('tvshows.networks.filter') == '4' and item['status'] != 'Running' or item['status'] != 'In Development' or item['status'] != 'Ended':
                     # raise exception()
-                    # # and not item['type'] == 'reality':
-                    # # and not item['type'] == 'news':
+                    # # and item['type'] != 'reality':
+                    # # and item['type'] != 'news':
                 title = item['name']
                 title = re.sub('\s(|[(])(UK|US|AU|\d{4})(|[)])$', '', title)
                 title = client.replaceHTMLCodes(title)
@@ -402,31 +405,41 @@ class tvshows:
                 if poster == '0' and not item3 is None :
                     try:
                         poster = client.parseDOM(item3, 'poster')[0]
-                        if not poster == '' or not poster is None: poster = self.tvdb_image + poster
-                        else: poster = '0'
+                        if poster != '' or not poster is None:
+                            poster = self.tvdb_image + poster
+                        else:
+                            poster = '0'
                         poster = client.replaceHTMLCodes(poster)
                         poster = poster.encode('utf-8')
-                    except: poster = '0'
+                    except:
+                        poster = '0'
 
                 if not item3 is None:
                     try:
                         banner = client.parseDOM(item3, 'banner')[0]
-                        if not banner == '' or not banner is None: banner = self.tvdb_image + banner
-                        else: banner = '0'
+                        if banner != '' or not banner is None:
+                            banner = self.tvdb_image + banner
+                        else:
+                            banner = '0'
                         banner = client.replaceHTMLCodes(banner)
                         banner = banner.encode('utf-8')
-                    except: banner = '0'
+                    except:
+                        banner = '0'
 
                     try:
                         fanart = client.parseDOM(item3, 'fanart')[0]
-                        if not fanart == '': fanart = self.tvdb_image + fanart
+                        if fanart != '' or not fanart is None:
+                            fanart = self.tvdb_image + fanart
+                        else:
+                            fanart = '0'
                         fanart = client.replaceHTMLCodes(fanart)
                         fanart = fanart.encode('utf-8')
-                    except: fanart = '0'
+                    except:
+                        fanart = '0'
 
                     try:
                         cast = client.parseDOM(item3, 'Actors')[0]
-                        cast = [x for x in cast.split('|') if not x == '']
+                        cast = [x for x in cast.split('|') if x != '']
                         cast = [(x.encode('utf-8'), '') for x in cast]
                     except: cast = '0'
 
@@ -470,17 +483,19 @@ class tvshows:
                     item = {}
                     item = {'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'mpaa': mpaa, 'genre': genre, 'duration': duration, 'cast': cast,
                             'rating': rating, 'votes': votes, 'plot': plot, 'content': content, 'status': status, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': '0',
-                            'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False, 'next': next}
+                            'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
                     meta = {}
                     meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
 
                 # fanart_thread = threading.Thread
-                from resources.lib.indexers import fanarttv
-                extended_art = fanarttv.get_tvshow_art(tvdb)
-                if not extended_art is None:
-                    item.update(extended_art)
-                    meta.update(item)
+                if self.disable_fanarttv != 'true':
+                    from resources.lib.indexers import fanarttv
+                    extended_art = fanarttv.get_tvshow_art(tvdb)
+
+                    if extended_art is not None:
+                        item.update(extended_art)
+                        meta.update(item)
 
                 self.list.append(item)
                 self.meta.append(meta)

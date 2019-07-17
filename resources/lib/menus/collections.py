@@ -15,7 +15,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views
+from resources.lib.modules import views, log_utils
 
 sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
 artPath = control.artPath() ; addonFanart = control.addonFanart()
@@ -696,15 +696,18 @@ class Collections:
                     self.list = sorted(self.list, key = lambda k: int(k['votes'].replace(',', '')), reverse = reverse)
                 elif attribute == 4:
                     for i in range(len(self.list)):
-                        if not 'premiered' in self.list[i]: self.list[i]['premiered'] = ''
+                        if 'premiered' not in self.list[i]:
+                            self.list[i]['premiered'] = ''
                     self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
                 elif attribute == 5:
                     for i in range(len(self.list)):
-                        if not 'added' in self.list[i]: self.list[i]['added'] = ''
+                        if 'added' not in self.list[i]:
+                            self.list[i]['added'] = ''
                     self.list = sorted(self.list, key = lambda k: k['added'], reverse = reverse)
                 elif attribute == 6:
                     for i in range(len(self.list)):
-                        if not 'lastplayed' in self.list[i]: self.list[i]['lastplayed'] = ''
+                        if 'lastplayed' not in self.list[i]:
+                            self.list[i]['lastplayed'] = ''
                     self.list = sorted(self.list, key = lambda k: k['lastplayed'], reverse = reverse)
             elif reverse:
                 self.list = reversed(self.list)
@@ -774,17 +777,29 @@ class Collections:
                 imdb = re.findall('(tt\d*)', imdb)[0]
                 imdb = imdb.encode('utf-8')
 
-                try: poster = client.parseDOM(item, 'img', ret='loadlate')[0]
-                except: poster = '0'
-                if '/nopicture/' in poster: poster = '0'
+#                parseDOM cannot handle elements without a closing tag.
+#                try: poster = client.parseDOM(item, 'img', ret='loadlate')[0]
+#                except: poster = '0'
+                try:
+                    from bs4 import BeautifulSoup
+                    html = BeautifulSoup(item, "html.parser")
+                    poster = html.find_all('img')[0]['loadlate']
+                except:
+                    poster = '0'
+
+                if '/nopicture/' in poster:
+                    poster = '0'
                 poster = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
                 poster = client.replaceHTMLCodes(poster)
                 poster = poster.encode('utf-8')
 
-                try: genre = client.parseDOM(item, 'span', attrs = {'class': 'genre'})[0]
-                except: genre = '0'
+                try:
+                    genre = client.parseDOM(item, 'span', attrs = {'class': 'genre'})[0]
+                except:
+                    genre = '0'
                 genre = ' / '.join([i.strip() for i in genre.split(',')])
-                if genre == '': genre = '0'
+                if genre == '':
+                    genre = '0'
                 genre = client.replaceHTMLCodes(genre)
                 genre = genre.encode('utf-8')
 
@@ -893,8 +908,9 @@ class Collections:
             year = item.get('year', 0)
             year = re.sub('[^0-9]', '', str(year))
 
-            # imdb = item.get('ids', {}).get('imdb', '0')
-            # imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
+            if imdb == '0' or imdb is None:
+                imdb = item.get('ids', {}).get('imdb', '0')
+                imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
 
             tmdb = str(item.get('ids', {}).get('tmdb', 0))
 
@@ -926,10 +942,8 @@ class Collections:
             if not mpaa:
                 mpaa = '0'
 
-            # tagline = item.get('tagline', '0')
             tagline = item.get('tagline')
 
-            # plot = item.get('overview', '0')
             plot = item.get('overview')
 
             people = trakt.getPeople(imdb, 'movies')
@@ -959,31 +973,30 @@ class Collections:
             item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'premiered': premiered,
                         'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
                         'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': '0',
-                        'banner': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
-                        'metacache': False}
+                        'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
+                        'discart': '0', 'metacache': False}
 
             meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
             # fanart_thread = threading.Thread
-            if not self.disable_fanarttv == 'true':
+            if self.disable_fanarttv != 'true':
                 from resources.lib.indexers import fanarttv
-                fanarttv_art = fanarttv.get_movie_art(imdb, tmdb)
+                extended_art = fanarttv.get_movie_art(imdb, tmdb)
 
-                if not fanarttv_art is None:
-                    item.update(fanarttv_art)
+                if extended_art is not None:
+                    item.update(extended_art)
                     meta.update(item)
 
             if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') or (self.disable_fanarttv == 'true' and tmdb != '0'):
-                try:
-                    from resources.lib.indexers.tmdb import Movies
-                    tmdb_art = Movies().tmdb_art(tmdb)
-                except:
-                    import traceback
-                    traceback.print_exc()
+                from resources.lib.indexers.tmdb import Movies
+                tmdb_art = Movies().tmdb_art(tmdb)
                 item.update(tmdb_art)
+                if item.get('landscape') == '0':
+                    landscape = item.get('fanart3')
+                    item.update({'landscape': landscape})
                 meta.update(item)
 
-            item = dict((k,v) for k, v in item.iteritems() if not v == '0')
+            item = dict((k,v) for k, v in item.iteritems() if v != '0')
             self.list[i].update(item)
 
             self.meta.append(meta)
@@ -1036,7 +1049,7 @@ class Collections:
                 sysname = urllib.quote_plus(label)
                 systitle = urllib.quote_plus(title)
 
-                meta = dict((k,v) for k, v in i.iteritems() if not v == '0')
+                meta = dict((k,v) for k, v in i.iteritems() if v != '0')
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tmdb_id': tmdb})
                 meta.update({'mediatype': 'movie'})
@@ -1104,23 +1117,23 @@ class Collections:
                 if fanart == '0': fanart = addonFanart
 
                 art = {}
-                if not icon == '0' and not icon is None:
+                if icon != '0' and not icon is None:
                     art.update({'icon': icon})
-                if not thumb == '0' and not thumb is None:
+                if thumb != '0' and not thumb is None:
                     art.update({'thumb': thumb})
-                if not banner == '0' and not banner is None:
+                if banner != '0' and not banner is None:
                     art.update({'banner': banner})
-                if not poster == '0' and not poster is None:
+                if poster != '0' and not poster is None:
                     art.update({'poster': poster})
-                if not fanart == '0' and not fanart is None:
+                if fanart != '0' and not fanart is None:
                     art.update({'fanart': fanart})
-                if not clearlogo == '0' and not clearlogo is None:
+                if clearlogo != '0' and not clearlogo is None:
                     art.update({'clearlogo': clearlogo})
-                if not clearart == '0' and not clearart is None:
+                if clearart != '0' and not clearart is None:
                     art.update({'clearart': clearart})
-                if not landscape == '0' and not landscape is None:
+                if landscape != '0' and not landscape is None:
                     art.update({'landscape': landscape})
-                if not discart == '0' and not discart is None:
+                if discart != '0' and not discart is None:
                     art.update({'discart': discart})
 
 
@@ -1160,7 +1173,7 @@ class Collections:
                 if 'cast' in i:
                     item.setCast(i['cast'])
 
-                # if not fanart == '0' and not fanart is None:
+                # if fanart != '0' and not fanart is None:
                     # item.setProperty('Fanart_Image', fanart)
 
                 item.setArt(art)

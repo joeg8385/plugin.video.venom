@@ -28,13 +28,13 @@ def fetch(items, lang = 'en', user=''):
             dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tmdb'], lang, user, items[i]['tvdb'], lang, user))
             # dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tvdb'], lang, user))
             match = dbcur.fetchone()
-            if not match is None:
+            if match is not None:
                 t1 = int(match[6])
                 update = (abs(t2 - t1) / 3600) >= 720
                 if update is True:
                     raise Exception()
                 item = eval(match[5].encode('utf-8'))
-                item = dict((k, v) for k, v in item.iteritems() if not v == '0')
+                item = dict((k, v) for k, v in item.iteritems() if v != '0')
                 items[i].update(item)
                 items[i].update({'metacache': True})
         except:
@@ -85,14 +85,18 @@ def local(items, link, poster, fanart):
             item = items[i]
             match = [x for x in data if x[1] == item['imdb']][0]
             try:
-                if poster in item and not item[poster] == '0': raise Exception()
-                if match[2] == '0': raise Exception()
+                if poster in item and item[poster] != '0':
+                    raise Exception()
+                if match[2] == '0':
+                    raise Exception()
                 items[i].update({poster: link % ('300', '/%s.jpg' % match[2])})
             except:
                 pass
             try:
-                if fanart in item and not item[fanart] == '0': raise Exception()
-                if match[3] == '0': raise Exception()
+                if fanart in item and item[fanart] != '0':
+                    raise Exception()
+                if match[3] == '0':
+                    raise Exception()
                 items[i].update({fanart: link % ('1280', '/%s.jpg' % match[3])})
             except:
                 pass

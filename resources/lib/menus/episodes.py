@@ -146,15 +146,18 @@ class Episodes:
                     self.list = sorted(self.list, key=lambda k: int(k['votes'].replace(',', '')), reverse=reverse)
                 elif attribute == 4:
                     for i in range(len(self.list)):
-                        if not 'premiered' in self.list[i]: self.list[i]['premiered'] = ''
+                        if 'premiered' not in self.list[i]:
+                            self.list[i]['premiered'] = ''
                     self.list = sorted(self.list, key=lambda k: k['premiered'], reverse=reverse)
                 elif attribute == 5:
                     for i in range(len(self.list)):
-                        if not 'added' in self.list[i]: self.list[i]['added'] = ''
+                        if 'added' not in self.list[i]:
+                            self.list[i]['added'] = ''
                     self.list = sorted(self.list, key=lambda k: k['added'], reverse=reverse)
                 elif attribute == 6:
                     for i in range(len(self.list)):
-                        if not 'lastplayed' in self.list[i]: self.list[i]['lastplayed'] = ''
+                        if 'lastplayed' not in self.list[i]:
+                            self.list[i]['lastplayed'] = ''
                     self.list = sorted(self.list, key=lambda k: k['lastplayed'], reverse=reverse)
             elif reverse:
                 self.list = reversed(self.list)
@@ -208,7 +211,7 @@ class Episodes:
 
 
     def seasonCount(self, items, index):
-        if not 'seasoncount' in items[index] or not items[index]['seasoncount']:
+        if 'seasoncount' not in items[index] or not items[index]['seasoncount']:
             thread = workers.Thread(self._seasonCount, items, index)
             self.threads.append(thread)
             thread.start()
@@ -272,7 +275,7 @@ class Episodes:
                 self.list = cache.get(self.trakt_list, 0.1, url, self.trakt_user, True)
                 self.list = self.list[::-1]
 
-            elif self.trakt_link in url and not url == self.onDeck_link:
+            elif self.trakt_link in url and url != self.onDeck_link:
                 self.list = cache.get(self.trakt_list, 1, url, self.trakt_user, True)
 
             elif self.tvmaze_link in url and url == self.added_link:
@@ -311,7 +314,7 @@ class Episodes:
                 # self.list = cache.get(self.trakt_list, 0.1, url, self.trakt_user, True)
                 # self.list = self.list[::-1]
 
-            # elif self.trakt_link in url and not url == self.onDeck_link:
+            # elif self.trakt_link in url and url != self.onDeck_link:
                 # self.list = cache.get(self.trakt_list, 1, url, self.trakt_user, True)
 
             # elif self.tvmaze_link in url and url == self.added_link:
@@ -327,6 +330,7 @@ class Episodes:
             # return self.list
         # except:
             # pass
+
 
     def calendars(self, idx=True):
         m = control.lang(32060).encode('utf-8').split('|')
@@ -387,7 +391,8 @@ class Episodes:
             pass
 
         try:
-            if not trakt.getTraktCredentialsInfo(): raise Exception()
+            if not trakt.getTraktCredentialsInfo():
+                raise Exception()
             self.list = []
             try:
                 if activity > cache.timeout(self.trakt_user_list, self.traktlikedlists_link,
@@ -438,7 +443,7 @@ class Episodes:
 
         for item in items:
             try:
-                if not 'show' in item or not 'episode' in item:
+                if 'show' not in item or 'episode' not in item:
                     raise Exception()
 
                 # title = (item.get('episode', {}).get('title', 0)).encode('utf-8')
@@ -551,7 +556,7 @@ class Episodes:
                 genre = ' / '.join(genre)
                 genre = genre.encode('utf-8')
 
-                if 'duration' in item and not item['duration'] is None and not item['duration'] == '':
+                if 'duration' in item and item['duration'] is not None and item['duration'] != '':
                     duration = item['duration']
                 else:
                     try:
@@ -580,7 +585,7 @@ class Episodes:
                 if votes is None: votes = '0'
                 votes = votes.encode('utf-8')
 
-                if 'mpaa' in item and not item['mpaa'] is None and not item['mpaa'] == '':
+                if 'mpaa' in item and item['mpaa'] is not None and item['mpaa'] != '':
                     mpaa = item['mpaa']
                 else:
                     mpaa = item['show']['certification']
@@ -598,11 +603,11 @@ class Episodes:
                             'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb,
                             'tvdb': tvdb, 'progress': progress, 'episodeIDS': episodeIDS}
 
-                if 'airday' in item and not item['airday'] is None and not item['airday'] == '':
+                if 'airday' in item and not item['airday'] is None and item['airday'] != '':
                     values['airday'] = item['airday']
-                if 'airtime' in item and not item['airtime'] is None and not item['airtime'] == '':
+                if 'airtime' in item and not item['airtime'] is None and item['airtime'] != '':
                     values['airtime'] = item['airtime']
-                if 'airzone' in item and not item['airzone'] is None and not item['airzone'] == '':
+                if 'airzone' in item and not item['airzone'] is None and item['airzone'] != '':
                     values['airzone'] = item['airzone']
                 try:
                     air = item['show']['airs']
@@ -723,7 +728,7 @@ class Episodes:
             result = trakt.getTrakt(self.hiddenprogress_link)
             result = json.loads(result)
             result = [str(i['show']['ids']['tvdb']) for i in result]
-            items = [i for i in items if not i['tvdb'] in result]
+            items = [i for i in items if i['tvdb'] not in result]
         except:
             pass
 
@@ -835,7 +840,7 @@ class Episodes:
                     poster = client.parseDOM(item2, 'poster')[0]
                 except:
                     poster = ''
-                if not poster == '':
+                if poster != '':
                     poster = self.tvdb_image + poster
                 else:
                     poster = '0'
@@ -846,7 +851,7 @@ class Episodes:
                     banner = client.parseDOM(item2, 'banner')[0]
                 except:
                     banner = ''
-                if not banner == '':
+                if banner != '':
                     banner = self.tvdb_image + banner
                 else:
                     banner = '0'
@@ -857,7 +862,7 @@ class Episodes:
                     fanart = client.parseDOM(item2, 'fanart')[0]
                 except:
                     fanart = ''
-                if not fanart == '':
+                if fanart != '':
                     fanart = self.tvdb_image + fanart
                 else:
                     fanart = '0'
@@ -868,59 +873,63 @@ class Episodes:
                     thumb = client.parseDOM(item, 'filename')[0]
                 except:
                     thumb = ''
-                if not thumb == '':
+                if thumb != '':
                     thumb = self.tvdb_image + thumb
                 else:
                     thumb = '0'
                 thumb = client.replaceHTMLCodes(thumb)
                 thumb = thumb.encode('utf-8')
 
-                if not poster == '0':
+                if poster != '0':
                     pass
-                elif not fanart == '0':
+                elif fanart != '0':
                     poster = fanart
-                elif not banner == '0':
+                elif banner != '0':
                     poster = banner
 
-                if not banner == '0':
+                if banner != '0':
                     pass
-                elif not fanart == '0':
+                elif fanart != '0':
                     banner = fanart
-                elif not poster == '0':
+                elif poster != '0':
                     banner = poster
 
-                if not thumb == '0':
+                if thumb != '0':
                     pass
-                elif not fanart == '0':
+                elif fanart != '0':
                     thumb = fanart.replace(self.tvdb_image, self.tvdb_poster)
-                elif not poster == '0':
+                elif poster != '0':
                     thumb = poster
 
                 try:
                     studio = client.parseDOM(item2, 'Network')[0]
                 except:
                     studio = ''
-                if studio == '': studio = '0'
+                if studio == '':
+                    studio = '0'
                 studio = client.replaceHTMLCodes(studio)
                 studio = studio.encode('utf-8')
+
                 try:
                     genre = client.parseDOM(item2, 'Genre')[0]
                 except:
                     genre = ''
-                genre = [x for x in genre.split('|') if not x == '']
+                genre = [x for x in genre.split('|') if x != '']
                 genre = ' / '.join(genre)
-                if genre == '': genre = '0'
+                if genre == '':
+                    genre = '0'
                 genre = client.replaceHTMLCodes(genre)
                 genre = genre.encode('utf-8')
 
-                if 'duration' in i and not i['duration'] is None and not i['duration'] == '':
+                if 'duration' in i and i['duration'] is not None and i['duration'] != '':
                     duration = i['duration']
                 else:
                     try:
                         duration = client.parseDOM(item2, 'Runtime')[0]
                     except:
                         duration = ''
-                    if duration == '': duration = '0'
+                    if duration == '':
+                        duration = '0'
                     duration = client.replaceHTMLCodes(duration)
                     duration = duration.encode('utf-8')
 
@@ -940,7 +949,7 @@ class Episodes:
                 votes = client.replaceHTMLCodes(votes)
                 votes = votes.encode('utf-8')
 
-                if 'mpaa' in i and not i['mpaa'] is None and not i['mpaa'] == '':
+                if 'mpaa' in i and i['mpaa'] is not None and i['mpaa'] != '':
                     mpaa = i['mpaa']
                 else:
                     try:
@@ -955,9 +964,10 @@ class Episodes:
                     director = client.parseDOM(item, 'Director')[0]
                 except:
                     director = ''
-                director = [x for x in director.split('|') if not x == '']
+                director = [x for x in director.split('|') if x != '']
                 director = ' / '.join(director)
-                if director == '': director = '0'
+                if director == '':
+                    director = '0'
                 director = client.replaceHTMLCodes(director)
                 director = director.encode('utf-8')
 
@@ -965,9 +975,10 @@ class Episodes:
                     writer = client.parseDOM(item, 'Writer')[0]
                 except:
                     writer = ''
-                writer = [x for x in writer.split('|') if not x == '']
+                writer = [x for x in writer.split('|') if x != '']
                 writer = ' / '.join(writer)
-                if writer == '': writer = '0'
+                if writer == '':
+                    writer = '0'
                 writer = client.replaceHTMLCodes(writer)
                 writer = writer.encode('utf-8')
 
@@ -975,7 +986,7 @@ class Episodes:
                     cast = client.parseDOM(item2, 'Actors')[0]
                 except:
                     cast = ''
-                cast = [x for x in cast.split('|') if not x == '']
+                cast = [x for x in cast.split('|') if x != '']
                 try:
                     cast = [(x.encode('utf-8'), '') for x in cast]
                 except:
@@ -1003,11 +1014,11 @@ class Episodes:
                           'unaired': unaired, 'episodeIDS': episodeIDS}
 
                 values['action'] = 'episodes'
-                if 'airday' in i and not i['airday'] is None and not i['airday'] == '':
+                if 'airday' in i and i['airday'] is not None and i['airday'] != '':
                     values['airday'] = i['airday']
-                if 'airtime' in i and not i['airtime'] is None and not i['airtime'] == '':
+                if 'airtime' in i and i['airtime'] is not None and i['airtime'] != '':
                     values['airtime'] = i['airtime']
-                if 'airzone' in i and not i['airzone'] is None and not i['airzone'] == '':
+                if 'airzone' in i and i['airzone'] is not None and i['airzone'] != '':
                     values['airzone'] = i['airzone']
                 self.list.append(values)
             except:
@@ -1110,7 +1121,7 @@ class Episodes:
                     poster = client.parseDOM(item2, 'poster')[0]
                 except:
                     poster = ''
-                if not poster == '':
+                if poster != '':
                     poster = self.tvdb_image + poster
                 else:
                     poster = '0'
@@ -1121,7 +1132,7 @@ class Episodes:
                     banner = client.parseDOM(item2, 'banner')[0]
                 except:
                     banner = ''
-                if not banner == '':
+                if banner != '':
                     banner = self.tvdb_image + banner
                 else:
                     banner = '0'
@@ -1132,7 +1143,7 @@ class Episodes:
                     fanart = client.parseDOM(item2, 'fanart')[0]
                 except:
                     fanart = ''
-                if not fanart == '':
+                if fanart != '':
                     fanart = self.tvdb_image + fanart
                 else:
                     fanart = '0'
@@ -1143,32 +1154,32 @@ class Episodes:
                     thumb = client.parseDOM(item, 'filename')[0]
                 except:
                     thumb = ''
-                if not thumb == '':
+                if thumb != '':
                     thumb = self.tvdb_image + thumb
                 else:
                     thumb = '0'
                 thumb = client.replaceHTMLCodes(thumb)
                 thumb = thumb.encode('utf-8')
 
-                if not poster == '0':
+                if poster != '0':
                     pass
-                elif not fanart == '0':
+                elif fanart != '0':
                     poster = fanart
-                elif not banner == '0':
+                elif banner != '0':
                     poster = banner
 
-                if not banner == '0':
+                if banner != '0':
                     pass
-                elif not fanart == '0':
+                elif fanart != '0':
                     banner = fanart
-                elif not poster == '0':
+                elif poster != '0':
                     banner = poster
 
-                if not thumb == '0':
+                if thumb != '0':
                     pass
-                elif not fanart == '0':
+                elif fanart != '0':
                     thumb = fanart.replace(self.tvdb_image, self.tvdb_poster)
-                elif not poster == '0':
+                elif poster != '0':
                     thumb = poster
 
                 try:
@@ -1183,13 +1194,13 @@ class Episodes:
                     genre = client.parseDOM(item2, 'Genre')[0]
                 except:
                     genre = ''
-                genre = [x for x in genre.split('|') if not x == '']
+                genre = [x for x in genre.split('|') if x != '']
                 genre = ' / '.join(genre)
                 if genre == '': genre = '0'
                 genre = client.replaceHTMLCodes(genre)
                 genre = genre.encode('utf-8')
 
-                if 'duration' in i and not i['duration'] is None and not i['duration'] == '':
+                if 'duration' in i and i['duration'] is not None and i['duration'] != '':
                     duration = i['duration']
                 else:
                     try:
@@ -1217,7 +1228,7 @@ class Episodes:
                 votes = client.replaceHTMLCodes(votes)
                 votes = votes.encode('utf-8')
 
-                if 'mpaa' in i and not i['mpaa'] is None and not i['mpaa'] == '':
+                if 'mpaa' in i and i['mpaa'] is not None and i['mpaa'] != '':
                     mpaa = i['mpaa']
                 else:
                     try:
@@ -1233,7 +1244,7 @@ class Episodes:
                     director = client.parseDOM(item, 'Director')[0]
                 except:
                     director = ''
-                director = [x for x in director.split('|') if not x == '']
+                director = [x for x in director.split('|') if x != '']
                 director = ' / '.join(director)
                 if director == '':
                     director = '0'
@@ -1244,7 +1255,7 @@ class Episodes:
                     writer = client.parseDOM(item, 'Writer')[0]
                 except:
                     writer = ''
-                writer = [x for x in writer.split('|') if not x == '']
+                writer = [x for x in writer.split('|') if x != '']
                 writer = ' / '.join(writer)
                 if writer == '':
                     writer = '0'
@@ -1255,7 +1266,7 @@ class Episodes:
                     cast = client.parseDOM(item2, 'Actors')[0]
                 except:
                     cast = ''
-                cast = [x for x in cast.split('|') if not x == '']
+                cast = [x for x in cast.split('|') if x != '']
                 try:
                     cast = [(x.encode('utf-8'), '') for x in cast]
                 except:
@@ -1281,19 +1292,19 @@ class Episodes:
                           'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
                           'fanart': fanart, 'thumb': thumb, 'episodeIDS': episodeIDS}
 
-                if 'airday' in i and not i['airday'] is None and not i['airday'] == '':
+                if 'airday' in i and i['airday'] is not None and i['airday'] != '':
                     values['airday'] = i['airday']
-                if 'airtime' in i and not i['airtime'] is None and not i['airtime'] == '':
+                if 'airtime' in i and i['airtime'] is not None and i['airtime'] != '':
                     values['airtime'] = i['airtime']
-                if 'airzone' in i and not i['airzone'] is None and not i['airzone'] == '':
+                if 'airzone' in i and i['airzone'] is not None and i['airzone'] != '':
                     values['airzone'] = i['airzone']
                 try:
                     air = i['show']['airs']
-                    if not 'airday' in i or i['airday'] is None or i['airday'] == '':
+                    if 'airday' not in i or i['airday'] is None or i['airday'] == '':
                         values['airday'] = air['day'].strip()
-                    if not 'airtime' in i or i['airtime'] is None or i['airtime'] == '':
+                    if 'airtime' not in i or i['airtime'] is None or i['airtime'] == '':
                         values['airtime'] = air['time'].strip()
-                    if not 'airzone' in i or i['airzone'] is None or i['airzone'] == '':
+                    if 'airzone' not in i or i['airzone'] is None or i['airzone'] == '':
                         values['airzone'] = air['timezone'].strip()
                 except:
                     pass
@@ -1349,10 +1360,10 @@ class Episodes:
 
         for item in items:
             try:
-                if not 'english' in item['show']['language'].lower():
+                if 'english' not in item['show']['language'].lower():
                     raise Exception()
 
-                if limit is True and not 'scripted' in item['show']['type'].lower():
+                if limit is True and 'scripted' not in item['show']['type'].lower():
                     raise Exception()
 
                 try:
@@ -1478,20 +1489,20 @@ class Episodes:
                                 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
                                 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'thumb': thumb, 'episodeIDS': episodeIDS}
 
-                if 'airday' in item and not item['airday'] is None and not item['airday'] == '':
+                if 'airday' in item and item['airday'] is not None and item['airday'] != '':
                     values['airday'] = item['airday']
-                if 'airtime' in item and not item['airtime'] is None and not item['airtime'] == '':
+                if 'airtime' in item and item['airtime'] is not None and item['airtime'] != '':
                     values['airtime'] = item['airtime']
-                if 'airzone' in item and not item['airzone'] is None and not item['airzone'] == '':
+                if 'airzone' in item and item['airzone'] is not None and item['airzone'] != '':
                     values['airzone'] = item['airzone']
 
                 try:
                     air = item['show']['airs']
-                    if not 'airday' in item or item['airday'] is None or item['airday'] == '':
+                    if 'airday' not in item or item['airday'] is None or item['airday'] == '':
                         values['airday'] = air['day'].strip()
-                    if not 'airtime' in item or item['airtime'] is None or item['airtime'] == '':
+                    if 'airtime' not in item or item['airtime'] is None or item['airtime'] == '':
                         values['airtime'] = air['time'].strip()
-                    if not 'airzone' in item or item['airzone'] is None or item['airzone'] == '':
+                    if 'airzone' not in item or item['airzone'] is None or item['airzone'] == '':
                         values['airzone'] = air['timezone'].strip()
                 except:
                     pass
@@ -1518,7 +1529,7 @@ class Episodes:
     def episodeDirectory(self, items):
         # Retrieve additional metadata if not super info was retireved (eg: Trakt lists, such as Unfinished and History)
         try:
-            if not 'extended' in items[0] or not items[0]['extended']:
+            if 'extended' not in items[0] or not items[0]['extended']:
                 from resources.lib.menus import tvshows
                 show = tvshows.TVshows(type=self.type)
                 show.list = copy.deepcopy(self.list)
@@ -1563,7 +1574,7 @@ class Episodes:
         except:
             sysaction = ''
 
-        isFolder = False if not sysaction == 'episodes' else True
+        isFolder = False if sysaction != 'episodes' else True
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
         airEnabled = control.setting('tvshows.air.enabled')
@@ -1596,7 +1607,7 @@ class Episodes:
         for i in items:
             try:
                 imdb, tvdb, year, season, episode, premiered = i['imdb'], i['tvdb'], i['year'], i['season'], i['episode'], i['premiered']
-                if not 'label' in i:
+                if 'label' not in i:
                     i['label'] = i['title']
 
                 if i['label'] == '0':
@@ -1631,7 +1642,7 @@ class Episodes:
                     seasoncount = None
 
                 # UpNext requires all data
-                # meta = dict((k, v) for k, v in i.iteritems() if not v == '0')
+                # meta = dict((k, v) for k, v in i.iteritems() if v != '0')
                 meta = dict((k, v) for k, v in i.iteritems())
                 meta.update({'mediatype': 'episode'})
                 meta.update({'trailer': '%s?action=trailer&name=%s&imdb=%s' % (sysaddon, systvshowtitle, imdb)})
@@ -1668,11 +1679,11 @@ class Episodes:
                     air = []
                     airday = None
                     airtime = None
-                    if 'airday' in meta and not meta['airday'] is None and not meta['airday'] == '':
+                    if 'airday' in meta and not meta['airday'] is None and meta['airday'] != '':
                         airday = meta['airday']
-                    if 'airtime' in meta and not meta['airtime'] is None and not meta['airtime'] == '':
+                    if 'airtime' in meta and not meta['airtime'] is None and meta['airtime'] != '':
                         airtime = meta['airtime']
-                        if 'airzone' in meta and not meta['airzone'] is None and not meta['airzone'] == '':
+                        if 'airzone' in meta and not meta['airzone'] is None and meta['airzone'] != '':
                             if airZone == '1':
                                 zoneTo = meta['airzone']
                             elif airZone == '2':
@@ -1762,26 +1773,25 @@ class Episodes:
                 if fanart == '0': fanart = addonFanart
 
                 art = {}
-                if not poster == '0' and not poster is None:
+                if poster != '0' and not poster is None:
                     art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
-                if not fanart == '0' and not fanart is None:
+                if fanart != '0' and not fanart is None:
                     art.update({'fanart': fanart})
-                if not icon == '0' and not icon is None:
+                if icon != '0' and not icon is None:
                     art.update({'icon': icon})
-                if not thumb == '0' and not thumb is None:
+                if thumb != '0' and not thumb is None:
                     art.update({'thumb': thumb})
-                if not banner == '0' and not banner is None:
+                if banner != '0' and not banner is None:
                     art.update({'banner': banner})
-                if not clearlogo == '0' and not clearlogo is None:
+                if clearlogo != '0' and not clearlogo is None:
                     art.update({'clearlogo': clearlogo})
-                if not clearart == '0' and not clearart is None:
+                if clearart != '0' and not clearart is None:
                     art.update({'clearart': clearart})
-                if not landscape == '0' and not landscape is None:
+                if landscape != '0' and not landscape is None:
                     art.update({'landscape': landscape})
 
 ####-Context Menu and Overlays-####
                 cm = []
-
                 if traktCredentials is True:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s&season=%s&episode=%s)' % (
                                                 sysaddon, systvshowtitle, imdb, tvdb, season, episode)))
@@ -1854,7 +1864,7 @@ class Episodes:
                     item.setUniqueIDs(i['episodeIDS'])
                 if 'cast' in i:
                     item.setCast(i['cast'])
-                # if not fanart == '0' and not fanart is None:
+                # if fanart != '0' and not fanart is None:
                     # item.setProperty('Fanart_Image', fanart)
                 item.setArt(art)
                 item.setProperty('IsPlayable', isPlayable)

@@ -124,18 +124,16 @@ class Movies:
                                 # raise Exception()
 
                 poster = item.get('poster_path')
-                if not poster == '' and not poster is None:
+                if poster != '' and poster is not None:
                     poster = ('%s%s' % (self.tmdb_poster, poster)).encode('utf-8')
                 else:
                     poster = '0'
-                # log_utils.log('poster = %s' % str(poster), __name__, log_utils.LOGDEBUG)
 
                 fanart = item.get('backdrop_path')
-                if not fanart == '' and not fanart is None:
+                if fanart != '' and fanart is not None:
                     fanart = ('%s%s' % (self.tmdb_fanart, fanart)).encode('utf-8')
                 else:
                     fanart = '0'
-                # log_utils.log('fanart = %s' % str(fanart), __name__, log_utils.LOGDEBUG)
 
                 premiered = item['release_date']
                 try:
@@ -236,17 +234,18 @@ class Movies:
                 meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
 
                 # fanart_thread = threading.Thread
-                if not self.disable_fanarttv == 'true':
+                if self.disable_fanarttv != 'true':
                     from resources.lib.indexers import fanarttv
                     extended_art = fanarttv.get_movie_art(imdb, tmdb)
-                    if not extended_art is None:
+
+                    if extended_art is not None:
                         item.update(extended_art)
                         meta.update(item)
 
                 self.list.append(item)
                 self.meta.append(meta)
                 metacache.insert(self.meta)
-                # log_utils.log('self.list = %s' % str(self.list), __name__, log_utils.LOGDEBUG)
+
             except:
                 pass
         return self.list
@@ -264,7 +263,7 @@ class Movies:
                 media_type = item['media_type']
 
                 title = (item.get('title')).encode('utf-8')
-                if not media_type == 'movie':
+                if media_type != 'movie':
                     title = (item.get('name')).encode('utf-8')
 
                 try: 
@@ -281,13 +280,13 @@ class Movies:
                 tmdb = tmdb.encode('utf-8')
 
                 poster = item.get('poster_path')
-                if not poster == '' and not poster is None:
+                if poster != '' and poster is not None:
                     poster = ('%s%s' % (self.tmdb_poster, poster)).encode('utf-8')
                 else:
                     poster = '0'
 
                 fanart = item.get('backdrop_path')
-                if not fanart == '' and not fanart is None:
+                if fanart != '' and fanart is not None:
                     fanart = ('%s%s' % (self.tmdb_fanart, fanart)).encode('utf-8')
                 else:
                     fanart = '0'
@@ -370,25 +369,27 @@ class Movies:
                     writer = '0'
                 if writer == '' or writer is None or writer == []:
                     writer = '0'
-                writer = ' / '.join(writer)
-                writer = writer.encode('utf-8')
+                writer = (' / '.join(writer)).encode('utf-8')
 
                 cast = item['credits']['cast']
-                try: cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
-                except: cast = []
+                try:
+                    cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
+                except:
+                    cast = []
 
                 item = {}
                 item = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
                                 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
-                                'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False, 'next': next}
+                                'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
                 meta = {}
                 meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
 
                 # fanart_thread = threading.Thread
-                if not self.disable_fanarttv == 'true':
+                if self.disable_fanarttv != 'true':
                     from resources.lib.indexers import fanarttv
                     extended_art = fanarttv.get_movie_art(imdb, tmdb)
-                    if not extended_art is None:
+
+                    if extended_art is not None:
                         item.update(extended_art)
                         meta.update(item)
 
@@ -506,8 +507,13 @@ class TVshows:
         try:
             page = int(result['page'])
             total = int(result['total_pages'])
-            if page >= total: raise Exception()
-            if not 'page=' in url: raise Exception()
+
+            if page >= total:
+                raise Exception()
+
+            if not 'page=' in url:
+                raise Exception()
+
             next = '%s&page=%s' % (next.split('&page=', 1)[0], str(page+1))
             next = next.encode('utf-8')
         except:
@@ -526,13 +532,13 @@ class TVshows:
                 tmdb = tmdb.encode('utf-8')
 
                 poster = item.get('poster_path')
-                if not poster == '' and not poster is None:
+                if poster != '' and poster is not None:
                     poster = ('%s%s' % (self.tmdb_poster, poster)).encode('utf-8')
                 else:
                     poster = '0'
 
                 fanart = item.get('backdrop_path')
-                if not fanart == '' and not fanart is None:
+                if fanart != '' and fanart is not None:
                     fanart = ('%s%s' % (self.tmdb_fanart, fanart)).encode('utf-8')
                 else:
                     fanart = '0'
@@ -609,7 +615,7 @@ class TVshows:
 
 
 # ##--IMDb additional info
-                if not imdb == '0' or None:
+                if imdb != '0' or imdb is not None:
                     try:
                         url = self.imdb_by_query % imdb
                         item2 = client.request(url, timeout='30')
@@ -618,9 +624,11 @@ class TVshows:
 
                     try:
                         mpaa2 = item2['Rated']
-                    except: mpaa2 = 'NR'
+                    except:
+                        mpaa2 = 'NR'
                     mpaa2 = mpaa.encode('utf-8')
-                    if mpaa == '0' or mpaa == 'NR' and not mpaa2 == 'NR': mpaa = mpaa2
+                    if mpaa == '0' or mpaa == 'NR' and mpaa2 != 'NR':
+                        mpaa = mpaa2
 
                     try:
                         writer = item2['Writer']
@@ -633,16 +641,17 @@ class TVshows:
                 item = {}
                 item = {'content': 'tvshow', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
                                 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
-                                'poster2': '0', 'banner': '0', 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False, 'next': next}
+                                'poster2': '0', 'banner': '0', 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
 
                 meta = {}
                 meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
 
                 # fanart_thread = threading.Thread
-                if not self.disable_fanarttv == 'true':
+                if self.disable_fanarttv != 'true':
                     from resources.lib.indexers import fanarttv
                     extended_art = fanarttv.get_tvshow_art(tvdb)
-                    if not extended_art is None:
+
+                    if extended_art is not None:
                         item.update(extended_art)
                         meta.update(item)
 
@@ -676,13 +685,13 @@ class TVshows:
                 tvdb = '0'
 
                 poster = item.get('poster_path')
-                if not poster == '' and not poster is None:
+                if poster != '' and poster is not None:
                     poster = ('%s%s' % (self.tmdb_poster, poster)).encode('utf-8')
                 else:
                     poster = '0'
 
                 fanart = item.get('backdrop_path')
-                if not fanart == '' and not fanart is None:
+                if fanart != '' and fanart is not None:
                     fanart = ('%s%s' % (self.tmdb_fanart, fanart)).encode('utf-8')
                 else:
                     fanart = '0'
@@ -778,15 +787,16 @@ class TVshows:
                 item = {}
                 item = {'content': 'movie', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
                                 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
-                                'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0', 'metacache': False, 'next': next}
+                                'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
                 meta = {}
                 meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
 
                 # fanart_thread = threading.Thread
-                if not self.disable_fanarttv == 'true':
+                if self.disable_fanarttv != 'true':
                     from resources.lib.indexers import fanarttv
-                    extended_art =  fanarttv.get_tvshow_art(tvdb)
-                    if not extended_art is None:
+                    extended_art = fanarttv.get_tvshow_art(tvdb)
+
+                    if extended_art is not None:
                         item.update(extended_art)
                         meta.update(item)
 

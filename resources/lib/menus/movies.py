@@ -27,7 +27,7 @@ action = params.get('action')
 class Movies:
     def __init__(self, type='movie', notifications=True):
         self.count = int(control.setting('page.item.limit'))
-        # if not type(self.count) is int:
+        # if type(self.count) is not int:
             # self.count = 40
         self.type = type
         self.notifications = notifications
@@ -131,7 +131,7 @@ class Movies:
                 try:
                     if url == self.trakthistory_link:
                         raise Exception()
-                    if not '/users/me/' in url:
+                    if '/users/me/' not in url:
                         raise Exception()
                     if trakt.getActivity() > cache.timeout(self.trakt_list, url, self.trakt_user):
                         raise Exception()
@@ -251,15 +251,18 @@ class Movies:
                     self.list = sorted(self.list, key = lambda k: int(k['votes'].replace(',', '')), reverse = reverse)
                 elif attribute == 4:
                     for i in range(len(self.list)):
-                        if not 'premiered' in self.list[i]: self.list[i]['premiered'] = ''
+                        if 'premiered' not in self.list[i]:
+                            self.list[i]['premiered'] = ''
                     self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
                 elif attribute == 5:
                     for i in range(len(self.list)):
-                        if not 'added' in self.list[i]: self.list[i]['added'] = ''
+                        if 'added' not in self.list[i]:
+                            self.list[i]['added'] = ''
                     self.list = sorted(self.list, key = lambda k: k['added'], reverse = reverse)
                 elif attribute == 6:
                     for i in range(len(self.list)):
-                        if not 'lastplayed' in self.list[i]: self.list[i]['lastplayed'] = ''
+                        if 'lastplayed' not in self.list[i]:
+                            self.list[i]['lastplayed'] = ''
                     self.list = sorted(self.list, key = lambda k: k['lastplayed'], reverse = reverse)
             elif reverse:
                 self.list = reversed(self.list)
@@ -509,7 +512,7 @@ class Movies:
             return
         try:
             q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
-            if not int(q['limit']) == len(items):
+            if int(q['limit']) != len(items):
                 raise Exception()
             q.update({'page': str(int(q['page']) + 1)})
             q = (urllib.urlencode(q)).replace('%2C', ',')
@@ -886,7 +889,7 @@ class Movies:
                 if self.meta:
                     metacache.insert(self.meta)
 
-            self.list = [i for i in self.list if not i['imdb'] == '0']
+            self.list = [i for i in self.list if i['imdb'] != '0']
         except:
             import traceback
             traceback.print_exc()
@@ -915,7 +918,7 @@ class Movies:
             year = item.get('year', 0)
             year = re.sub('[^0-9]', '', str(year))
 
-            if imdb == '0':
+            if imdb == '0' or imdb is None:
                 imdb = item.get('ids', {}).get('imdb', '0')
                 imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
 
@@ -986,25 +989,24 @@ class Movies:
             meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
             # fanart_thread = threading.Thread
-            if not self.disable_fanarttv == 'true':
+            if self.disable_fanarttv != 'true':
                 from resources.lib.indexers import fanarttv
-                fanarttv_art = fanarttv.get_movie_art(imdb, tmdb)
-                if not fanarttv_art is None:
-                    item.update(fanarttv_art)
+                extended_art = fanarttv.get_movie_art(imdb, tmdb)
+
+                if extended_art is not None:
+                    item.update(extended_art)
                     meta.update(item)
 
             if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') or (self.disable_fanarttv == 'true' and tmdb != '0'):
-                try:
-                    from resources.lib.indexers.tmdb import Movies
-                    tmdb_art = Movies().tmdb_art(tmdb)
-                    # log_utils.log('tmdb_art = %s' % str(tmdb_art), __name__, log_utils.LOGDEBUG)
-                except:
-                    import traceback
-                    traceback.print_exc()
+                from resources.lib.indexers.tmdb import Movies
+                tmdb_art = Movies().tmdb_art(tmdb)
                 item.update(tmdb_art)
+                if item.get('landscape') == '0':
+                    landscape = item.get('fanart3')
+                    item.update({'landscape': landscape})
                 meta.update(item)
 
-            item = dict((k,v) for k, v in item.iteritems() if not v == '0')
+            item = dict((k,v) for k, v in item.iteritems() if v != '0')
             self.list[i].update(item)
 
             self.meta.append(meta)
@@ -1026,7 +1028,7 @@ class Movies:
 
         traktCredentials = trakt.getTraktCredentialsInfo()
 
-        isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
+        isPlayable = 'true' if 'plugin' not in control.infoLabel('Container.PluginName') else 'false'
 
         if control.setting('hosts.mode') == '2':
             playbackMenu = control.lang(32063).encode('utf-8')
@@ -1064,7 +1066,7 @@ class Movies:
                 sysname = urllib.quote_plus(label)
                 systitle = urllib.quote_plus(title)
 
-                meta = dict((k,v) for k, v in i.iteritems() if not v == '0')
+                meta = dict((k,v) for k, v in i.iteritems() if v != '0')
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tmdb_id': tmdb})
                 meta.update({'mediatype': 'movie'})
@@ -1148,23 +1150,23 @@ class Movies:
                 if fanart == '0': fanart = addonFanart
 
                 art = {}
-                if not icon == '0' and not icon is None:
+                if icon != '0' and icon is not None:
                     art.update({'icon': icon})
-                if not thumb == '0' and not thumb is None:
+                if thumb != '0' and thumb is not None:
                     art.update({'thumb': thumb})
-                if not banner == '0' and not banner is None:
+                if banner != '0' and banner is not None:
                     art.update({'banner': banner})
-                if not poster == '0' and not poster is None:
+                if poster != '0' and poster is not None:
                     art.update({'poster': poster})
-                if not fanart == '0' and not fanart is None:
+                if fanart != '0' and fanart is not None:
                     art.update({'fanart': fanart})
-                if not clearlogo == '0' and not clearlogo is None:
+                if clearlogo != '0' and clearlogo is not None:
                     art.update({'clearlogo': clearlogo})
-                if not clearart == '0' and not clearart is None:
+                if clearart != '0' and clearart is not None:
                     art.update({'clearart': clearart})
-                if not landscape == '0' and not landscape is None:
+                if landscape != '0' and landscape is not None:
                     art.update({'landscape': landscape})
-                if not discart == '0' and not discart is None:
+                if discart != '0' and discart is not None:
                     art.update({'discart': discart})
 
 ####-Context Menu and Overlays-####
@@ -1203,7 +1205,7 @@ class Movies:
                 item = control.item(label=labelProgress)
                 if 'cast' in i:
                     item.setCast(i['cast'])
-                # if not fanart == '0' and not fanart is None:
+                # if fanart != '0' and fanart is not None:
                     # item.setProperty('Fanart_Image', fanart)
                 item.setArt(art)
                 item.setProperty('IsPlayable', isPlayable)
@@ -1221,7 +1223,7 @@ class Movies:
                 if url == '':
                     raise Exception()
 
-                if not self.tmdb_link in url:
+                if self.tmdb_link not in url:
                     url = '%s?action=moviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
                 elif self.tmdb_link in url:
@@ -1230,7 +1232,7 @@ class Movies:
                 item = control.item(label=nextMenu)
                 icon = control.addonNext()
                 item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-                # if not addonFanart is None:
+                # if addonFanart is not None:
                     # item.setProperty('Fanart_Image', addonFanart)
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:
@@ -1261,7 +1263,7 @@ class Movies:
 
                 if i['image'].startswith('http'):
                     thumb = i['image']
-                elif not artPath is None:
+                elif artPath is not None:
                     thumb = os.path.join(artPath, i['image'])
                 else:
                     thumb = addonThumb
@@ -1292,7 +1294,7 @@ class Movies:
                 item = control.item(label = name)
                 item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
 
-                if not addonFanart is None:
+                if addonFanart is not None:
                     item.setProperty('Fanart_Image', addonFanart)
 
                 item.addContextMenuItems(cm)

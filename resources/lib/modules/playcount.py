@@ -354,7 +354,8 @@ def tvshowsUpdate(imdb, tvdb):
         from metahandler import metahandlers
         from resources.lib.menus import episodes
 
-        if not trakt.getTraktIndicatorsInfo() is False: raise Exception()
+        if not trakt.getTraktIndicatorsInfo() is False:
+            raise Exception()
 
         name = control.addonInfo('name')
         metaget = metahandlers.MetaData(preparezip=False)
@@ -367,7 +368,8 @@ def tvshowsUpdate(imdb, tvdb):
 
         seasons = {}
         for i in items:
-            if not i['season'] in seasons: seasons[i['season']] = []
+            if i['season'] not in seasons:
+                seasons[i['season']] = []
             seasons[i['season']].append(i)
 
         countSeason = 0
