@@ -262,7 +262,7 @@ class Episodes:
             elif self.trakt_link in url and url == self.progress_link:
                 self.blist = cache.get(self.trakt_progress_list, 720, url, self.trakt_user, self.lang)
                 self.list = []
-                self.list = cache.get(self.trakt_progress_list, 0, url, self.trakt_user, self.lang)
+                self.list = cache.get(self.trakt_progress_list, 0.2, url, self.trakt_user, self.lang)
                 self.sort()
 
             elif self.trakt_link in url and url == self.mycalendar_link:
@@ -291,45 +291,6 @@ class Episodes:
             return self.list
         except:
             pass
-
-    # def calendar(self, url):
-        # try:
-            # try:
-                # url = getattr(self, url + '_link')
-            # except:
-                # pass
-
-            # if self.trakt_link in url and url == self.onDeck_link:
-                # self.list = cache.get(self.trakt_episodes_list, 1, url, self.trakt_user, self.lang)
-
-            # elif self.trakt_link in url and url == self.progress_link:
-                # self.list = cache.get(self.trakt_progress_list, 0.3, url, self.trakt_user, self.lang)
-                # self.sort()
-
-            # elif self.trakt_link in url and url == self.mycalendar_link:
-                # self.list = cache.get(self.trakt_episodes_list, 0.1, url, self.trakt_user, self.lang)
-                # self.sort(dateSort=True)
-
-            # elif self.trakt_link in url and '/users/' in url:
-                # self.list = cache.get(self.trakt_list, 0.1, url, self.trakt_user, True)
-                # self.list = self.list[::-1]
-
-            # elif self.trakt_link in url and url != self.onDeck_link:
-                # self.list = cache.get(self.trakt_list, 1, url, self.trakt_user, True)
-
-            # elif self.tvmaze_link in url and url == self.added_link:
-                # urls = [i['url'] for i in self.calendars(idx=False)][:5]
-                # self.list = []
-                # for url in urls:
-                    # self.list += cache.get(self.tvmaze_list, 720, url, True)
-
-            # elif self.tvmaze_link in url:
-                # self.list = cache.get(self.tvmaze_list, 1, url, False)
-
-            # self.episodeDirectory(self.list)
-            # return self.list
-        # except:
-            # pass
 
 
     def calendars(self, idx=True):
@@ -371,33 +332,33 @@ class Episodes:
     def userlists(self):
         userlists = []
         try:
-            if not trakt.getTraktCredentialsInfo():
+            if trakt.getTraktCredentialsInfo() is False:
                 raise Exception()
             activity = trakt.getActivity()
         except:
             pass
 
         try:
-            if not trakt.getTraktCredentialsInfo():
+            if trakt.getTraktCredentialsInfo() is False:
                 raise Exception()
             self.list = []
             try:
                 if activity > cache.timeout(self.trakt_user_list, self.traktlists_link, self.trakt_user):
                     raise Exception()
-                userlists += cache.get(self.trakt_user_list, 3, self.traktlists_link, self.trakt_user)
+                userlists += cache.get(self.trakt_user_list, 720, self.traktlists_link, self.trakt_user)
             except:
                 userlists += cache.get(self.trakt_user_list, 0, self.traktlists_link, self.trakt_user)
         except:
             pass
 
         try:
-            if not trakt.getTraktCredentialsInfo():
+            if trakt.getTraktCredentialsInfo() is False:
                 raise Exception()
             self.list = []
             try:
-                if activity > cache.timeout(self.trakt_user_list, self.traktlikedlists_link,
-                                            self.trakt_user): raise Exception()
-                userlists += cache.get(self.trakt_user_list, 3, self.traktlikedlists_link, self.trakt_user)
+                if activity > cache.timeout(self.trakt_user_list, self.traktlikedlists_link, self.trakt_user):
+                    raise Exception()
+                userlists += cache.get(self.trakt_user_list, 720, self.traktlikedlists_link, self.trakt_user)
             except:
                 userlists += cache.get(self.trakt_user_list, 0, self.traktlikedlists_link, self.trakt_user)
         except:
@@ -611,11 +572,11 @@ class Episodes:
                     values['airzone'] = item['airzone']
                 try:
                     air = item['show']['airs']
-                    if not 'airday' in item or item['airday'] is None or item['airday'] == '':
+                    if 'airday' not in item or item['airday'] is None or item['airday'] == '':
                         values['airday'] = air['day'].strip()
-                    if not 'airtime' in item or item['airtime'] is None or item['airtime'] == '':
+                    if 'airtime' not in item or item['airtime'] is None or item['airtime'] == '':
                         values['airtime'] = air['time'].strip()
-                    if not 'airzone' in item or item['airzone'] is None or item['airzone'] == '':
+                    if 'airzone' not in item or item['airzone'] is None or item['airzone'] == '':
                         values['airzone'] = air['timezone'].strip()
                 except:
                     pass
@@ -688,7 +649,7 @@ class Episodes:
                 except:
                     tvdb = '0'
 
-### episode IDS
+# ### episode IDS
                 try:
                     episodeIDS = trakt.getEpisodeSummary(imdb, season, episode, full=False)
                     episodeIDS = episodeIDS.get('ids', {})
@@ -764,6 +725,7 @@ class Episodes:
                     premiered = '0'
                 premiered = client.replaceHTMLCodes(premiered)
                 premiered = premiered.encode('utf-8')
+
                 try:
                     added = i['added']
                 except:
@@ -782,7 +744,9 @@ class Episodes:
                     status = 'Ended'
                 status = client.replaceHTMLCodes(status)
                 status = status.encode('utf-8')
+
                 unaired = ''
+
                 if status == 'Ended':
                     pass
                 elif premiered == '0':
@@ -937,7 +901,8 @@ class Episodes:
                     rating = client.parseDOM(item, 'Rating')[0]
                 except:
                     rating = ''
-                if rating == '': rating = '0'
+                if rating == '':
+                    rating = '0'
                 rating = client.replaceHTMLCodes(rating)
                 rating = rating.encode('utf-8')
 
@@ -945,7 +910,8 @@ class Episodes:
                     votes = client.parseDOM(item2, 'RatingCount')[0]
                 except:
                     votes = '0'
-                if votes == '': votes = '0'
+                if votes == '':
+                    votes = '0'
                 votes = client.replaceHTMLCodes(votes)
                 votes = votes.encode('utf-8')
 
@@ -1001,7 +967,8 @@ class Episodes:
                         plot = client.parseDOM(item2, 'Overview')[0]
                     except:
                         plot = ''
-                if plot == '': plot = '0'
+                if plot == '':
+                    plot = '0'
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
@@ -1641,7 +1608,7 @@ class Episodes:
                 except:
                     seasoncount = None
 
-                # UpNext requires all data
+                # UpNext requires all data passed even if 0
                 # meta = dict((k, v) for k, v in i.iteritems() if v != '0')
                 meta = dict((k, v) for k, v in i.iteritems())
                 meta.update({'mediatype': 'episode'})
@@ -1675,6 +1642,7 @@ class Episodes:
                     # Kodi uses the year (the year the show started) as the year for the episode. Change it from the premiered date.
                     meta.update({'tvshowyear': i['year']})
                 except: pass
+
                 if airEnabled == 'true':
                     air = []
                     airday = None
@@ -1687,10 +1655,8 @@ class Episodes:
                             if airZone == '1':
                                 zoneTo = meta['airzone']
                             elif airZone == '2':
-                                # zoneTo = tools.Time.ZoneUtc
                                 zoneTo = 'utc'
                             else:
-                                # zoneTo = tools.Time.ZoneLocal
                                 zoneTo = 'local'
 
                             if airFormatTime == '1':
@@ -1702,8 +1668,7 @@ class Episodes:
 
                             abbreviate = airFormatDay == '1'
                             airtime = tools.Time.convert(stringTime=airtime, stringDay=airday, zoneFrom=meta['airzone'],
-                                                         zoneTo=zoneTo, abbreviate=abbreviate,
-                                                         formatOutput=formatOutput)
+                                                         zoneTo=zoneTo, abbreviate=abbreviate, formatOutput=formatOutput)
                             if airday:
                                 airday = airtime[1]
                                 airtime = airtime[0]
@@ -1831,6 +1796,7 @@ class Episodes:
                 if multi is True:
                     cm.append((tvshowBrowserMenu, 'Container.Update(%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s,return)' % (
                                         sysaddon, systvshowtitle, year, imdb, tvdb)))
+
                 if isFolder is False:
                     cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (
                                         sysaddon, sysurl, sysmeta)))
@@ -1842,28 +1808,30 @@ class Episodes:
 
                 item = control.item(label=labelProgress)
 
-                unwatchedEnabled = True
+                unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
                 unwatchedLimit = False
+                seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
 
-                if unwatchedEnabled:
+                if unwatchedEnabled == 'true':
                     count = playcount.getShowCount(indicators, imdb, tvdb, unwatchedLimit)
                     if count:
                         item.setProperty('TotalEpisodes', str(count['total']))
                         item.setProperty('WatchedEpisodes', str(count['watched']))
                         item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
 
-                total_seasons = trakt.getSeasons(imdb, full=False)
-                if not total_seasons is None:
-                    total_seasons = [i['number'] for i in total_seasons]
-                    total_seasons = len(total_seasons)
-                    if control.setting('tv.specials') == 'false' or self.season_special is False:
-                        total_seasons = total_seasons - 1
-                    item.setProperty('TotalSeasons', str(total_seasons))
+                # if seasoncountEnabled == 'true':
+                    # total_seasons = trakt.getSeasons(imdb, full=False)
+                    # if total_seasons is not None:
+                        # total_seasons = [i['number'] for i in total_seasons]
+                        # total_seasons = len(total_seasons)
+                        # if control.setting('tv.specials') == 'false' or self.season_special is False:
+                            # total_seasons = total_seasons - 1
+                        # item.setProperty('TotalSeasons', str(total_seasons))
 
                 if 'episodeIDS' in i:
                     item.setUniqueIDs(i['episodeIDS'])
-                if 'cast' in i:
-                    item.setCast(i['cast'])
+                # if 'cast' in i:
+                    # item.setCast(i['cast'])
                 # if fanart != '0' and not fanart is None:
                     # item.setProperty('Fanart_Image', fanart)
                 item.setArt(art)
@@ -1881,11 +1849,12 @@ class Episodes:
                 import traceback
                 traceback.print_exc()
                 pass
+
         # Show multi as show, in order to display unwatched count.
         if multi:
             control.content(syshandle, 'tvshows')
             control.directory(syshandle, cacheToDisc=True)
-            views.setView('shows', {'skin.estuary': 55, 'skin.confluence': 500})
+            views.setView('tvshows', {'skin.estuary': 55, 'skin.confluence': 500})
         else:
             control.content(syshandle, 'episodes')
             control.directory(syshandle, cacheToDisc=True)

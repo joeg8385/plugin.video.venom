@@ -136,7 +136,7 @@ class TVshows:
                             raise Exception()
                         if trakt.getActivity() > cache.timeout(self.trakt_list, u, self.trakt_user):
                             raise Exception()
-                        result = cache.get(self.trakt_list, 0, u, self.trakt_user)
+                        result = cache.get(self.trakt_list, 720, u, self.trakt_user)
                         if result: lists += result
                     except:
                         result = cache.get(self.trakt_list, 0, u, self.trakt_user)
@@ -325,10 +325,12 @@ class TVshows:
         q = k.getText() if k.isConfirmed() else None
         if (q is None or q == ''):
             return
+
         try:
             from sqlite3 import dbapi2 as database
         except:
             from pysqlite2 import dbapi2 as database
+
         dbcon = database.connect(control.searchFile)
         dbcur = dbcon.cursor()
         dbcur.execute("INSERT INTO tvshow VALUES (?,?)", (None, q))
@@ -619,7 +621,7 @@ class TVshows:
                 try: duration = str(item['runtime'])
                 except: duration = '0'
                 if duration is None: duration = '0'
-                genre = genre.encode('utf-8')
+                duration = duration.encode('utf-8')
 
                 try: rating = str(item['rating'])
                 except: rating = '0'
@@ -1403,23 +1405,25 @@ class TVshows:
 
                 item = control.item(label = label)
 
-                unwatchedEnabled = True
+                unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
                 unwatchedLimit = False
+                seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
 
-                if unwatchedEnabled:
+                if unwatchedEnabled == 'true':
                     count = playcount.getShowCount(indicators, imdb, tvdb, unwatchedLimit)
                     if count:
                         item.setProperty('TotalEpisodes', str(count['total']))
                         item.setProperty('WatchedEpisodes', str(count['watched']))
                         item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
 
-                total_seasons = trakt.getSeasons(imdb, full=False)
-                if total_seasons is not None:
-                    total_seasons = [i['number'] for i in total_seasons]
-                    total_seasons = len(total_seasons)
-                    # if control.setting('tv.specials') == 'true' and self.season_special is True:
-                        # total_seasons = total_seasons - 1
-                    item.setProperty('TotalSeasons', str(total_seasons))
+                if seasoncountEnabled == 'true':
+                    total_seasons = trakt.getSeasons(imdb, full=False)
+                    if total_seasons is not None:
+                        total_seasons = [i['number'] for i in total_seasons]
+                        total_seasons = len(total_seasons)
+                        # if control.setting('tv.specials') == 'true' and self.season_special is True:
+                            # total_seasons = total_seasons - 1
+                        item.setProperty('TotalSeasons', str(total_seasons))
 
                 # if fanart != '0' and fanart is not None:
                     # item.setProperty('Fanart_Image', fanart)
@@ -1457,7 +1461,7 @@ class TVshows:
 
         control.content(syshandle, 'tvshows')
         control.directory(syshandle, cacheToDisc=True)
-        views.setView('shows', {'skin.estuary': 55, 'skin.confluence': 500})
+        views.setView('tvshows', {'skin.estuary': 55, 'skin.confluence': 500})
 
 
     def addDirectory(self, items, queue=False):

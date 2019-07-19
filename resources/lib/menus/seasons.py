@@ -949,23 +949,25 @@ class Seasons:
 
                 item = control.item(label = label)
 
-                unwatchedEnabled = True
+                unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
                 unwatchedLimit = False
+                seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
 
-                if unwatchedEnabled:
+                if unwatchedEnabled == 'true':
                     count = playcount.getSeasonCount(imdb, season, self.season_special, unwatchedLimit)
                     if count:
                         item.setProperty('TotalEpisodes', str(count['total']))
                         item.setProperty('WatchedEpisodes', str(count['watched']))
                         item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
 
-                total_seasons = trakt.getSeasons(imdb, full=False)
-                if total_seasons is not None:
-                    total_seasons = [i['number'] for i in total_seasons]
-                    total_seasons = len(total_seasons)
-                    if control.setting('tv.specials') == 'false' or self.season_special is False:
-                        total_seasons = total_seasons - 1
-                    item.setProperty('TotalSeasons', str(total_seasons))
+                # if seasoncountEnabled == 'true':
+                    # total_seasons = trakt.getSeasons(imdb, full=False)
+                    # if total_seasons is not None:
+                        # total_seasons = [i['number'] for i in total_seasons]
+                        # total_seasons = len(total_seasons)
+                        # if control.setting('tv.specials') == 'false' or self.season_special is False:
+                            # total_seasons = total_seasons - 1
+                        # item.setProperty('TotalSeasons', str(total_seasons))
 
                 if 'episodeIDS' in i:
                     item.setUniqueIDs(i['episodeIDS'])

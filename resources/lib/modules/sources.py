@@ -48,8 +48,6 @@ class Sources:
             # if control.window.getProperty('PseudoTVRunning') == 'True':
                 # return control.resolve(int(sys.argv[1]), True, control.item(path=str(self.sourcesDirect(items))))
 
-            log_utils.log('control.infoLabel = %s' % str(control.infoLabel('Container.PluginName')), __name__, log_utils.LOGDEBUG)
-
             if len(items) > 0:
                 if select == '1' and 'plugin' in control.infoLabel('Container.PluginName'):
                     control.window.clearProperty(self.itemProperty)
@@ -274,6 +272,7 @@ class Sources:
                     except:
                         # progressDialog.update(int((100 / float(len(items))) * i), str(header2), str((items[i]['label']).replace('\n     ', '')))
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
+
                     if items[i]['source'] == block:
                         raise Exception()
 
@@ -955,6 +954,9 @@ class Sources:
         # self.sources = filter
 # ##---
 
+        if HEVC != 'true':
+            self.sources = [i for i in self.sources if not any(value in i['url'].lower() for value in['hevc', 'h265', 'h.265', 'x265', 'x.265'])]
+
         random.shuffle(self.sources)
 
         if provider == 'true':
@@ -987,7 +989,7 @@ class Sources:
             else:
                 filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster or 'magnet:' in i['url']]
 
-        if debrid_only == 'false' or  debrid.status() is False:
+        if debrid_only == 'false' or debrid.status() is False:
             filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] is False]
         self.sources = filter
 
@@ -1139,15 +1141,7 @@ class Sources:
                 self.sources[i]['multiline_label'] = multiline_label.upper()
                 self.sources[i]['label'] = label.upper()
 
-        try: 
-            if HEVC != 'true':
-                self.sources = [i for i in self.sources if not 'HEVC' in i['label']]
-                self.sources = [i for i in self.sources if not 'X265' in i['label']]
-        except:
-            pass
-
         self.sources = [i for i in self.sources if 'label' or 'multiline_label' in i['label']]
-        # self.sources = [i for i in self.sources if 'label' in i]
         return self.sources
 
 

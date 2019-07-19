@@ -627,16 +627,13 @@ msgctxt "#32374"
 msgid "Enable Debug"
 msgstr ""
 
-
 msgctxt "#32375"
 msgid "TV "Networks" menu options"
 msgstr ""
 
-
 msgctxt "#32376"
 msgid "List Mode"
 msgstr ""
-
 
 msgctxt "#32377"
 msgid "This Season's Shows"
@@ -2329,6 +2326,10 @@ msgstr ""
 
 
 
+
+msgctxt "#33890"
+msgid "Season Count"
+msgstr ""
 
 msgctxt "#33891"
 msgid "Unwatched Count"

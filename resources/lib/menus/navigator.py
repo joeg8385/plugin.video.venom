@@ -325,16 +325,21 @@ class Navigator:
                 return
 
             content = items[select][1]
+
             title = control.lang(32059).encode('utf-8')
             url = '%s?action=addView&content=%s' % (sys.argv[0], content)
+
             poster, banner, fanart = control.addonPoster(), control.addonBanner(), control.addonFanart()
+
             item = control.item(label=title)
             item.setInfo(type='video', infoLabels = {'title': title})
             item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'banner': banner})
-            # item.setProperty('Fanart_Image', fanart)
+            item.setProperty('Fanart_Image', fanart)
+
             control.addItem(handle = int(sys.argv[1]), url=url, listitem=item, isFolder=False)
             control.content(int(sys.argv[1]), content)
             control.directory(int(sys.argv[1]), cacheToDisc=True)
+
             from resources.lib.modules import views
             views.setView(content, {})
         except:

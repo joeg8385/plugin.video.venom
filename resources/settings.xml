@@ -59,7 +59,8 @@
 		<setting id="upnext.notice" type="text" label="  If enabled Episodes are hard coded to Auto play" default="" enable="false" />
 		<setting type="slider" id="upnext.time" enable="eq(-2,true)" visible="eq(-2,true)" default="60" label="40029" option="int" range="10,60" />
 		<setting id="auto.playlistcreate" type="bool" label="40030" default="true" />
-		<!-- <setting id="tvshows.unwatched.enabled" type="bool" label="33891" default="true" /> -->
+		<setting id="tvshows.seasoncount.enabled" type="bool" label="33890" default="true" />
+		<setting id="tvshows.unwatched.enabled" type="bool" label="33891" default="true" />
 		<!-- <setting id="tvshows.unwatched.limit" type="bool" label="33892" default="true" subsetting="false" visible="eq(-1,true)" /> -->
 		<setting type="lsep" label="32375" />
 		<setting id="tvshows.networks.view" type="enum" label="32376" lvalues="32377|32378" default="1" />

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import json, sys
+import json, sys, xbmc
 
 from resources.lib.modules import control
 from resources.lib.modules import trakt
@@ -287,8 +287,6 @@ def seasons(tvshowtitle, imdb, tvdb, season, watched):
 def tvshows(tvshowtitle, imdb, tvdb, season, watched):
     watched = int(watched)
     try:
-        import sys, xbmc
-
         from metahandler import metahandlers
         from resources.lib.menus import episodes
 
@@ -376,7 +374,8 @@ def tvshowsUpdate(imdb, tvdb):
         metaget.get_seasons('', imdb, seasons.keys()) # Must be called to initialize the database.
         for key, value in seasons.iteritems():
             countEpisode = 0
-            for i in value: countEpisode += int(metaget._get_watched_episode({'imdb_id': i['imdb'], 'season': i['season'], 'episode': i['episode'], 'premiered': ''}) == 7)
+            for i in value:
+                countEpisode += int(metaget._get_watched_episode({'imdb_id': i['imdb'], 'season': i['season'], 'episode': i['episode'], 'premiered': ''}) == 7)
             countSeason += int(countEpisode == len(value))
             metaget.change_watched('season', '', imdb_id = imdb, season = key, watched = 7 if countEpisode == len(value) else 6)
         metaget.change_watched('tvshow', '', imdb_id = imdb, watched = 7 if countSeason == len(seasons.keys()) else 6)

@@ -384,6 +384,7 @@ def _rating(action, imdb = None, tvdb = None, season = None, episode = None):
                 data['video_id'] = imdb
                 data['media_type'] = 'movie'
                 data['dbid'] = 4
+
             script = os.path.join(control.addonPath(addon), 'resources', 'lib', 'sqlitequeue.py')
             sqlitequeue = imp.load_source('sqlitequeue', script)
             data = {'action': 'manualRating', 'ratingData': data}
@@ -478,7 +479,10 @@ def listAdd(successNotification = True):
     t = control.lang(32520).encode('utf-8')
     k = control.keyboard('', t) ; k.doModal()
     new = k.getText() if k.isConfirmed() else None
-    if (new is None or new == ''): return
+
+    if (new is None or new == ''):
+        return
+
     result = getTrakt('/users/me/lists', post = {"name" : new, "privacy" : "private"})
     try:
         slug = json.loads(result)['ids']['slug']
@@ -510,7 +514,8 @@ def verify(authentication = None):
     try:
         if getTraktAsJson('/sync/last_activities', authentication = authentication):
             return True
-    except: pass
+    except:
+        pass
     return False
 
 
@@ -558,7 +563,8 @@ def timeoutsyncMovies():
 
 def syncMovies():
     try:
-        if getTraktCredentialsInfo() is False: return
+        if getTraktCredentialsInfo() is False:
+            return
         indicators = getTraktAsJson('/users/me/watched/movies')
         indicators = [i['movie']['ids'] for i in indicators]
         indicators = [str(i['imdb']) for i in indicators if 'imdb' in i]
@@ -605,7 +611,8 @@ def timeoutsyncTVShows():
 
 def syncTVShows():
     try:
-        if getTraktCredentialsInfo() is False: return
+        if getTraktCredentialsInfo() is False:
+            return
         indicators = getTraktAsJson('/users/me/watched/shows?extended=full')
         indicators = [(i['show']['ids']['tvdb'], i['show']['aired_episodes'], sum([[(s['number'], e['number']) for e in s['episodes']] for s in i['seasons']], [])) for i in indicators]
         indicators = [(str(i[0]), int(i[1]), i[2]) for i in indicators]
@@ -616,7 +623,8 @@ def syncTVShows():
 
 def watchedShows():
     try:
-        if getTraktCredentialsInfo() is False: return
+        if getTraktCredentialsInfo() is False:
+            return
         return getTraktAsJson('/users/me/watched/shows?extended=full')
     except:
         pass
@@ -819,7 +827,10 @@ def getTVShowTranslation(id, lang, season=None, episode=None, full=False):
 def getMovieSummary(id, full=True):
     try:
         url = '/movies/%s' % id
-        if full: url += '?extended=full'
+
+        if full:
+            url += '?extended=full'
+
         return cache.get(getTraktAsJson, 48, url)
     except:
         return
@@ -828,7 +839,10 @@ def getMovieSummary(id, full=True):
 def getTVShowSummary(id, full=True):
     try:
         url = '/shows/%s' % id
-        if full: url += '?extended=full'
+
+        if full:
+            url += '?extended=full'
+
         return cache.get(getTraktAsJson, 48, url)
     except:
         return
@@ -846,14 +860,11 @@ def getEpisodeSummary(id, season, episode, full=True):
 
 
 def getSeasons(id, full=True):
-    try:
-        url = '/shows/%s/seasons' % (id)
-        if full:
-            url += '&extended=full'
-        return cache.get(getTraktAsJson, 48, url)
-    except:
-        import traceback
-        traceback.print_exc()
+    url = '/shows/%s/seasons' % (id)
+    if full:
+        url += '&extended=full'
+    return cache.get(getTraktAsJson, 48, url)
+
 
 
 def sort_list(sort_key, sort_direction, list_data):
@@ -879,19 +890,26 @@ def sort_list(sort_key, sort_direction, list_data):
 
 
 def getMovieAliases(id):
-    try: return cache.get(getTraktAsJson, 48, '/movies/%s/aliases' % id)
-    except: return []
+    try:
+        return cache.get(getTraktAsJson, 48, '/movies/%s/aliases' % id)
+    except:
+        return []
 
 
 def getTVShowAliases(id):
-    try: return cache.get(getTraktAsJson, 48, '/shows/%s/aliases' % id)
-    except: return []
+    try:
+        return cache.get(getTraktAsJson, 48, '/shows/%s/aliases' % id)
+    except:
+        return []
 
 
 def getPeople(id, content_type, full=True):
     try:
         url = '/%s/%s/people' % (content_type, id)
-        if full: url += '?extended=full'
+
+        if full:
+            url += '?extended=full'
+
         return cache.get(getTraktAsJson, 48, url)
     except:
         return
@@ -907,8 +925,13 @@ def SearchAll(title, year, full=True):
 def SearchMovie(title, year, full=True):
     try:
         url = '/search/movie?query=%s' % title
-        if year: url += '&year=%s' % year
-        if full: url += '&extended=full'
+
+        if year:
+            url += '&year=%s' % year
+
+        if full:
+            url += '&extended=full'
+
         return getTraktAsJson(url)
     except:
         return
@@ -917,8 +940,13 @@ def SearchMovie(title, year, full=True):
 def SearchTVShow(title, year, full=True):
     try:
         url = '/search/show?query=%s' % title
-        if year: url += '&year=%s' % year
-        if full: url += '&extended=full'
+
+        if year:
+            url += '&year=%s' % year
+
+        if full:
+            url += '&extended=full'
+
         return getTraktAsJson(url)
     except:
         return
@@ -941,6 +969,15 @@ def getGenre(content, type, type_id):
         return r
     except:
         return []
+
+
+def IdLookup(content, type, type_id):
+    try:
+        r = '/search/%s/%s?type=%s' % (type, type_id, content)
+        r = cache.get(getTraktAsJson, 48, r)
+        return r[0].get(content, {}).get('ids', [])
+    except:
+        return {}
 
 
 def _scrobbleType(type):
@@ -1033,14 +1070,6 @@ def scrobbleUpdate(action, type, imdb = None, tvdb = None, season = None, episod
     except:
         pass
     return False
-
-
-def IdLookup(content, type, type_id):
-    try:
-        r = getTraktAsJson('/search/%s/%s?type=%s' % (type, type_id, content))
-        return r[0].get(content, {}).get('ids', [])
-    except:
-        return {}
 
 
 def _released_key(item):

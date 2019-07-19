@@ -150,7 +150,7 @@ def getFileType(url):
         type += ' WEB-DL /'
 
     if any(value in url for value in ['hdrip', 'hd-rip']):
-        type += ' HDRip /'
+        type += ' HDRIP /'
 
     if any(value in url for value in ['bd-r', 'bd.r', 'bdr', 'bd-rip', 'bd.rip', 'bdrip']):
         type += ' BD-R /'
@@ -159,10 +159,10 @@ def getFileType(url):
         type += ' DOLBYDIGITAL /'
 
     if any(value in url for value in ['.ddex', 'dolby-ex', 'dd-ex']):
-        type += ' DOLBYDIGITAL-EX /'
+        type += ' DD-EX /'
 
     if any(value in url for value in ['dolby-digital-plus', 'dolby.digital.plus']):
-        type += ' DOLBYDIGITAL-Plus /'
+        type += ' DD-PLUS /'
 
     if any(value in url for value in ['truehd', '.ddhd']):
         type += ' DOLBY-TRUEHD /'
@@ -210,17 +210,17 @@ def getFileType(url):
         type += ' AC3 /'
 
     if any(value in url for value in CODEC_H264):
-        type += ' x264 /'
+        type += ' X264 /'
 
     if any(value in url for value in CODEC_H265):
-        type += ' x265 /'
+        type += ' X265 /'
 
     if any(value in url for value in CODEC_MKV):
         type += ' MKV /'
 
     if 'subs' in url: 
         if type != '':
-            type += ' - WITH SUBS'
+            type += ' WITH SUBS'
         else:
             type = 'SUBS'
     type = type.rstrip('/')

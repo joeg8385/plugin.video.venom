@@ -199,7 +199,7 @@ def cache_clear_search():
 def cache_clear_bookmarks():
     try:
         cursor = _get_connection_cursor_bookmarks()
-        for t in ['idFile']:
+        for t in ['bookmark']:
             try:
                 cursor.execute("DROP TABLE IF EXISTS %s" % t)
                 cursor.execute("VACUUM")
@@ -268,8 +268,6 @@ def _get_connection_bookmarks():
     conn = db.connect(control.bookmarksFile)
     conn.row_factory = _dict_factory
     return conn
-
-
 
 
 def _dict_factory(cursor, row):

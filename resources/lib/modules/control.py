@@ -305,7 +305,7 @@ def notification(title=None, message=None, icon=None, time=3000, sound=False):
     else:
         body = str(message)
 
-    if icon is None or 'icon' or 'default':
+    if icon is None or icon == '' or icon == 'default':
         icon = addonIcon()
 
     elif icon == 'INFO':

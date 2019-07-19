@@ -1,8 +1,43 @@
+[B][COLOR red]July 18, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] More additions to try and speed up menu load
+    times so please experiment with the new options for
+    "Season Count" and "Unwatched Count".  Personally
+    I like seeing this added info but it does add an api call
+    and impacts load times.  Also if you flip these on or off
+    please remember you need to clear cache, meta and
+    cache option at a min.[/I]
+
+[COLOR yellow]--[/COLOR][I] Had a little issue with someone messing with
+    "view types' and did not know how to cure the setting
+    they chose.  What I decided to do was enhance the
+    "Reset View Types" option to now include flushing
+    of the Kodi cache for "viewMode6.db".  Keep in mind
+    this will now reset every single view type to skin default
+    and wipe the data from Kodi as well.  It's actually the
+    preferable method for a proper reset.[/I]
+
+[COLOR yellow]--[/COLOR][I] I actually fixed the HEVC filtering last update
+     and forgot to include that in the changelog.  What I
+     discovered today was the filtering was done after the
+     source links were counted so you saw all kind of gaps
+     in the link count list.  I now moved the code to where it
+     should be to not effect the count and labels.[/I]
+
+[COLOR yellow]--[/COLOR][I] I've turned back on caching of Trakt Progress
+    list for speed.  First users complained the list did not
+    update for episodes they just finished watching so I
+    removed the caching duration so it would update
+    instantly but this came at a cost...slow down and it
+    comes with the territory folks and you can not have it
+    both ways.  I've come to realize the complaints of speed
+    out weigh the folks wanting it updated instantly so some
+    of you lose.  No more discussions on it either!![/I]
+
 [B][COLOR red]July 06, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Trying to speed up menu load times so please
     experiment with the new options for "Page Item Limit" and
     "Disable Extended artwork(fanart.tv).  I'm currently using
-    a Page Limit of 10, yes you heard that right.[//I]
+    a Page Limit of 10, yes you heard that right.[/I]
 [COLOR yellow]--[/COLOR][I] Disabling Extended artwork seems to have the
     biggest impact on TMDb lists at this time.  I watched a 20
     listitem page go from 8 seconds to 4 seconds by turning

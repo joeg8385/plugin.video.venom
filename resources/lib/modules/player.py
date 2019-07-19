@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import os, sys, re, base64, codecs
+# import os, sys, re, base64, codecs
+import sys
 import urllib, hashlib, json
-import xbmc, xmlrpclib
-import gzip, StringIO
+import xbmc
+# import gzip, StringIO, xmlrpclib
 
 try:
     import AddonSignals
@@ -562,6 +563,9 @@ class Player(xbmc.Player):
 
 class Subtitles:
     def get(self, name, imdb, season, episode):
+        import gzip, StringIO, codecs
+        import xmlrpclib, os, re, base64
+
         try:
             langDict = {'Afrikaans': 'afr', 'Albanian': 'alb', 'Arabic': 'ara', 'Armenian': 'arm', 'Basque': 'baq', 'Bengali': 'ben', 'Bosnian': 'bos', 'Breton': 'bre', 'Bulgarian': 'bul', 'Burmese': 'bur', 'Catalan': 'cat', 'Chinese': 'chi', 'Croatian': 'hrv', 'Czech': 'cze', 'Danish': 'dan', 'Dutch': 'dut', 'English': 'eng', 'Esperanto': 'epo', 'Estonian': 'est', 'Finnish': 'fin', 'French': 'fre', 'Galician': 'glg', 'Georgian': 'geo', 'German': 'ger', 'Greek': 'ell', 'Hebrew': 'heb', 'Hindi': 'hin', 'Hungarian': 'hun', 'Icelandic': 'ice', 'Indonesian': 'ind', 'Italian': 'ita', 'Japanese': 'jpn', 'Kazakh': 'kaz', 'Khmer': 'khm', 'Korean': 'kor', 'Latvian': 'lav', 'Lithuanian': 'lit', 'Luxembourgish': 'ltz', 'Macedonian': 'mac', 'Malay': 'may', 'Malayalam': 'mal', 'Manipuri': 'mni', 'Mongolian': 'mon', 'Montenegrin': 'mne', 'Norwegian': 'nor', 'Occitan': 'oci', 'Persian': 'per', 'Polish': 'pol', 'Portuguese': 'por,pob', 'Portuguese(Brazil)': 'pob,por', 'Romanian': 'rum', 'Russian': 'rus', 'Serbian': 'scc', 'Sinhalese': 'sin', 'Slovak': 'slo', 'Slovenian': 'slv', 'Spanish': 'spa', 'Swahili': 'swa', 'Swedish': 'swe', 'Syriac': 'syr', 'Tagalog': 'tgl', 'Tamil': 'tam', 'Telugu': 'tel', 'Thai': 'tha', 'Turkish': 'tur', 'Ukrainian': 'ukr', 'Urdu': 'urd'}
             codePageDict = {'ara': 'cp1256', 'ar': 'cp1256', 'ell': 'cp1253', 'el': 'cp1253', 'heb': 'cp1255', 'he': 'cp1255', 'tur': 'cp1254', 'tr': 'cp1254', 'rus': 'cp1251', 'ru': 'cp1251'}
@@ -653,98 +657,130 @@ class Bookmarks:
         self.offset = '0'
 
 
+    # def get(self, name, year='0'):
+        # try:
+            # if control.setting('bookmarks') != 'true':
+                # return self.offset
+
+            # idFile = hashlib.md5()
+
+            # for i in name:
+                # idFile.update(str(i))
+
+            # for i in year:
+                # idFile.update(str(i))
+
+            # idFile = str(idFile.hexdigest())
+
+            # dbcon = database.connect(control.bookmarksFile)
+            # dbcur = dbcon.cursor()
+            # dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
+            # dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
+            # match = dbcur.fetchone()
+
+            # if match is None:
+                # return self.offset
+
+            # self.offset = str(match[1])
+            # dbcon.commit()
+
+            # minutes, seconds = divmod(float(self.offset), 60)
+            # hours, minutes = divmod(minutes, 60)
+
+            # label = '%02d:%02d:%02d' % (hours, minutes, seconds)
+            # label = (control.lang(32502) % label).encode('utf-8')
+
+            # if control.setting('bookmarks.auto') == 'false':
+                # # if xbmc.abortRequested is True:
+                    # # return sys.exit()
+                # yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503).encode('utf-8'), control.lang(32501).encode('utf-8'))
+                # if yes:
+                    # self.offset = '0'
+
+            # return self.offset
+        # except:
+            # import traceback
+            # traceback.print_exc()
+            # return self.offset
+
+
     def get(self, name, year='0'):
-        try:
-            if control.setting('bookmarks') != 'true':
-                return self.offset
-
-            idFile = hashlib.md5()
-
-            for i in name:
-                idFile.update(str(i))
-
-            for i in year:
-                idFile.update(str(i))
-
-            idFile = str(idFile.hexdigest())
-
-            dbcon = database.connect(control.bookmarksFile)
-            dbcur = dbcon.cursor()
-            dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
-            dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
-            match = dbcur.fetchone()
-
-            if match is None:
-                return self.offset
-
-            self.offset = str(match[1])
-            dbcon.commit()
-
-            minutes, seconds = divmod(float(self.offset), 60)
-            hours, minutes = divmod(minutes, 60)
-
-            label = '%02d:%02d:%02d' % (hours, minutes, seconds)
-            label = (control.lang(32502) % label).encode('utf-8')
-
-            if control.setting('bookmarks.auto') == 'false':
-                # if xbmc.abortRequested is True:
-                    # return sys.exit()
-                yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503).encode('utf-8'), control.lang(32501).encode('utf-8'))
-                if yes:
-                    self.offset = '0'
-
+        if control.setting('bookmarks') != 'true':
             return self.offset
-        except:
-            import traceback
-            traceback.print_exc()
+
+        idFile = hashlib.md5()
+
+        for i in name:
+            idFile.update(str(i))
+
+        for i in year:
+            idFile.update(str(i))
+
+        idFile = str(idFile.hexdigest())
+
+        dbcon = database.connect(control.bookmarksFile)
+        dbcur = dbcon.cursor()
+        dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
+        dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
+        match = dbcur.fetchone()
+
+        if match is None:
             return self.offset
+
+        self.offset = str(match[1])
+        dbcon.commit()
+
+        minutes, seconds = divmod(float(self.offset), 60)
+        hours, minutes = divmod(minutes, 60)
+
+        label = '%02d:%02d:%02d' % (hours, minutes, seconds)
+        label = (control.lang(32502) % label).encode('utf-8')
+
+        if control.setting('bookmarks.auto') == 'false':
+            # if xbmc.abortRequested is True:
+                # return sys.exit()
+            yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503).encode('utf-8'), control.lang(32501).encode('utf-8'))
+            if yes:
+                self.offset = '0'
+
+        return self.offset
+
 
 
     def reset(self, current_time, media_length, name, year='0'):
-        # log_utils.log('Bookmarks reset call', __name__, log_utils.LOGDEBUG)
-        # log_utils.log('current_time = %s' % str(float(current_time / 60)), __name__, log_utils.LOGDEBUG)
-        # log_utils.log('media_length = %s' % str(float(media_length / 60)), __name__, log_utils.LOGDEBUG)
-        try:
-            if control.setting('bookmarks') != 'true' or media_length == 0 or current_time == 0:
-                return
+        if control.setting('bookmarks') != 'true' or media_length == 0 or current_time == 0:
+            return
 
-            try:
-                timeInSeconds = str(current_time)
+        timeInSeconds = str(current_time)
 
-                ok = (int(current_time) > 180 and (current_time / media_length) <= .92)
+        ok = (int(current_time) > 180 and (current_time / media_length) <= .92)
 
-                idFile = hashlib.md5()
+        idFile = hashlib.md5()
 
-                for i in name:
-                    idFile.update(str(i))
+        for i in name:
+            idFile.update(str(i))
 
-                for i in year:
-                    idFile.update(str(i))
+        for i in year:
+            idFile.update(str(i))
 
-                idFile = str(idFile.hexdigest())
+        idFile = str(idFile.hexdigest())
 
-                control.makeFile(control.dataPath)
-                dbcon = database.connect(control.bookmarksFile)
+        control.makeFile(control.dataPath)
+        dbcon = database.connect(control.bookmarksFile)
+        dbcur = dbcon.cursor()
 
-                dbcur = dbcon.cursor()
+        dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
+        dbcur.execute("DELETE FROM bookmark WHERE idFile = '%s'" % idFile)
 
-                dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
-                dbcur.execute("DELETE FROM bookmark WHERE idFile = '%s'" % idFile)
+        if ok:
+            dbcur.execute("INSERT INTO bookmark Values (?, ?)", (idFile, timeInSeconds))
 
-                if ok:
-                    dbcur.execute("INSERT INTO bookmark Values (?, ?)", (idFile, timeInSeconds))
+            minutes, seconds = divmod(float(timeInSeconds), 60)
+            hours, minutes = divmod(minutes, 60)
 
-                    minutes, seconds = divmod(float(timeInSeconds), 60)
-                    hours, minutes = divmod(minutes, 60)
+            label = ('%02d:%02d:%02d' % (hours, minutes, seconds)).encode('utf-8')
+            message = control.lang(32660).encode('utf-8')
 
-                    label = ('%02d:%02d:%02d' % (hours, minutes, seconds)).encode('utf-8')
-                    message = control.lang(32660).encode('utf-8')
-
-                    control.notification(title=name, message=message + '(' + label + ')', icon='INFO', sound=False)
-                dbcon.commit()
-            except:
-                import traceback
-                traceback.print_exc()
-                pass
-        except:
-            pass
+            control.notification(title=name, message=message + '(' + label + ')', icon='INFO', sound=False)
+        dbcur.connection.commit()
+        dbcon.close()
