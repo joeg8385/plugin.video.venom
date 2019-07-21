@@ -78,6 +78,7 @@ class TVshows:
         self.imdbwatchlist2_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
 
         self.trakt_user = control.setting('trakt.user').strip()
+        self.traktCredentials = trakt.getTraktCredentialsInfo()
         self.trakt_link = 'http://api.trakt.tv'
         self.search_link = 'http://api.trakt.tv/search/show?limit=%d&page=1&query=' % self.count
 
@@ -255,6 +256,8 @@ class TVshows:
 
     def sort(self):
         try:
+            if self.list is None or self.list == []:
+                return
             attribute = int(control.setting('sort.shows.type'))
             reverse = int(control.setting('sort.shows.order')) == 1
             if attribute == 0:
@@ -300,21 +303,23 @@ class TVshows:
 
         dbcon = database.connect(control.searchFile)
         dbcur = dbcon.cursor()
+
         try:
             dbcur.executescript("CREATE TABLE IF NOT EXISTS tvshow (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
         except:
             pass
+
         dbcur.execute("SELECT * FROM tvshow ORDER BY ID DESC")
         lst = []
         delete_option = False
-        for (id,term) in dbcur.fetchall():
+        for (id, term) in dbcur.fetchall():
             if term not in str(lst):
                 delete_option = True
                 navigator.Navigator().addDirectoryItem(term, 'tvSearchterm&name=%s' % term, 'search.png', 'DefaultAddonsSearch.png')
                 lst += [(term)]
         dbcur.close()
         if delete_option:
-            navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonService.png')
+            navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonService.png', isFolder=False)
         navigator.Navigator().endDirectory()
 
 
@@ -334,7 +339,7 @@ class TVshows:
         dbcon = database.connect(control.searchFile)
         dbcur = dbcon.cursor()
         dbcur.execute("INSERT INTO tvshow VALUES (?,?)", (None, q))
-        dbcon.commit()
+        dbcur.connection.commit()
         dbcur.close()
         url = self.search_link + urllib.quote_plus(q)
         self.get(url)
@@ -347,7 +352,8 @@ class TVshows:
 
     def person(self):
         t = control.lang(32010).encode('utf-8')
-        k = control.keyboard('', t) ; k.doModal()
+        k = control.keyboard('', t)
+        k.doModal()
         q = k.getText().strip() if k.isConfirmed() else None
         if not q:
             return
@@ -440,7 +446,7 @@ class TVshows:
     def userlists(self):
         userlists = []
         try:
-            if trakt.getTraktCredentialsInfo() is False:
+            if self.traktCredentials is False:
                 raise Exception()
             activity = trakt.getActivity()
             self.list = []
@@ -471,7 +477,7 @@ class TVshows:
             pass
 
         try:
-            if trakt.getTraktCredentialsInfo() is False:
+            if self.traktCredentials is False:
                 raise Exception()
             self.list = []
             lists = []
@@ -511,7 +517,7 @@ class TVshows:
             self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': imdb_watchlist, 'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tvshows'})
 
         # Trakt Watchlist
-        if trakt.getTraktCredentialsInfo():
+        if self.traktCredentials is True:
             trakt_watchlist = self.traktwatchlist_link + 'shows'
             self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': trakt_watchlist, 'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tvshows'})
 
@@ -597,7 +603,8 @@ class TVshows:
                 except:
                     tvdb = '0'
 
-                if tvdb is None or tvdb == '' or tvdb in dupes: raise Exception()
+                if tvdb is None or tvdb == '' or tvdb in dupes:
+                    raise Exception()
                 dupes.append(tvdb)
 
                 try: premiered = item['first_aired']
@@ -875,7 +882,8 @@ class TVshows:
 
                 url = client.parseDOM(item, 'a', ret='href')[1]
                 url = re.findall('(nm\d*)', url, re.I)[0]
-                url = self.person_link % (url, self.certificates)
+                # url = self.person_link % (url, self.certificates)
+                url = self.person_link % url
                 url = client.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
 
@@ -1082,70 +1090,54 @@ class TVshows:
             premiered = premiered.encode('utf-8')
 
             if 'studio' not in self.list[i] or self.list[i]['studio'] == '0':
-                try:
-                    studio = client.parseDOM(item, 'Network')[0]
-                except:
-                    studio = '0'
+                studio = client.parseDOM(item, 'Network')[0]
                 studio = client.replaceHTMLCodes(studio)
                 studio = studio.encode('utf-8')
+                if studio is None or studio == '': studio = '0'
             else:
                 studio = self.list[i]['studio']
 
-            try:
+            if 'genre' not in self.list[i] or self.list[i]['genre'] == '0':
                 genre = client.parseDOM(item, 'Genre')[0]
-            except:
-                genre = ''
-            genre = [x for x in genre.split('|') if x != '']
-            genre = ' / '.join(genre)
-            if genre == '':
-                genre = '0'
-            genre = client.replaceHTMLCodes(genre)
-            genre = genre.encode('utf-8')
+                genre = [x for x in genre.split('|') if x != '']
+                genre = ' / '.join(genre)
+                genre = client.replaceHTMLCodes(genre)
+                genre = genre.encode('utf-8')
+                if genre is None or genre == '': genre = '0'
+            else:
+                genre = self.list[i]['genre']
 
             if 'duration' not in self.list[i] or self.list[i]['duration'] == '0':
-                try:
-                    duration = client.parseDOM(item, 'Runtime')[0]
-                except:
-                    duration = ''
-                if duration == '':
-                    duration = '0'
+                duration = client.parseDOM(item, 'Runtime')[0]
                 duration = client.replaceHTMLCodes(duration)
                 duration = duration.encode('utf-8')
+                if duration is None or duration == '': duration = '0'
             else:
                 duration = self.list[i]['duration']
 
             if 'rating' not in self.list[i] or self.list[i]['rating'] == '0':
-                try:
-                    rating = client.parseDOM(item, 'Rating')[0]
-                except:
-                    rating = ''
-                if rating == '':
-                    rating = '0'
+                rating = client.parseDOM(item, 'Rating')[0]
                 rating = client.replaceHTMLCodes(rating)
                 rating = rating.encode('utf-8')
+                if rating is None or rating == '': rating = '0'
             else:
                 rating = self.list[i]['rating']
 
             if 'votes' not in self.list[i] or self.list[i]['votes'] == '0':
-                try:
-                    votes = client.parseDOM(item, 'RatingCount')[0]
-                except:
-                    votes = ''
-                if votes == '':
-                    votes = '0'
+                votes = client.parseDOM(item, 'RatingCount')[0]
                 votes = client.replaceHTMLCodes(votes)
                 votes = votes.encode('utf-8')
+                if votes is None or votes == '': votes = '0'
             else:
                 votes = self.list[i]['votes']
 
-            try:
+            if 'mpaa' not in self.list[i] or self.list[i]['mpaa'] == '0':
                 mpaa = client.parseDOM(item, 'ContentRating')[0]
-            except:
-                mpaa = ''
-            if mpaa == '':
-                mpaa = '0'
-            mpaa = client.replaceHTMLCodes(mpaa)
-            mpaa = mpaa.encode('utf-8')
+                mpaa = client.replaceHTMLCodes(mpaa)
+                mpaa = mpaa.encode('utf-8')
+                if mpaa is None or mpaa == '': mpaa = '0'
+            else:
+                mpaa = self.list[i]['mpaa']
 
             try:
                 cast = client.parseDOM(item, 'Actors')[0]
@@ -1218,15 +1210,13 @@ class TVshows:
             if self.disable_fanarttv != 'true':
                 from resources.lib.indexers import fanarttv
                 extended_art = fanarttv.get_tvshow_art(tvdb)
-
                 if extended_art is not None:
                     item.update(extended_art)
                     meta.update(item)
 
-            if (poster == '0' or 'fanart' == '0') or (self.disable_fanarttv == 'true' and tmdb != '0'):
+            if (poster == '0' or fanart == '0') and (self.disable_fanarttv == 'true' and tmdb != '0'):
                 from resources.lib.indexers.tmdb import TVshows
                 tmdb_art = TVshows().tmdb_art(tmdb)
-
                 item.update(tmdb_art)
                 meta.update(item)
 
@@ -1249,8 +1239,6 @@ class TVshows:
 
         addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
         addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
-
-        traktCredentials = trakt.getTraktCredentialsInfo()
 
         flatten = True if control.setting('flatten.tvshows') == 'true' else False
 
@@ -1372,8 +1360,7 @@ class TVshows:
 
 ####-Context Menu and Overlays-####
                 cm = []
-
-                if traktCredentials is True:
+                if self.traktCredentials is True:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, sysname, imdb, tvdb)))
                 try:
                     indicators = playcount.getTVShowIndicators()
@@ -1400,7 +1387,7 @@ class TVshows:
                 cm.append((clearPlaylistMenu, 'RunPlugin(%s?action=clearPlaylist)' % sysaddon))
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tvdb)))
-                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 ####################################
 
                 item = control.item(label = label)
@@ -1416,7 +1403,7 @@ class TVshows:
                         item.setProperty('WatchedEpisodes', str(count['watched']))
                         item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
 
-                if seasoncountEnabled == 'true':
+                if seasoncountEnabled == 'true' and self.traktCredentials is True:
                     total_seasons = trakt.getSeasons(imdb, full=False)
                     if total_seasons is not None:
                         total_seasons = [i['number'] for i in total_seasons]
@@ -1510,7 +1497,7 @@ class TVshows:
                 except:
                     pass
 
-                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
                 item = control.item(label = name)
                 item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})

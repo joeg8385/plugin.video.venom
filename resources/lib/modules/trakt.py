@@ -698,6 +698,7 @@ def seasonCount(imdb, refresh = True, wait = False):
 
         if not imdb.startswith('tt'):
             imdb = 'tt' + imdb
+
         indicators = cache.cache_existing(_seasonCountRetrieve, imdb)
 
         if refresh:
@@ -725,10 +726,8 @@ def _seasonCountRetrieve(imdb):
             indicators = getTraktAsJson('/shows/%s/progress/watched?specials=true&hidden=false&count_specials=true' % imdb)
         else:
             indicators = getTraktAsJson('/shows/%s/progress/watched?specials=false&hidden=false' % imdb)
-
-        # xbmc.log('line 679 from trakt indicators = %s' % str(indicators), 2)
-
         seasons = indicators['seasons']
+
         return [{'total': season['aired'], 'watched': season['completed'], 'unwatched': season['aired'] - season['completed']} for season in seasons]
         # return [{season['number']: {'total': season['aired'], 'watched': season['completed'], 'unwatched': season['aired'] - season['completed']} for season in seasons}]
     except:

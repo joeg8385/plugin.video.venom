@@ -15,7 +15,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views, log_utils
+from resources.lib.modules import views
 
 sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
 artPath = control.artPath() ; addonFanart = control.addonFanart()
@@ -35,6 +35,7 @@ class Collections:
         self.year_date = (self.datetime - datetime.timedelta(days = 365)).strftime('%Y-%m-%d')
 
         self.lang = control.apiLanguage()['trakt']
+        self.traktCredentials = trakt.getTraktCredentialsInfo()
 
         self.imdb_link = 'https://www.imdb.com'
 
@@ -946,8 +947,10 @@ class Collections:
 
             plot = item.get('overview')
 
+            # if self.list[i]['director'] == '0' or self.list[i]['writer'] == '0' or self.list[i]['cast'] == '0':
+            director = '0' ; writer = '0'; cast = '0'
+            # if control.setting('disable.dir.writer.cast') == 'false':
             people = trakt.getPeople(imdb, 'movies')
-
             director = writer = ''
             if 'crew' in people and 'directing' in people['crew']:
                 director = ', '.join([director['person']['name'] for director in people['crew']['directing'] if director['job'].lower() == 'director'])
@@ -982,12 +985,11 @@ class Collections:
             if self.disable_fanarttv != 'true':
                 from resources.lib.indexers import fanarttv
                 extended_art = fanarttv.get_movie_art(imdb, tmdb)
-
                 if extended_art is not None:
                     item.update(extended_art)
                     meta.update(item)
 
-            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') or (self.disable_fanarttv == 'true' and tmdb != '0'):
+            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') and (self.disable_fanarttv == 'true' and tmdb != '0'):
                 from resources.lib.indexers.tmdb import Movies
                 tmdb_art = Movies().tmdb_art(tmdb)
                 item.update(tmdb_art)
@@ -1012,8 +1014,6 @@ class Collections:
 
         addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
         addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
-
-        traktCredentials = trakt.getTraktCredentialsInfo()
 
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
@@ -1139,7 +1139,7 @@ class Collections:
 
 ####-Context Menu and Overlays-####
                 cm = []
-                if traktCredentials is True:
+                if self.traktCredentials is True:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
 
                 try:
@@ -1166,7 +1166,7 @@ class Collections:
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
                 cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
-                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 ####################################
 
                 item = control.item(label=label)
@@ -1216,14 +1216,10 @@ class Collections:
 
 
     def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
-        try:
-            if type(name) is str or type(name) is unicode:
-                name = str(name)
-            if type(name) is int:
-                name = control.lang(name).encode('utf-8')
-        except:
-            import traceback
-            traceback.print_exc()
+        if type(name) is str or type(name) is unicode:
+            name = str(name)
+        if type(name) is int:
+            name = control.lang(name).encode('utf-8')
 
         url = '%s?action=%s' % (sysaddon, query) if isAction else query
 
@@ -1236,7 +1232,7 @@ class Collections:
         if not context is None:
             cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
 
-        cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+        cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
         item = control.item(label=name)
         item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})

@@ -1,3 +1,13 @@
+[B][COLOR red]Update - v3.0.8 - July 21, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed People(TV Search.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed log error "Error getting plugin" for some
+    menu functions that incorrectly set isFolder.[/I]
+[COLOR yellow]--[/COLOR][I] Moved TMDb throttling logging to Venom debug
+    log.[/I]
+[COLOR yellow]--[/COLOR][I] Changed Trakt user lists to "episodes" if 
+    "unwatched count" is disabled. Unwatched
+    count only shows if listItems="tvshows".[/I]
+
 [B][COLOR red]Update - v3.0.7 - July 18, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed HEVC source filtering.[/I]
 [COLOR yellow]--[/COLOR][I] Fixed duration in some TVShows.[/I]

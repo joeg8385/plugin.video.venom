@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.0.7" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.0.8" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,20 +36,15 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.0.7 - July 18, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Fixed HEVC source filtering.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed duration in some TVShows.[/I]
-[COLOR yellow]--[/COLOR][I] Fixed clear cache option for bookmarks.[/I]
-[COLOR yellow]--[/COLOR][I] Turned back on caching of Trakt Progress, one side
-    complaints outweighed the other...sorry.[/I]
-[COLOR yellow]--[/COLOR][I] Changed "Reset View Types" to now wipe
-    Venom's saved data in Kodi's "viewModes6.db" as well.[/I]
-[COLOR yellow]--[/COLOR][I] Added settings page option to enable or disable
-    "Season Count" to limit extra api call.[/I]
-[COLOR yellow]--[/COLOR][I] Added settings page option to enable or disable
-    "Unwatched Count" to limit extra api call.[/I]
-[COLOR yellow]--[/COLOR][I] Please read NewsInfo update for more descriptive
-    chatter of these new features.[/I]
+[B][COLOR red]Update - v3.0.8 - July 21, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed People(TV Search.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed log error "Error getting plugin" for some
+    menu functions that incorrectly set isFolder.[/I]
+[COLOR yellow]--[/COLOR][I] Moved TMDb throttling logging to Venom debug
+    log.[/I]
+[COLOR yellow]--[/COLOR][I] Changed Trakt user lists to "episodes" if 
+    "unwatched count" is disabled. Unwatched
+    count only shows if listItems="tvshows".[/I]
 		</news>
 	</extension>
 

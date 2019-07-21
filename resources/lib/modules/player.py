@@ -401,12 +401,7 @@ class Player(xbmc.Player):
 
     def isPlayback(self):
         # Kodi often starts playback where isPlaying() is true and isPlayingVideo() is false, since the video loading is still in progress, whereas the play is already started.
-        try:
-            return self.isPlaying() and self.isPlayingVideo() and self.getTime() >= 0
-        except:
-            import traceback
-            traceback.print_exc()
-            False
+        return self.isPlaying() and self.isPlayingVideo() and self.getTime() >= 0
 
 
     def onPlayBackSeek(self, time, seekOffset):
@@ -657,53 +652,6 @@ class Bookmarks:
         self.offset = '0'
 
 
-    # def get(self, name, year='0'):
-        # try:
-            # if control.setting('bookmarks') != 'true':
-                # return self.offset
-
-            # idFile = hashlib.md5()
-
-            # for i in name:
-                # idFile.update(str(i))
-
-            # for i in year:
-                # idFile.update(str(i))
-
-            # idFile = str(idFile.hexdigest())
-
-            # dbcon = database.connect(control.bookmarksFile)
-            # dbcur = dbcon.cursor()
-            # dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
-            # dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
-            # match = dbcur.fetchone()
-
-            # if match is None:
-                # return self.offset
-
-            # self.offset = str(match[1])
-            # dbcon.commit()
-
-            # minutes, seconds = divmod(float(self.offset), 60)
-            # hours, minutes = divmod(minutes, 60)
-
-            # label = '%02d:%02d:%02d' % (hours, minutes, seconds)
-            # label = (control.lang(32502) % label).encode('utf-8')
-
-            # if control.setting('bookmarks.auto') == 'false':
-                # # if xbmc.abortRequested is True:
-                    # # return sys.exit()
-                # yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503).encode('utf-8'), control.lang(32501).encode('utf-8'))
-                # if yes:
-                    # self.offset = '0'
-
-            # return self.offset
-        # except:
-            # import traceback
-            # traceback.print_exc()
-            # return self.offset
-
-
     def get(self, name, year='0'):
         if control.setting('bookmarks') != 'true':
             return self.offset
@@ -723,12 +671,13 @@ class Bookmarks:
         dbcur.execute("CREATE TABLE IF NOT EXISTS bookmark (""idFile TEXT, ""timeInSeconds TEXT, ""UNIQUE(idFile)"");")
         dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
         match = dbcur.fetchone()
+        dbcon.close()
 
         if match is None:
             return self.offset
 
         self.offset = str(match[1])
-        dbcon.commit()
+        # dbcon.commit()
 
         minutes, seconds = divmod(float(self.offset), 60)
         hours, minutes = divmod(minutes, 60)
@@ -737,14 +686,12 @@ class Bookmarks:
         label = (control.lang(32502) % label).encode('utf-8')
 
         if control.setting('bookmarks.auto') == 'false':
-            # if xbmc.abortRequested is True:
-                # return sys.exit()
             yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503).encode('utf-8'), control.lang(32501).encode('utf-8'))
+
             if yes:
                 self.offset = '0'
 
         return self.offset
-
 
 
     def reset(self, current_time, media_length, name, year='0'):

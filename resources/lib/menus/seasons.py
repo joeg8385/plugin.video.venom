@@ -45,6 +45,7 @@ class Seasons:
         self.tvdb_poster = 'http://thetvdb.com/banners/_cache/'
 
         self.trakt_user = control.setting('trakt.user').strip()
+        self.traktCredentials = trakt.getTraktCredentialsInfo()
         self.trakt_link = 'http://api.trakt.tv'
         self.onDeck_link = 'http://api.trakt.tv/sync/playback/episodes?extended=full&limit=20'
         self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
@@ -152,13 +153,15 @@ class Seasons:
         userlists = []
 
         try:
-            if trakt.getTraktCredentialsInfo() is False: raise Exception()
+            if self.traktCredentials is False:
+                raise Exception()
             activity = trakt.getActivity()
         except:
             pass
 
         try:
-            if trakt.getTraktCredentialsInfo() is False: raise Exception()
+            if self.traktCredentials is False:
+                raise Exception()
             self.list = []
             try:
                 if activity > cache.timeout(episodes.trakt_user_list, self.traktlists_link, self.trakt_user): raise Exception()
@@ -169,7 +172,8 @@ class Seasons:
             pass
 
         try:
-            if trakt.getTraktCredentialsInfo() is False: raise Exception()
+            if self.traktCredentials is False:
+                raise Exception()
             self.list = []
             try:
                 if activity > cache.timeout(episodes.trakt_user_list, self.traktlikedlists_link, self.trakt_user): raise Exception()
@@ -195,7 +199,7 @@ class Seasons:
         for i in range(0, len(self.list)): self.list[i].update({'image': 'traktlists.png', 'action': 'seasonsList'})
 
         # Watchlist
-        if trakt.getTraktCredentialsInfo():
+        if self.traktCredentials is True:
             self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.traktwatchlist_link, 'image': 'traktwatch.png', 'action': 'seasons'})
 
         episodes.addDirectory(self.list, queue = True)
@@ -540,12 +544,11 @@ class Seasons:
                 episode = re.sub('[^0-9]', '', '%01d' % int(episode))
                 episode = episode.encode('utf-8')
 
-### episode IDS
-                try:
+# ### episode IDS
+                episodeIDS = {}
+                if control.setting('enable.upnext') == 'true':
                     episodeIDS = trakt.getEpisodeSummary(imdb, season, episode, full=False)
                     episodeIDS = episodeIDS.get('ids', {})
-                except:
-                    episodeIDS = {}
 ##------------------
 
                 title = client.parseDOM(item, 'EpisodeName')[0]
@@ -775,8 +778,6 @@ class Seasons:
         addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
         addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
 
-        traktCredentials = trakt.getTraktCredentialsInfo()
-
         if trakt.getTraktIndicatorsInfo() is True:
             watchedMenu = control.lang(32068).encode('utf-8')
             unwatchedMenu = control.lang(32069).encode('utf-8')
@@ -915,7 +916,7 @@ class Seasons:
 
 ####-Context Menu and Overlays-####
                 cm = []
-                if traktCredentials is True:
+                if self.traktCredentials is True:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s&season=%s)' % (sysaddon, sysname, imdb, tvdb, season)))
 
                 try:
@@ -944,7 +945,7 @@ class Seasons:
                 cm.append((clearPlaylistMenu, 'RunPlugin(%s?action=clearPlaylist)' % sysaddon))
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tvdb)))
-                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 ####################################
 
                 item = control.item(label = label)
@@ -960,14 +961,14 @@ class Seasons:
                         item.setProperty('WatchedEpisodes', str(count['watched']))
                         item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
 
-                # if seasoncountEnabled == 'true':
-                    # total_seasons = trakt.getSeasons(imdb, full=False)
-                    # if total_seasons is not None:
-                        # total_seasons = [i['number'] for i in total_seasons]
-                        # total_seasons = len(total_seasons)
+                if seasoncountEnabled == 'true' and self.traktCredentials is True:
+                    total_seasons = trakt.getSeasons(imdb, full=False)
+                    if total_seasons is not None:
+                        total_seasons = [i['number'] for i in total_seasons]
+                        total_seasons = len(total_seasons)
                         # if control.setting('tv.specials') == 'false' or self.season_special is False:
                             # total_seasons = total_seasons - 1
-                        # item.setProperty('TotalSeasons', str(total_seasons))
+                        item.setProperty('TotalSeasons', str(total_seasons))
 
                 if 'episodeIDS' in i:
                     item.setUniqueIDs(i['episodeIDS'])

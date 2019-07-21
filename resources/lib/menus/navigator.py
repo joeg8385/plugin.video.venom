@@ -64,8 +64,8 @@ class Navigator:
         if downloads is True:
             self.addDirectoryItem(32009, 'downloadNavigator', 'downloads.png', 'DefaultFolder.png')
 
-        self.addDirectoryItem('News and Info!!', 'ShowNews', 'icon.png', 'DefaultAddonHelper.png')
-        self.addDirectoryItem('Change Log!!', 'ShowChangelog', 'icon.png', 'DefaultAddonsUpdates.png')
+        self.addDirectoryItem('News and Info!!', 'ShowNews', 'icon.png', 'DefaultAddonHelper.png', isFolder=False)
+        self.addDirectoryItem('Change Log!!', 'ShowChangelog', 'icon.png', 'DefaultAddonsUpdates.png', isFolder=False)
         self.endDirectory()
 
 
@@ -248,50 +248,51 @@ class Navigator:
 
 
     def tools(self):
-        self.addDirectoryItem(32510, 'cfNavigator', 'tools.png', 'DefaultAddonService.png')
-        self.addDirectoryItem(32609, 'urlResolver', 'urlresolver.png', 'DefaultAddonService.png')
+        self.addDirectoryItem(32510, 'cfNavigator', 'tools.png', 'DefaultAddonService.png', isFolder=True)
+        self.addDirectoryItem(32609, 'urlResolver', 'urlresolver.png', 'DefaultAddonService.png', isFolder=False)
         #-- Providers - 4
-        self.addDirectoryItem(32651, 'openscrapersSettings&query=0.0', 'OpenScrapers.png', 'DefaultAddonService.png')
+        self.addDirectoryItem(32651, 'openscrapersSettings&query=0.0', 'OpenScrapers.png', 'DefaultAddonService.png', isFolder=False)
         #-- General - 0
-        self.addDirectoryItem(32043, 'openSettings&query=0.1', 'tools.png', 'DefaultAddonService.png')
+        self.addDirectoryItem(32043, 'openSettings&query=0.1', 'tools.png', 'DefaultAddonService.png', isFolder=False)
         #-- Navigation - 1
-        self.addDirectoryItem(32362, 'openSettings&query=1.0', 'tools.png', 'DefaultAddonService.png')
+        self.addDirectoryItem(32362, 'openSettings&query=1.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
         #-- Playback - 3
-        self.addDirectoryItem(32045, 'openSettings&query=3.0', 'tools.png', 'DefaultAddonService.png')
+        self.addDirectoryItem(32045, 'openSettings&query=3.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
         #-- Api-keys - 8
-        self.addDirectoryItem(32044, 'openSettings&query=8.0', 'tools.png', 'DefaultAddonService.png')
+        self.addDirectoryItem(32044, 'openSettings&query=8.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
         #-- Downloads - 10
-        self.addDirectoryItem(32048, 'openSettings&query=10.0', 'tools.png', 'DefaultAddonService.png')
+        self.addDirectoryItem(32048, 'openSettings&query=10.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
         #-- Subtitles - 11
-        self.addDirectoryItem(32046, 'openSettings&query=11.0', 'tools.png', 'DefaultAddonService.png')
-        self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonService.png')
-        self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonService.png')
-        self.addDirectoryItem(32361, 'resetViewTypes', 'tools.png', 'DefaultAddonService.png')
-        self.addDirectoryItem(32073, 'authTrakt&opensettings=false', 'trakt.png', 'DefaultAddonService.png')
+        self.addDirectoryItem(32046, 'openSettings&query=11.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+        self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonService.png', isFolder=True)
+        self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+        self.addDirectoryItem(32361, 'resetViewTypes', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+        self.addDirectoryItem(32073, 'authTrakt&opensettings=false', 'trakt.png', 'DefaultAddonService.png', isFolder=False)
         self.endDirectory()
 
 
     def cf(self):
-        self.addDirectoryItem(32610, 'clearAllCache', 'tools.png', 'DefaultAddonService.png')
-        self.addDirectoryItem(32611, 'clearSources&opensettings=false', 'tools.png', 'DefaultAddonService.png')
-        self.addDirectoryItem(32612, 'clearMetaCache', 'tools.png', 'DefaultAddonService.png')
-        self.addDirectoryItem(32613, 'clearCache', 'tools.png', 'DefaultAddonService.png')
-        self.addDirectoryItem(32614, 'clearCacheSearch', 'tools.png', 'DefaultAddonService.png')
-        self.addDirectoryItem(32615, 'clearBookmarks', 'tools.png', 'DefaultAddonService.png')
+        self.addDirectoryItem(32610, 'clearAllCache', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+        self.addDirectoryItem(32611, 'clearSources&opensettings=false', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+        self.addDirectoryItem(32612, 'clearMetaCache', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+        self.addDirectoryItem(32613, 'clearCache', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+        self.addDirectoryItem(32614, 'clearCacheSearch', 'tools.png', 'DefaultAddonService.png', isFolder=False)
+        self.addDirectoryItem(32615, 'clearBookmarks', 'tools.png', 'DefaultAddonService.png', isFolder=False)
         self.endDirectory()
 
 
     def library(self):
 #-- Library - 9
-        self.addDirectoryItem(32557, 'openSettings&query=9.0', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32558, 'updateLibrary&query=tool', 'library_update.png', 'DefaultAddonLibrary.png')
+        self.addDirectoryItem(32557, 'openSettings&query=9.0', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32558, 'updateLibrary&query=tool', 'library_update.png', 'DefaultAddonLibrary.png', isFolder=False)
         self.addDirectoryItem(32559, control.setting('library.movie'), 'movies.png', 'DefaultMovies.png', isAction=False)
         self.addDirectoryItem(32560, control.setting('library.tv'), 'tvshows.png', 'DefaultTVShows.png', isAction=False)
-        if trakt.getTraktCredentialsInfo():
-            self.addDirectoryItem(32561, 'moviesToLibrary&url=traktcollection', 'trakt.png', 'DefaultMovies.png')
-            self.addDirectoryItem(32562, 'moviesToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png')
-            self.addDirectoryItem(32563, 'tvshowsToLibrary&url=traktcollection', 'trakt.png', 'DefaultTVShows.png')
-            self.addDirectoryItem(32564, 'tvshowsToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png')
+
+        if traktCredentials is True:
+            self.addDirectoryItem(32561, 'moviesToLibrary&url=traktcollection', 'trakt.png', 'DefaultMovies.png', isFolder=False)
+            self.addDirectoryItem(32562, 'moviesToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png', isFolder=False)
+            self.addDirectoryItem(32563, 'tvshowsToLibrary&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', isFolder=False)
+            self.addDirectoryItem(32564, 'tvshowsToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', isFolder=False)
         self.endDirectory()
 
 

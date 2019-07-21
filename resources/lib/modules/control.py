@@ -475,7 +475,7 @@ def cdnImport(uri, name):
     path = os.path.join(dataPath, 'py' + name)
     path = path.decode('utf-8')
     deleteDir(os.path.join(path, ''), force=True)
-    makeFile(dataPath);
+    makeFile(dataPath)
     makeFile(path)
     r = client.request(uri)
     p = os.path.join(path, name + '.py')

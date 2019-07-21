@@ -6,11 +6,13 @@ from resources.lib.modules import control
 from resources.lib.modules import trakt
 
 trakt.notification = False if control.setting('trakt.notifications') == 'false' else True
+traktIndicators = trakt.getTraktIndicatorsInfo()
 
 
 def getMovieIndicators(refresh=False):
     try:
-        if trakt.getTraktIndicatorsInfo() is True:
+        # if trakt.getTraktIndicatorsInfo() is True:
+        if traktIndicators is True:
             raise Exception()
         from metahandler import metahandlers
         indicators = metahandlers.MetaData(preparezip = False)
@@ -18,7 +20,8 @@ def getMovieIndicators(refresh=False):
     except:
         pass
     try:
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             raise Exception()
         if refresh is False:
             timeout = 720
@@ -34,7 +37,8 @@ def getMovieIndicators(refresh=False):
 
 def getTVShowIndicators(refresh=False):
     try:
-        if trakt.getTraktIndicatorsInfo() is True:
+        # if trakt.getTraktIndicatorsInfo() is True:
+        if traktIndicators is True:
             raise Exception()
         from metahandler import metahandlers
         indicators = metahandlers.MetaData(preparezip=False)
@@ -42,7 +46,8 @@ def getTVShowIndicators(refresh=False):
     except:
         pass
     try:
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             raise Exception()
         if refresh is False:
             timeout = 720
@@ -58,14 +63,19 @@ def getTVShowIndicators(refresh=False):
 
 def getSeasonIndicators(imdb, refresh=False):
     try:
-        if trakt.getTraktIndicatorsInfo() is True: raise Exception()
+        # if trakt.getTraktIndicatorsInfo() is True:
+        if traktIndicators is True:
+            raise Exception()
         from metahandler import metahandlers
         indicators = metahandlers.MetaData(preparezip = False)
         return indicators
     except:
         pass
+
     try:
-        if trakt.getTraktIndicatorsInfo() is False: raise Exception()
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
+            raise Exception()
         if refresh is False:
             timeout = 720
         elif trakt.getWatchedActivity() < trakt.timeoutsyncSeason(imdb = imdb):
@@ -134,7 +144,8 @@ def getEpisodeOverlay(indicators, imdb, tvdb, season, episode):
 
 def getShowCount(indicators, imdb, tvdb, limit = False):
     try:
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             raise Exception()
         result = trakt.showCount(imdb)
         if limit and result:
@@ -156,7 +167,8 @@ def getShowCount(indicators, imdb, tvdb, limit = False):
 
 def getSeasonCount(imdb, season = None, season_special = False, limit = False):
     try:
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             raise Exception()
         result = trakt.seasonCount(imdb)
         if season is None:
@@ -184,7 +196,8 @@ def getSeasonCount(imdb, season = None, season_special = False, limit = False):
 
 def markMovieDuringPlayback(imdb, watched):
     try:
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             raise Exception()
 
         if int(watched) == 7:
@@ -211,7 +224,8 @@ def markMovieDuringPlayback(imdb, watched):
 
 def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
     try:
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             raise Exception()
 
         if int(watched) == 7:
@@ -239,8 +253,10 @@ def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
 
 def movies(imdb, watched):
     try:
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             raise Exception()
+
         if int(watched) == 7:
             trakt.watch(imdb=imdb, refresh=True, notification=trakt.notification)
         else:
@@ -252,7 +268,8 @@ def movies(imdb, watched):
         metaget = metahandlers.MetaData(preparezip=False)
         metaget.get_meta('movie', name='', imdb_id=imdb)
         metaget.change_watched('movie', name='', imdb_id=imdb, watched=int(watched))
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             control.refresh()
     except:
         pass
@@ -260,7 +277,8 @@ def movies(imdb, watched):
 
 def episodes(imdb, tvdb, season, episode, watched):
     try:
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             raise Exception()
         if int(watched) == 7:
             trakt.watch(imdb=imdb, tvdb=tvdb, season=season, episode=episode, refresh=True, notification=trakt.notification)
@@ -274,7 +292,8 @@ def episodes(imdb, tvdb, season, episode, watched):
         metaget.get_meta('tvshow', name='', imdb_id=imdb)
         metaget.get_episode_meta('', imdb_id=imdb, season=season, episode=episode)
         metaget.change_watched('episode', '', imdb_id=imdb, season=season, episode=episode, watched=int(watched))
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             tvshowsUpdate(imdb=imdb, tvdb=tvdb)
     except:
         pass
@@ -290,7 +309,8 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
         from metahandler import metahandlers
         from resources.lib.menus import episodes
 
-        if not trakt.getTraktIndicatorsInfo() is False:
+        # if not trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is True:
             raise Exception()
         name = control.addonInfo('name')
 
@@ -335,7 +355,8 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
             pass
 
     try:
-        if trakt.getTraktIndicatorsInfo() is False:
+        # if trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is False:
             raise Exception()
         if watched == 7:
             trakt.watch(imdb = imdb, tvdb = tvdb, season = season, refresh = True, notification = trakt.notification)
@@ -352,7 +373,8 @@ def tvshowsUpdate(imdb, tvdb):
         from metahandler import metahandlers
         from resources.lib.menus import episodes
 
-        if not trakt.getTraktIndicatorsInfo() is False:
+        # if not trakt.getTraktIndicatorsInfo() is False:
+        if traktIndicators is True:
             raise Exception()
 
         name = control.addonInfo('name')

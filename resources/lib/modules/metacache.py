@@ -20,19 +20,21 @@ def fetch(items, lang = 'en', user=''):
         dbcon = database.connect(control.metacacheFile)
         dbcur = dbcon.cursor()
         dbcur.execute("CREATE TABLE IF NOT EXISTS meta (""imdb TEXT, ""tmdb TEXT, ""tvdb TEXT, ""lang TEXT, ""user TEXT, ""item TEXT, ""time TEXT, ""UNIQUE(imdb, tmdb, tvdb, lang, user)"");")
+        dbcur.connection.commit()
     except:
         return items
 
     for i in range(0, len(items)):
         try:
             dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tmdb'], lang, user, items[i]['tvdb'], lang, user))
-            # dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tvdb'], lang, user))
             match = dbcur.fetchone()
             if match is not None:
                 t1 = int(match[6])
                 update = (abs(t2 - t1) / 3600) >= 720
+
                 if update is True:
                     raise Exception()
+
                 item = eval(match[5].encode('utf-8'))
                 item = dict((k, v) for k, v in item.iteritems() if v != '0')
                 items[i].update(item)
@@ -41,6 +43,8 @@ def fetch(items, lang = 'en', user=''):
             import traceback
             traceback.print_exc()
             pass
+
+    dbcon.close()
     return items
 
 
@@ -50,22 +54,15 @@ def insert(meta):
         dbcon = database.connect(control.metacacheFile)
         dbcur = dbcon.cursor()
         dbcur.execute("CREATE TABLE IF NOT EXISTS meta (""imdb TEXT, ""tmdb TEXT, ""tvdb TEXT, ""lang TEXT, ""user TEXT, ""item TEXT, ""time TEXT, ""UNIQUE(imdb, tmdb, tvdb, lang, user)"");")
-        # dbcur.execute("CREATE TABLE IF NOT EXISTS meta (""imdb TEXT, ""tvdb TEXT, ""lang TEXT, ""user TEXT, ""item TEXT, ""time TEXT, ""UNIQUE(imdb, tvdb, lang, user)"");")
         t = int(time.time())
 
         for m in meta:
-            try:
                 i = repr(m['item'])
-                try:
-                    dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tmdb'], lang, user, items[i]['tvdb'], lang, user))
-                # try: dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (m['imdb'], m['lang'], m['user'], m['tvdb'], m['lang'], m['user']))
-                except:
-                    pass
+                dbcur.execute("DELETE FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % (items[i]['imdb'], lang, user, items[i]['tmdb'], lang, user, items[i]['tvdb'], lang, user))
                 dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?, ?)", (m['imdb'], m['tmdb'], m['tvdb'], m['lang'], m['user'], i, t))
-                # dbcur.execute("INSERT INTO meta Values (?, ?, ?, ?, ?, ?)", (m['imdb'], m['tvdb'], m['lang'], m['user'], i, t))
-            except:
-                pass
-        dbcon.commit()
+
+        dbcur.connection.commit()
+        dbcon.close()
     except:
         return
 
@@ -102,4 +99,6 @@ def local(items, link, poster, fanart):
                 pass
         except:
             pass
+
+    dbcon.close()
     return items

@@ -24,6 +24,8 @@ def getFavourites(content):
         items = [(i[0].encode('utf-8'), eval(i[1].encode('utf-8'))) for i in items]
     except:
         items = []
+
+    dbcon.close()
     return items
 
 
@@ -36,6 +38,8 @@ def getProgress(content):
         items = [(i[0].encode('utf-8'), eval(i[1].encode('utf-8'))) for i in items]
     except:
         items = []
+
+    dbcon.close()
     return items
 
 
@@ -46,6 +50,7 @@ def addFavourite(meta, content):
         # print "META DUMP FAVOURITES %s" % meta
         try: id = meta['imdb']
         except: id = meta['tvdb']
+
         if 'title' in meta: title = item['title'] = meta['title']
         if 'tvshowtitle' in meta: title = item['title'] = meta['tvshowtitle']
         if 'year' in meta: item['year'] = meta['year']
@@ -65,7 +70,9 @@ def addFavourite(meta, content):
         dbcur.execute("CREATE TABLE IF NOT EXISTS %s (""id TEXT, ""items TEXT, ""UNIQUE(id)"");" % content)
         dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, id))
         dbcur.execute("INSERT INTO %s Values (?, ?)" % content, (id, repr(item)))
-        dbcon.commit()
+        dbcur.connection.commit()
+        dbcon.close()
+
         control.refresh()
         control.notification(title = title, message = 'Added to Favorites', icon = 'INFO', sound = True)
     except:
@@ -101,13 +108,16 @@ def addEpisodes(meta, content):
         if 'season' in meta: item['season'] = meta['season']
         if 'premiered' in meta: item['premiered'] = meta['premiered']
         if 'original_year' in meta: item['original_year'] = meta['original_year']
+
         control.makeFile(dataPath)
         dbcon = database.connect(favouritesFile)
         dbcur = dbcon.cursor()
         dbcur.execute("CREATE TABLE IF NOT EXISTS %s (""id TEXT, ""items TEXT, ""UNIQUE(id)"");" % content)
         dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, id))
         dbcur.execute("INSERT INTO %s Values (?, ?)" % content, (id, repr(item)))
-        dbcon.commit()
+        dbcur.connection.commit()
+        dbcon.close()
+
         control.refresh()
         control.notification(title = title, message = 'Added to Favorites', icon = 'INFO', sound = True)
     except:
@@ -117,22 +127,19 @@ def addEpisodes(meta, content):
 def deleteFavourite(meta, content):
     try:
         meta = json.loads(meta)
-        if 'title' in meta: title = meta['title']
-        if 'tvshowtitle' in meta: title = meta['tvshowtitle']
-        try:
-            dbcon = database.connect(favouritesFile)
-            dbcur = dbcon.cursor()
-            try:
-                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['imdb']))
-            except: pass
-            try:
-                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tvdb']))
-            except: pass
-            try:
-                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tmdb']))
-            except: pass
-            dbcon.commit()
-        except: pass
+        if 'title' in meta:
+            title = meta['title']
+        if 'tvshowtitle' in meta:
+            title = meta['tvshowtitle']
+
+        dbcon = database.connect(favouritesFile)
+        dbcur = dbcon.cursor()
+        dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['imdb']))
+        dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tvdb']))
+        dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tmdb']))
+        dbcur.connection.commit()
+        dbcon.close()
+
         control.refresh()
         control.notification(title = title, message = 'Removed From Favorites', icon = 'INFO', sound = True)
     except:
@@ -142,20 +149,15 @@ def deleteFavourite(meta, content):
 def deleteProgress(meta, content):
     try:
         meta = json.loads(meta)
-        try:
-            dbcon = database.connect(progressFile)
-            dbcur = dbcon.cursor()
-            try:
-                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['imdb']))
-            except: pass
-            try:
-                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tvdb']))
-            except: pass
-            try:
-                dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tmdb']))
-            except: pass
-            dbcon.commit()
-        except: pass
+
+        dbcon = database.connect(progressFile)
+        dbcur = dbcon.cursor()
+        dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['imdb']))
+        dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tvdb']))
+        dbcur.execute("DELETE FROM %s WHERE id = '%s'" % (content, meta['tmdb']))
+        dbcur.connection.commit()
+        dbcon.close()
+
         control.refresh()
     except:
         return

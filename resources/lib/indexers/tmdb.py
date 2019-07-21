@@ -6,6 +6,7 @@ Venom
 
 import re, datetime
 import json, requests, xbmc
+from time import sleep
 
 from resources.lib.modules import control
 from resources.lib.modules import client
@@ -55,12 +56,12 @@ class Movies:
         elif 'Retry-After' in response.headers:
             # API REQUESTS ARE BEING THROTTLED, INTRODUCE WAIT TIME
             throttleTime = response.headers['Retry-After']
-            log_utils.log2('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, '')
+            log_utils.log('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, __name__, log_utils.LOGDEBUG)
             sleep(int(throttleTime) + 1)
             return self.get_request(url)
         else:
-            log_utils.log2('Get request failed to TMDB URL: %s' % url, 'error')
-            log_utils.log2('TMDB Response: %s' % response.text, 'error')
+            log_utils.log('Get request failed to TMDB URL: %s' % url, __name__, log_utils.LOGDEBUG)
+            log_utils.log('TMDB Response: %s' % response.text, __name__, log_utils.LOGDEBUG)
             return None
 
 
@@ -477,12 +478,12 @@ class TVshows:
         elif 'Retry-After' in response.headers:
             # API REQUESTS ARE BEING THROTTLED, INTRODUCE WAIT TIME
             throttleTime = response.headers['Retry-After']
-            log_utils.log2('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, '')
+            log_utils.log('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, __name__, log_utils.LOGDEBUG)
             sleep(int(throttleTime) + 1)
             return self.get_request(url)
         else:
-            log_utils.log2('Get request failed to TMDB URL: %s' % url, 'error')
-            log_utils.log2('TMDB Response: %s' % response.text, 'error')
+            log_utils.log('Get request failed to TMDB URL: %s' % url, __name__, log_utils.LOGDEBUG)
+            log_utils.log('TMDB Response: %s' % response.text, __name__, log_utils.LOGDEBUG)
             return None
 
 

@@ -5,37 +5,56 @@ import xbmc,xbmcplugin,xbmcvfs,xbmcgui
 
 
 def download(name, image, url):
-    if url is None: return
+    if url is None:
+        return
+
     from resources.lib.modules import control
-    try: headers = dict(urlparse.parse_qsl(url.rsplit('|', 1)[1]))
-    except: headers = dict('')
+
+    try:
+        headers = dict(urlparse.parse_qsl(url.rsplit('|', 1)[1]))
+    except:
+        headers = dict('')
+
     url = url.split('|')[0]
+
     content = re.compile('(.+?)\sS(\d*)E\d*$').findall(name)
     transname = name.translate(None, '\/:*?"<>|').strip('.')
     levels =['../../../..', '../../..', '../..', '..']
+
     if len(content) == 0:
         dest = control.setting('movie.download.path')
         dest = control.transPath(dest)
         for level in levels:
-            try: control.makeFile(os.path.abspath(os.path.join(dest, level)))
-            except: pass
+            try:
+                control.makeFile(os.path.abspath(os.path.join(dest, level)))
+            except:
+                pass
+
         control.makeFile(dest)
         dest = os.path.join(dest, transname)
         control.makeFile(dest)
     else:
         dest = control.setting('tv.download.path')
         dest = control.transPath(dest)
+
         for level in levels:
-            try: control.makeFile(os.path.abspath(os.path.join(dest, level)))
-            except: pass
+            try:
+                control.makeFile(os.path.abspath(os.path.join(dest, level)))
+            except:
+                pass
+
         control.makeFile(dest)
         transtvshowtitle = content[0][0].translate(None, '\/:*?"<>|').strip('.')
         dest = os.path.join(dest, transtvshowtitle)
         control.makeFile(dest)
         dest = os.path.join(dest, 'Season %01d' % int(content[0][1]))
         control.makeFile(dest)
+
     ext = os.path.splitext(urlparse.urlparse(url).path)[1][1:]
-    if not ext in ['mp4', 'mkv', 'flv', 'avi', 'mpg']: ext = 'mp4'
+
+    if not ext in ['mp4', 'mkv', 'flv', 'avi', 'mpg']:
+        ext = 'mp4'
+
     dest = os.path.join(dest, transname + '.' + ext)
     sysheaders = urllib.quote_plus(json.dumps(headers))
     sysurl = urllib.quote_plus(url)

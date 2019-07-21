@@ -334,8 +334,10 @@ def _get_result(response, limit=None):
 
 
 def parseDOM(html, name='', attrs=None, ret=False):
-    if attrs: attrs = dict((key, re.compile(value + ('$' if value else ''))) for key, value in attrs.iteritems())
+    if attrs:
+        attrs = dict((key, re.compile(value + ('$' if value else ''))) for key, value in attrs.iteritems())
     results = dom_parser.parse_dom(html, name, attrs, ret)
+
     if ret:
         results = [result.attrs[ret.lower()] for result in results]
     else:

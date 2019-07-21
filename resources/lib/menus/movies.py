@@ -41,6 +41,7 @@ class Movies:
 
         self.trakt_link = 'http://api.trakt.tv'
         self.trakt_user = control.setting('trakt.user').strip()
+        self.traktCredentials = trakt.getTraktCredentialsInfo()
         self.lang = control.apiLanguage()['trakt']
 
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
@@ -237,6 +238,8 @@ class Movies:
 
     def sort(self):
         try:
+            if self.list is None or self.list == []:
+                return
             attribute = int(control.setting('sort.movies.type'))
             reverse = int(control.setting('sort.movies.order')) == 1
             if attribute == 0: reverse = False
@@ -244,7 +247,8 @@ class Movies:
                 if attribute == 1:
                     try:
                         self.list = sorted(self.list, key = lambda k: re.sub('(^the |^a |^an )', '', k['title'].lower()), reverse = reverse)
-                    except: self.list = sorted(self.list, key = lambda k: k['title'].lower(), reverse = reverse)
+                    except:
+                        self.list = sorted(self.list, key = lambda k: k['title'].lower(), reverse = reverse)
                 elif attribute == 2:
                     self.list = sorted(self.list, key = lambda k: float(k['rating']), reverse = reverse)
                 elif attribute == 3:
@@ -277,12 +281,15 @@ class Movies:
             from sqlite3 import dbapi2 as database
         except:
             from pysqlite2 import dbapi2 as database
+
         dbcon = database.connect(control.searchFile)
         dbcur = dbcon.cursor()
+
         try:
             dbcur.executescript("CREATE TABLE IF NOT EXISTS movies (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
         except:
             pass
+
         dbcur.execute("SELECT * FROM movies ORDER BY ID DESC")
         lst = []
         delete_option = False
@@ -293,7 +300,7 @@ class Movies:
                 lst += [(term)]
         dbcur.close()
         if delete_option:
-            navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonService.png')
+            navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonService.png', isFolder=False)
         navigator.Navigator().endDirectory()
 
 
@@ -304,14 +311,16 @@ class Movies:
         q = k.getText() if k.isConfirmed() else None
         if (q is None or q == ''):
             return
+
         try:
             from sqlite3 import dbapi2 as database
         except:
             from pysqlite2 import dbapi2 as database
+
         dbcon = database.connect(control.searchFile)
         dbcur = dbcon.cursor()
         dbcur.execute("INSERT INTO movies VALUES (?,?)", (None, q))
-        dbcon.commit()
+        dbcur.connection.commit()
         dbcur.close()
         url = self.search_link + urllib.quote_plus(q)
         self.get(url)
@@ -324,7 +333,8 @@ class Movies:
 
     def person(self):
         t = control.lang(32010).encode('utf-8')
-        k = control.keyboard('', t) ; k.doModal()
+        k = control.keyboard('', t)
+        k.doModal()
         q = k.getText().strip() if k.isConfirmed() else None
         if not q:
             return
@@ -409,7 +419,7 @@ class Movies:
     def userlists(self):
         userlists = []
         try:
-            if trakt.getTraktCredentialsInfo() is False:
+            if self.traktCredentials is False:
                 raise Exception()
             activity = trakt.getActivity()
             self.list = []
@@ -440,7 +450,7 @@ class Movies:
             pass
 
         try:
-            if trakt.getTraktCredentialsInfo() is False:
+            if self.traktCredentials is False:
                 raise Exception()
             self.list = []
             lists = []
@@ -479,7 +489,7 @@ class Movies:
             # self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.imdbwatchlist2_link, 'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
 
         # Watchlist
-        if trakt.getTraktCredentialsInfo():
+        if self.traktCredentials is True:
             self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.traktwatchlist_link, 'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
 
         self.addDirectory(self.list, queue=True)
@@ -756,42 +766,54 @@ class Movies:
                 votes = client.replaceHTMLCodes(votes)
                 votes = votes.encode('utf-8')
 
-                try: director = re.findall('Director(?:s|):(.+?)(?:\||</div>)', item)[0]
-                except: director = '0'
+                try:
+                    director = re.findall('Director(?:s|):(.+?)(?:\||</div>)', item)[0]
+                except:
+                    director = '0'
                 director = client.parseDOM(director, 'a')
                 director = ' / '.join(director)
-                if director == '': director = '0'
+                if director == '':
+                    director = '0'
                 director = client.replaceHTMLCodes(director)
                 director = director.encode('utf-8')
 
-                try: cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
-                except: cast = '0'
+                try:
+                    cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
+                except:
+                    cast = '0'
                 cast = client.replaceHTMLCodes(cast)
                 cast = cast.encode('utf-8')
                 cast = client.parseDOM(cast, 'a')
-                if cast == []: cast = '0'
+                if cast == []:
+                    cast = '0'
 
                 plot = '0'
-                try: plot = client.parseDOM(item, 'p', attrs = {'class': 'text-muted'})[0]
+                try:
+                    plot = client.parseDOM(item, 'p', attrs = {'class': 'text-muted'})[0]
                 except:
-                    try: plot = client.parseDOM(item, 'div', attrs = {'class': 'item_description'})[0]
-                    except: pass
+                    try:
+                        plot = client.parseDOM(item, 'div', attrs = {'class': 'item_description'})[0]
+                    except:
+                        pass
                 plot = plot.rsplit('<span>', 1)[0].strip()
                 plot = re.sub('<.+?>|</.+?>', '', plot)
-                if plot == '': plot = '0'
+                if plot == '':
+                    plot = '0'
                 if plot == '0':
                     try:
                         plot = client.parseDOM(item, 'div', attrs = {'class': 'lister-item-content'})[0]
                         plot = re.sub('<p\s*class="">', '<p class="plot_">', plot)
                         plot = client.parseDOM(plot, 'p', attrs = {'class': 'plot_'})[0]
                         plot = re.sub('<.+?>|</.+?>', '', plot)
-                        if plot == '': plot = '0'
-                    except: pass
+                        if plot == '':
+                            plot = '0'
+                    except:
+                        pass
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
                 list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating,
-                                            'votes': votes, 'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'imdb': imdb,
+                                            'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0', 'cast': cast, 'plot': plot, 'imdb': imdb,
                                             'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
             except:
                 pass
@@ -956,8 +978,10 @@ class Movies:
 
             plot = item.get('overview', '0')
 
+            # if self.list[i]['director'] == '0' or self.list[i]['writer'] == '0' or self.list[i]['cast'] == '0':
+            director = '0' ; writer = '0'; cast = '0'
+            # if control.setting('disable.dir.writer.cast') == 'false':
             people = trakt.getPeople(imdb, 'movies')
-
             director = writer = ''
             if 'crew' in people and 'directing' in people['crew']:
                 director = ', '.join([director['person']['name'] for director in people['crew']['directing'] if director['job'].lower() == 'director'])
@@ -992,12 +1016,11 @@ class Movies:
             if self.disable_fanarttv != 'true':
                 from resources.lib.indexers import fanarttv
                 extended_art = fanarttv.get_movie_art(imdb, tmdb)
-
                 if extended_art is not None:
                     item.update(extended_art)
                     meta.update(item)
 
-            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') or (self.disable_fanarttv == 'true' and tmdb != '0'):
+            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') and (self.disable_fanarttv == 'true' and tmdb != '0'):
                 from resources.lib.indexers.tmdb import Movies
                 tmdb_art = Movies().tmdb_art(tmdb)
                 item.update(tmdb_art)
@@ -1025,8 +1048,6 @@ class Movies:
 
         addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
         addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
-
-        traktCredentials = trakt.getTraktCredentialsInfo()
 
         isPlayable = 'true' if 'plugin' not in control.infoLabel('Container.PluginName') else 'false'
 
@@ -1171,7 +1192,7 @@ class Movies:
 
 ####-Context Menu and Overlays-####
                 cm = []
-                if traktCredentials is True:
+                if self.traktCredentials is True:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
 
                 try:
@@ -1199,7 +1220,7 @@ class Movies:
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem&name=%s)' % (sysaddon, sysname)))
                 cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
-                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 ####################################
 
                 item = control.item(label=labelProgress)
@@ -1289,7 +1310,7 @@ class Movies:
                 except:
                     pass
 
-                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=(0,0))' % sysaddon))
+                cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
                 item = control.item(label = name)
                 item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})

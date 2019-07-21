@@ -29,8 +29,8 @@ class Sources:
     def play(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select):
         try:
             url = None
-            # items = cache.get(self.getSources, 12, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
-            items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+            items = cache.get(self.getSources, 12, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+            # items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 
             if items is None:
                 return self.errorForSources()
