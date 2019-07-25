@@ -45,8 +45,8 @@ class Sources:
 
             title = tvshowtitle if tvshowtitle is not None else title
 
-            # if control.window.getProperty('PseudoTVRunning') == 'True':
-                # return control.resolve(int(sys.argv[1]), True, control.item(path=str(self.sourcesDirect(items))))
+            if control.window.getProperty('PseudoTVRunning') == 'True':
+                return control.resolve(int(sys.argv[1]), True, control.item(path=str(self.sourcesDirect(items))))
 
             if len(items) > 0:
                 if select == '1' and 'plugin' in control.infoLabel('Container.PluginName'):
@@ -65,7 +65,7 @@ class Sources:
                 else:
                     url = self.sourcesDirect(items)
 
-            if url is None:
+            if url == 'close://' or url is None:
                 return self.errorForSources()
 
             try:
@@ -165,21 +165,9 @@ class Sources:
 
         for i in range(len(items)):
             try:
-                # item_height = 55
-                # self.source_list = control.listControl(20, 130, 760, 640, 'font12', '0xFFFFFFFF', '',
-                                                     # os.path.join(control.images_path, 'highlight11.png'),
-                                                     # '', 0, 0, 0, 0, item_height)
-                # self.addControl(self.source_list)
-                # self.source_list.addItems(self.sources)
-                # self.setFocus(self.source_list)
-
+                label = str(items[i]['label'])
                 if control.setting('sourcelist.multiline') == 'true':
                     label = str(items[i]['multiline_label'])
-                else:
-                    label = str(items[i]['label'])
-
-                # # # info_label = control.labelControl(control.XBFONT_LEFT, control.XBFONT_CENTER_Y, 760, 640, label, font="font10", alignment=control.XBFONT_CENTER_X)
-                # # # self.addControl(info_label)
 
                 syssource = urllib.quote_plus(json.dumps([items[i]]))
                 sysurl = '%s?action=playItem&title=%s&source=%s' % (sysaddon, systitle, syssource)
@@ -263,14 +251,12 @@ class Sources:
             block = None
 
             for i in range(len(items)):
-                # label = str(items[i]['label'])
                 try:
                     try:
                         if progressDialog.iscanceled():
                             break
                         progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
                     except:
-                        # progressDialog.update(int((100 / float(len(items))) * i), str(header2), str((items[i]['label']).replace('\n     ', '')))
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
                     if items[i]['source'] == block:
@@ -335,17 +321,18 @@ class Sources:
                     control.execute('Dialog.Close(virtualkeyboard)')
                     control.execute('Dialog.Close(yesnoDialog)')
 
-                    # from resources.lib.modules.player import Player
                     from resources.lib.modules import player
-                    # control.closeAll()
                     player.Player().play_source(title, year, season, episode, imdb, tvdb, self.url, meta)
+                    # control.closeAll()
                     return self.url
                 except:
                     pass
+
             try:
                 progressDialog.close()
             except:
                 pass
+
             self.errorForSources()
         except:
             import traceback
@@ -1375,7 +1362,6 @@ class Sources:
 
 
     def errorForSources(self):
-        # control.closeAll()
         control.infoDialog(control.lang(32401).encode('utf-8'), sound=False, icon='INFO')
 
 

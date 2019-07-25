@@ -46,22 +46,6 @@ class Seasons:
 
         self.trakt_user = control.setting('trakt.user').strip()
         self.traktCredentials = trakt.getTraktCredentialsInfo()
-        self.trakt_link = 'http://api.trakt.tv'
-        self.onDeck_link = 'http://api.trakt.tv/sync/playback/episodes?extended=full&limit=20'
-        self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
-        self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
-        self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/episodes'
-        self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
-        self.mycalendar_link = 'http://api.trakt.tv/calendars/my/shows/date[30]/31/' #go back 30 and show all shows aired until tomorrow
-        self.trakthistory_link = 'http://api.trakt.tv/users/me/history/shows?limit=300'
-        self.progress_link = 'http://api.trakt.tv/users/me/watched/shows'
-        self.hiddenprogress_link = 'http://api.trakt.tv/users/hidden/progress_watched?limit=1000&type=show'
-        self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/shows'
-        self.traktfeatured_link = 'http://api.trakt.tv/recommendations/shows?limit=40'
-        self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/episodes'
-
-        self.added_link = 'http://api.tvmaze.com/schedule'
-        self.calendar_link = 'http://api.tvmaze.com/schedule?date=%s'
 
         self.showunaired = control.setting('showunaired') or 'true'
         self.unairedcolor = control.setting('unaired.identify')
@@ -107,21 +91,19 @@ class Seasons:
 
 
     def get(self, tvshowtitle, year, imdb, tvdb, idx=True):
-        # if control.window.getProperty('PseudoTVRunning') == 'True':
-            # return episodes().get(tvshowtitle, year, imdb, tvdb)
-
         if idx is True:
             self.list = cache.get(self.tvdb_list, 24, tvshowtitle, year, imdb, tvdb, self.lang)
+            # self.list = cache.get(self.tvdb_list, 24, tvshowtitle, year, imdb, tmdb, tvdb, self.lang)
             self.seasonDirectory(self.list)
             return self.list
         else:
             self.list = self.tvdb_list(tvshowtitle, year, imdb, tvdb, 'en')
+            # self.list = self.tvdb_list(tvshowtitle, year, imdb, tmdb, tvdb, 'en')
             return self.list
 
 
     def seasonList(self, url):
         # Dirty implementation, but avoids rewritting everything from episodes.py.
-
         episodes = episodesx.Episodes(type = self.type)
         self.list = cache.get(episodes.trakt_list, 0, url, self.trakt_user)
         self.list = self.list[::-1]
@@ -207,26 +189,24 @@ class Seasons:
 
 
     def tvdb_list(self, tvshowtitle, year, imdb, tvdb, lang, limit = ''):
+        tmdb = '0'
         try:
-            if imdb == '0':
-                try:
-                    trakt_ids = trakt.SearchTVShow(urllib.quote_plus(tvshowtitle), year, full=False)[0]
-                    trakt_ids = trakt_ids.get('show', '0')
-                    imdb = trakt_ids.get('ids', {}).get('imdb', '0')
-                    imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
-                    if not imdb:
-                        imdb = '0'
-                except:
+            # if imdb == '0' or tmdb == '0' or tvdb == '0':
+            if imdb == '0' or tvdb == '0':
+                trakt_ids = trakt.SearchTVShow(urllib.quote_plus(tvshowtitle), year, full=False)[0]
+                trakt_ids = trakt_ids.get('show', '0')
+
+                imdb = str(trakt_ids.get('ids', {}).get('imdb', '0'))
+                if imdb == '' or imdb is None:
                     imdb = '0'
 
-                # if tmdb == '0':
-                    # try:
-                        # tmdb = trakt_ids.get('ids', {}).get('tmdb', '0')
-                        # tmdb = re.sub('[^0-9]', '', str(tmdb))
-                        # if not tmdb:
-                            # tmdb = '0'
-                    # except:
-                        # tmdb = '0'
+                tmdb = trakt_ids.get('ids', {}).get('tmdb')
+                if tmdb == '' or tmdb is None:
+                    tmdb = '0'
+
+                tvdb = trakt_ids.get('ids', {}).get('tvdb')
+                if tvdb == '' or tvdb is None:
+                    tvdb = '0'
 
             if tvdb == '0' and imdb != '0':
                 url = self.tvdb_by_imdb % imdb
@@ -513,7 +493,7 @@ class Seasons:
 
                 self.list.append({'season': season, 'seasoncount': seasoncount, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered, 'status': status,
                                             'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'cast': cast, 'plot': plot, 'imdb': imdb,
-                                            'tmdb': '0', 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
+                                            'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
 
             except:
                 pass
@@ -639,7 +619,7 @@ class Seasons:
 
                 self.list.append({'title': title, 'label': label, 'seasoncount': seasoncount, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year,
                                 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa,
-                                'director': director, 'writer': writer, 'cast': cast, 'plot': episodeplot, 'imdb': imdb, 'tmdb': '0', 'tvdb': tvdb, 'poster': poster, 'banner': banner,
+                                'director': director, 'writer': writer, 'cast': cast, 'plot': episodeplot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
                                 'fanart': fanart, 'thumb': thumb, 'unaired': unaired, 'episodeIDS': episodeIDS})
             except:
                 pass
@@ -803,7 +783,7 @@ class Seasons:
 
         for i in items:
             try:
-                imdb, tvdb, year, season = i['imdb'], i['tvdb'], i['year'], i['season']
+                imdb, tmdb, tvdb, year, season = i['imdb'], i['tmdb'], i['tvdb'], i['year'], i['season']
                 title = i['tvshowtitle']
 
                 label = '%s %s' % (labelMenu, i['season'])
@@ -821,6 +801,7 @@ class Seasons:
 
                 meta = dict((k,v) for k, v in i.iteritems() if v != '0')
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
+                meta.update({'tmdb_id': tmdb})
                 meta.update({'tvdb_id': tvdb})
                 meta.update({'mediatype': 'tvshow'})
                 meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, sysname)})

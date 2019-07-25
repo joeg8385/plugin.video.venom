@@ -301,6 +301,8 @@ elif action == 'tvUserlists':
 elif action == 'seasons':
     from resources.lib.menus import seasons
     seasons.Seasons().get(tvshowtitle, year, imdb, tvdb)
+    # seasons.Seasons().get(tvshowtitle, year, imdb, tmdb, tvdb)
+
 
 elif action == 'seasonsUserlists':
     from resources.lib.indexers import seasons
@@ -318,6 +320,7 @@ elif action == 'seasonsList':
 elif action == 'episodes':
     from resources.lib.menus import episodes
     episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
+    # episodes.Episodes().get(tvshowtitle, year, imdb, tmdb, tvdb, season, episode)
 
 elif action == 'tvWidget':
     from resources.lib.menus import episodes

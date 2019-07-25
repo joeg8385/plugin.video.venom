@@ -27,7 +27,6 @@ def get_tvshow_art(tvdb):
 
     art = client.request(url % tvdb, headers=headers, timeout='30', error=True)
     art = json.loads(art)
-    # log_utils.log('tvdb for art %s = %s' % (tvdb, art), __name__, log_utils.LOGDEBUG)
     if 'error message' in art and art['error message'].lower() == 'not found':
         return None
 
@@ -37,7 +36,6 @@ def get_tvshow_art(tvdb):
         poster2 = [(x[0], x[1]) for x in poster2]
         poster2 = sorted(poster2, key=lambda x: int(x[1]), reverse=True)
         poster2 = [x[0] for x in poster2][0]
-        poster2 = poster2.encode('utf-8')
     except:
         poster2 = '0'
 
@@ -47,7 +45,6 @@ def get_tvshow_art(tvdb):
         fanart2 = [(x[0], x[1]) for x in fanart2]
         fanart2 = sorted(fanart2, key=lambda x: int(x[1]), reverse=True)
         fanart2 = [x[0] for x in fanart2][0]
-        fanart2 = fanart2.encode('utf-8')
     except:
         fanart2= '0'
 
@@ -57,7 +54,6 @@ def get_tvshow_art(tvdb):
         banner2 = [(x[0], x[1]) for x in banner2]
         banner2 = sorted(banner2, key=lambda x: int(x[1]), reverse=True)
         banner2 = [x[0] for x in banner2][0]
-        banner2 = banner2.encode('utf-8')
     except:
         banner2 = '0'
 
@@ -71,7 +67,6 @@ def get_tvshow_art(tvdb):
         clearlogo = [(x[0], x[1]) for x in clearlogo]
         clearlogo = sorted(clearlogo, key=lambda x: int(x[1]), reverse=True)
         clearlogo = [x[0] for x in clearlogo][0]
-        clearlogo = clearlogo.encode('utf-8')
     except:
         clearlogo = '0'
 
@@ -85,7 +80,6 @@ def get_tvshow_art(tvdb):
         clearart = [(x[0], x[1]) for x in clearart]
         clearart = sorted(clearart, key=lambda x: int(x[1]), reverse=True)
         clearart = [x[0] for x in clearart][0]
-        clearart = clearart.encode('utf-8')
     except:
         clearart = '0'
 
@@ -99,7 +93,6 @@ def get_tvshow_art(tvdb):
         landscape = [(x[0], x[1]) for x in landscape]
         landscape = sorted(landscape, key=lambda x: int(x[1]), reverse=True)
         landscape = [x[0] for x in landscape][0]
-        landscape = landscape.encode('utf-8')
     except:
         landscape = '0'
 
@@ -110,15 +103,13 @@ def get_tvshow_art(tvdb):
 def get_movie_art(imdb, tmdb):
     url = base_url % ('movies', '%s')
 
-    art = client.request(url % imdb, headers=headers, timeout='10', error=True)
+    art = client.request(url % tmdb, headers=headers, timeout='10', error=True)
     art = json.loads(art)
-    # log_utils.log('imdb for art %s = %s' % (imdb, str(art)), __name__, log_utils.LOGDEBUG)
 
-    # Some Fanart items do not have an IMDb ID. In such a case try to use the TMDb ID.
-    if 'error message' in art and art['error message'].lower() == 'not found' and tmdb and tmdb != '0':
-        art = client.request(url % tmdb, headers=headers, timeout='10', error=True)
+    # Check IMDb ID if TMDb ID not found.
+    if 'error message' in art and art['error message'].lower() == 'not found' and imdb and imdb != '0':
+        art = client.request(url % imdb, headers=headers, timeout='10', error=True)
         art = json.loads(art)
-        # log_utils.log('tmdb for art %s = %s' % (tmdb, art), __name__, log_utils.LOGDEBUG)
         if 'error message' in art and art['error message'].lower() == 'not found':
             return None
 
@@ -128,7 +119,6 @@ def get_movie_art(imdb, tmdb):
         poster2 = [(x[0], x[1]) for x in poster2]
         poster2 = sorted(poster2, key=lambda x: int(x[1]), reverse=True)
         poster2 = [x[0] for x in poster2][0]
-        poster2 = poster2.encode('utf-8')
     except:
         poster2 = '0'
 
@@ -142,7 +132,6 @@ def get_movie_art(imdb, tmdb):
         fanart2 = [(x[0], x[1]) for x in fanart2]
         fanart2 = sorted(fanart2, key=lambda x: int(x[1]), reverse=True)
         fanart2 = [x[0] for x in fanart2][0]
-        fanart2 = fanart2.encode('utf-8')
     except:
         fanart2 = '0'
 
@@ -152,7 +141,6 @@ def get_movie_art(imdb, tmdb):
         banner2 = [(x[0], x[1]) for x in banner2]
         banner2 = sorted(banner2, key=lambda x: int(x[1]), reverse=True)
         banner2 = [x[0] for x in banner2][0]
-        banner2 = banner2.encode('utf-8')
     except:
         banner2 = '0'
 
@@ -166,7 +154,6 @@ def get_movie_art(imdb, tmdb):
         clearlogo = [(x[0], x[1]) for x in clearlogo]
         clearlogo = sorted(clearlogo, key=lambda x: int(x[1]), reverse=True)
         clearlogo = [x[0] for x in clearlogo][0]
-        clearlogo = clearlogo.encode('utf-8')
     except:
         clearlogo = '0'
 
@@ -180,7 +167,6 @@ def get_movie_art(imdb, tmdb):
         clearart = [(x[0], x[1]) for x in clearart]
         clearart = sorted(clearart, key=lambda x: int(x[1]), reverse=True)
         clearart = [x[0] for x in clearart][0]
-        clearart = clearart.encode('utf-8')
     except:
         clearart = '0'
 
@@ -190,7 +176,6 @@ def get_movie_art(imdb, tmdb):
         discart = [(x[0], x[1]) for x in discart]
         discart = sorted(discart, key=lambda x: int(x[1]), reverse=True)
         discart = [x[0] for x in discart][0]
-        discart = discart.encode('utf-8')
     except:
         discart = '0'
 
@@ -204,7 +189,6 @@ def get_movie_art(imdb, tmdb):
         landscape = [(x[0], x[1]) for x in landscape]
         landscape = sorted(landscape, key=lambda x: int(x[1]), reverse=True)
         landscape = [x[0] for x in landscape][0]
-        landscape = landscape.encode('utf-8')
     except:
         landscape = '0'
 

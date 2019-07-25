@@ -217,30 +217,6 @@ class tvshows:
         self.tvdb_image = 'http://thetvdb.com/banners/'
 
 
-    def get_TMDb_request(self, url):
-        try:
-            try:
-                response = requests.get(url)
-            except requests.exceptions.SSLError:
-                response = requests.get(url, verify=False)
-        except requests.exceptions.ConnectionError:
-            control.notification(title='default', message=32024, icon='INFO')
-            return
-
-        if '200' in str(response):
-            return json.loads(response.text)
-        elif 'Retry-After' in response.headers:
-            # API REQUESTS ARE BEING THROTTLED, INTRODUCE WAIT TIME
-            throttleTime = response.headers['Retry-After']
-            log_utils.log2('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, '')
-            sleep(int(throttleTime) + 1)
-            return self.get_request(url)
-        else:
-            log_utils.log2('Get request failed to TMDB URL: %s' % url, 'error')
-            log_utils.log2('TMDB Response: %s' % response.text, 'error')
-            return None
-
-
     def tvmaze_list(self, url):
         try:
             result = client.request(url)
@@ -276,6 +252,7 @@ class tvshows:
                 url = self.tvmaze_info_link % i
                 item = client.request(url)
                 item = json.loads(item)
+
                 # if control.setting('tvshows.networks.filter') == '0' and item['status'] != 'Running' or item['status'] != 'In Development':
                     # raise exception()
                 # if control.setting('tvshows.networks.filter') == '1' and item['status'] != 'Ended':
@@ -288,83 +265,50 @@ class tvshows:
                     # raise exception()
                     # # and item['type'] != 'reality':
                     # # and item['type'] != 'news':
-                title = item['name']
-                title = re.sub('\s(|[(])(UK|US|AU|\d{4})(|[)])$', '', title)
-                title = client.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
 
-                try:
-                    year = item['premiered']
-                    year = re.findall('(\d{4})', year)[0]
-                    year = year.encode('utf-8')
-                except: yeat = '0'
+                title = (item.get('name')).encode('utf-8')
 
-                try:
-                    imdb = item['externals']['imdb']
-                    if imdb is None or imdb == '':
-                        imdb = '0'
-                    else:
-                        imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
-                    imdb = imdb.encode('utf-8')
-                except:
+                year = item.get('premiered', '0')
+
+                imdb = item.get('externals').get('imdb', '0')
+                if imdb is None or imdb == '':
                     imdb = '0'
 
-                try:
-                    tvdb = item['externals']['thetvdb']
-                    if tvdb is None or tvdb == '':
-                        tvdb = '0'
-                    else:
-                        tvdb = re.sub('[^0-9]', '', str(tvdb))
-                    tvdb = tvdb.encode('utf-8')
-                except:
+                tvdb = str(item.get('externals').get('thetvdb', '0'))
+                if tvdb is None or tvdb == '':
                     tvdb = '0'
 
+                # TXMaze does not have tmdb in api
                 tmdb = '0'
 
-                premiered = item['premiered']
-                try: premiered = re.findall('(\d{4}-\d{2}-\d{2})', premiered)[0]
-                except: premiered = '0'
-                premiered = premiered.encode('utf-8')
+                premiered = item.get('premiered', '0')
 
-                try: studio = item['network']['name']
-                except: studio = '0'
-                if studio == '0':
-                    try: studio = item['webChannel']['name']
-                    except: studio = '0'
-                if studio is None: studio = '0'
-                studio = studio.encode('utf-8')
+                studio = item.get('network').get('name', '0')
+                if studio == '0' or studio is None:
+                    studio = item.get('webChannel').get('name', '0')
+                if studio == '0' or studio is None:
+                    studio = '0'
 
                 try:
                     genre = item['genres']
                     genre = [i.title() for i in genre]
-                    genre = (' / '.join(genre)).encode('utf-8')
+                    genre = (' / '.join(genre))
                     if genre == '' or genre is None: raise Exception()
                 except: genre = 'NA'
 
-                try:
-                    duration = str(item['runtime']).encode('utf-8')
-                except: duration = '0'
+                duration = str(item.get('runtime'))
 
-                try:
-                    rating = str(item['rating']['average']).encode('utf-8')
-                except: rating = '0.0'
+                rating = str(item.get('rating').get('average', '0'))
 
                 try:
                     plot = item['summary']
                     plot = re.sub('<.+?>|</.+?>|\n', '', plot)
-                    plot = client.replaceHTMLCodes(plot)
-                    plot = plot.encode('utf-8')
-                except: plot = '0'
+                except:
+                    plot = '0'
 
-                try:
-                    content = item['type'].lower()
-                    content = content.encode('utf-8')
-                except: content = '0'
+                content = item.get('type', '0').lower()
 
-                try:
-                    status = item['status']
-                    status = status.encode('utf-8')
-                except: status = '0'
+                status = item.get('status', '0')
 
                 # cast = []
                 # try:
@@ -373,11 +317,7 @@ class tvshows:
                     # # cast.append({'name': people['person']['name'], 'role': people['character']['name']})
                 # except: cast = []
 
-                try:
-                    poster = item['image']['original']
-                    poster = poster.encode('utf-8')
-                except: poster = '0'
-
+                poster = item.get('image').get('original', '0')
                 fanart = '0' ; banner = '0'
 
 
@@ -400,7 +340,9 @@ class tvshows:
                         raise Exception()
                     url = self.tvdb_info_link % tvdb
                     item3 = client.request(url, timeout='20', error=True)
-                except: item3 = None ; fanart = '0'
+                except:
+                    item3 = None
+                    fanart = '0'
 
                 if poster == '0' and not item3 is None :
                     try:
@@ -410,7 +352,6 @@ class tvshows:
                         else:
                             poster = '0'
                         poster = client.replaceHTMLCodes(poster)
-                        poster = poster.encode('utf-8')
                     except:
                         poster = '0'
 
@@ -422,7 +363,6 @@ class tvshows:
                         else:
                             banner = '0'
                         banner = client.replaceHTMLCodes(banner)
-                        banner = banner.encode('utf-8')
                     except:
                         banner = '0'
 
@@ -433,7 +373,6 @@ class tvshows:
                         else:
                             fanart = '0'
                         fanart = client.replaceHTMLCodes(fanart)
-                        fanart = fanart.encode('utf-8')
                     except:
                         fanart = '0'
 
@@ -446,27 +385,23 @@ class tvshows:
                     try:
                         mpaa = client.parseDOM(item3, 'ContentRating')[0]
                         mpaa = client.replaceHTMLCodes(mpaa)
-                        mpaa = mpaa.encode('utf-8')
                     except: mpaa = 'NR'
 
                     if duration == '0':
                         try:
                             duration = client.parseDOM(item3, 'Runtime')[0]
                             duration = client.replaceHTMLCodes(duration)
-                            duration = duration.encode('utf-8')
                         except: duration = '0'
 
                     try:
                         votes = client.parseDOM(item3, 'RatingCount')[0]
                         votes = client.replaceHTMLCodes(votes)
-                        votes = votes.encode('utf-8')
                     except: votes = '0'
 
                     if year == '0':
                         try:
                             year = client.parseDOM(item3, 'FirstAired')[0]
                             year = re.compile('(\d{4})').findall(year)[0]
-                            year = year.encode('utf-8')
                         except: year = '0'
 ###-----
 

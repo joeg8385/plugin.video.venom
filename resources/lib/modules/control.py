@@ -366,14 +366,14 @@ def busy():
 
 
 def idle():
-    if int(getKodiVersion()) >= 18:
+    if int(getKodiVersion()) >= 18 and condVisibility('Window.IsActive(busydialognocancel)'):
         return execute('Dialog.Close(busydialognocancel)')
     else:
         return execute('Dialog.Close(busydialog)')
 
 
 def hide():
-    if int(getKodiVersion()) >= 18:
+    if int(getKodiVersion()) >= 18 and condVisibility('Window.IsActive(busydialognocancel)'):
         return execute('Dialog.Close(busydialognocancel)')
     else:
         return execute('Dialog.Close(busydialog)')

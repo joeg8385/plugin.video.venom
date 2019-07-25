@@ -913,7 +913,7 @@ class Collections:
                 imdb = item.get('ids', {}).get('imdb', '0')
                 imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
 
-            tmdb = str(item.get('ids', {}).get('tmdb', 0))
+            tmdb = str(item.get('ids', {}).get('tmdb', '0'))
 
             premiered = item.get('released', '0')
             try:
@@ -989,11 +989,11 @@ class Collections:
                     item.update(extended_art)
                     meta.update(item)
 
-            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') and (self.disable_fanarttv == 'true' and tmdb != '0'):
+            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') and (self.disable_fanarttv == 'true'):
                 from resources.lib.indexers.tmdb import Movies
                 tmdb_art = Movies().tmdb_art(tmdb)
                 item.update(tmdb_art)
-                if item.get('landscape') == '0':
+                if item.get('landscape', '0') == '0':
                     landscape = item.get('fanart3')
                     item.update({'landscape': landscape})
                 meta.update(item)

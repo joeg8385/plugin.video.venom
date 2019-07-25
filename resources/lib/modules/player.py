@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# import os, sys, re, base64, codecs
 import sys
 import urllib, hashlib, json
 import xbmc
-# import gzip, StringIO, xmlrpclib
 
 try:
     import AddonSignals
@@ -38,6 +36,7 @@ class Player(xbmc.Player):
         self.scrobbled = False
         self.playback_resumed = False
         self.av_started = False
+
 
     def play_source(self, title, year, season, episode, imdb, tvdb, url, meta):
         try:
@@ -73,7 +72,7 @@ class Player(xbmc.Player):
             item.setArt({'clearart': clearart, 'clearlogo': clearlogo, 'discart': discart, 'thumb': thumb, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart})
 
             if self.media_type == 'episode':
-                self.episodeIDS = meta.get('episodeIDS')
+                self.episodeIDS = meta.get('episodeIDS', '0')
                 item.setUniqueIDs(self.episodeIDS)
             else:
                 item.setUniqueIDs(self.ids)
@@ -82,9 +81,8 @@ class Player(xbmc.Player):
 
             if 'plugin' in control.infoLabel('Container.PluginName'):
                 control.player.play(url, item)
-
-            xbmc.sleep(2000)
-            control.closeAll()
+                xbmc.sleep(2000)
+                control.closeAll()
 
             if 'plugin' not in control.infoLabel('Container.PluginName'):
                 control.resolve(syshandle, True, item)
@@ -95,7 +93,7 @@ class Player(xbmc.Player):
         except:
             import traceback
             traceback.print_exc()
-
+            return
 
     def play_playlist(self):
         try:

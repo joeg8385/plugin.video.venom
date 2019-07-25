@@ -1,3 +1,17 @@
+[B][COLOR red]Update - v3.0.9 - July 25, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Lot of code cleanup and removal of unneceassy
+    encoding.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed missing cancel dialog check for source
+    directory and dialog list[/I]
+[COLOR yellow]--[/COLOR][I] Added TMDb pop up notification when rate
+    limit is hit and notifies how much time is added.[/I]
+[COLOR yellow]--[/COLOR][I] Few additional artwork tweaks to help with
+    Trakt menu load times.[/I]
+[COLOR yellow]--[/COLOR][I] Added a few more missing Trakt lists to follow
+    the option "Page Item Limit".  Not your "My Lists"
+    items at this time, but that story can be found
+    more indepth in the newsinfo page.[/I]
+
 [B][COLOR red]Update - v3.0.8 - July 21, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed People(TV Search.[/I]
 [COLOR yellow]--[/COLOR][I] Fixed log error "Error getting plugin" for some

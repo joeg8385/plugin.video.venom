@@ -16,7 +16,7 @@ from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
-from resources.lib.modules import utils
+from resources.lib.modules import utils, log_utils
 from resources.lib.menus import navigator
 # import requests
 
@@ -105,14 +105,17 @@ class Movies:
         self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
         self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
         self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
+
         self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies'
+        # self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies?page=1&limit=%d' % self.count
+
         self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies'
         self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?page=1&limit=%d' % self.count
 
-        self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/movies'
+        self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/movies?page=1&limit=%d' % self.count
 
-        self.traktanticipated_link = 'http://api.trakt.tv/movies/anticipated?page=1&limit=60' # seems to have issues with low limit value
-        self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?page=1&limit=40' # check this as it will not advance to page2 but takes pagination
+        self.traktanticipated_link = 'http://api.trakt.tv/movies/anticipated?page=1&limit=%d' % self.count 
+        self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?page=1&limit=%d' % self.count
 
         self.trakttrending_link = 'http://api.trakt.tv/movies/trending?page=1&limit=%d' % self.count
         self.traktboxoffice_link = 'http://api.trakt.tv/movies/boxoffice'
@@ -205,7 +208,7 @@ class Movies:
             elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
                 from resources.lib.indexers import tmdb
                 self.list = cache.get(tmdb.Movies().tmdb_list, 168, url)
-
+                # self.list = cache.get(tmdb.Movies().tmdb_list, 0, url)
             if self.list is None: 
                 self.list = []
                 raise Exception()
@@ -533,79 +536,39 @@ class Movies:
 
         for item in items:
             try:
-                title = item['title'].encode('utf-8')
-                title = client.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
+                title = (item.get('title')).encode('utf-8')
 
-                year = item['year']
-                year = re.sub('[^0-9]', '', str(year))
-                year = year.encode('utf-8')
+                year = str(item.get('year'))
 
-                try:
-                    if int(year) > int((self.datetime).strftime('%Y')):
-                        continue
-                except:
-                    pass
+                progress = item.get('progress', '0')
 
-                try:
-                    progress = item['progress']
-                except:
-                    progress = None
-
-                try:
-                    imdb = item['ids']['imdb']
-                    imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
-                    imdb = imdb.encode('utf-8')
-                except:
+                imdb = item.get('ids', {}).get('imdb', '0')
+                if imdb == '' or imdb is None:
                     imdb = '0'
 
-                tmdb = str(item.get('ids', {}).get('tmdb', 0))
+                tmdb = str(item.get('ids', {}).get('tmdb', '0'))
 
-                try:
-                    premiered = item['released']
-                    premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                    premiered = premiered.encode('utf-8')
-                except:
-                    premiered = '0'
+                premiered = item.get('released', '0')
 
                 try:
                     genre = item['genres']
                     genre = [i.title() for i in genre]
                     genre = ' / '.join(genre)
-                    genre = genre.encode('utf-8')
                 except: genre = 'NA'
 
-                try:
-                    duration = str(item['runtime'])
-                    duration = duration.encode('utf-8')
-                except: duration = '0'
+                duration = str(item.get('runtime', '0'))
 
-                try:
-                    rating = str(item['rating'])
-                    rating = rating.encode('utf-8')
-                except: rating = '0'
-
-                try:
-                    votes = str(item['votes'])
-                    votes = str(format(int(votes),',d'))
-                    votes = votes.encode('utf-8')
-                except: votes = '0'
+                rating = str(item.get('rating', '0'))
+                votes = str(format(int(item.get('votes', '0')),',d'))
 
                 try:
                     mpaa = item['certification']
                     mpaa = mpaa.encode('utf-8')
                 except: mpaa = '0'
 
-                try:
-                    plot = item['overview'].encode('utf-8')
-                    plot = client.replaceHTMLCodes(plot)
-                    plot = plot.encode('utf-8')
-                except: plot = '0'
+                plot = item.get('overview')
 
-                try:
-                    tagline = item['tagline']
-                    tagline = client.replaceHTMLCodes(tagline)
-                except: tagline = '0'
+                tagline = item.get('tagline', '0')
 
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration,
                                             'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb,
@@ -904,7 +867,7 @@ class Movies:
                 threads = []
                 for i in range(r, r + 40):
                     if i <= total:
-                        threads.append(workers.Thread(self.super_info, i))
+                        threads.append(workers.Thread(self.super_info, i, total))
                 [i.start() for i in threads]
                 [i.join() for i in threads]
 
@@ -923,7 +886,7 @@ class Movies:
         return self.list[0]
 
 
-    def super_info(self, i):
+    def super_info(self, i, total):
         try:
             if self.list[i]['metacache'] is True:
                 raise Exception()
@@ -932,25 +895,21 @@ class Movies:
 
             item = trakt.getMovieSummary(id=imdb)
 
-            title = item.get('title')
-            title = client.replaceHTMLCodes(title)
+            title = (item.get('title')).encode('utf-8')
 
             originaltitle = title
 
-            year = item.get('year', 0)
-            year = re.sub('[^0-9]', '', str(year))
+            year = str(item.get('year'))
 
             if imdb == '0' or imdb is None:
                 imdb = item.get('ids', {}).get('imdb', '0')
-                imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
+                # imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
 
-            tmdb = str(item.get('ids', {}).get('tmdb', 0))
+            tmdb = str(item.get('ids', {}).get('tmdb', '0'))
+            if tmdb == '' or tmdb == 'N/A' or tmdb == 'NA':
+                tmdb = '0'
 
             premiered = item.get('released', '0')
-            try:
-                premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-            except:
-                premiered = '0'
 
             genre = item.get('genres', [])
             genre = [x.title() for x in genre]
@@ -958,17 +917,11 @@ class Movies:
             if not genre:
                 genre = 'NA'
 
-            duration = str(item.get('runtime', 0))
+            duration = str(item.get('runtime', '0'))
 
-            rating = item.get('rating', '0')
-            if not rating or rating == '0.0':
-                rating = '0'
+            rating = str(item.get('rating', '0'))
 
-            votes = item.get('votes', '0')
-            try:
-                votes = str(format(int(votes), ',d'))
-            except:
-                pass
+            votes = str(format(int(item.get('votes', '0')),',d'))
 
             mpaa = item.get('certification', '0')
             if not mpaa:
@@ -1013,21 +966,22 @@ class Movies:
             meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
             # fanart_thread = threading.Thread
-            if self.disable_fanarttv != 'true':
+            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0' and total > 40) or (self.disable_fanarttv != 'true'):
                 from resources.lib.indexers import fanarttv
                 extended_art = fanarttv.get_movie_art(imdb, tmdb)
                 if extended_art is not None:
                     item.update(extended_art)
                     meta.update(item)
 
-            if (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0') and (self.disable_fanarttv == 'true' and tmdb != '0'):
-                from resources.lib.indexers.tmdb import Movies
-                tmdb_art = Movies().tmdb_art(tmdb)
-                item.update(tmdb_art)
-                if item.get('landscape') == '0':
-                    landscape = item.get('fanart3')
-                    item.update({'landscape': landscape})
-                meta.update(item)
+            if (self.disable_fanarttv == 'true') or (self.disable_fanarttv != 'true' and extended_art is None):
+                if total <= 40:
+                    from resources.lib.indexers.tmdb import Movies
+                    tmdb_art = Movies().tmdb_art(tmdb)
+                    item.update(tmdb_art)
+                    if item.get('landscape', '0') == '0':
+                        landscape = item.get('fanart3', '0')
+                        item.update({'landscape': landscape})
+                    meta.update(item)
 
             item = dict((k,v) for k, v in item.iteritems() if v != '0')
             self.list[i].update(item)

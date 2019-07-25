@@ -5,14 +5,13 @@ Venom
 '''
 
 import re, datetime
-import json, requests, xbmc
+import requests, xbmc
 from time import sleep
 
 from resources.lib.modules import control
 from resources.lib.modules import client
 from resources.lib.modules import metacache
 from resources.lib.modules import log_utils
-# from resources.lib.modules import trakt
 
 
 class Movies:
@@ -52,11 +51,12 @@ class Movies:
             return
 
         if '200' in str(response):
-            return json.loads(response.text)
+            return response.json()
         elif 'Retry-After' in response.headers:
             # API REQUESTS ARE BEING THROTTLED, INTRODUCE WAIT TIME
             throttleTime = response.headers['Retry-After']
-            log_utils.log('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, __name__, log_utils.LOGDEBUG)
+            control.notification(title='default', message='TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, icon='INFO')
+            # log_utils.log('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, __name__, log_utils.LOGDEBUG)
             sleep(int(throttleTime) + 1)
             return self.get_request(url)
         else:
@@ -73,24 +73,16 @@ class Movies:
         except:
             return
 
-        # try:
-            # page = int(result['page'])
-            # total = int(result['total_pages'])
-            # if page >= total: raise Exception()
-            # url2 = '%s&page=%s' % (url.split('&page=', 1)[0], str(page+1))
-            # result = self.get_request(url2 % self.tmdb_key)
-            # # result = client.request(url2 % self.tmdb_key)
-            # # result = json.loads(result)
-            # items += result['results']
-        # except: pass
         try:
             page = int(result['page'])
             total = int(result['total_pages'])
-            if page >= total: raise Exception()
+            if page >= total:
+                raise Exception()
             if not 'page=' in url:
                 raise Exception()
-            next = '%s&page=%s' % (next.split('&page=', 1)[0], str(page+1))
-            next = next.encode('utf-8')
+            # next = '%s&page=%s' % (next.split('&page=', 1)[0], str(page+1))
+            next = '%s&page=%s' % (next.split('&page=', 1)[0], page+1)
+            # next = next.encode('utf-8')
         except:
             next = ''
 
@@ -103,62 +95,24 @@ class Movies:
                 except:
                     originaltitle = title
 
-                year = item['release_date']
-                year = re.compile('(\d{4})').findall(year)[-1]
-                year = year.encode('utf-8')
+                year = str(item.get('release_date')[:4])
 
-                tmdb = item['id']
-                tmdb = re.sub('[^0-9]', '', str(tmdb))
-                tmdb = tmdb.encode('utf-8')
+                tmdb = item.get('id')
 
-                # try:
-                    # meta_chk = []
-                    # meta_chk.append({'tmdb': tmdb, 'imdb': '0', 'tvdb': '0'})
-                    # meta_chk = metacache.fetch(meta_chk, self.lang, self.tmdb_key)
-                    # log_utils.log('meta_chk = %s' % str(meta_chk), __name__, log_utils.LOGDEBUG)
+                poster = '%s%s' % (self.tmdb_poster, item['poster_path']) if item['poster_path'] else '0'
+                fanart = '%s%s' % (self.tmdb_fanart, item['backdrop_path']) if item['backdrop_path'] else '0'
 
-                    # for i in meta_chk:
-                        # if 'metacache' in i:
-                            # if i['metacache'] is True:
-                                # item = meta_chk
-                                # log_utils.log('metacache = %s' % i['metacache'], __name__, log_utils.LOGDEBUG)
-                                # raise Exception()
+                premiered = item.get('release_date')
 
-                poster = item.get('poster_path')
-                if poster != '' and poster is not None:
-                    poster = ('%s%s' % (self.tmdb_poster, poster)).encode('utf-8')
-                else:
-                    poster = '0'
+                rating = str(item.get('vote_average', '0'))
+                votes = str(format(int(item.get('vote_count', '0')),',d'))
 
-                fanart = item.get('backdrop_path')
-                if fanart != '' and fanart is not None:
-                    fanart = ('%s%s' % (self.tmdb_fanart, fanart)).encode('utf-8')
-                else:
-                    fanart = '0'
-
-                premiered = item['release_date']
-                try:
-                    premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                except:
-                    premiered = '0'
-                premiered = premiered.encode('utf-8')
+                plot = item.get('overview')
 
                 try:
-                    rating = str(item['vote_average']).encode('utf-8')
-                except:
-                    rating = '0'
-
-                try:
-                    votes = str(format(int(item['vote_count']),',d')).encode('utf-8')
-                except:
-                    votes = '0'
-
-                plot = (item.get('overview')).encode('utf-8')
-
-                try:
-                    tagline = item['tagline']
-                    tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-                    tagline = tagline.encode('utf-8')
+                    tagline = item.get('tagline', '0')
+                    if tagline == '' or tagline == '0' or tagline is None:
+                        tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
                 except:
                     tagline = '0'
 
@@ -166,27 +120,23 @@ class Movies:
                 url = self.tmdb_info_link % tmdb
                 item = self.get_request(url)
 
-                imdb = item['external_ids']['imdb_id']
-                if imdb == '' or imdb is None: imdb = '0'
-                imdb = imdb.encode('utf-8')
+                imdb = item.get('imdb_id', '0')
+                if imdb == '' or imdb is None:
+                    imdb = '0'
 
-                # studio = item['production_companies']
+                  # studio = item['production_companies']
                 # try: studio = [x['name'] for x in studio][0]
                 # except: studio = '0'
                 # if studio == '' or studio is None: studio = '0'
-                # studio = studio.encode('utf-8')
 
                 try:
                     genre = item['genres']
                     genre = [x['name'] for x in genre]
-                    genre = (' / '.join(genre)).encode('utf-8')
+                    genre = (' / '.join(genre))
                 except:
                     genre = 'NA'
 
-                try:
-                    duration = (str(item['runtime'])).encode('utf-8')
-                except:
-                    duration = '0'
+                duration = str(item.get('runtime', '0'))
 
                 mpaa = item['release_dates']['results']
                 mpaa = [i for i in mpaa if i['iso_3166_1'] == 'US']
@@ -196,21 +146,23 @@ class Movies:
                         mpaa = mpaa[0].get('release_dates')[0].get('certification')
                         if not mpaa:
                             mpaa = mpaa[0].get('release_dates')[1].get('certification')
-                    mpaa = str(mpaa).encode('utf-8')
+                    mpaa = str(mpaa)
                 except: mpaa = '0'
 
                 director = item['credits']['crew']
                 try:
                     director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
+                    # director = [x['name'] for x in director if x['job'] == 'Director']
                 except:
                     director = '0'
                 if director == '' or director is None or director == []:
                     director = '0'
-                director = (' / '.join(director)).encode('utf-8')
+                director = (' / '.join(director))
 
                 writer = item['credits']['crew']
                 try:
                     writer = [x['name'] for x in writer if x['job'].encode('utf-8') in ['Writer', 'Screenplay']]
+                    # writer = [x['name'] for x in writer if x['job'] in ['Writer', 'Screenplay']]
                 except:
                     writer = '0'
                 try:
@@ -219,11 +171,12 @@ class Movies:
                     writer = '0'
                 if writer == '' or writer is None or writer == []:
                     writer = '0'
-                writer = (' / '.join(writer)).encode('utf-8')
+                writer = (' / '.join(writer))
 
                 cast = item['credits']['cast']
                 try:
                     cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
+                    # cast = [(x['name'], x['character']) for x in cast]
                 except:
                     cast = []
 
@@ -272,74 +225,48 @@ class Movies:
                 except:
                     originaltitle = title
 
-                year = item['release_date']
-                year = re.compile('(\d{4})').findall(year)[0]
-                year = year.encode('utf-8')
+                year = str(item.get('release_date')[:4])
 
-                tmdb = item['id']
-                tmdb = re.sub('[^0-9]', '', str(tmdb))
-                tmdb = tmdb.encode('utf-8')
+                tmdb = item.get('id')
 
-                poster = item.get('poster_path')
-                if poster != '' and poster is not None:
-                    poster = ('%s%s' % (self.tmdb_poster, poster)).encode('utf-8')
-                else:
-                    poster = '0'
+                poster = '%s%s' % (self.tmdb_poster, item['poster_path']) if item['poster_path'] else '0'
+                fanart = '%s%s' % (self.tmdb_fanart, item['backdrop_path']) if item['backdrop_path'] else '0'
 
-                fanart = item.get('backdrop_path')
-                if fanart != '' and fanart is not None:
-                    fanart = ('%s%s' % (self.tmdb_fanart, fanart)).encode('utf-8')
-                else:
-                    fanart = '0'
+                premiered = item.get('release_date')
 
-                premiered = item['release_date']
-                try: premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                except: premiered = '0'
-                premiered = premiered.encode('utf-8')
+                rating = str(item.get('vote_average', '0'))
+                votes = str(format(int(item.get('vote_count', '0')),',d'))
+
+                plot = (item.get('overview'))
 
                 try:
-                    rating = str(item['vote_average']).encode('utf-8')
-                except: rating = '0'
-
-                try:
-                    votes = str(format(int(item['vote_count']),',d')).encode('utf-8')
-                except: votes = '0'
-
-                plot = (item.get('overview')).encode('utf-8')
-
-                try:
-                    tagline = item['tagline']
+                    tagline = item.get('tagline', '0')
                     if tagline == '' or tagline == '0' or tagline is None:
                         tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-                    tagline = tagline.encode('utf-8')
-                except: tagline = '0'
+                except:
+                    tagline = '0'
 
 
 ##--TMDb additional info
                 url = self.tmdb_info_link % tmdb
                 item = self.get_request(url)
 
-                imdb = item['external_ids']['imdb_id']
-                if imdb == '' or imdb is None: imdb = '0'
-                imdb = imdb.encode('utf-8')
+                imdb = item.get('imdb_id', '0')
+                if imdb == '' or imdb is None:
+                    imdb = '0'
 
                 # studio = item['production_companies']
                 # try: studio = [x['name'] for x in studio][0]
                 # except: studio = '0'
                 # if studio == '' or studio is None: studio = '0'
-                # studio = studio.encode('utf-8')
 
                 genre = item['genres']
                 try: genre = [x['name'] for x in genre]
                 except: genre = '0'
                 genre = ' / '.join(genre)
-                genre = genre.encode('utf-8')
                 if not genre: genre = 'NA'
 
-                try: duration = str(item['runtime'])
-                except: duration = '0'
-                if duration == '' or duration is None or duration == 'N/A': duration = '0'
-                duration = duration.encode('utf-8')
+                duration = str(item.get('runtime', '0'))
 
                 mpaa = item['release_dates']['results']
                 mpaa = [i for i in mpaa if i['iso_3166_1'] == 'US']
@@ -349,19 +276,19 @@ class Movies:
                         mpaa = mpaa[0].get('release_dates')[0].get('certification')
                         if not mpaa:
                             mpaa = mpaa[0].get('release_dates')[1].get('certification')
-                    mpaa = str(mpaa).encode('utf-8')
+                    mpaa = str(mpaa)
                 except: mpaa = '0'
 
                 director = item['credits']['crew']
-                try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
+                try: director = [x['name'] for x in director if x['job'] == 'Director']
                 except: director = '0'
                 if director == '' or director is None or director == []: director = '0'
                 director = ' / '.join(director)
-                director = director.encode('utf-8')
+
 
                 writer = item['credits']['crew']
                 try:
-                    writer = [x['name'] for x in writer if x['job'].encode('utf-8') in ['Writer', 'Screenplay']]
+                    writer = [x['name'] for x in writer if x['job'] in ['Writer', 'Screenplay']]
                 except:
                     writer = '0'
                 try:
@@ -370,11 +297,11 @@ class Movies:
                     writer = '0'
                 if writer == '' or writer is None or writer == []:
                     writer = '0'
-                writer = (' / '.join(writer)).encode('utf-8')
+                writer = (' / '.join(writer))
 
                 cast = item['credits']['cast']
                 try:
-                    cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
+                    cast = [(x['name'], x['character']) for x in cast]
                 except:
                     cast = []
 
@@ -404,16 +331,12 @@ class Movies:
 
 
     def tmdb_art(self, tmdb):
-        try:
-            if self.tmdb_key == '':
-                raise Exception()
-            art3 = self.get_request(self.tmdb_art_link % tmdb)
-        except:
-            import traceback
-            traceback.print_exc()
+        if (self.tmdb_key == '') or (tmdb == '0' or tmdb is None):
             return None
 
-        url = (self.tmdb_art_link % tmdb)
+        art3 = self.get_request(self.tmdb_art_link % tmdb)
+        if art3 is None:
+            return None
 
         try:
             poster3 = art3['posters']
@@ -474,11 +397,12 @@ class TVshows:
             return
 
         if '200' in str(response):
-            return json.loads(response.text)
+            return response.json()
         elif 'Retry-After' in response.headers:
             # API REQUESTS ARE BEING THROTTLED, INTRODUCE WAIT TIME
             throttleTime = response.headers['Retry-After']
-            log_utils.log('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, __name__, log_utils.LOGDEBUG)
+            control.notification(title='default', message='TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, icon='INFO')
+            # log_utils.log('TMDB Throttling Applied, Sleeping for %s seconds' % throttleTime, __name__, log_utils.LOGDEBUG)
             sleep(int(throttleTime) + 1)
             return self.get_request(url)
         else:
@@ -495,16 +419,6 @@ class TVshows:
         except:
             return
 
-        # try:
-            # page = int(result['page'])
-            # total = int(result['total_pages'])
-            # if page >= total: raise Exception()
-            # url2 = '%s&page=%s' % (url.split('&page=', 1)[0], str(page+1))
-            # result = self.get_request(url2 % self.tmdb_key)
-            # # result = client.request(url2 % self.tmdb_key)
-            # # result = json.loads(result)
-            # items += result['results']
-        # except: pass
         try:
             page = int(result['page'])
             total = int(result['total_pages'])
@@ -515,8 +429,8 @@ class TVshows:
             if not 'page=' in url:
                 raise Exception()
 
-            next = '%s&page=%s' % (next.split('&page=', 1)[0], str(page+1))
-            next = next.encode('utf-8')
+            next = '%s&page=%s' % (next.split('&page=', 1)[0], page+1)
+
         except:
             next = ''
 
@@ -524,71 +438,49 @@ class TVshows:
             try:
                 title = (item.get('name')).encode('utf-8')
 
-                year = item['first_air_date']
-                year = re.compile('(\d{4})').findall(year)[-1]
-                year = year.encode('utf-8')
+                year = str(item.get('first_air_date')[:4])
 
-                tmdb = item['id']
-                tmdb = re.sub('[^0-9]', '', str(tmdb))
-                tmdb = tmdb.encode('utf-8')
+                tmdb = item.get('id')
 
-                poster = item.get('poster_path')
-                if poster != '' and poster is not None:
-                    poster = ('%s%s' % (self.tmdb_poster, poster)).encode('utf-8')
-                else:
-                    poster = '0'
+                poster = '%s%s' % (self.tmdb_poster, item['poster_path']) if item['poster_path'] else '0'
+                fanart = '%s%s' % (self.tmdb_fanart, item['backdrop_path']) if item['backdrop_path'] else '0'
 
-                fanart = item.get('backdrop_path')
-                if fanart != '' and fanart is not None:
-                    fanart = ('%s%s' % (self.tmdb_fanart, fanart)).encode('utf-8')
-                else:
-                    fanart = '0'
+                premiered = item.get('first_air_date')
 
-                premiered = item['first_air_date']
-                try: premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                except: premiered = '0'
-                premiered = premiered.encode('utf-8')
+                rating = str(item.get('vote_average', '0'))
+                votes = str(format(int(item.get('vote_count', '0')),',d'))
 
-                rating = str(item['vote_average'])
-                if rating == '' or rating is None: rating = '0'
-                rating = rating.encode('utf-8')
+                plot = item.get('overview')
 
-                votes = str(item['vote_count'])
-                try: votes = str(format(int(votes),',d'))
-                except: pass
-                if votes == '' or votes is None: votes = '0'
-                votes = votes.encode('utf-8')
-
-                plot = (item.get('overview')).encode('utf-8')
-
-                tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-                try: tagline = tagline.encode('utf-8')
-                except: tagline = 'NA'
+                try:
+                    tagline = item.get('tagline', '0')
+                    if tagline == '' or tagline == '0' or tagline is None:
+                        tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
+                except:
+                    tagline = '0'
 
 ##--TMDb additional info
                 url = self.tmdb_info_link % tmdb
                 item = self.get_request(url)
 
-                tvdb = item['external_ids']['tvdb_id']
-                if tvdb == '' or tvdb is None or tvdb == 'N/A' or tvdb == 'NA': tvdb = '0'
-                tvdb = re.sub('[^0-9]', '', str(tvdb))
-                tvdb = tvdb.encode('utf-8')
+                tvdb = str(item.get('external_ids').get('tvdb_id'))
+                if tvdb == '' or tvdb is None:
+                    tvdb = '0'
 
-                imdb = item['external_ids']['imdb_id']
-                if imdb == '' or imdb is None or imdb == 'N/A' or imdb == 'NA': imdb = '0'
-                imdb = imdb.encode('utf-8')
+                imdb = (item.get('external_ids').get('imdb_id'))
+                if imdb == '' or imdb is None:
+                    imdb = '0'
 
                 genre = item['genres']
-                try: genre = [x['name'] for x in genre]
-                except: genre = '0'
+                try:
+                    genre = [x['name'] for x in genre]
+                except:
+                    genre = '0'
                 genre = ' / '.join(genre)
-                genre = genre.encode('utf-8')
-                if not genre: genre = 'NA'
+                if not genre:
+                    genre = 'NA'
 
-                duration = str(item['episode_run_time'][0])
-                try: duration = duration.strip("[]")
-                except: duration = '0'
-                duration = duration.encode('utf-8')
+                duration = str(item.get('episode_run_time', '0')[0])
 
                 try:
                     mpaa = [i['rating'] for i in item['content_ratings']['results'] if i['iso_3166_1'] == 'US'][0]
@@ -601,43 +493,28 @@ class TVshows:
                 try: studio = [x['name'] for x in studio][0]
                 except: studio = '0'
                 if studio == '' or studio is None: studio = '0'
-                studio = studio.encode('utf-8')
 
                 director = item['credits']['crew']
-                try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
+                # try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
+                try: director = [x['name'] for x in director if x['job'] == 'Director']
                 except: director = '0'
                 if director == '' or director is None or director == []: director = '0'
                 director = ' / '.join(director)
-                director = director.encode('utf-8')
+
+                writer = item['credits']['crew']
+                # try: writer = [x['name'] for x in writer if x['job'].encode('utf-8') in ['Writer', 'Screenplay']]
+                try: writer = [x['name'] for x in writer if x['job'] in ['Writer', 'Screenplay']]
+                except: writer = '0'
+                try: writer = [x for n,x in enumerate(writer) if x not in writer[:n]]
+                except: writer = '0'
+                if writer == '' or writer is None or writer == []: writer = '0'
+                writer = ' / '.join(writer)
 
                 cast = item['credits']['cast']
-                try: cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
+                # try: cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
+                try: cast = [(x['name'], x['character']) for x in cast]
                 except: cast = []
 
-
-# ##--IMDb additional info
-                if imdb != '0' or imdb is not None:
-                    try:
-                        url = self.imdb_by_query % imdb
-                        item2 = client.request(url, timeout='30')
-                        item2 = json.loads(item2)
-                    except: Exception()
-
-                    try:
-                        mpaa2 = item2['Rated']
-                    except:
-                        mpaa2 = 'NR'
-                    mpaa2 = mpaa.encode('utf-8')
-                    if mpaa == '0' or mpaa == 'NR' and mpaa2 != 'NR':
-                        mpaa = mpaa2
-
-                    try:
-                        writer = item2['Writer']
-                    except: writer = 'NA'
-                    writer = writer.replace(', ', ' / ')
-                    writer = re.sub(r'\(.*?\)', '', writer)
-                    writer = ' '.join(writer.split())
-                    writer = writer.encode('utf-8')
 
                 item = {}
                 item = {'content': 'tvshow', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
@@ -670,87 +547,50 @@ class TVshows:
         next = ''
         for item in items:
             try:
+                media_type = item['media_type']
+
                 title = (item.get('name')).encode('utf-8')
 
-                year = item['first_air_date']
-                year = re.compile('(\d{4})').findall(year)[-1]
-                year = year.encode('utf-8')
+                year = str(item.get('first_air_date')[:4])
 
-                tmdb = item['id']
-                if tmdb == '' or tmdb is None:
-                    tmdb = '0'
-                tmdb = re.sub('[^0-9]', '', str(tmdb))
-                tmdb = tmdb.encode('utf-8')
+                tmdb = item.get('id')
 
-                imdb = '0'
-                tvdb = '0'
+                poster = '%s%s' % (self.tmdb_poster, item['poster_path']) if item['poster_path'] else '0'
+                fanart = '%s%s' % (self.tmdb_fanart, item['backdrop_path']) if item['backdrop_path'] else '0'
 
-                poster = item.get('poster_path')
-                if poster != '' and poster is not None:
-                    poster = ('%s%s' % (self.tmdb_poster, poster)).encode('utf-8')
-                else:
-                    poster = '0'
+                premiered = item.get('first_air_date')
 
-                fanart = item.get('backdrop_path')
-                if fanart != '' and fanart is not None:
-                    fanart = ('%s%s' % (self.tmdb_fanart, fanart)).encode('utf-8')
-                else:
-                    fanart = '0'
+                rating = str(item.get('vote_average', '0'))
+                votes = str(format(int(item.get('vote_count', '0')),',d'))
 
-                premiered = item['first_air_date']
-                try:
-                    premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                except:
-                    premiered = '0'
-                premiered = premiered.encode('utf-8')
-
-                rating = str(item['vote_average'])
-                if rating == '' or rating is None:
-                    rating = '0'
-                rating = rating.encode('utf-8')
-
-                votes = str(item['vote_count'])
-                try:
-                    votes = str(format(int(votes),',d'))
-                except:
-                    pass
-                if votes == '' or votes is None:
-                    votes = '0'
-                votes = votes.encode('utf-8')
-
-                plot = (item.get('overview')).encode('utf-8')
+                plot = (item.get('overview'))
 
                 try:
-                    tagline = item['tagline']
+                    tagline = item.get('tagline', '0')
                     if tagline == '' or tagline == '0' or tagline is None:
                         tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-                    tagline = tagline.encode('utf-8')
-                except: tagline = '0'
+                except:
+                    tagline = '0'
 
 ##--TMDb additional info
                 url = self.tmdb_info_link % tmdb
                 item = self.get_request(url)
 
-                tvdb = item['external_ids']['tvdb_id']
-                if tvdb == '' or tvdb is None or tvdb == 'N/A' or tvdb == 'NA': tvdb = '0'
-                tvdb = re.sub('[^0-9]', '', str(tvdb))
-                tvdb = tvdb.encode('utf-8')
+                tvdb = str(item.get('external_ids').get('tvdb_id'))
+                if tvdb == '' or tvdb is None:
+                    tvdb = '0'
 
-                imdb = item['external_ids']['imdb_id']
-                if imdb == '' or imdb is None or imdb == 'N/A' or imdb == 'NA': imdb = '0'
-                imdb = imdb.encode('utf-8')
+                imdb = (item.get('external_ids').get('imdb_id'))
+                if imdb == '' or imdb is None:
+                    imdb = '0'
 
                 genre = item['genres']
                 try: genre = [x['name'] for x in genre]
                 except: genre = '0'
                 genre = ' / '.join(genre)
-                genre = genre.encode('utf-8')
                 if not genre: genre = 'NA'
 
-                try: duration = str(item['runtime'])
-                except: duration = '0'
-                if duration == '' or duration is None or duration == 'N/A': duration = '0'
-                duration = duration.encode('utf-8')
+                duration = str(item.get('episode_run_time', '0'))
 
                 try:
                     mpaa = [i['rating'] for i in item['content_ratings']['results'] if i['iso_3166_1'] == 'US'][0]
@@ -763,26 +603,26 @@ class TVshows:
                 try: studio = [x['name'] for x in studio][0]
                 except: studio = '0'
                 if studio == '' or studio is None: studio = '0'
-                studio = studio.encode('utf-8')
 
                 director = item['credits']['crew']
-                try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
+                # try: director = [x['name'] for x in director if x['job'].encode('utf-8') == 'Director']
+                try: director = [x['name'] for x in director if x['job'] == 'Director']
                 except: director = '0'
                 if director == '' or director is None or director == []: director = '0'
                 director = ' / '.join(director)
-                director = director.encode('utf-8')
 
                 writer = item['credits']['crew']
-                try: writer = [x['name'] for x in writer if x['job'].encode('utf-8') in ['Writer', 'Screenplay']]
+                # try: writer = [x['name'] for x in writer if x['job'].encode('utf-8') in ['Writer', 'Screenplay']]
+                try: writer = [x['name'] for x in writer if x['job'] in ['Writer', 'Screenplay']]
                 except: writer = '0'
                 try: writer = [x for n,x in enumerate(writer) if x not in writer[:n]]
                 except: writer = '0'
                 if writer == '' or writer is None or writer == []: writer = '0'
                 writer = ' / '.join(writer)
-                writer = writer.encode('utf-8')
 
                 cast = item['credits']['cast']
-                try: cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
+                # try: cast = [(x['name'].encode('utf-8'), x['character'].encode('utf-8')) for x in cast]
+                try: cast = [(x['name'], x['character']) for x in cast]
                 except: cast = []
 
                 item = {}
@@ -810,11 +650,11 @@ class TVshows:
 
 
     def tmdb_art(self, tmdb):
-        try:
-            if self.tmdb_key == '':
-                raise Exception()
-            art3 = self.get_request(self.tmdb_art_link % tmdb)
-        except:
+        if (self.tmdb_key == '') or (tmdb == '0' or tmdb is None):
+            return None
+
+        art3 = self.get_request(self.tmdb_art_link % tmdb)
+        if art3 is None:
             return None
 
         try:
