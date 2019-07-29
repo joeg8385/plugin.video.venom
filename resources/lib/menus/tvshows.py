@@ -17,7 +17,7 @@ from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
-from resources.lib.modules import utils
+from resources.lib.modules import utils, log_utils
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -77,6 +77,8 @@ class TVshows:
         self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
         self.imdbwatchlist2_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
 
+        self.anime_link = 'https://www.imdb.com/search/keyword?keywords=anime&title_type=tvSeries,miniSeries&sort=moviemeter,asc&count=%d&start=1' % self.count
+
         self.trakt_user = control.setting('trakt.user').strip()
         self.traktCredentials = trakt.getTraktCredentialsInfo()
         self.trakt_link = 'http://api.trakt.tv'
@@ -86,12 +88,9 @@ class TVshows:
         self.traktpopular_link = 'http://api.trakt.tv/shows/popular?page=1&limit=%d' % self.count
         self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
         self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
-
         self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/'
-
         self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
         self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/shows'
-
         self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/shows?page=1&limit=%d' % self.count
 
         self.tvmaze_link = 'http://www.tvmaze.com'
@@ -294,10 +293,12 @@ class TVshows:
         except:
             import traceback
             traceback.print_exc()
+            pass
 
 
     def search(self):
         navigator.Navigator().addDirectoryItem(32603, 'tvSearchnew', 'search.png', 'DefaultAddonsSearch.png')
+
         try:
             from sqlite3 import dbapi2 as database
         except:
@@ -308,18 +309,24 @@ class TVshows:
 
         try:
             dbcur.executescript("CREATE TABLE IF NOT EXISTS tvshow (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
+            dbcur.connection.commit()
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         dbcur.execute("SELECT * FROM tvshow ORDER BY ID DESC")
         lst = []
         delete_option = False
+
         for (id, term) in dbcur.fetchall():
             if term not in str(lst):
                 delete_option = True
                 navigator.Navigator().addDirectoryItem(term, 'tvSearchterm&name=%s' % term, 'search.png', 'DefaultAddonsSearch.png')
                 lst += [(term)]
-        dbcur.close()
+
+        dbcon.close()
+
         if delete_option:
             navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonService.png', isFolder=False)
         navigator.Navigator().endDirectory()
@@ -330,8 +337,10 @@ class TVshows:
         k = control.keyboard('', t)
         k.doModal()
         q = k.getText() if k.isConfirmed() else None
+
         if (q is None or q == ''):
             return
+            # return sys.exit()
 
         try:
             from sqlite3 import dbapi2 as database
@@ -342,7 +351,7 @@ class TVshows:
         dbcur = dbcon.cursor()
         dbcur.execute("INSERT INTO tvshow VALUES (?,?)", (None, q))
         dbcur.connection.commit()
-        dbcur.close()
+        dbcon.close()
         url = self.search_link + urllib.quote_plus(q)
         self.get(url)
 
@@ -391,6 +400,21 @@ class TVshows:
         networks = sorted(networks, key=lambda x: x[0])
 
         for i in networks:
+            self.list.append({'name': i[0], 'url': self.tvmaze_link + i[1], 'image': i[2], 'icon': 'DefaultNetwork.png', 'action': 'tvmazeTvshows'})
+        self.addDirectory(self.list)
+        return self.list
+
+
+    def originals(self):
+        if control.setting('tvshows.networks.view') == '0':
+            from resources.lib.indexers.tvmaze import originals_this_season as originals
+
+        if control.setting('tvshows.networks.view') == '1':
+            from resources.lib.indexers.tvmaze import originals_view_all as originals
+
+        originals = sorted(originals, key=lambda x: x[0])
+
+        for i in originals:
             self.list.append({'name': i[0], 'url': self.tvmaze_link + i[1], 'image': i[2], 'icon': 'DefaultNetwork.png', 'action': 'tvmazeTvshows'})
         self.addDirectory(self.list)
         return self.list
@@ -622,8 +646,8 @@ class TVshows:
                     name = item['list']['name']
                 except:
                     name = item['name']
-                # name = client.replaceHTMLCodes(name)
-                # name = name.encode('utf-8')
+                name = client.replaceHTMLCodes(name)
+                name = name.encode('utf-8')
 
                 try:
                     url = (trakt.slug(item['list']['user']['username']), item['list']['ids']['slug'])

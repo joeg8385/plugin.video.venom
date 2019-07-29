@@ -30,6 +30,8 @@ class Navigator:
     def root(self):
         self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'DefaultMovies.png')
         self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'DefaultTVShows.png')
+        if self.getMenuEnabled('navi.anime') is True:
+            self.addDirectoryItem('Anime', 'animeNavigator', 'boxsets.png', 'DefaultFolder.png')
 
         if self.getMenuEnabled('mylists.widget') is True:
             self.addDirectoryItem(32003, 'mymovieNavigator', 'mymovies.png','DefaultVideoPlaylists.png')
@@ -133,7 +135,7 @@ class Navigator:
             if self.getMenuEnabled('mylists.widget') is True:
                self.addDirectoryItem(32003, 'mymovieliteNavigator', 'mymovies.png', 'DefaultMovies.png')
             self.addDirectoryItem(32029, 'moviePerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
-            self.addDirectoryItem(32010, 'movieSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
+            self.addDirectoryItem(32010, 'movieSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultAddonsSearch.png')
         self.endDirectory()
 
 
@@ -165,11 +167,13 @@ class Navigator:
         if lite is False:
             self.addDirectoryItem(32031, 'movieliteNavigator', 'movies.png', 'DefaultMovies.png')
             self.addDirectoryItem(32029, 'moviePerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
-            self.addDirectoryItem(32010, 'movieSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
+            self.addDirectoryItem(32010, 'movieSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultAddonsSearch.png')
         self.endDirectory()
 
 
     def tvshows(self, lite=False):
+        if self.getMenuEnabled('navi.originals') is True:
+            self.addDirectoryItem(40070 if control.setting('index.labels') == 'false' else 40071, 'originals', 'networks.png' if control.setting('icon.logos') == 'Traditional' else 'tvmaze.png', 'DefaultNetwork.png')
         if self.getMenuEnabled('navi.tv.imdb.popular') is True:
             self.addDirectoryItem(32428 if control.setting('index.labels') == 'false' else 32429, 'tvshows&url=popular', 'most-popular.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultTVShows.png')
         if self.getMenuEnabled('navi.tv.tmdb.popular') is True:
@@ -205,7 +209,7 @@ class Navigator:
                self.addDirectoryItem(32004, 'mytvliteNavigator', 'mytvshows.png', 'DefaultTVShows.png')
 
             self.addDirectoryItem(32030, 'tvPerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
-            self.addDirectoryItem(32010, 'tvSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
+            self.addDirectoryItem(32010, 'tvSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultAddonsSearch.png')
         self.endDirectory()
 
 
@@ -243,13 +247,22 @@ class Navigator:
         if lite is False:
             self.addDirectoryItem(32031, 'tvliteNavigator', 'tvshows.png', 'DefaultTVShows.png')
             self.addDirectoryItem(32030, 'tvPerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
-            self.addDirectoryItem(32010, 'tvSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
+            self.addDirectoryItem(32010, 'tvSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultAddonsSearch.png')
+        self.endDirectory()
+
+
+    def anime(self, lite=False):
+        self.addDirectoryItem(32001, 'animeMovies&url=anime', 'movies.png', 'DefaultMovies.png')
+        self.addDirectoryItem(32002, 'animeTVshows&url=anime', 'tvshows.png', 'DefaultTVShows.png')
         self.endDirectory()
 
 
     def tools(self):
         self.addDirectoryItem(32510, 'cfNavigator', 'tools.png', 'DefaultAddonService.png', isFolder=True)
         self.addDirectoryItem(32609, 'urlResolver', 'urlresolver.png', 'DefaultAddonService.png', isFolder=False)
+        self.addDirectoryItem(32504, 'clearResolveURLcache', 'urlresolver.png', 'DefaultAddonProgram.png', isFolder=False)
+        if control.condVisibility('System.HasAddon(service.upnext)'):
+            self.addDirectoryItem(32505, 'UpNextSettings&query=0.0', 'UpNext.png', 'DefaultAddonProgram.png', isFolder=False)
         #-- Providers - 4
         self.addDirectoryItem(32651, 'openscrapersSettings&query=0.0', 'OpenScrapers.png', 'DefaultAddonService.png', isFolder=False)
         #-- General - 0
@@ -307,10 +320,10 @@ class Navigator:
 
 
     def search(self):
-        self.addDirectoryItem(32001, 'movieSearch', 'search.png', 'DefaultAddonsSearch.png')
-        self.addDirectoryItem(32002, 'tvSearch', 'search.png', 'DefaultAddonsSearch.png')
-        self.addDirectoryItem(32029, 'moviePerson', 'people-search.png', 'DefaultAddonsSearch.png')
-        self.addDirectoryItem(32030, 'tvPerson', 'people-search.png', 'DefaultAddonsSearch.png')
+        self.addDirectoryItem(32001, 'movieSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultAddonsSearch.png')
+        self.addDirectoryItem(32002, 'tvSearch', 'search.png' if control.setting('icon.logos') == 'Traditional' else 'trakt.png', 'DefaultAddonsSearch.png')
+        self.addDirectoryItem(32029, 'moviePerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
+        self.addDirectoryItem(32030, 'tvPerson', 'people-search.png' if control.setting('icon.logos') == 'Traditional' else 'imdb.png', 'DefaultAddonsSearch.png')
         self.endDirectory()
 
 

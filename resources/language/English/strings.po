@@ -1144,11 +1144,11 @@ msgid "Resume"
 msgstr ""
 
 msgctxt "#32504"
-msgid ""
+msgid "Clear [B][COLOR red]ResolveURL[/COLOR][/B] Function Cache"
 msgstr ""
 
 msgctxt "#32505"
-msgid ""
+msgid "[B][COLOR red]UpNext[/COLOR][/B] Settings"
 msgstr ""
 
 msgctxt "#32506"
@@ -1648,7 +1648,7 @@ msgid "Powered by..."
 msgstr ""
 
 msgctxt "#32651"
-msgid "Open Scrapers Settings"
+msgid "[B][COLOR red]Open Scrapers[/COLOR][/B] Settings"
 msgstr ""
 
 msgctxt "#32652"
@@ -2920,33 +2920,22 @@ msgid "Clear Providers Cache After Changing Scraper Provider"
 msgstr ""
 
 msgctxt "#40068"
-msgid ""
+msgid "Enable Anime Menu"
 msgstr ""
 
 msgctxt "#40069"
-msgid ""
+msgid "Enable Originals (ex. Netflix)"
 msgstr ""
 
 msgctxt "#40070"
-msgid ""
+msgid "Originals"
 msgstr ""
 
 msgctxt "#40071"
-msgid ""
+msgid "Originals (TVMaze)"
 msgstr ""
 
 msgctxt "#40072"
 msgid ""
 msgstr ""
-
-
-
-
-
-
-
-
-
-
-
 

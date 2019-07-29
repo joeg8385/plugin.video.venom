@@ -294,6 +294,29 @@ elif action == 'tvUserlists':
     tvshows.TVshows().userlists()
 
 
+####################################################
+# Anime
+####################################################
+elif action == 'animeNavigator':
+    from resources.lib.menus import navigator
+    navigator.Navigator().anime()
+
+elif action == 'animeMovies':
+    from resources.lib.menus import movies
+    movies.Movies().get(url)
+
+elif action == 'animeTVshows':
+    from resources.lib.menus import tvshows
+    tvshows.TVshows().get(url)
+
+
+####################################################
+# Originals
+####################################################
+elif action == 'originals':
+    from resources.lib.menus import tvshows
+    tvshows.TVshows().originals()
+
 
 ####################################################
 # SEASON
@@ -302,7 +325,6 @@ elif action == 'seasons':
     from resources.lib.menus import seasons
     seasons.Seasons().get(tvshowtitle, year, imdb, tvdb)
     # seasons.Seasons().get(tvshowtitle, year, imdb, tmdb, tvdb)
-
 
 elif action == 'seasonsUserlists':
     from resources.lib.indexers import seasons
@@ -400,6 +422,9 @@ elif action == 'artwork':
     from resources.lib.modules import control
     control.artwork()
 
+elif action == 'UpNextSettings':
+    from resources.lib.modules import control
+    control.openSettings('0.0', 'service.upnext')
 
 
 
@@ -627,6 +652,10 @@ elif action == 'clearCacheSearch':
 elif action == 'clearBookmarks':
     from resources.lib.menus import navigator
     navigator.Navigator().clearBookmarks()
+
+elif action == 'clearResolveURLcache':
+    if control.condVisibility('System.HasAddon(script.module.resolveurl)'):
+        control.execute('RunPlugin(plugin://script.module.resolveurl/?mode=reset_cache)')
 
 
 

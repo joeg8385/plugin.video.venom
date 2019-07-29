@@ -1,5 +1,26 @@
+[B][COLOR red]Update - v3.1.0 - July 28, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added Container.Refresh to cache search
+    clearing option so items are removed instantly.[/I]
+[COLOR yellow]--[/COLOR][I] Added hard coding of "Dialog" source list for
+    cases when ExtendedInfo or OpenInfo is visible.
+    Directory list style ends up in background and is
+    not preferable list type in this case.[/I]
+[COLOR yellow]--[/COLOR][I] Added "Anime" menu option to root listing.
+    This is Experimental! at this time and is turned
+    off by default. See Navigation settings[/I]
+[COLOR yellow]--[/COLOR][I] Added "Originals" menu to "TVShows" menu
+    for Netflix, Hulu, and Amazon. Turned off by
+    default. See Navigation settings[/I]
+[COLOR yellow]--[/COLOR][I] Added UpNext setting access to Tools menu.[/I]
+[COLOR yellow]--[/COLOR][I] Added ResolveUrl function cache clear
+    option to Tools menu.[/I]
+[COLOR yellow]--[/COLOR][I] Moved "Enable Christmas Collection" to
+    Navigation category in settings.[/I]
+[COLOR yellow]--[/COLOR][I] Added a few new boxsets to Collections.[/I]
+
+
 [B][COLOR red]Update - v3.0.9 - July 25, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Lot of code cleanup and removal of unneceassy
+[COLOR yellow]--[/COLOR][I] Lot of code cleanup and removal of unnecessary
     encoding.[/I]
 [COLOR yellow]--[/COLOR][I] Fixed missing cancel dialog check for source
     directory and dialog list[/I]
@@ -10,7 +31,7 @@
 [COLOR yellow]--[/COLOR][I] Added a few more missing Trakt lists to follow
     the option "Page Item Limit".  Not your "My Lists"
     items at this time, but that story can be found
-    more indepth in the newsinfo page.[/I]
+    more in-depth in the newsinfo page.[/I]
 
 [B][COLOR red]Update - v3.0.8 - July 21, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed People(TV Search.[/I]

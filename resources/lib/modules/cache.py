@@ -212,6 +212,8 @@ def cache_clear_search():
             traceback.print_exc()
             pass
     cursor.close()
+    control.execute('Container.Refresh')
+
 
 def cache_clear_bookmarks():
     cursor = _get_connection_cursor_bookmarks()

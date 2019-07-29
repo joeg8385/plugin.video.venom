@@ -33,6 +33,7 @@ class Sources:
             # items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 
             if items is None:
+                self.url = url
                 return self.errorForSources()
 
             if select is None:
@@ -40,13 +41,20 @@ class Sources:
                     select = '2'
                 else: 
                     select = control.setting('hosts.mode')
+                    if control.window.getProperty('extendedinfo_running') or control.window.getProperty('infodialogs.active'):
+                        select = '0'
+                    # if xbmc.getCondVisibility("Window.IsActive(script.extendedinfo-DialogVideoInfo-Netflix.xml)") and select == '1':
+                        # select = '0'
+                    # if xbmc.getCondVisibility("Window.IsActive(script.extendedinfo-VideoList-Netflix.xml)") and select == '1':
+                        # select = '0'
+
             else:
                 select = select
 
             title = tvshowtitle if tvshowtitle is not None else title
 
-            if control.window.getProperty('PseudoTVRunning') == 'True':
-                return control.resolve(int(sys.argv[1]), True, control.item(path=str(self.sourcesDirect(items))))
+            # if control.window.getProperty('PseudoTVRunning') == 'True':
+                # return control.resolve(int(sys.argv[1]), True, control.item(path=str(self.sourcesDirect(items))))
 
             if len(items) > 0:
                 if select == '1' and 'plugin' in control.infoLabel('Container.PluginName'):
@@ -66,6 +74,7 @@ class Sources:
                     url = self.sourcesDirect(items)
 
             if url == 'close://' or url is None:
+                self.url = url
                 return self.errorForSources()
 
             try:
@@ -1238,8 +1247,10 @@ class Sources:
                     for x in range(3600):
                         try:
                             if xbmc.abortRequested is True:
+                                control.infoDialog('Sources Cancelled', sound=False, icon='INFO')
                                 return sys.exit()
                             if progressDialog.iscanceled():
+                                control.infoDialog('Sources Cancelled', sound=False, icon='INFO')
                                 return progressDialog.close()
                         except:
                             pass
@@ -1262,8 +1273,10 @@ class Sources:
                     for x in range(30):
                         try:
                             if xbmc.abortRequested is True:
+                                control.infoDialog('Sources Cancelled', sound=False, icon='INFO')
                                 return sys.exit()
                             if progressDialog.iscanceled():
+                                control.infoDialog('Sources Cancelled', sound=False, icon='INFO')
                                 return progressDialog.close()
                         except:
                             pass
@@ -1362,7 +1375,10 @@ class Sources:
 
 
     def errorForSources(self):
-        control.infoDialog(control.lang(32401).encode('utf-8'), sound=False, icon='INFO')
+        if self.url == 'close://':
+            control.infoDialog('Sources Cancelled', sound=False, icon='INFO')
+        else:
+            control.infoDialog(control.lang(32401).encode('utf-8'), sound=False, icon='INFO')
 
 
     def getLanguage(self):

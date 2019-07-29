@@ -59,14 +59,13 @@ class Movies:
         self.hidecinema_rollback2 = self.hidecinema_rollback * 30
         self.hidecinema_date = (datetime.date.today() - datetime.timedelta(days = self.hidecinema_rollback2)).strftime('%Y-%m')
 
+        self.tmdb_link = 'http://api.themoviedb.org'
         self.tmdb_popular_link = 'http://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&page=1'
         self.tmdb_toprated_link = 'http://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
         self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
         self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&language=en-US&region=US&page=1'
 
         self.imdb_link = 'https://www.imdb.com'
-        self.tmdb_link = 'http://api.themoviedb.org'
-
         self.persons_link = 'https://www.imdb.com/search/name?count=100&name='
         self.personlist_link = 'https://www.imdb.com/search/name?count=100&gender=male,female'
         self.person_link = 'https://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&role=%s&sort=year,desc&count=%d&start=1' % ('%s', self.count)
@@ -99,24 +98,21 @@ class Movies:
         self.imdblist2_link = 'http://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
         self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
         self.imdbwatchlist2_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
+        self.anime_link = 'https://www.imdb.com/search/keyword?keywords=anime&title_type=movie,tvMovie&sort=moviemeter,asc&count=%d&start=1' % self.count
 
-        self.search_link = 'http://api.trakt.tv/search/movie?limit=20&page=1&query='
+        self.search_link = 'http://api.trakt.tv/search/movie?limit=%d&page=1&query=' % self.count
+
+        self.traktlistsearch_link = 'http://api.trakt.tv/search/list?limit=%d&page=1&query=' % self.count
 
         self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
         self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
         self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
-
         self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies'
-        # self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies?page=1&limit=%d' % self.count
-
         self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies'
         self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?page=1&limit=%d' % self.count
-
         self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/movies?page=1&limit=%d' % self.count
-
         self.traktanticipated_link = 'http://api.trakt.tv/movies/anticipated?page=1&limit=%d' % self.count 
         self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/movies?page=1&limit=%d' % self.count
-
         self.trakttrending_link = 'http://api.trakt.tv/movies/trending?page=1&limit=%d' % self.count
         self.traktboxoffice_link = 'http://api.trakt.tv/movies/boxoffice'
         self.traktpopular_link = 'http://api.trakt.tv/movies/popular?page=1&limit=%d' % self.count
@@ -276,10 +272,12 @@ class Movies:
         except:
             import traceback
             traceback.print_exc()
+            pass
 
 
     def search(self):
         navigator.Navigator().addDirectoryItem(32603, 'movieSearchnew', 'search.png', 'DefaultAddonsSearch.png')
+
         try:
             from sqlite3 import dbapi2 as database
         except:
@@ -290,18 +288,24 @@ class Movies:
 
         try:
             dbcur.executescript("CREATE TABLE IF NOT EXISTS movies (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
+            dbcur.connection.commit()
         except:
+            import traceback
+            traceback.print_exc()
             pass
 
         dbcur.execute("SELECT * FROM movies ORDER BY ID DESC")
         lst = []
         delete_option = False
+
         for (id, term) in dbcur.fetchall():
             if term not in str(lst):
                 delete_option = True
                 navigator.Navigator().addDirectoryItem(term, 'movieSearchterm&name=%s' % term, 'search.png', 'DefaultAddonsSearch.png')
                 lst += [(term)]
-        dbcur.close()
+
+        dbcon.close()
+
         if delete_option:
             navigator.Navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonService.png', isFolder=False)
         navigator.Navigator().endDirectory()
@@ -314,6 +318,7 @@ class Movies:
         q = k.getText() if k.isConfirmed() else None
         if (q is None or q == ''):
             return
+            # return sys.exit()
 
         try:
             from sqlite3 import dbapi2 as database
@@ -324,7 +329,8 @@ class Movies:
         dbcur = dbcon.cursor()
         dbcur.execute("INSERT INTO movies VALUES (?,?)", (None, q))
         dbcur.connection.commit()
-        dbcur.close()
+        dbcon.close()
+
         url = self.search_link + urllib.quote_plus(q)
         self.get(url)
 
@@ -487,11 +493,11 @@ class Movies:
         for i in range(0, len(self.list)):
             self.list[i].update({'action': 'movies'})
 
-        # # imdb Watchlist
-        # if self.imdb_user != '':
-            # self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.imdbwatchlist2_link, 'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
+        # imdb Watchlist
+        if self.imdb_user != '':
+            self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.imdbwatchlist2_link, 'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
 
-        # Watchlist
+        # Trakt Watchlist
         if self.traktCredentials is True:
             self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.traktwatchlist_link, 'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
 
