@@ -9,7 +9,7 @@ try:
 except:
     pass
 
-from resources.lib.modules import cleantitle, control, playcount, log_utils
+from resources.lib.modules import cleantitle, control, playcount
 
 try:
     sysaddon = sys.argv[0]
@@ -80,11 +80,13 @@ class Player(xbmc.Player):
             item.setInfo(type='video', infoLabels=control.metadataClean(meta))
 
             if 'plugin' in control.infoLabel('Container.PluginName'):
+                control.closeAll()
                 control.player.play(url, item)
                 xbmc.sleep(2000)
-                control.closeAll()
 
             if 'plugin' not in control.infoLabel('Container.PluginName'):
+                if control.window.getProperty('infodialogs.active'):
+                    control.closeAll()
                 control.resolve(syshandle, True, item)
 
             control.window.setProperty('script.trakt.ids', json.dumps(self.ids))
@@ -415,7 +417,7 @@ class Player(xbmc.Player):
                 xbmc.sleep(1000)
 
         if self.offset != '0' and self.playback_resumed is False:
-            log_utils.log('Seeking %.2f minutes' % (float(self.offset) / 60), __name__, log_utils.LOGDEBUG)
+            # log_utils.log('Seeking %.2f minutes' % (float(self.offset) / 60), __name__, log_utils.LOGDEBUG)
             self.seekTime(float(self.offset))
             self.playback_resumed = True
 
@@ -436,7 +438,7 @@ class Player(xbmc.Player):
                 xbmc.sleep(1000)
 
         if self.offset != '0' and self.playback_resumed is False:
-            log_utils.log('Seeking %.2f minutes' % (float(self.offset) / 60), __name__, log_utils.LOGDEBUG)
+            # log_utils.log('Seeking %.2f minutes' % (float(self.offset) / 60), __name__, log_utils.LOGDEBUG)
             self.seekTime(float(self.offset))
             self.playback_resumed = True
 

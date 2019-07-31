@@ -50,7 +50,7 @@ class Collections:
         self.disable_fanarttv = control.setting('disable.fanarttv')
 
         self.tmdb_link = 'https://api.themoviedb.org'
-        self.tmdb_api_link = 'https://api.themoviedb.org/3/list/%s?api_key=%s' % ('%s', '%s')
+        self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&sort_by=release_date.asc&page=1' % ('%s', '%s')
 
         self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
         self.imdblist_link = 'https://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
@@ -58,20 +58,44 @@ class Collections:
         self.imdbwatchlist_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
         self.imdbwatchlist2_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
 
+
+# Martial Arts Movies
+        self.martialartsmovies_link = self.tmdb_api_link % ('117973', self.tmdb_key)
+
+# Martial Arts Actors
+        self.brandonlee_link = self.tmdb_api_link % ('117971', self.tmdb_key)
+        self.brucelee2_link = self.tmdb_api_link % ('118011', self.tmdb_key)
+        self.chucknorris_link = self.tmdb_api_link % ('118012', self.tmdb_key)
+        self.chowyunfat_link = self.tmdb_api_link % ('118014', self.tmdb_key)
+        self.donnieyen_link = self.tmdb_api_link % ('118015', self.tmdb_key)
+        self.garydaniels_link = self.tmdb_api_link % ('118035', self.tmdb_key)
+        self.jackiechan_link = self.tmdb_api_link % ('118017', self.tmdb_key)
+        self.jasonstatham_link = self.tmdb_api_link % ('118016', self.tmdb_key)
+        self.vandamme_link = self.tmdb_api_link % ('118022', self.tmdb_key)
+        self.jetli_link = self.tmdb_api_link % ('118023', self.tmdb_key)
+        self.markdacascos_link = self.tmdb_api_link % ('118024', self.tmdb_key)
+        self.michaeljaiwhite_link = self.tmdb_api_link % ('118025', self.tmdb_key)
+        self.philipng_link = self.tmdb_api_link % ('118026', self.tmdb_key)
+        self.rain_link = self.tmdb_api_link % ('118033', self.tmdb_key)
+        self.robinshou_link = self.tmdb_api_link % ('118028', self.tmdb_key)
+        self.stevenseagal_link = self.tmdb_api_link % ('118029', self.tmdb_key)
+        self.tigerchen_link = self.tmdb_api_link % ('118030', self.tmdb_key)
+        self.tonyjaa_link = self.tmdb_api_link % ('118031', self.tmdb_key)
+
 # Christmas Movies
-        self.xmasmovies_link = 'https://api.themoviedb.org/3/list/32770?api_key=%s' % (self.tmdb_key)
+        self.xmasmovies_link = self.tmdb_api_link % ('32770', self.tmdb_key)
 
 # DC Comics Movies
-        self.dcmovies_link = 'https://api.themoviedb.org/3/list/32799?api_key=%s' % (self.tmdb_key)
+        self.dcmovies_link = self.tmdb_api_link % ('32799', self.tmdb_key)
 
 # Disney Movies
-        self.disneymovies_link = 'https://api.themoviedb.org/3/list/32800?api_key=%s' % (self.tmdb_key)
+        self.disneymovies_link = self.tmdb_api_link % ('32800', self.tmdb_key)
 
 # Kids Movies
-        self.kidsmovies_link = 'https://api.themoviedb.org/3/list/32802?api_key=%s' % (self.tmdb_key)
+        self.kidsmovies_link = self.tmdb_api_link % ('32802', self.tmdb_key)
 
 # Marvel Movies
-        self.marvelmovies_link = 'https://api.themoviedb.org/3/list/32793?api_key=%s' % (self.tmdb_key)
+        self.marvelmovies_link = self.tmdb_api_link % ('32793', self.tmdb_key)
 
 # Boxset Collection
         self.rounds_link = self.tmdb_api_link % ('13120', self.tmdb_key)
@@ -267,7 +291,6 @@ class Collections:
         self.zoolander_link = self.tmdb_api_link % ('33412', self.tmdb_key)
         self.zorro_link = self.tmdb_api_link % ('33413', self.tmdb_key)
 
-
 # Boxset Collection Kids
         self.onehundredonedalmations_link = self.tmdb_api_link % ('33182', self.tmdb_key)
         self.addamsfamily_link = self.tmdb_api_link % ('33183', self.tmdb_key)
@@ -277,64 +300,64 @@ class Collections:
         self.babe_link = self.tmdb_api_link % ('33187', self.tmdb_key)
         self.balto_link = self.tmdb_api_link % ('33188', self.tmdb_key)
         self.bambi_link = self.tmdb_api_link % ('33189', self.tmdb_key)
-        self.beautyandthebeast_link = 'https://api.themoviedb.org/3/list/33190?api_key=%s' % (self.tmdb_key)
-        self.beethoven_link = 'https://api.themoviedb.org/3/list/33191?api_key=%s' % (self.tmdb_key)
-        self.brotherbear_link = 'https://api.themoviedb.org/3/list/33192?api_key=%s' % (self.tmdb_key)
-        self.cars_link = 'https://api.themoviedb.org/3/list/33193?api_key=%s' % (self.tmdb_key)
-        self.cinderella_link = 'https://api.themoviedb.org/3/list/33194?api_key=%s' % (self.tmdb_key)
-        self.cloudywithachanceofmeatballs_link = 'https://api.themoviedb.org/3/list/33195?api_key=%s' % (self.tmdb_key)
-        self.despicableme_link = 'https://api.themoviedb.org/3/list/33197?api_key=%s' % (self.tmdb_key)
-        self.findingnemo_link = 'https://api.themoviedb.org/3/list/33198?api_key=%s' % (self.tmdb_key)
-        self.foxandthehound_link = 'https://api.themoviedb.org/3/list/33199?api_key=%s' % (self.tmdb_key)
-        self.freewilly_link = 'https://api.themoviedb.org/3/list/33200?api_key=%s' % (self.tmdb_key)
-        self.ghostbusters_link = 'https://api.themoviedb.org/3/list/33201?api_key=%s' % (self.tmdb_key)
-        self.gremlins_link = 'https://api.themoviedb.org/3/list/33202?api_key=%s' % (self.tmdb_key)
-        self.happyfeet_link = 'https://api.themoviedb.org/3/list/33204?api_key=%s' % (self.tmdb_key)
-        self.harrypotter_link = 'https://api.themoviedb.org/3/list/33205?api_key=%s' % (self.tmdb_key)
-        self.homealone_link = 'https://api.themoviedb.org/3/list/33206?api_key=%s' % (self.tmdb_key)
-        self.homewardbound_link = 'https://api.themoviedb.org/3/list/33207?api_key=%s' % (self.tmdb_key)
-        self.honeyishrunkthekids_link = 'https://api.themoviedb.org/3/list/33208?api_key=%s' % (self.tmdb_key)
-        self.hoteltransylvania_link = 'https://api.themoviedb.org/3/list/33209?api_key=%s' % (self.tmdb_key)
-        self.howtotrainyourdragon_link = 'https://api.themoviedb.org/3/list/33210?api_key=%s' % (self.tmdb_key)
-        self.hunchbackofnotredame_link = 'https://api.themoviedb.org/3/list/33211?api_key=%s' % (self.tmdb_key)
-        self.iceage_link = 'https://api.themoviedb.org/3/list/33212?api_key=%s' % (self.tmdb_key)
+        self.beautyandthebeast_link = self.tmdb_api_link % ('33190', self.tmdb_key)
+        self.beethoven_link = self.tmdb_api_link % ('33191', self.tmdb_key)
+        self.brotherbear_link = self.tmdb_api_link % ('33192', self.tmdb_key)
+        self.cars_link = self.tmdb_api_link % ('33193', self.tmdb_key)
+        self.cinderella_link = self.tmdb_api_link % ('33194', self.tmdb_key)
+        self.cloudywithachanceofmeatballs_link = self.tmdb_api_link % ('33195', self.tmdb_key)
+        self.despicableme_link = self.tmdb_api_link % ('33197', self.tmdb_key)
+        self.findingnemo_link = self.tmdb_api_link % ('33198', self.tmdb_key)
+        self.foxandthehound_link = self.tmdb_api_link % ('33199', self.tmdb_key)
+        self.freewilly_link = self.tmdb_api_link % ('33200', self.tmdb_key)
+        self.ghostbusters_link = self.tmdb_api_link % ('33201', self.tmdb_key)
+        self.gremlins_link =  self.tmdb_api_link % ('33202', self.tmdb_key)
+        self.happyfeet_link = self.tmdb_api_link % ('33204', self.tmdb_key)
+        self.harrypotter_link = self.tmdb_api_link % ('33205', self.tmdb_key)
+        self.homealone_link = self.tmdb_api_link % ('33206', self.tmdb_key)
+        self.homewardbound_link = self.tmdb_api_link % ('33207', self.tmdb_key)
+        self.honeyishrunkthekids_link = self.tmdb_api_link % ('33208', self.tmdb_key)
+        self.hoteltransylvania_link = self.tmdb_api_link % ('33209', self.tmdb_key)
+        self.howtotrainyourdragon_link = self.tmdb_api_link % ('33210', self.tmdb_key)
+        self.hunchbackofnotredame_link = self.tmdb_api_link % ('33211', self.tmdb_key)
+        self.iceage_link = self.tmdb_api_link % ('33212', self.tmdb_key)
         self.jurassicpark_link = self.tmdb_api_link % ('113188', self.tmdb_key)
-        self.kungfupanda_link = 'https://api.themoviedb.org/3/list/33218?api_key=%s' % (self.tmdb_key)
-        self.ladyandthetramp_link = 'https://api.themoviedb.org/3/list/33219?api_key=%s' % (self.tmdb_key)
-        self.liloandstitch_link = 'https://api.themoviedb.org/3/list/33220?api_key=%s' % (self.tmdb_key)
-        self.madagascar_link = 'https://api.themoviedb.org/3/list/33221?api_key=%s' % (self.tmdb_key)
-        self.monstersinc_link = 'https://api.themoviedb.org/3/list/33222?api_key=%s' % (self.tmdb_key)
-        self.mulan_link = 'https://api.themoviedb.org/3/list/33223?api_key=%s' % (self.tmdb_key)
-        self.narnia_link = 'https://api.themoviedb.org/3/list/33224?api_key=%s' % (self.tmdb_key)
-        self.newgroove_link = 'https://api.themoviedb.org/3/list/33225?api_key=%s' % (self.tmdb_key)
-        self.openseason_link = 'https://api.themoviedb.org/3/list/33226?api_key=%s' % (self.tmdb_key)
-        self.planes_link = 'https://api.themoviedb.org/3/list/33227?api_key=%s' % (self.tmdb_key)
-        self.pocahontas_link = 'https://api.themoviedb.org/3/list/33228?api_key=%s' % (self.tmdb_key)
-        self.problemchild_link = 'https://api.themoviedb.org/3/list/33229?api_key=%s' % (self.tmdb_key)
-        self.rio_link = 'https://api.themoviedb.org/3/list/33230?api_key=%s' % (self.tmdb_key)
-        self.sammysadventures_link = 'https://api.themoviedb.org/3/list/33231?api_key=%s' % (self.tmdb_key)
-        self.scoobydoo_link = 'https://api.themoviedb.org/3/list/33232?api_key=%s' % (self.tmdb_key)
-        self.shortcircuit_link = 'https://api.themoviedb.org/3/list/33233?api_key=%s' % (self.tmdb_key)
-        self.shrek_link = 'https://api.themoviedb.org/3/list/33234?api_key=%s' % (self.tmdb_key)
-        self.spongebobsquarepants_link = 'https://api.themoviedb.org/3/list/33235?api_key=%s' % (self.tmdb_key)
-        self.spykids_link = 'https://api.themoviedb.org/3/list/33236?api_key=%s' % (self.tmdb_key)
+        self.kungfupanda_link = self.tmdb_api_link % ('33218', self.tmdb_key)
+        self.ladyandthetramp_link = self.tmdb_api_link % ('33219', self.tmdb_key)
+        self.liloandstitch_link = self.tmdb_api_link % ('33220', self.tmdb_key)
+        self.madagascar_link = self.tmdb_api_link % ('33221', self.tmdb_key)
+        self.monstersinc_link = self.tmdb_api_link % ('33222', self.tmdb_key)
+        self.mulan_link = self.tmdb_api_link % ('33223', self.tmdb_key)
+        self.narnia_link = self.tmdb_api_link % ('33224', self.tmdb_key)
+        self.newgroove_link = self.tmdb_api_link % ('33225', self.tmdb_key)
+        self.openseason_link = self.tmdb_api_link % ('33226', self.tmdb_key)
+        self.planes_link = self.tmdb_api_link % ('33227', self.tmdb_key)
+        self.pocahontas_link = self.tmdb_api_link % ('33228', self.tmdb_key)
+        self.problemchild_link = self.tmdb_api_link % ('33229', self.tmdb_key)
+        self.rio_link = self.tmdb_api_link % ('33230', self.tmdb_key)
+        self.sammysadventures_link = self.tmdb_api_link % ('33231', self.tmdb_key)
+        self.scoobydoo_link = self.tmdb_api_link % ('33232', self.tmdb_key)
+        self.shortcircuit_link = self.tmdb_api_link % ('33233', self.tmdb_key)
+        self.shrek_link = self.tmdb_api_link % ('33234', self.tmdb_key)
+        self.spongebobsquarepants_link = self.tmdb_api_link % ('33235', self.tmdb_key)
+        self.spykids_link = self.tmdb_api_link % ('33236', self.tmdb_key)
         self.starwars_link = self.tmdb_api_link % ('113185', self.tmdb_key)
-        self.stuartlittle_link = 'https://api.themoviedb.org/3/list/33238?api_key=%s' % (self.tmdb_key)
-        self.tarzan_link = 'https://api.themoviedb.org/3/list/33239?api_key=%s' % (self.tmdb_key)
-        self.teenagemutantninjaturtles_link = 'https://api.themoviedb.org/3/list/33240?api_key=%s' % (self.tmdb_key)
-        self.thejunglebook_link = 'https://api.themoviedb.org/3/list/33216?api_key=%s' % (self.tmdb_key)
-        self.thekaratekid_link = 'https://api.themoviedb.org/3/list/33241?api_key=%s' % (self.tmdb_key)
-        self.thelionking_link = 'https://api.themoviedb.org/3/list/33242?api_key=%s' % (self.tmdb_key)
-        self.thelittlemermaid_link = 'https://api.themoviedb.org/3/list/33243?api_key=%s' % (self.tmdb_key)
-        self.theneverendingstory_link = 'https://api.themoviedb.org/3/list/33248?api_key=%s' % (self.tmdb_key)
-        self.thesmurfs_link = 'https://api.themoviedb.org/3/list/33249?api_key=%s' % (self.tmdb_key)
-        self.toothfairy_link = 'https://api.themoviedb.org/3/list/33251?api_key=%s' % (self.tmdb_key)
-        self.tinkerbell_link = 'https://api.themoviedb.org/3/list/33252?api_key=%s' % (self.tmdb_key)
-        self.tomandjerry_link = 'https://api.themoviedb.org/3/list/33253?api_key=%s' % (self.tmdb_key)
-        self.toystory_link = 'https://api.themoviedb.org/3/list/33254?api_key=%s' % (self.tmdb_key)
-        self.veggietales_link = 'https://api.themoviedb.org/3/list/33255?api_key=%s' % (self.tmdb_key)
-        self.winniethepooh_link = 'https://api.themoviedb.org/3/list/33257?api_key=%s' % (self.tmdb_key)
-        self.wizardofoz_link = 'https://api.themoviedb.org/3/list/33258?api_key=%s' % (self.tmdb_key)
+        self.stuartlittle_link = self.tmdb_api_link % ('33238', self.tmdb_key)
+        self.tarzan_link = self.tmdb_api_link % ('33239', self.tmdb_key)
+        self.teenagemutantninjaturtles_link = self.tmdb_api_link % ('33240', self.tmdb_key)
+        self.thejunglebook_link = self.tmdb_api_link % ('33216', self.tmdb_key)
+        self.thekaratekid_link = self.tmdb_api_link % ('33241', self.tmdb_key)
+        self.thelionking_link = self.tmdb_api_link % ('33242', self.tmdb_key)
+        self.thelittlemermaid_link = self.tmdb_api_link % ('33243', self.tmdb_key)
+        self.theneverendingstory_link = self.tmdb_api_link % ('33248', self.tmdb_key)
+        self.thesmurfs_link = self.tmdb_api_link % ('33249', self.tmdb_key)
+        self.toothfairy_link = self.tmdb_api_link % ('33251', self.tmdb_key)
+        self.tinkerbell_link = self.tmdb_api_link % ('33252', self.tmdb_key)
+        self.tomandjerry_link = self.tmdb_api_link % ('33253', self.tmdb_key)
+        self.toystory_link = self.tmdb_api_link % ('33254', self.tmdb_key)
+        self.veggietales_link = self.tmdb_api_link % ('33255', self.tmdb_key)
+        self.winniethepooh_link = self.tmdb_api_link % ('33257', self.tmdb_key)
+        self.wizardofoz_link = self.tmdb_api_link % ('33258', self.tmdb_key)
 
 # Superhero Collection
         self.avengers_link = self.tmdb_api_link % ('33128', self.tmdb_key)
@@ -352,6 +375,8 @@ class Collections:
 
     def collectionsNavigator(self, lite=False):
         self.addDirectoryItem('Movies', 'collectionBoxset', 'boxsets.png', 'DefaultVideoPlaylists.png')
+        self.addDirectoryItem('Martial Arts', 'collection_martial_arts', 'boxsets.png', 'DefaultVideoPlaylists.png')
+
         if self.getMenuEnabled('navi.xmascollections') is True:
             self.addDirectoryItem('Christmas Collections', 'collections&url=xmasmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
         self.addDirectoryItem('DC Comics', 'collections&url=dcmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
@@ -552,6 +577,54 @@ class Collections:
         self.addDirectoryItem('Young Guns (1988-1990)', 'collections&url=youngguns', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
         self.addDirectoryItem('Zoolander (2001-2016)', 'collections&url=zoolander', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
         self.addDirectoryItem('Zorro (1998-2005)', 'collections&url=zorro', 'collectionboxset.png', 'DefaultVideoPlaylists.png')
+        self.endDirectory()
+
+
+    def collection_martial_arts(self):
+        self.addDirectoryItem('All Movies', 'collections&url=martialartsmovies', 'boxsets.png', 'DefaultVideoPlaylists.png')
+        self.addDirectoryItem('By Actors', 'collection_martial_arts_actors', 'people.png', 'DefaultVideoPlaylists.png')
+        self.endDirectory()
+
+
+    def collection_martial_arts_actors(self):
+        self.addDirectoryItem('Brandon Lee', 'collections&url=brandonlee', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Bruce Lee', 'collections&url=brucelee2', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Chuck Norris', 'collections&url=chucknorris', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Chow Yun-Fat', 'collections&url=chowyunfat', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Donnie Yen', 'collections&url=donnieyen', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Gary Daniels', 'collections&url=garydaniels', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Jackie Chan', 'collections&url=jackiechan', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Jason Statham', 'collections&url=jasonstatham', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Jean-Claude Van Damme', 'collections&url=vandamme', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Jet Li', 'collections&url=jetli', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Mark Dacascos', 'collections&url=markdacascos', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Michael Jai White', 'collections&url=michaeljaiwhite', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Philip Ng', 'collections&url=philipng', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Rain', 'collections&url=rain', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Robin Shou', 'collections&url=robinshou', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Steven Seagal', 'collections&url=stevenseagal', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Tiger Chen', 'collections&url=tigerchen', 'people.png', 'DefaultActor.png')
+        self.addDirectoryItem('Tony Jaa', 'collections&url=tonyjaa', 'people.png', 'DefaultActor.png')
+
+# Biao Yuen
+# Billy Chow
+# Bolo Yeung
+# Chia-Hui Liu
+# Chia-Liang Liu
+# Dan Inosanto
+# Don Wilson
+# Jeff Speakman
+# Jim Kelly
+# Jing Wu
+# Jung-Lee Hwang
+# Hiroyuki Sanada
+# Hou Hsiao
+# Marko Zaror
+# Michelle Yeoh
+# Sammo Kam-Bo Hung
+# Scott Adkins
+# Siu Tin Yuen
+
         self.endDirectory()
 
 
@@ -1018,7 +1091,7 @@ class Collections:
             pass
 
 
-    def movieDirectory(self, items):
+    def movieDirectory(self, items, next=True):
         if items is None or len(items) == 0: 
             control.idle()
             control.notification(title = 32000, message = 33049, icon = 'INFO')
@@ -1205,11 +1278,7 @@ class Collections:
                 if url == '':
                     raise Exception()
 
-                if not self.tmdb_link in url:
-                    url = '%s?action=moviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
-
-                elif self.tmdb_link in url:
-                    url = '%s?action=tmdbmoviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
+                url = '%s?action=collections&url=%s' % (sysaddon, urllib.quote_plus(url))
 
                 item = control.item(label=nextMenu)
                 icon = control.addonNext()

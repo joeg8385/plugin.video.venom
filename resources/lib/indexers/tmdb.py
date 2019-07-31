@@ -26,6 +26,7 @@ class Movies:
 		self.tmdb_key = control.setting('tm.user')
 		if self.tmdb_key == '' or self.tmdb_key is None:
 			self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
+		access_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzMzIwODU1ZTY1YTk3NTgyOTdmZWM0ZjdjOTcxNzY5OCIsInN1YiI6IjVjNDYwODQ2OTI1MTQxMGUyNDRmMDU4ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3pqIZisgsykso59k521K4plalhK7lnah2zADdHiB_g4'
 
 		self.tmdb_link = 'http://api.themoviedb.org'
 		# self.tmdb_poster = 'http://image.tmdb.org/t/p/w500'
@@ -201,12 +202,27 @@ class Movies:
 
 
 	def tmdb_collections_list(self, url):
+		next = url
 		try:
 			result = self.get_request(url)
-			items = result['items']
+			if '/3/' in url:
+				items = result['items']
+			else:
+				items = result['results']
 		except:
 			return
-		next = ''
+
+		try:
+			page = int(result['page'])
+			total = int(result['total_pages'])
+			if page >= total:
+				raise Exception()
+			if not 'page=' in url:
+				raise Exception()
+			next = '%s&page=%s' % (next.split('&page=', 1)[0], page+1)
+		except:
+			next = ''
+
 		for item in items:
 			try:
 				media_type = item['media_type']
@@ -279,7 +295,6 @@ class Movies:
 				except: director = '0'
 				if director == '' or director is None or director == []: director = '0'
 				director = ' / '.join(director)
-
 
 				writer = item['credits']['crew']
 				try:
@@ -373,8 +388,8 @@ class TVshows:
 		# self.tmdb_fanart = 'http://image.tmdb.org/t/p/original'
 		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
 
-		self.tmdb_info_link = 'http://api.themoviedb.org/3/tv/%s?api_key=%s&language=%s&append_to_response=credits,content_ratings,external_ids' % ('%s', self.tmdb_key, self.lang)
-###                                                                                  other "append_to_response" options                                           alternative_titles,videos,images
+		self.tmdb_info_link = 'http://api.themoviedb.org/3/tv/%s?api_key=%s&language=%s&append_to_response=credits,content_ratings' % ('%s', self.tmdb_key, self.lang)
+###                                                                                  other "append_to_response" options                                           external_ids,alternative_titles,videos,images
 
 		self.tmdb_art_link = 'http://api.themoviedb.org/3/tv/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
 

@@ -152,7 +152,6 @@ elif action == 'movieUserlists':
 ####################################################
 elif action == 'collectionsNavigator':
     from resources.lib.menus import collections
-    # navigator.Navigator().collections()
     collections.Collections().collectionsNavigator()
 
 elif action == 'collectionActors':
@@ -178,6 +177,17 @@ elif action == 'collectionSuperhero':
 elif action == 'collections':
     from resources.lib.menus import collections
     collections.Collections().get(url)
+
+####################################################
+#---Martial Arts Collections
+####################################################
+elif action == 'collection_martial_arts':
+    from resources.lib.menus import collections
+    collections.Collections().collection_martial_arts()
+
+elif action == 'collection_martial_arts_actors':
+    from resources.lib.menus import collections
+    collections.Collections().collection_martial_arts_actors()
 
 
 
