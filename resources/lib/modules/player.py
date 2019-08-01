@@ -292,8 +292,8 @@ class Player(xbmc.Player):
                 if not self.playback_started:
                     self.start_playback()
 
-                # if not self.offset == '0' and self.playback_resumed is False:
-                # # if not self.offset == '0':
+                # if self.offset != '0' and self.playback_resumed is False:
+                # # if self.offset != '0':
                     # from resources.lib.modules import log_utils
                     # log_utils.log('Seeking %s seconds' % self.offset, __name__, log_utils.LOGDEBUG)
                     # self.seekTime(float(self.offset))

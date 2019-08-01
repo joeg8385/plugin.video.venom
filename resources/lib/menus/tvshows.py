@@ -27,7 +27,7 @@ action = params.get('action')
 class TVshows:
     def __init__(self, type = 'show', notifications = True):
         self.count = int(control.setting('page.item.limit'))
-        # if not type(self.count) is int:
+        # if type(self.count) is not int:
             # self.count = 40
         self.list = []
         self.meta = []

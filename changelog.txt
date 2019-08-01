@@ -1,3 +1,11 @@
+[B][COLOR red]Update - v3.1.2 - July 31, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed TMDb TVShows.  Sorry typo in last
+    update broke it.[/I]
+[COLOR yellow]--[/COLOR][I] Added Scott Adkins to Martial Arts actors
+    per request.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed "Play Random" for TVShows and
+    Seasons.[/I]
+
 [B][COLOR red]Update - v3.1.1 - July 31, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Added new "Martial Arts" sections to
     "Collections". Contains sub menu for "All

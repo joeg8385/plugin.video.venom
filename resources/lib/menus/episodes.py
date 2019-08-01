@@ -1694,7 +1694,7 @@ class Episodes:
 
                 if i['image'].startswith('http'):
                     thumb = i['image']
-                elif not artPath is None:
+                elif artPath is not None:
                     thumb = os.path.join(artPath, i['image'])
                 else:
                     thumb = addonThumb
@@ -1718,7 +1718,7 @@ class Episodes:
                 item = control.item(label=name)
                 item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
 
-                if not addonFanart is None:
+                if addonFanart is not None:
                     item.setProperty('Fanart_Image', addonFanart)
 
                 item.addContextMenuItems(cm)

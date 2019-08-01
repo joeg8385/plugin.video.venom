@@ -375,6 +375,18 @@ elif action == 'episodesUserlists':
     episodes.Episodes().userlists()
 
 
+####################################################
+#---YouTube
+####################################################
+elif action == 'youtube':
+    from resources.lib.menus import youtube
+    if subid == None:
+        youtube.yt_index().root(action)
+    else:
+        youtube.yt_index().get(action, subid)
+
+
+
 
 ####################################################
 #---Tools
@@ -533,22 +545,22 @@ elif action == 'random':
 
     if rtype == 'movie':
         from resources.lib.menus import movies
-        rlist = movies.Movies().get(url, create_directory=False)
+        rlist = movies.Movies().get(url, idx=False)
         r = sys.argv[0]+"?action=play"
 
     elif rtype == 'episode':
         from resources.lib.menus import episodes
-        rlist = episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, create_directory=False)
+        rlist = episodes.Episodes().get(tvshowtitle, year, imdb, tvdb, season, idx=False)
         r = sys.argv[0]+"?action=play"
 
     elif rtype == 'season':
         from resources.lib.menus import seasons
-        rlist = seasons.Seasons().get(tvshowtitle, year, imdb, tvdb, create_directory=False)
+        rlist = seasons.Seasons().get(tvshowtitle, year, imdb, tvdb, idx=False)
         r = sys.argv[0]+"?action=random&rtype=episode"
 
     elif rtype == 'show':
         from resources.lib.menus import tvshows
-        rlist = tvshows.TVshows().get(url, create_directory=False)
+        rlist = tvshows.TVshows().get(url, idx=False)
         r = sys.argv[0]+"?action=random&rtype=season"
 
     from resources.lib.modules import control
