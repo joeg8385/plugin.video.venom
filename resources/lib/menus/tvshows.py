@@ -1129,17 +1129,22 @@ class TVshows:
 			else:
 				mpaa = self.list[i]['mpaa']
 
-			try:
-				cast = client.parseDOM(item, 'Actors')[0]
-			except:
-				cast = ''
-			cast = [x for x in cast.split('|') if x != '']
-			try:
-				cast = [(x.encode('utf-8'), '') for x in cast]
-			except:
-				cast = []
-			if cast == []:
+			if 'castandart' not in self.list[i]:
+				castandart = '0'
+				try:
+					cast = client.parseDOM(item, 'Actors')[0]
+				except:
+					cast = ''
+				cast = [x for x in cast.split('|') if x != '']
+				try:
+					cast = [(x.encode('utf-8'), '') for x in cast]
+				except:
+					cast = []
+				if cast == []:
+					cast = '0'
+			else:
 				cast = '0'
+				castandart = self.list[i]['castandart']
 
 			try:
 				plot = client.parseDOM(item, 'Overview')[0]
@@ -1190,7 +1195,7 @@ class TVshows:
 				fanart = self.list[i]['fanart']
 
 			item = {'extended': True, 'title': title, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'premiered': premiered, 'studio': studio,
-						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'cast': cast, 'plot': plot,
+						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'cast': cast, 'castandart': castandart, 'plot': plot,
 						'poster': poster, 'poster2': '0', 'poster3': '0', 'banner': banner, 'banner2': '0', 'fanart': fanart, 'fanart2': '0',
 						'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False}
 
@@ -1410,6 +1415,9 @@ class TVshows:
 						# if control.setting('tv.specials') == 'true' and self.season_special is True:
 							# total_seasons = total_seasons - 1
 						item.setProperty('TotalSeasons', str(total_seasons))
+
+				if 'castandart' in i:
+					item.setCast(i['castandart'])
 
 				# if fanart != '0' and fanart is not None:
 					# item.setProperty('Fanart_Image', fanart)
