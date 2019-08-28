@@ -6,7 +6,6 @@ Venom
 
 import re, datetime
 import requests
-import threading
 from time import sleep
 
 from resources.lib.modules import control, cache
@@ -118,13 +117,6 @@ class Movies:
 			except:
 				tagline = '0'
 
-			if self.disable_fanarttv != 'true':
-				fanart_thread = threading.Thread
-				imdb = None
-				fanart_thread = fanart_thread(target=self.get_fanarttv_art, args=(imdb, tmdb),)
-				# fanart_thread = fanart_thread(target=cache.get(self.get_fanarttv_art, 168, imdb, tmdb), args=(),)
-				fanart_thread.run()
-
 ##--TMDb additional info
 			url = self.tmdb_info_link % tmdb
 			item = self.get_request(url)
@@ -136,8 +128,7 @@ class Movies:
 			# studio = item['production_companies']
 			# try: studio = [x['name'] for x in studio][0]
 			# except: studio = '0'
-			# if studio == '' or studio is None:
-				# studio = '0'
+			# if studio == '' or studio is None: studio = '0'
 
 			try:
 				genre = item['genres']
@@ -157,7 +148,8 @@ class Movies:
 					if not mpaa:
 						mpaa = mpaa[0].get('release_dates')[1].get('certification')
 				mpaa = str(mpaa)
-			except: mpaa = '0'
+			except:
+				mpaa = '0'
 
 			credits = item['credits']
 			director = writer = '0'
@@ -176,17 +168,17 @@ class Movies:
 
 			item = {}
 			item = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered, 'studio': '0',
-						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
-						'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
-						'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0',
-						'landscape': fanart, 'metacache': False, 'next': next}
+					'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
+					'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
+					'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0',
+					'landscape': fanart, 'metacache': False, 'next': next}
+
 			meta = {}
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
 
 			if self.disable_fanarttv != 'true':
-				while fanart_thread.is_alive():
-					sleep(.2)
-				extended_art = self.fanarttv
+				from resources.lib.indexers import fanarttv
+				extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
 				if extended_art is not None:
 					item.update(extended_art)
 					meta.update(item)
@@ -223,6 +215,7 @@ class Movies:
 		for item in items:
 			media_type = item['media_type']
 
+
 			title = (item.get('title')).encode('utf-8')
 			if media_type != 'movie':
 				title = (item.get('name')).encode('utf-8')
@@ -253,12 +246,6 @@ class Movies:
 			except:
 				tagline = '0'
 
-			if self.disable_fanarttv != 'true':
-				fanart_thread = threading.Thread
-				imdb = None
-				fanart_thread = fanart_thread(target=self.get_fanarttv_art, args=(imdb, tmdb),)
-				# fanart_thread = fanart_thread(target=cache.get(self.get_fanarttv_art, 168, imdb, tmdb),,)
-				fanart_thread.run()
 
 ##--TMDb additional info
 			url = self.tmdb_info_link % tmdb
@@ -309,16 +296,19 @@ class Movies:
 					castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 
 			item = {}
-			item = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-							'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
-							'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
+			item = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered, 'studio': '0',
+					'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
+					'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
+					'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0',
+					'landscape': fanart, 'metacache': False, 'next': next}
+
 			meta = {}
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
 
 			if self.disable_fanarttv != 'true':
-				while fanart_thread.is_alive():
-					sleep(.2)
-				extended_art = self.fanarttv
+				from resources.lib.indexers import fanarttv
+				# extended_art = fanarttv.get_movie_art(imdb, tmdb)
+				extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
 				if extended_art is not None:
 					item.update(extended_art)
 					meta.update(item)
@@ -365,11 +355,6 @@ class Movies:
 		if people is None:
 			return None
 		return people
-
-
-	def get_fanarttv_art(self, imdb=None, tmdb=None):
-		from resources.lib.indexers import fanarttv
-		self.fanarttv = fanarttv.get_movie_art(imdb, tmdb)
 
 
 class TVshows:
@@ -445,98 +430,105 @@ class TVshows:
 		for item in items:
 			try:
 				title = (item.get('name')).encode('utf-8')
+			except:
+				title = item.get('name')
 
-				year = str(item.get('first_air_date')[:4])
+			year = str(item.get('first_air_date')[:4])
 
-				tmdb = item.get('id')
+			tmdb = item.get('id')
 
-				poster = '%s%s' % (self.tmdb_poster, item['poster_path']) if item['poster_path'] else '0'
-				fanart = '%s%s' % (self.tmdb_fanart, item['backdrop_path']) if item['backdrop_path'] else '0'
+			poster = '%s%s' % (self.tmdb_poster, item['poster_path']) if item['poster_path'] else '0'
+			fanart = '%s%s' % (self.tmdb_fanart, item['backdrop_path']) if item['backdrop_path'] else '0'
 
-				premiered = item.get('first_air_date')
+			premiered = item.get('first_air_date')
 
-				rating = str(item.get('vote_average', '0'))
-				votes = str(format(int(item.get('vote_count', '0')),',d'))
+			rating = str(item.get('vote_average', '0'))
+			votes = str(format(int(item.get('vote_count', '0')),',d'))
 
-				plot = item.get('overview')
+			plot = item.get('overview')
 
-				try:
-					tagline = item.get('tagline', '0')
-					if tagline == '' or tagline == '0' or tagline is None:
-						tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-				except:
-					tagline = '0'
+			try:
+				tagline = item.get('tagline', '0')
+				if tagline == '' or tagline == '0' or tagline is None:
+					tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
+			except:
+				tagline = '0'
 
 ##--TMDb additional info
-				url = self.tmdb_info_link % tmdb
-				item = self.get_request(url)
+			url = self.tmdb_info_link % tmdb
+			item = self.get_request(url)
 
-				tvdb = str(item.get('external_ids').get('tvdb_id'))
-				if tvdb == '' or tvdb is None or tvdb == 'None':
-					tvdb = '0'
+			tvdb = str(item.get('external_ids').get('tvdb_id'))
+			if tvdb == '' or tvdb is None or tvdb == 'None':
+				tvdb = '0'
 
-				imdb = (item.get('external_ids').get('imdb_id'))
-				if imdb == '' or imdb is None or imdb == 'None':
-					imdb = '0'
+			imdb = (item.get('external_ids').get('imdb_id'))
+			if imdb == '' or imdb is None or imdb == 'None':
+				imdb = '0'
 
-				genre = item['genres']
-				try:
-					genre = [x['name'] for x in genre]
-				except:
-					genre = '0'
-				genre = ' / '.join(genre)
-				if not genre:
-					genre = 'NA'
-
-				duration = str(item.get('episode_run_time', '0')[0])
-
-				try:
-					mpaa = [i['rating'] for i in item['content_ratings']['results'] if i['iso_3166_1'] == 'US'][0]
-				except: 
-					try:
-						mpaa = item['content_ratings'][0]['rating']
-					except: mpaa = 'NR'
-
-				studio = item['networks']
-				try: studio = [x['name'] for x in studio][0]
-				except: studio = '0'
-				if studio == '' or studio is None: studio = '0'
-
-				credits = item['credits']
-				director = writer = '0'
-				for person in credits['crew']:
-					if 'Director' in person['job']:
-						director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
-					if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
-						writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
-
-				castandart = []
-				for person in item['credits']['cast']:
-					try:
-						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
-					except:
-						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
-
-				item = {}
-				item = {'content': 'tvshow', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-								'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
-								'poster2': '0', 'banner': '0', 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
-
-				meta = {}
-				meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
-
-				if self.disable_fanarttv != 'true':
-					from resources.lib.indexers import fanarttv
-					extended_art = cache.get(fanarttv.get_tvshow_art, 168, tvdb)
-					if extended_art is not None:
-						item.update(extended_art)
-						meta.update(item)
-
-				self.list.append(item)
-				self.meta.append(meta)
-				metacache.insert(self.meta)
+			genre = item['genres']
+			try:
+				genre = [x['name'] for x in genre]
 			except:
-				pass
+				genre = '0'
+			genre = ' / '.join(genre)
+			if not genre:
+				genre = 'NA'
+
+			duration = str(item.get('episode_run_time', '0'))
+
+			try:
+				mpaa = [i['rating'] for i in item['content_ratings']['results'] if i['iso_3166_1'] == 'US'][0]
+			except: 
+				try:
+					mpaa = item['content_ratings'][0]['rating']
+				except: mpaa = 'NR'
+
+			studio = item['networks']
+			try:
+				studio = [x['name'] for x in studio][0]
+			except:
+				studio = '0'
+			if studio == '' or studio is None:
+				studio = '0'
+
+			credits = item['credits']
+			director = writer = '0'
+			for person in credits['crew']:
+				if 'Director' in person['job']:
+					director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
+				if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+					writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+
+			castandart = []
+			for person in item['credits']['cast']:
+				try:
+					castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+				except:
+					castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+
+			item = {}
+			item = {'content': 'tvshow', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio,
+					'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
+					'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb,
+					'poster': poster, 'poster2': '0', 'banner': '0', 'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'clearlogo': '0',
+					'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
+
+			meta = {}
+			meta = {'tmdb': tmdb, 'imdb': imdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
+
+			if self.disable_fanarttv != 'true':
+				from resources.lib.indexers import fanarttv
+				# extended_art = fanarttv.get_tvshow_art(tvdb)
+				extended_art = cache.get(fanarttv.get_tvshow_art, 168, tvdb)
+				if extended_art is not None:
+					item.update(extended_art)
+					meta.update(item)
+
+			self.list.append(item)
+			self.meta.append(meta)
+			metacache.insert(self.meta)
+
 		return self.list
 
 
@@ -545,100 +537,109 @@ class TVshows:
 		items = result['items']
 		next = ''
 		for item in items:
+			media_type = item['media_type']
+
 			try:
-				media_type = item['media_type']
-
 				title = (item.get('name')).encode('utf-8')
+			except:
+				title = item.get('name')
 
-				year = str(item.get('first_air_date')[:4])
+			year = str(item.get('first_air_date')[:4])
 
-				tmdb = item.get('id')
+			tmdb = item.get('id')
 
-				poster = '%s%s' % (self.tmdb_poster, item['poster_path']) if item['poster_path'] else '0'
-				fanart = '%s%s' % (self.tmdb_fanart, item['backdrop_path']) if item['backdrop_path'] else '0'
+			poster = '%s%s' % (self.tmdb_poster, item['poster_path']) if item['poster_path'] else '0'
+			fanart = '%s%s' % (self.tmdb_fanart, item['backdrop_path']) if item['backdrop_path'] else '0'
 
-				premiered = item.get('first_air_date')
+			premiered = item.get('first_air_date')
 
-				rating = str(item.get('vote_average', '0'))
-				votes = str(format(int(item.get('vote_count', '0')),',d'))
+			rating = str(item.get('vote_average', '0'))
+			votes = str(format(int(item.get('vote_count', '0')),',d'))
 
-				plot = (item.get('overview'))
+			plot = (item.get('overview'))
 
-				try:
-					tagline = item.get('tagline', '0')
-					if tagline == '' or tagline == '0' or tagline is None:
-						tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
-				except:
-					tagline = '0'
+			try:
+				tagline = item.get('tagline', '0')
+				if tagline == '' or tagline == '0' or tagline is None:
+					tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
+			except:
+				tagline = '0'
 
 ##--TMDb additional info
-				url = self.tmdb_info_link % tmdb
-				item = self.get_request(url)
+			url = self.tmdb_info_link % tmdb
+			item = self.get_request(url)
 
-				tvdb = str(item.get('external_ids').get('tvdb_id'))
-				if tvdb == '' or tvdb is None or tvdb == 'None':
-					tvdb = '0'
+			tvdb = str(item.get('external_ids').get('tvdb_id'))
+			if tvdb == '' or tvdb is None or tvdb == 'None':
+				tvdb = '0'
 
-				imdb = (item.get('external_ids').get('imdb_id'))
-				if imdb == '' or imdb is None or imdb == 'None':
-					imdb = '0'
+			imdb = (item.get('external_ids').get('imdb_id'))
+			if imdb == '' or imdb is None or imdb == 'None':
+				imdb = '0'
 
-				genre = item['genres']
-				try: genre = [x['name'] for x in genre]
-				except: genre = '0'
-				genre = ' / '.join(genre)
-				if not genre:
-					genre = 'NA'
-
-				duration = str(item.get('episode_run_time', '0'))
-
-				try:
-					mpaa = [i['rating'] for i in item['content_ratings']['results'] if i['iso_3166_1'] == 'US'][0]
-				except: 
-					try:
-						mpaa = item['content_ratings'][0]['rating']
-					except: mpaa = 'NR'
-
-				studio = item['networks']
-				try: studio = [x['name'] for x in studio][0]
-				except: studio = '0'
-				if studio == '' or studio is None: studio = '0'
-
-				credits = item['credits']
-				director = writer = '0'
-				for person in credits['crew']:
-					if 'Director' in person['job']:
-						director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
-					if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
-						writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
-
-				castandart = []
-				for person in item['credits']['cast']:
-					try:
-						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
-					except:
-						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
-
-				item = {}
-				item = {'content': 'movie', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-								'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
-								'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
-				meta = {}
-				meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
-
-				if self.disable_fanarttv != 'true':
-					from resources.lib.indexers import fanarttv
-					extended_art = fanarttv.get_tvshow_art(tvdb)
-
-					if extended_art is not None:
-						item.update(extended_art)
-						meta.update(item)
-
-				self.list.append(item)
-				self.meta.append(meta)
-				metacache.insert(self.meta)
+			genre = item['genres']
+			try:
+				genre = [x['name'] for x in genre]
 			except:
-				pass
+				genre = '0'
+			genre = ' / '.join(genre)
+			if not genre:
+				genre = 'NA'
+
+			duration = str(item.get('episode_run_time', '0'))
+
+			try:
+				mpaa = [i['rating'] for i in item['content_ratings']['results'] if i['iso_3166_1'] == 'US'][0]
+			except: 
+				try:
+					mpaa = item['content_ratings'][0]['rating']
+				except: mpaa = 'NR'
+
+			studio = item['networks']
+			try:
+				studio = [x['name'] for x in studio][0]
+			except:
+				studio = '0'
+			if studio == '' or studio is None:
+				studio = '0'
+
+			credits = item['credits']
+			director = writer = '0'
+			for person in credits['crew']:
+				if 'Director' in person['job']:
+					director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
+				if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+					writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+
+			castandart = []
+			for person in item['credits']['cast']:
+				try:
+					castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+				except:
+					castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+
+			item = {}
+			item = {'content': 'movie', 'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio,
+					'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
+					'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0',
+					'poster': poster, 'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0',
+					'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
+
+			meta = {}
+			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
+
+			if self.disable_fanarttv != 'true':
+				from resources.lib.indexers import fanarttv
+				# extended_art = fanarttv.get_tvshow_art(tvdb)
+				extended_art = cache.get(fanarttv.get_movie_art, 168, tvdb)
+				if extended_art is not None:
+					item.update(extended_art)
+					meta.update(item)
+
+			self.list.append(item)
+			self.meta.append(meta)
+			metacache.insert(self.meta)
+
 		return self.list
 
 
@@ -668,8 +669,3 @@ class TVshows:
 
 		extended_art = {'extended': True, 'poster3': poster3, 'fanart3': fanart3}
 		return extended_art
-
-
-	def get_fanarttv_art(self, imdb=None, tmdb=None):
-		from resources.lib.indexers import fanarttv
-		self.fanarttv = fanarttv.get_movie_art(imdb, tmdb)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.1.5" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.1.8" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -7,7 +7,7 @@
 		<import addon="script.module.beautifulsoup4" version="4.5.3"/>
 		<import addon="script.module.metahandler" version="1.0.0" />
 		<import addon="plugin.video.youtube" version="6.2.0"/>
-		<import addon="script.module.resolveurl" />
+		<import addon="script.module.resolveurl" version="5.0.0"/>
 		<import addon="script.module.openscrapers" />
 		<import addon="script.module.addon.signals" version="0.0.1"/>
 	</requires>
@@ -36,14 +36,19 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.1.5 - Aug 15, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Added Actor profile pics using setCast().
-    Note this will be seen in std Info dialogs.
-    Infolabels for cast and castandrole no
-    longer in use.  Movies are complete but
-    a few TVShow lists are unfinished at this
-    time, IMDb to name one.  Sorry folks
-    leaving for vaca.  See yall in a week![/I]
+[B][COLOR red]Update - v3.1.8 - Aug 28, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed actor profiles for Silvo skin, note
+    that Silvo skin still has random issues wiith
+    season count due to an ExtendedSeasonPanel
+    that does not work well with 3rd party addons
+    so best to disable the season count
+    option.  I do have a modded Silvo
+    file to cure the problem if needed.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed TMDb random extended artwork drops.[/I]
+[COLOR yellow]--[/COLOR][I] Changed fanart.tv api call to threaded request
+    for TMDb Movies as experimental at this
+    time.  Menu load times was marginaly
+    shortened by .5-.75 secs.[/I]
 		</news>
 	</extension>
 

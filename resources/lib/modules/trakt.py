@@ -847,25 +847,23 @@ def getTVShowTranslation(id, lang, season=None, episode=None, full=False):
 def getMovieSummary(id, full=True):
 	try:
 		url = '/movies/%s' % id
-
 		if full:
 			url += '?extended=full'
-
 		return cache.get(getTraktAsJson, 48, url)
 	except:
-		return
+		import traceback
+		traceback.print_exc()
 
 
 def getTVShowSummary(id, full=True):
 	try:
 		url = '/shows/%s' % id
-
 		if full:
 			url += '?extended=full'
-
 		return cache.get(getTraktAsJson, 48, url)
 	except:
-		return
+		import traceback
+		traceback.print_exc()
 
 
 def getEpisodeSummary(id, season, episode, full=True):
@@ -880,12 +878,14 @@ def getEpisodeSummary(id, season, episode, full=True):
 
 
 def getSeasons(id, full=True):
-	url = '/shows/%s/seasons' % (id)
-
-	if full:
-		url += '&extended=full'
-	return cache.get(getTraktAsJson, 48, url)
-
+	try:
+		url = '/shows/%s/seasons' % (id)
+		if full:
+			url += '&extended=full'
+		return cache.get(getTraktAsJson, 48, url)
+	except:
+		import traceback
+		traceback.print_exc()
 
 
 def sort_list(sort_key, sort_direction, list_data):
@@ -927,13 +927,12 @@ def getTVShowAliases(id):
 def getPeople(id, content_type, full=True):
 	try:
 		url = '/%s/%s/people' % (content_type, id)
-
 		if full:
 			url += '?extended=full'
-
 		return cache.get(getTraktAsJson, 48, url)
 	except:
-		return
+		import traceback
+		traceback.print_exc()
 
 
 def SearchAll(title, year, full=True):

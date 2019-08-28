@@ -62,6 +62,7 @@ class Episodes:
 		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/episodes?limit=100'
 		self.onDeck_link = 'http://api.trakt.tv/sync/playback/episodes?extended=full&limit=20'
 		self.mycalendar_link = 'http://api.trakt.tv/calendars/my/shows/date[29]/60/'
+
 		self.tvmaze_link = 'http://api.tvmaze.com'
 		self.added_link = 'http://api.tvmaze.com/schedule'
 		self.calendar_link = 'http://api.tvmaze.com/schedule?date=%s'
@@ -130,7 +131,7 @@ class Episodes:
 			if attribute > 0:
 				if attribute == 1:
 					try:
-						self.list = sorted(self.list, key=lambda k: k['tvshowtitle'].lower(), reverse=reverse)
+						self.list = sorted(self.list, key=lambda k: re.sub('(^the |^a |^an )', '', k['tvshowtitle'].lower()), reverse=reverse)
 					except:
 						self.list = sorted(self.list, key=lambda k: k['title'].lower(), reverse=reverse)
 				elif attribute == 2:
@@ -220,8 +221,8 @@ class Episodes:
 		try:
 			from resources.lib.menus import seasons
 			items[index]['seasoncount'] = seasons.Seasons().seasonCount(items[index]['tvshowtitle'],
-																items[index]['year'], items[index]['imdb'],
-																items[index]['tvdb'], items[index]['season'])
+											items[index]['year'], items[index]['imdb'],
+											items[index]['tvdb'], items[index]['season'])
 		except:
 			import traceback
 			traceback.print_exc()
@@ -315,7 +316,8 @@ class Episodes:
 				self.list.append({'name': name, 'url': url, 'image': 'calendar.png', 'icon': 'DefaultYear.png', 'action': 'calendar'})
 			except:
 				pass
-		if idx is True: self.addDirectory(self.list)
+		if idx is True:
+			self.addDirectory(self.list)
 		return self.list
 
 
@@ -620,7 +622,7 @@ class Episodes:
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
-				# actors = zip.read('actors.xml')
+				actors = zip.read('actors.xml')
 				zip.close()
 
 				result = result.split('<Episode>')
@@ -788,10 +790,31 @@ class Episodes:
 				writer = ' / '.join(writer)
 				writer = client.replaceHTMLCodes(writer)
 
+			# try:
+				# director = client.parseDOM(item, 'Director')[0]
+			# except:
+				# director = ''
+			# director = [x for x in director.split('|') if x != '']
+			# director = ' / '.join(director)
+			# if director == '':
+				# director = '0'
+			# director = client.replaceHTMLCodes(director)
+			# director = director.encode('utf-8')
+
+			# try:
+				# writer = client.parseDOM(item, 'Writer')[0]
+			# except:
+				# writer = ''
+			# writer = [x for x in writer.split('|') if x != '']
+			# writer = ' / '.join(writer)
+			# if writer == '':
+				# writer = '0'
+			# writer = client.replaceHTMLCodes(writer)
+			# writer = writer.encode('utf-8')
+
 				import xml.etree.ElementTree as ET
 				tree = ET.ElementTree(ET.fromstring(actors))
 				root = tree.getroot()
-
 				castandart = []
 				for actor in root.iter('Actor'):
 					person = [name.text for name in actor]
@@ -817,12 +840,12 @@ class Episodes:
 				plot = client.replaceHTMLCodes(plot)
 
 				values = {'title': title, 'seasoncount': seasoncount, 'season': season, 'episode': episode,
-							'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
-							'added': added, 'lastplayed': lastplayed, 'status': status, 'studio': studio, 'genre': genre,
-							'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
-							'writer': writer, 'castandart': castandart, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster,
-							'banner': banner, 'fanart': fanart, 'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'],
-							'unaired': unaired, 'episodeIDS': episodeIDS}
+								'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
+								'added': added, 'lastplayed': lastplayed, 'status': status, 'studio': studio, 'genre': genre,
+								'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
+								'writer': writer, 'castandart': castandart, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb,
+								'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'snum': i['snum'],
+								'enum': i['enum'], 'unaired': unaired, 'episodeIDS': episodeIDS}
 
 				values['action'] = 'episodes'
 				if 'airday' in i and i['airday'] is not None and i['airday'] != '':
@@ -866,7 +889,7 @@ class Episodes:
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
 				result = zip.read('%s.xml' % lang)
 				artwork = zip.read('banners.xml')
-				# actors = zip.read('actors.xml')
+				actors = zip.read('actors.xml')
 				zip.close()
 
 				result = result.split('<Episode>')
@@ -1078,7 +1101,6 @@ class Episodes:
 				import xml.etree.ElementTree as ET
 				tree = ET.ElementTree(ET.fromstring(actors))
 				root = tree.getroot()
-
 				castandart = []
 				for actor in root.iter('Actor'):
 					person = [name.text for name in actor]
@@ -1177,6 +1199,8 @@ class Episodes:
 		except:
 			return
 
+		# log_utils.log('items = %s' % items, __name__, log_utils.LOGDEBUG)
+
 		for item in items:
 			try:
 				if 'english' not in item['show']['language'].lower():
@@ -1273,9 +1297,10 @@ class Episodes:
 				except:
 					plot = '0'
 
-				values = {'title': title, 'season': season, 'episode': episode, 'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear,
-								'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
-								'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'thumb': thumb, 'episodeIDS': episodeIDS}
+				values = {'title': title, 'season': season, 'episode': episode, 'year': year, 'tvshowtitle': tvshowtitle,
+							'tvshowyear': tvshowyear, 'premiered': premiered, 'status': status, 'studio': studio,
+							'genre': genre, 'duration': duration, 'rating': rating, 'plot': plot, 'imdb': imdb,
+							'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'thumb': thumb, 'episodeIDS': episodeIDS}
 
 				if 'airday' in item and item['airday'] is not None and item['airday'] != '':
 					values['airday'] = item['airday']
@@ -1642,6 +1667,12 @@ class Episodes:
 
 				item = control.item(label=labelProgress)
 
+				if 'castandart' in i:
+					item.setCast(i['castandart'])
+
+				if 'episodeIDS' in i:
+					item.setUniqueIDs(i['episodeIDS'])
+
 				unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
 				unwatchedLimit = False
 				seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
@@ -1652,12 +1683,6 @@ class Episodes:
 						item.setProperty('TotalEpisodes', str(count['total']))
 						item.setProperty('WatchedEpisodes', str(count['watched']))
 						item.setProperty('UnWatchedEpisodes', str(count['unwatched']))
-
-				if 'episodeIDS' in i:
-					item.setUniqueIDs(i['episodeIDS'])
-
-				if 'castandart' in i:
-					item.setCast(i['castandart'])
 
 				# if fanart != '0' and not fanart is None:
 					# item.setProperty('Fanart_Image', fanart)

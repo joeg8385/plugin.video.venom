@@ -1,3 +1,30 @@
+[B][COLOR red]Update - v3.1.8 - Aug 28, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed actor profiles for Silvo skin, note
+    that Silvo skin still has random issues wiith
+    season count due to an ExtendedSeasonPanel
+    that does not work well with 3rd party addons
+    so best to disable the season count
+    option.  I do have a modded Silvo
+    file to cure the problem if needed.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed TMDb random extended artwork drops.[/I]
+[COLOR yellow]--[/COLOR][I] Changed fanart.tv api call to threaded request
+    for TMDb Movies as experimental at this
+    time.  Menu load times was marginaly
+    shortened by .5-.75 secs.[/I]
+
+[B][COLOR red]Update - v3.1.7 - Aug 18, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Finished actor profile pics for TVShows,
+    Seasons, and Episodes.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed sorting of some MyTVShows lists not
+    filter for "The, "An", and "A".[/I]
+[COLOR yellow]--[/COLOR][I] Added Re-Scrape option to Context Menu
+    to bypass cached links.[/I]
+
+[B][COLOR red]Update - v3.1.6 - Aug 17, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed typo from last update effecting
+    Trakt lists due to new added actor profile
+    pics.[/I]
+
 [B][COLOR red]Update - v3.1.5 - Aug 15, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Added Actor profile pics using setCast().
     Note this will be seen in std Info dialogs.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import time, xbmc
+import time
 from resources.lib.modules import control
 
 try:

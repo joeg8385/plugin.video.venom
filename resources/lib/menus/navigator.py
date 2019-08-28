@@ -4,11 +4,10 @@
 	Venom Add-on
 '''
 
-import os, sys, xbmc
+import os, sys
 
 from resources.lib.modules import control
 from resources.lib.modules import trakt
-from resources.lib.modules import cache
 
 try:
 	sysaddon = sys.argv[0]
