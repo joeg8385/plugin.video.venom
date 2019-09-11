@@ -381,7 +381,7 @@ class Sources:
 			genres = trakt.getGenre('show', 'tvdb', tvdb)
 
 		sourceDict = [(i[0], i[1], i[2]) for i in sourceDict if not hasattr(i[1], 'genre_filter') or not i[1].genre_filter or any(
-						x in i[1].genre_filter for x in genres)]
+								x in i[1].genre_filter for x in genres)]
 		sourceDict = [(i[0], i[1]) for i in sourceDict if i[2] is not None]
 
 		language = self.getLanguage()
@@ -440,14 +440,13 @@ class Sources:
 			pass
 
 		quality = control.setting('hosts.quality')
-
 		if quality == '':
 			quality = '0'
 
 		line1 = line2 = line3 = ""
 
-		pre_emp = control.setting('preemptive.termination')
-		pre_emp_limit = control.setting('preemptive.limit')
+		pre_emp = str(control.setting('preemptive.termination'))
+		pre_emp_limit = int(control.setting('preemptive.limit'))
 
 		source_4k = d_source_4k = 0
 		source_1080 = d_source_1080 = 0
@@ -464,21 +463,21 @@ class Sources:
 		pdiag_bg_format = '4K:%s(%s)|1080p:%s(%s)|720p:%s(%s)|SD:%s(%s)|T:%s(%s)'.split('|')
 
 		for i in range(0, 4 * timeout):
-			if str(pre_emp) == 'true':
-				if quality in ['0', '1']:
-					if (source_4k + d_source_4k) >= int(pre_emp_limit):
+			if pre_emp == 'true':
+				if quality in ['0','1']:
+					if (source_4k + d_source_4k) >= pre_emp_limit:
 						break
 				elif quality in ['1']:
-					if (source_1080 + d_source_1080) >= int(pre_emp_limit):
+					if (source_1080 + d_source_1080) >= pre_emp_limit:
 						break
 				elif quality in ['2']:
-					if (source_720 + d_source_720) >= int(pre_emp_limit):
+					if (source_720 + d_source_720) >= pre_emp_limit:
 						break
 				elif quality in ['3']:
-					if (source_sd + d_source_sd) >= int(pre_emp_limit):
+					if (source_sd + d_source_sd) >= pre_emp_limit:
 						break
 				else:
-					if (source_sd + d_source_sd) >= int(pre_emp_limit):
+					if (source_sd + d_source_sd) >= pre_emp_limit:
 						break
 			try:
 				if xbmc.abortRequested is True:
@@ -503,8 +502,7 @@ class Sources:
 						source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] is False])
 
 					elif quality in ['2']:
-						source_1080 = len(
-							[e for e in self.sources if e['quality'] in ['1080p'] and e['debridonly'] is False])
+						source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and e['debridonly'] is False])
 						source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] is False])
 						source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] is False])
 
@@ -942,27 +940,28 @@ class Sources:
 		HEVC = control.setting('HEVC')
 
 		###---Filter out duplicates
-		filter = []
-		for i in self.sources:
-			a = i['url'].lower()
-			for sublist in filter:
-				b = sublist['url'].lower()
-				if 'magnet:' in a and debrid.status() is True:
-					info_hash = re.search('magnet:.+?urn:\w+:([a-z0-9]+)', a)
-					if info_hash:
-						if info_hash.group(1) in b:
-							filter.remove(sublist)
-							log_utils.log('Removing %s - %s (DUPLICATE TORRENT) ALREADY IN :: %s' % (
-							i['provider'], info_hash.group(1), sublist['provider']), log_utils.LOGDEBUG)
-							break
-				elif a == b:
-					filter.remove(sublist)
-					log_utils.log('Removing %s - %s (DUPLICATE LINK) ALREADY IN :: %s' % (
-					i['provider'], i['url'], sublist['source']), log_utils.LOGDEBUG)
-					break
-			filter.append(i)
-		log_utils.log('Removed %s duplicate sources from list' % (len(self.sources) - len(filter)), log_utils.LOGDEBUG)
-		self.sources = filter
+		if control.setting('remove.duplicates') == 'true':
+			filter = []
+			for i in self.sources:
+				a = i['url'].lower()
+				for sublist in filter:
+					b = sublist['url'].lower()
+					if 'magnet:' in a and debrid.status() is True:
+						info_hash = re.search('magnet:.+?urn:\w+:([a-z0-9]+)', a)
+						if info_hash:
+							if info_hash.group(1) in b:
+								filter.remove(sublist)
+								log_utils.log('Removing %s - %s (DUPLICATE TORRENT) ALREADY IN :: %s' % (
+													i['provider'], info_hash.group(1), sublist['provider']), log_utils.LOGDEBUG)
+								break
+					elif a == b:
+						filter.remove(sublist)
+						log_utils.log('Removing %s - %s (DUPLICATE LINK) ALREADY IN :: %s' % (
+											i['provider'], i['url'], sublist['source']), log_utils.LOGDEBUG)
+						break
+				filter.append(i)
+			log_utils.log('Removed %s duplicate sources from list' % (len(self.sources) - len(filter)), log_utils.LOGDEBUG)
+			self.sources = filter
 		###---
 
 		##---Filter out uncached torrents
@@ -1428,11 +1427,13 @@ class Sources:
 			pass
 		return u
 
+
 	def errorForSources(self):
 		if self.url == 'close://':
 			control.infoDialog('Sources Cancelled', sound=False, icon='INFO')
 		else:
 			control.infoDialog(control.lang(32401).encode('utf-8'), sound=False, icon='INFO')
+
 
 	def getLanguage(self):
 		langDict = {'English': ['en'], 'German': ['de'], 'German+English': ['de', 'en'], 'French': ['fr'],

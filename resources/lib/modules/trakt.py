@@ -5,7 +5,7 @@
 '''
 
 import os, re, imp, json, urlparse
-import time, threading, xbmc
+import time, threading
 
 from resources.lib.modules import cache
 from resources.lib.modules import control
@@ -890,6 +890,7 @@ def getSeasons(id, full=True):
 
 def sort_list(sort_key, sort_direction, list_data):
 	reverse = False if sort_direction == 'asc' else True
+	# log_utils.log('sort_key = %s' % str(sort_key), __name__, log_utils.LOGDEBUG)
 	if sort_key == 'rank':
 		return sorted(list_data, key=lambda x: x['rank'], reverse=reverse)
 	elif sort_key == 'added':

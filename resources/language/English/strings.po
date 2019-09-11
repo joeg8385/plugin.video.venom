@@ -172,7 +172,7 @@ msgid "IMDb"
 msgstr ""
 
 msgctxt "#32035"
-msgid ""
+msgid "Remove Duplicate Sources"
 msgstr ""
 
 msgctxt "#32036"
@@ -492,7 +492,7 @@ msgid "SD Hosters in Auto Play"
 msgstr ""
 
 msgctxt "#32341"
-msgid "Exclude Hosters with captchas"
+msgid "Include Hosters with captchas"
 msgstr ""
 
 msgctxt "#32342"
@@ -580,7 +580,7 @@ msgid "[B]SETTINGS[/B] : Navigation"
 msgstr ""
 
 msgctxt "#32363"
-msgid "HEVC"
+msgid "Include HEVC"
 msgstr ""
 
 msgctxt "#32364"
@@ -1308,7 +1308,7 @@ msgid "Adding to library..."
 msgstr ""
 
 msgctxt "#32553"
-msgid "Updating TV shows..."
+msgid "Updating TV Shows In Local Library..."
 msgstr ""
 
 msgctxt "#32554"
@@ -2017,6 +2017,27 @@ msgctxt "#33499"
 msgid ""
 msgstr ""
 
+msgctxt "#33500"
+msgid ""
+msgstr ""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 msgctxt "#35500"
 msgid "Watch"
 msgstr ""
@@ -2278,43 +2299,43 @@ msgid "Default"
 msgstr ""
 
 msgctxt "#33565"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33566"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33567"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33568"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33569"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33570"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33571"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33572"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33573"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33574"
-msgid "Default"
+msgid ""
 msgstr ""
 
 msgctxt "#33575"

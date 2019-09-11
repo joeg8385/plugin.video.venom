@@ -281,7 +281,7 @@ class Navigator:
 		self.addDirectoryItem(32048, 'openSettings&query=10.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
 		#-- Subtitles - 11
 		self.addDirectoryItem(32046, 'openSettings&query=11.0', 'tools.png', 'DefaultAddonService.png', isFolder=False)
-		self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonService.png', isFolder=True)
+		self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonService.png')
 		self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonService.png')
 		self.addDirectoryItem(32361, 'resetViewTypes', 'tools.png', 'DefaultAddonService.png', isFolder=False)
 		self.addDirectoryItem(32073, 'authTrakt&opensettings=false', 'trakt.png', 'DefaultAddonService.png', isFolder=False)
@@ -345,6 +345,7 @@ class Navigator:
 			content = items[select][1]
 
 			title = control.lang(32059).encode('utf-8')
+
 			url = '%s?action=addView&content=%s' % (sys.argv[0], content)
 
 			poster, banner, fanart = control.addonPoster(), control.addonBanner(), control.addonFanart()
@@ -353,6 +354,7 @@ class Navigator:
 			item.setInfo(type='video', infoLabels = {'title': title})
 			item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'banner': banner})
 			item.setProperty('Fanart_Image', fanart)
+			item.setProperty('IsPlayable', 'false')
 
 			control.addItem(handle = int(sys.argv[1]), url=url, listitem=item, isFolder=False)
 			control.content(int(sys.argv[1]), content)

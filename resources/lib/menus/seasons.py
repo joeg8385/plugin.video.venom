@@ -4,7 +4,6 @@
 	Venom Add-on
 '''
 
-# import os, sys, re, json, zipfile
 import sys, re, json, zipfile
 import StringIO, urllib, urllib2, urlparse, datetime
 
@@ -53,7 +52,6 @@ class Seasons:
 		self.traktwatchlist_link = 'http://api-v2launch.trakt.tv/users/me/watchlist/seasons'
 		self.traktlist_link = 'http://api-v2launch.trakt.tv/users/%s/lists/%s/items'
 		self.traktlists_link = 'http://api-v2launch.trakt.tv/users/me/lists'
-
 
 		self.showunaired = control.setting('showunaired') or 'true'
 		self.unairedcolor = control.setting('unaired.identify')
@@ -518,10 +516,10 @@ class Seasons:
 					seasoncount = None
 
 				self.list.append({'season': season, 'seasoncount': seasoncount, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year,
-								'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration,
-								'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'imdb': imdb,
-								'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
-								'thumb': thumb, 'unaired': unaired})
+											'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration,
+											'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot, 'imdb': imdb,
+											'tmdb': tmdb, 'tvdb': tvdb, 'tvshowid': imdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
+											'thumb': thumb, 'unaired': unaired})
 
 			except:
 				pass
@@ -786,6 +784,15 @@ class Seasons:
 		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
 		addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
 
+		try:
+			indicators = playcount.getSeasonIndicators(items[0]['imdb'])
+		except :
+			pass
+
+		unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
+		unwatchedLimit = False
+		seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
+
 		if trakt.getTraktIndicatorsInfo() is True:
 			watchedMenu = control.lang(32068).encode('utf-8')
 			unwatchedMenu = control.lang(32069).encode('utf-8')
@@ -929,7 +936,6 @@ class Seasons:
 					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s&season=%s)' % (sysaddon, sysname, imdb, tvdb, season)))
 
 				try:
-					indicators = playcount.getSeasonIndicators(imdb)
 					overlay = int(playcount.getSeasonOverlay(indicators, imdb, tvdb, season))
 					watched = overlay == 7
 					if watched:
@@ -965,10 +971,6 @@ class Seasons:
 
 				if 'episodeIDS' in i:
 					item.setUniqueIDs(i['episodeIDS'])
-
-				unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
-				unwatchedLimit = False
-				seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
 
 				if unwatchedEnabled == 'true':
 					count = playcount.getSeasonCount(imdb, season, self.season_special, unwatchedLimit)

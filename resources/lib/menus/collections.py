@@ -15,7 +15,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views
+from resources.lib.modules import views, log_utils
 
 sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
 artPath = control.artPath() ; addonFanart = control.addonFanart()
@@ -47,7 +47,19 @@ class Collections:
 
 		self.tmdb_link = 'https://api.themoviedb.org'
 		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
-		self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&page=1' % ('%s', self.tmdb_key)
+		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
+
+		sort = int(control.setting('sort.movies.type'))
+		tmdb_sort = 'title'
+		if sort in [2, 3]:
+			tmdb_sort = 'vote_average'
+		if sort in [4, 5, 6]:
+			tmdb_sort = 'release_date'
+
+		tmdb_sort_order = '.asc' if int(control.setting('sort.movies.order')) == 0 else '.desc'
+
+		# self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&page=1' % ('%s', self.tmdb_key)
+		self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&sort_by=%s%s&page=1' % ('%s', self.tmdb_key, tmdb_sort, tmdb_sort_order)
 
 		self.imdb_link = 'https://www.imdb.com'
 		self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
@@ -718,7 +730,7 @@ class Collections:
 			if u in self.tmdb_link and ('/user/' in url or '/list/' in url):
 				from resources.lib.indexers import tmdb
 				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 720, url)
-				self.sort()
+				# self.sort()
 
 			elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
 				from resources.lib.indexers import tmdb
@@ -1008,21 +1020,24 @@ class Collections:
 			plot = item.get('overview')
 
 			from resources.lib.indexers.tmdb import Movies
-			# credits = Movies().tmdb_people(tmdb)
-			credits = cache.get(Movies().tmdb_people, 168, tmdb)
+			tmdb_Item = cache.get(Movies().tmdb_get_details, 168, tmdb)
+
 			castandart = []
-			for person in credits['cast']:
+			for person in tmdb_Item['credits']['cast']:
 				try:
 					castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 				except:
 					castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 
 			director = writer = '0'
-			for person in credits['crew']:
+			for person in tmdb_Item['credits']['crew']:
 				if 'Director' in person['job']:
-					director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
+					director = ', '.join([director['name'].encode('utf-8') for director in tmdb_Item['credits']['crew'] if director['job'].lower() == 'director'])
 				if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
-					writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+					writer = ', '.join([writer['name'].encode('utf-8') for writer in tmdb_Item['credits']['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+
+			poster3 = '%s%s' % (self.tmdb_poster, tmdb_Item['poster_path']) if tmdb_Item['poster_path'] else '0'
+			fanart3 = '%s%s' % (self.tmdb_fanart, tmdb_Item['backdrop_path']) if tmdb_Item['backdrop_path'] else '0'
 
 			try:
 				if self.lang == 'en' or self.lang not in item.get('available_translations', [self.lang]):
@@ -1037,31 +1052,21 @@ class Collections:
 
 			item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'premiered': premiered,
 						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
-						'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': '0',
-						'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
+						'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': poster3,
+						'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': fanart3, 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
 						'discart': '0', 'metacache': False}
 
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
 
-			# fanart_thread = threading.Thread
 			if self.disable_fanarttv != 'true':
 				from resources.lib.indexers import fanarttv
-				# extended_art = fanarttv.get_movie_art(imdb, tmdb)
 				extended_art = cache.get(fanarttv.get_movie_art, 168, imdb, tmdb)
 				if extended_art is not None:
 					item.update(extended_art)
 					meta.update(item)
 
-			if (self.disable_fanarttv == 'true' and (self.list[i]['poster'] == '0' or self.list[i]['fanart'] == '0')) or (
-					self.disable_fanarttv != 'true' and ((self.list[i]['poster'] == '0' and item.get('poster2') == '0') or (
-					self.list[i]['fanart'] == '0' and item.get('fanart2') == '0'))):
-				from resources.lib.indexers.tmdb import Movies
-				# tmdb_art = Movies().tmdb_art(tmdb)
-				tmdb_art = cache.get(Movies().tmdb_art, 168, tmdb)
-				item.update(tmdb_art)
-				if item.get('landscape', '0') == '0':
-					landscape = item.get('fanart3')
-					item.update({'landscape': landscape})
+			if item.get('landscape', '0') == '0':
+				item.update({'landscape': fanart3})
 				meta.update(item)
 
 			item = dict((k,v) for k, v in item.iteritems() if v != '0')

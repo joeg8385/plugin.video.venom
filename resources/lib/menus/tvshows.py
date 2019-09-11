@@ -26,14 +26,12 @@ action = params.get('action')
 class TVshows:
 	def __init__(self, type = 'show', notifications = True):
 		self.count = int(control.setting('page.item.limit'))
-		# if type(self.count) is not int:
-			# self.count = 40
 		self.list = []
 		self.meta = []
 		self.threads = []
 		self.type = type
 		self.lang = control.apiLanguage()['tvdb']
-		self.season_special = False
+		# self.season_special = False
 		self.notifications = notifications
 
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
@@ -82,11 +80,15 @@ class TVshows:
 		self.trakt_link = 'http://api.trakt.tv'
 		self.search_link = 'http://api.trakt.tv/search/show?limit=%d&page=1&query=' % self.count
 
+		# self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/shows?page=1&limit=%d' % ('%s', '%s', self.count)
+		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/shows'
 		self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
 		self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
-		self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items/shows?page=1&limit=%d' % ('%s', '%s', self.count)
-		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/shows?page=1&limit=%d' % self.count
+
+		# self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/shows?page=1&limit=%d' % self.count
+		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/shows'
 		self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/shows'
+
 		self.trakttrending_link = 'http://api.trakt.tv/shows/trending?page=1&limit=%d' % self.count
 		self.traktpopular_link = 'http://api.trakt.tv/shows/popular?page=1&limit=%d' % self.count
 		self.traktrecommendations_link = 'http://api.trakt.tv/recommendations/shows?page=1&limit=%d' % self.count
@@ -1197,17 +1199,17 @@ class TVshows:
 				fanart = self.list[i]['fanart']
 
 			item = {'extended': True, 'title': title, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb,
-					'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration,
-					'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot,
-					'status': status, 'poster': poster, 'poster2': '0', 'poster3': '0', 'banner': banner,
-					'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0',
-					'clearart': '0', 'landscape': fanart, 'metacache': False}
+						'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration,
+						'rating': rating, 'votes': votes, 'mpaa': mpaa, 'castandart': castandart, 'plot': plot,
+						'status': status, 'poster': poster, 'poster2': '0', 'poster3': '0', 'banner': banner,
+						'banner2': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0',
+						'clearart': '0', 'landscape': fanart, 'metacache': False}
 
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
 
 			# fanart_thread = threading.Thread
 			if (poster == '0' or fanart == '0' and total > 40) or (self.disable_fanarttv != 'true'):
-				if tvdb is not None or tvdb != '0':
+				if tvdb is not None and tvdb != '0':
 					from resources.lib.indexers import fanarttv
 					extended_art = fanarttv.get_tvshow_art(tvdb)
 					if extended_art is not None:
@@ -1246,6 +1248,12 @@ class TVshows:
 		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
 		addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
 
+		indicators = playcount.getTVShowIndicators()
+
+		unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
+		unwatchedLimit = False
+		seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
+
 		flatten = True if control.setting('flatten.tvshows') == 'true' else False
 
 		if trakt.getTraktIndicatorsInfo() is True:
@@ -1278,7 +1286,6 @@ class TVshows:
 				# meta.update({'tmdb_id': tmdb})
 				meta.update({'tvdb_id': tvdb})
 				meta.update({'mediatype': 'tvshow'})
-				# meta.update({'tvshowtitle': systitle})
 				meta.update({'tvshowtitle': label})
 				meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
 
@@ -1370,8 +1377,8 @@ class TVshows:
 				cm = []
 				if self.traktCredentials is True:
 					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s&tvdb=%s)' % (sysaddon, sysname, imdb, tvdb)))
+
 				try:
-					indicators = playcount.getTVShowIndicators()
 					overlay = int(playcount.getTVShowOverlay(indicators, imdb, tvdb))
 					watched = overlay == 7
 					if watched:
@@ -1403,10 +1410,6 @@ class TVshows:
 
 				if 'castandart' in i:
 					item.setCast(i['castandart'])
-
-				unwatchedEnabled = control.setting('tvshows.unwatched.enabled')
-				unwatchedLimit = False
-				seasoncountEnabled = control.setting('tvshows.seasoncount.enabled')
 
 				if unwatchedEnabled == 'true':
 					count = playcount.getShowCount(indicators, imdb, tvdb, unwatchedLimit)
@@ -1463,6 +1466,7 @@ class TVshows:
 
 		control.content(syshandle, 'tvshows')
 		control.directory(syshandle, cacheToDisc=True)
+
 		views.setView('tvshows', {'skin.estuary': 55, 'skin.confluence': 500})
 
 
@@ -1514,7 +1518,8 @@ class TVshows:
 
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
-				item = control.item(label = name)
+				item = control.item(label=name)
+				# item = control.item(label=name, offscreen=True)
 				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
 
 				if addonFanart is not None:

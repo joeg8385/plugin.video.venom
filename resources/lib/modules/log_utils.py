@@ -8,10 +8,9 @@ import pstats
 import StringIO
 import time
 import xbmc
-from datetime import date, datetime, timedelta
 
 from resources.lib.modules import control
-
+from datetime import date, datetime, timedelta
 from xbmc import LOGDEBUG, LOGERROR, LOGFATAL, LOGINFO, LOGNONE, LOGNOTICE, LOGSEVERE, LOGWARNING  # @UnusedImport
 
 name = control.addonInfo('name')

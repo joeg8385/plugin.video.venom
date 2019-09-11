@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-'''
-Venom
-'''
+"""
+	Venom
+"""
 
 import re, datetime
 import requests
@@ -35,7 +35,8 @@ class Movies:
 		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
 
 		self.tmdb_info_link = 'http://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates' % ('%s', self.tmdb_key, self.lang)
-###                                                                                  other "append_to_response" options                                           external_ids,alternative_titles,videos,images
+###                                                                             other "append_to_response" options                             external_ids,alternative_titles,videos,images
+
 		self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', self.tmdb_key, self.lang)
 
 		self.tmdb_people_link = 'https://api.themoviedb.org/3/movie/%s/credits?api_key=%s' % ('%s', self.tmdb_key)
@@ -135,7 +136,8 @@ class Movies:
 
 			# studio = item['production_companies']
 			# try: studio = [x['name'] for x in studio][0]
-			# except: studio = '0'
+			# except:
+				# studio = '0'
 			# if studio == '' or studio is None:
 				# studio = '0'
 
@@ -157,7 +159,8 @@ class Movies:
 					if not mpaa:
 						mpaa = mpaa[0].get('release_dates')[1].get('certification')
 				mpaa = str(mpaa)
-			except: mpaa = '0'
+			except:
+				mpaa = '0'
 
 			credits = item['credits']
 			director = writer = '0'
@@ -224,8 +227,6 @@ class Movies:
 			media_type = item['media_type']
 
 			title = (item.get('title')).encode('utf-8')
-			if media_type != 'movie':
-				title = (item.get('name')).encode('utf-8')
 
 			try: 
 				originaltitle = (item.get('original_title')).encode('utf-8')
@@ -270,12 +271,15 @@ class Movies:
 
 			# studio = item['production_companies']
 			# try: studio = [x['name'] for x in studio][0]
-			# except: studio = '0'
+			# except:
+				# studio = '0'
 			# if studio == '' or studio is None: studio = '0'
 
 			genre = item['genres']
-			try: genre = [x['name'] for x in genre]
-			except: genre = '0'
+			try:
+				genre = [x['name'] for x in genre]
+			except:
+				genre = '0'
 			genre = ' / '.join(genre)
 			if not genre:
 				genre = 'NA'
@@ -291,7 +295,8 @@ class Movies:
 					if not mpaa:
 						mpaa = mpaa[0].get('release_dates')[1].get('certification')
 				mpaa = str(mpaa)
-			except: mpaa = '0'
+			except:
+				mpaa = '0'
 
 			credits = item['credits']
 			director = writer = '0'
@@ -309,9 +314,11 @@ class Movies:
 					castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 
 			item = {}
-			item = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered, 'studio': '0', 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
-							'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
-							'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0', 'landscape': fanart, 'metacache': False, 'next': next}
+			item = {'content': 'movie', 'title': title, 'originaltitle': originaltitle, 'year': year, 'premiered': premiered, 'studio': '0',
+						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer,
+						'castandart': castandart, 'plot': plot, 'tagline': tagline, 'code': tmdb, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster,
+						'poster2': '0', 'poster3': '0', 'banner': '0', 'fanart': fanart, 'fanart2': '0', 'fanart3': '0', 'clearlogo': '0', 'clearart': '0',
+						'landscape': fanart, 'metacache': False, 'next': next}
 			meta = {}
 			meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.tmdb_key, 'item': item}
 
@@ -328,6 +335,59 @@ class Movies:
 			metacache.insert(self.meta)
 
 		return self.list
+
+
+	def tmdb_get_details(self, tmdb):
+		url = self.tmdb_info_link % tmdb
+		item = self.get_request(url)
+		return item
+
+		imdb = item.get('imdb_id', '0')
+		if imdb == '' or imdb is None or imdb == 'None':
+			imdb = '0'
+
+		# studio = item['production_companies']
+		# try: studio = [x['name'] for x in studio][0]
+		# except:
+			# studio = '0'
+		# if studio == '' or studio is None:
+			# studio = '0'
+
+		try:
+			genre = item['genres']
+			genre = [x['name'] for x in genre]
+			genre = (' / '.join(genre))
+		except:
+			genre = 'NA'
+
+		duration = str(item.get('runtime', '0'))
+
+		mpaa = item['release_dates']['results']
+		mpaa = [i for i in mpaa if i['iso_3166_1'] == 'US']
+		try:
+			mpaa = mpaa[0].get('release_dates')[-1].get('certification')
+			if not mpaa:
+				mpaa = mpaa[0].get('release_dates')[0].get('certification')
+				if not mpaa:
+					mpaa = mpaa[0].get('release_dates')[1].get('certification')
+			mpaa = str(mpaa)
+		except:
+			mpaa = '0'
+
+		credits = item['credits']
+		director = writer = '0'
+		for person in credits['crew']:
+			if 'Director' in person['job']:
+				director = ', '.join([director['name'].encode('utf-8') for director in credits['crew'] if director['job'].lower() == 'director'])
+			if person['job'] in ['Writer', 'Screenplay', 'Author', 'Novel']:
+				writer = ', '.join([writer['name'].encode('utf-8') for writer in credits['crew'] if writer['job'].lower() in ['writer', 'screenplay', 'author', 'novel']])
+
+		castandart = []
+		for person in item['credits']['cast']:
+			try:
+				castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+			except:
+				castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 
 
 	def tmdb_art(self, tmdb):
@@ -495,12 +555,16 @@ class TVshows:
 				except: 
 					try:
 						mpaa = item['content_ratings'][0]['rating']
-					except: mpaa = 'NR'
+					except:
+						mpaa = 'NR'
 
 				studio = item['networks']
-				try: studio = [x['name'] for x in studio][0]
-				except: studio = '0'
-				if studio == '' or studio is None: studio = '0'
+				try:
+					studio = [x['name'] for x in studio][0]
+				except:
+					studio = '0'
+				if studio == '' or studio is None:
+					studio = '0'
 
 				credits = item['credits']
 				director = writer = '0'
@@ -584,8 +648,10 @@ class TVshows:
 					imdb = '0'
 
 				genre = item['genres']
-				try: genre = [x['name'] for x in genre]
-				except: genre = '0'
+				try:
+					genre = [x['name'] for x in genre]
+				except:
+					genre = '0'
 				genre = ' / '.join(genre)
 				if not genre:
 					genre = 'NA'
@@ -600,9 +666,12 @@ class TVshows:
 					except: mpaa = 'NR'
 
 				studio = item['networks']
-				try: studio = [x['name'] for x in studio][0]
-				except: studio = '0'
-				if studio == '' or studio is None: studio = '0'
+				try:
+					studio = [x['name'] for x in studio][0]
+				except:
+					studio = '0'
+				if studio == '' or studio is None:
+					studio = '0'
 
 				credits = item['credits']
 				director = writer = '0'
@@ -628,8 +697,7 @@ class TVshows:
 
 				if self.disable_fanarttv != 'true':
 					from resources.lib.indexers import fanarttv
-					extended_art = fanarttv.get_tvshow_art(tvdb)
-
+					extended_art = cache.get(fanarttv.get_tvshow_art, 168, tvdb)
 					if extended_art is not None:
 						item.update(extended_art)
 						meta.update(item)
