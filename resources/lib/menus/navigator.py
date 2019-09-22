@@ -352,8 +352,8 @@ class Navigator:
 
 			item = control.item(label=title)
 			item.setInfo(type='video', infoLabels = {'title': title})
-			item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'banner': banner})
-			item.setProperty('Fanart_Image', fanart)
+			item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'fanart': fanart, 'banner': banner})
+			# item.setProperty('Fanart_Image', fanart)
 			item.setProperty('IsPlayable', 'false')
 
 			control.addItem(handle = int(sys.argv[1]), url=url, listitem=item, isFolder=False)
@@ -518,10 +518,10 @@ class Navigator:
 			item.setProperty('IsPlayable', 'true')
 		else:
 			item.setProperty('IsPlayable', 'false')
-		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
+		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
 
-		if addonFanart is not None:
-			item.setProperty('Fanart_Image', addonFanart)
+		# if addonFanart is not None:
+			# item.setProperty('Fanart_Image', addonFanart)
 
 		control.addItem(handle=syshandle, url=url, listitem=item, isFolder= isFolder)
 

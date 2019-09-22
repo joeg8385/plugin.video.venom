@@ -12,7 +12,7 @@ from resources.lib.modules import client
 from resources.lib.modules import workers
 from resources.lib.modules import trakt
 from resources.lib.modules import cleantitle
-from resources.lib.modules import cache, log_utils
+from resources.lib.modules import cache
 
 networks_this_season = [
 			('A&E', '/networks/29/ae', 'https://i.imgur.com/xLDfHjH.png'),
@@ -263,7 +263,7 @@ class tvshows:
 		def items_list(i):
 			try:
 				url = self.tvmaze_info_link % i
-				log_utils.log('url = %s' % url, __name__, log_utils.LOGDEBUG)
+				# log_utils.log('url = %s' % url, __name__, log_utils.LOGDEBUG)
 				# item = client.request(url)
 				item = client.request(url, timeout='20', error=True)
 				item = json.loads(item)

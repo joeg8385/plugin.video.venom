@@ -146,7 +146,7 @@ class PremiumizeMe:
 			if 'status' in result:
 				if result.get('status') == 'success':
 					response = result.get('response', False)
-					log_utils.log('response = %s' % response, log_utils.LOGDEBUG)
+					# log_utils.log('response = %s' % response, log_utils.LOGDEBUG)
 
 					if isinstance(response, list):
 						return response[0]

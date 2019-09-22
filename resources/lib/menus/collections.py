@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-Venom
+	Venom Add-on
 '''
 
 import os, sys, re, datetime
@@ -15,7 +15,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views, log_utils
+from resources.lib.modules import views
 
 sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
 artPath = control.artPath() ; addonFanart = control.addonFanart()
@@ -30,9 +30,6 @@ class Collections:
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 		self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
 		self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
-		self.today_date = (self.datetime).strftime('%Y-%m-%d')
-		self.month_date = (self.datetime - datetime.timedelta(days = 30)).strftime('%Y-%m-%d')
-		self.year_date = (self.datetime - datetime.timedelta(days = 365)).strftime('%Y-%m-%d')
 
 		self.lang = control.apiLanguage()['trakt']
 		self.traktCredentials = trakt.getTraktCredentialsInfo()
@@ -735,7 +732,7 @@ class Collections:
 			elif u in self.tmdb_link and not ('/user/' in url or '/list/' in url):
 				from resources.lib.indexers import tmdb
 				self.list = cache.get(tmdb.Movies().tmdb_list, 720, url)
-				self.sort()
+				# self.sort()
 
 			elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
 				self.list = cache.get(self.imdb_list, 720, url)
@@ -922,14 +919,6 @@ class Collections:
 				director = client.replaceHTMLCodes(director)
 				director = director.encode('utf-8')
 
-				# try: cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
-				# except: cast = '0'
-				# cast = client.replaceHTMLCodes(cast)
-				# cast = cast.encode('utf-8')
-				# cast = client.parseDOM(cast, 'a')
-				# if cast == []: cast = '0'
-				cast = '0'
-
 				plot = '0'
 				try: plot = client.parseDOM(item, 'p', attrs = {'class': 'text-muted'})[0]
 				except: pass
@@ -942,7 +931,7 @@ class Collections:
 				plot = plot.encode('utf-8')
 
 				self.list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa,
-											'director': director, 'cast': cast, 'plot': plot, 'tagline': '0', 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
+											'director': director, 'plot': plot, 'tagline': '0', 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
 			except:
 				pass
 
@@ -1087,6 +1076,7 @@ class Collections:
 		addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
 
 		isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
+		indicators = playcount.getMovieIndicators()
 
 		if control.setting('hosts.mode') == '2':
 			playbackMenu = control.lang(32063).encode('utf-8')
@@ -1207,14 +1197,12 @@ class Collections:
 				if discart != '0' and not discart is None:
 					art.update({'discart': discart})
 
-
 ####-Context Menu and Overlays-####
 				cm = []
 				if self.traktCredentials is True:
 					cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&imdb=%s)' % (sysaddon, sysname, imdb)))
 
 				try:
-					indicators = playcount.getMovieIndicators()
 					overlay = int(playcount.getMovieOverlay(indicators, imdb))
 					if overlay == 7:
 						cm.append((unwatchedMenu, 'RunPlugin(%s?action=moviePlaycount&imdb=%s&query=6)' % (sysaddon, imdb)))
@@ -1230,7 +1218,6 @@ class Collections:
 
 				url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
 				sysurl = urllib.quote_plus(url)
-				# path = '%s?action=play&title=%s&year=%s&imdb=%s' % (sysaddon, systitle, year, imdb)
 
 				cm.append(('Find similar', 'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (sysaddon, imdb)))
 				cm.append((playlistManagerMenu, 'RunPlugin(%s?action=playlistManager&name=%s&url=%s&meta=%s&art=%s)' % (sysaddon, sysname, sysurl, sysmeta, sysart)))
@@ -1244,9 +1231,6 @@ class Collections:
 
 				if 'castandart' in i:
 					item.setCast(i['castandart'])
-
-				# if fanart != '0' and not fanart is None:
-					# item.setProperty('Fanart_Image', fanart)
 
 				item.setArt(art)
 				item.setProperty('IsPlayable', isPlayable)
@@ -1270,9 +1254,6 @@ class Collections:
 				item = control.item(label=nextMenu)
 				icon = control.addonNext()
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-
-				# if addonFanart is not None:
-					# item.setProperty('Fanart_Image', addonFanart)
 
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
@@ -1303,10 +1284,10 @@ class Collections:
 		cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
 		item = control.item(label=name)
-		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
+		item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
 
-		if addonFanart is not None:
-			item.setProperty('Fanart_Image', addonFanart)
+		# if addonFanart is not None:
+			# item.setProperty('Fanart_Image', addonFanart)
 
 		item.addContextMenuItems(cm)
 		control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)

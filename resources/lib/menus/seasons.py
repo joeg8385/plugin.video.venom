@@ -5,7 +5,8 @@
 '''
 
 import sys, re, json, zipfile
-import StringIO, urllib, urllib2, urlparse, datetime
+import StringIO, urllib, urllib2, urlparse
+import datetime
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleantitle
@@ -18,7 +19,6 @@ from resources.lib.modules import views
 
 from resources.lib.menus import episodes as episodesx
 from resources.lib.menus import tvshows as tvshowsx
-
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -55,8 +55,6 @@ class Seasons:
 
 		self.showunaired = control.setting('showunaired') or 'true'
 		self.unairedcolor = control.setting('unaired.identify')
-		if self.unairedcolor == '':
-			self.unairedcolor = 'red'
 		self.unairedcolor = self.getUnairedColor(self.unairedcolor)
 
 
@@ -70,8 +68,14 @@ class Seasons:
 		elif n == '6': n = 'gold'
 		elif n == '7': n = 'magenta'
 		elif n == '8': n = 'yellowgreen'
-		elif n == '9': n = 'nocolor'
-		else: n == 'blue'
+		elif n == '9': n = 'skyblue'
+		elif n == '10': n = 'lime'
+		elif n == '11': n = 'limegreen'
+		elif n == '12': n = 'deepskyblue'
+		elif n == '13': n = 'white'
+		elif n == '14': n = 'whitesmoke'
+		elif n == '15': n = 'nocolor'
+		else: n == 'skyblue'
 		return n
 
 
@@ -987,9 +991,6 @@ class Seasons:
 						# if control.setting('tv.specials') == 'false' or self.season_special is False:
 							# total_seasons = total_seasons - 1
 						item.setProperty('TotalSeasons', str(total_seasons))
-
-				# if fanart != '0' and fanart is not None:
-					# item.setProperty('Fanart_Image', fanart)
 
 				item.setArt(art)
 				item.setProperty('IsPlayable', 'false')

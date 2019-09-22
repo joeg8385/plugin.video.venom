@@ -60,46 +60,41 @@ class Episodes:
 		self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/episodes'
 		# self.trakthistory_link = 'http://api.trakt.tv/users/me/history/shows?page=1&limit=%d' % self.count
 		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/shows?limit=300'
-
 		self.progress_link = 'http://api.trakt.tv/users/me/watched/shows'
 		self.hiddenprogress_link = 'http://api.trakt.tv/users/hidden/progress_watched?limit=1000&type=show'
+
 		self.onDeck_link = 'http://api.trakt.tv/sync/playback/episodes?extended=full&limit=20'
 		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/episodes'
+
 		self.mycalendar_link = 'http://api.trakt.tv/calendars/my/shows/date[30]/31/'
+
 		self.tvmaze_link = 'http://api.tvmaze.com'
 		self.added_link = 'http://api.tvmaze.com/schedule'
 		self.calendar_link = 'http://api.tvmaze.com/schedule?date=%s'
 
 		self.showunaired = control.setting('showunaired') or 'true'
 		self.unairedcolor = control.setting('unaired.identify')
-		if self.unairedcolor == '':
-			self.unairedcolor = 'red'
 		self.unairedcolor = self.getUnairedColor(self.unairedcolor)
 
 
 	def getUnairedColor(self, n):
-		if n == '0':
-			n = 'blue'
-		elif n == '1':
-			n = 'red'
-		elif n == '2':
-			n = 'yellow'
-		elif n == '3':
-			n = 'deeppink'
-		elif n == '4':
-			n = 'cyan'
-		elif n == '5':
-			n = 'lawngreen'
-		elif n == '6':
-			n = 'gold'
-		elif n == '7':
-			n = 'magenta'
-		elif n == '8':
-			n = 'yellowgreen'
-		elif n == '9':
-			n = 'nocolor'
-		else:
-			n == 'blue'
+		if n == '0': n = 'blue'
+		elif n == '1': n = 'red'
+		elif n == '2': n = 'yellow'
+		elif n == '3': n = 'deeppink'
+		elif n == '4': n = 'cyan'
+		elif n == '5': n = 'lawngreen'
+		elif n == '6': n = 'gold'
+		elif n == '7': n = 'magenta'
+		elif n == '8': n = 'yellowgreen'
+		elif n == '9': n = 'skyblue'
+		elif n == '10': n = 'lime'
+		elif n == '11': n = 'limegreen'
+		elif n == '12': n = 'deepskyblue'
+		elif n == '13': n = 'white'
+		elif n == '14': n = 'whitesmoke'
+		elif n == '15': n = 'nocolor'
+		else: n == 'skyblue'
 		return n
 
 
@@ -264,7 +259,7 @@ class Episodes:
 						raise Exception()
 					self.list = cache.get(self.trakt_list, 720, url, self.trakt_user, False)
 				except:
-					self.list = cache.get(self.trakt_list, 720, url, self.trakt_user, False)
+					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user, False)
 				self.list = self.list[::-1]
 				self.sort(type = 'calendar')
 
@@ -1555,9 +1550,6 @@ class Episodes:
 							# total_seasons = total_seasons - 1
 						# item.setProperty('TotalSeasons', str(total_seasons))
 
-				# if fanart != '0' and not fanart is None:
-					# item.setProperty('Fanart_Image', fanart)
-
 				item.setArt(art)
 				item.setProperty('IsPlayable', isPlayable)
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
@@ -1586,10 +1578,8 @@ class Episodes:
 				item = control.item(label=nextMenu)
 				icon = control.addonNext()
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-				# if addonFanart is not None:
-					# item.setProperty('Fanart_Image', addonFanart)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
-			except Exception:
+			except:
 				pass
 
 		# Show multi as show, in order to display unwatched count if enabled.
@@ -1648,10 +1638,10 @@ class Episodes:
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
 				item = control.item(label=name)
-				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
+				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
 
-				if addonFanart is not None:
-					item.setProperty('Fanart_Image', addonFanart)
+				# if addonFanart is not None:
+					# item.setProperty('Fanart_Image', addonFanart)
 
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)

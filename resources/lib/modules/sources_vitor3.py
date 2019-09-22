@@ -419,9 +419,13 @@ class Sources:
 
 		pdpc = control.setting('progress.dialog.prem.color')
 		pdpc = self.getPremColor(pdpc)
+		# if pdpc == '':
+			# pdpc = 'red'
 
 		pdfc = control.setting('progress.dialog.free.color')
 		pdfc = self.getPremColor(pdfc)
+		# if pdfc == '':
+			# pdfc = 'red'
 
 		string1 = control.lang(32404).encode('utf-8')
 		string2 = control.lang(32405).encode('utf-8')
@@ -544,17 +548,17 @@ class Sources:
 						d_total = d_source_4k + d_source_1080 + d_source_720 + d_source_sd
 
 				if debrid_status:
-					d_4k_label = total_format % ('red', d_source_4k) if d_source_4k == 0 else total_format % (pdpc, d_source_4k)
-					d_1080_label = total_format % ('red', d_source_1080) if d_source_1080 == 0 else total_format % (pdpc, d_source_1080)
-					d_720_label = total_format % ('red', d_source_720) if d_source_720 == 0 else total_format % (pdpc, d_source_720)
-					d_sd_label = total_format % ('red', d_source_sd) if d_source_sd == 0 else total_format % (pdpc, d_source_sd)
-					d_total_label = total_format % ('red', d_total) if d_total == 0 else total_format % (pdpc, d_total)
+					d_4k_label = total_format % (pdpc, d_source_4k) if d_source_4k == 0 else total_format % (pdpc, d_source_4k)
+					d_1080_label = total_format % (pdpc, d_source_1080) if d_source_1080 == 0 else total_format % (pdpc, d_source_1080)
+					d_720_label = total_format % (pdpc, d_source_720) if d_source_720 == 0 else total_format % (pdpc, d_source_720)
+					d_sd_label = total_format % (pdpc, d_source_sd) if d_source_sd == 0 else total_format % (pdpc, d_source_sd)
+					d_total_label = total_format % (pdpc, d_total) if d_total == 0 else total_format % (pdpc, d_total)
 
-				source_4k_label = total_format % ('red', source_4k) if source_4k == 0 else total_format % (pdfc, source_4k)
-				source_1080_label = total_format % ('red', source_1080) if source_1080 == 0 else total_format % (pdfc, source_1080)
-				source_720_label = total_format % ('red', source_720) if source_720 == 0 else total_format % (pdfc, source_720)
-				source_sd_label = total_format % ('red', source_sd) if source_sd == 0 else total_format % (pdfc, source_sd)
-				source_total_label = total_format % ('red', total) if total == 0 else total_format % (pdfc, total)
+				source_4k_label = total_format % (pdfc, source_4k) if source_4k == 0 else total_format % (pdfc, source_4k)
+				source_1080_label = total_format % (pdfc, source_1080) if source_1080 == 0 else total_format % (pdfc, source_1080)
+				source_720_label = total_format % (pdfc, source_720) if source_720 == 0 else total_format % (pdfc, source_720)
+				source_sd_label = total_format % (pdfc, source_sd) if source_sd == 0 else total_format % (pdfc, source_sd)
+				source_total_label = total_format % (pdfc, total) if total == 0 else total_format % (pdfc, total)
 
 				if (i / 2) < timeout:
 					try:
@@ -960,40 +964,42 @@ class Sources:
 		###---------
 
 
-		# # ---Filter out uncached torrents
-		# pm_filter = self.sources
-		# log_utils.log('self.sources = %s' % len(self.sources), __name__, log_utils.LOGDEBUG)
-		# from resources.lib.modules import premiumize
-		# try:
-			# # list = []
-			# # paged_sources = self.paginate_sources(sources=self.sources, page=1, limit=40)
-			# # for i in paged_sources:
-				# # list.append(i['url'])
-			# # log_utils.log('list = %s' % list, __name__, log_utils.LOGDEBUG)
+		# ---Filter out uncached torrents
+#		pm_filter = self.sources
+		log_utils.log('self.sources = %s' % len(self.sources), __name__, log_utils.LOGDEBUG)
+		from resources.lib.modules import premiumize
+		try:
+			# list = []
+			# paged_sources = self.paginate_sources(sources=self.sources, page=1, limit=40)
+			# for i in paged_sources:
+				# list.append(i['url'])
+			# log_utils.log('list = %s' % list, __name__, log_utils.LOGDEBUG)
 
-			# log_utils.log('self.sources = %s' % len(self.sources), __name__, log_utils.LOGDEBUG)
+			log_utils.log('self.sources = %s' % len(self.sources), __name__, log_utils.LOGDEBUG)
 
-			# for i in pm_filter:
-				# if 'torrent' in i['source'].lower():
-				# # if 'magnet:' in a and debrid.status() is True:
-					# cached = str(premiumize.PremiumizeMe().check_cache(i['url'].lower()))
-					# # log_utils.log('cached = %s - %s - %s - %s' % (cached, i['debrid'].upper(), i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
-					# log_utils.log('cached = %s - %s - %s' % (cached, i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
-					# if cached == 'False' or cached == False:
-						# pm_filter.remove(i) # seems to also be removing from self.sources
-						# # log_utils.log('Removing (%s uncached TORRENT) %s - %s' % (i['debrid'].upper(), i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
-						# log_utils.log('Removing (PM uncached TORRENT) %s - %s' % (i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
+			for i in self.sources:
+				a = i['url'].lower()
+				if 'torrent' in i['source'].lower():
+				# if 'magnet:' in a and debrid.status() is True:
+					list = str(premiumize.PremiumizeMe().check_cache(a))
+					uncached = [x for x in list if x == False]
+					# log_utils.log('cached = %s - %s - %s - %s' % (cached, i['debrid'].upper(), i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
+					log_utils.log('uncached = %s - %s - %s' % (uncached, i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
+#					if cached == 'False':
+					self.sources.remove(uncached) # seems to also be removing from self.sources
+					# log_utils.log('Removing (%s uncached TORRENT) %s - %s' % (i['debrid'].upper(), i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
+					log_utils.log('Removing (PM uncached TORRENT) %s - %s' % (i['provider'].upper(), i['url']), __name__, log_utils.LOGDEBUG)
 
-			# log_utils.log('self.sources = %s' % len(self.sources), __name__, log_utils.LOGDEBUG)
-			# log_utils.log('pm_filter = %s' % len(pm_filter), __name__, log_utils.LOGDEBUG)
-			# log_utils.log('Removed %s PM uncached TORRENT sources from list' % (len(self.sources) - len(pm_filter)), log_utils.LOGDEBUG)
+			log_utils.log('self.sources = %s' % len(self.sources), __name__, log_utils.LOGDEBUG)
+#			log_utils.log('pm_filter = %s' % len(pm_filter), __name__, log_utils.LOGDEBUG)
+#			log_utils.log('Removed %s PM uncached TORRENT sources from list' % (len(self.sources) - len(pm_filter)), log_utils.LOGDEBUG)
 
-			# self.sources = pm_filter
-		# except:
-			# import traceback
-			# traceback.print_exc()
-			# pass
-		# # ###---------
+#			self.sources = pm_filter
+		except:
+			import traceback
+			traceback.print_exc()
+			pass
+		# ###---------
 
 
 		if control.setting('HEVC') != 'true':
@@ -1499,10 +1505,7 @@ class Sources:
 		elif n == '9': n = 'skyblue'
 		elif n == '10': n = 'lime'
 		elif n == '11': n = 'limegreen'
-		elif n == '12': n = 'deepskyblue'
-		elif n == '13': n = 'white'
-		elif n == '14': n = 'whitesmoke'
-		elif n == '15': n = 'nocolor'
+		elif n == '12': n = 'nocolor'
 		else: n == 'skyblue'
 		return n
 

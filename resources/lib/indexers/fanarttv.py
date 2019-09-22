@@ -7,7 +7,7 @@
 import json
 
 from resources.lib.modules import client
-from resources.lib.modules import control
+from resources.lib.modules import control, log_utils
 
 user = control.setting('fanart.tv.user')
 if user == '' or user is None:
@@ -112,7 +112,17 @@ def get_movie_art(imdb, tmdb):
 	except:
 		landscape = '0'
 
+	# try:
+		# keyart = art['movieposter']
+		# keyart = [(x['url'], x['likes']) for x in keyart if x.get('lang') in ['00', 'None', None]]
+		# keyart = [(x[0], x[1]) for x in keyart]
+		# keyart = sorted(keyart, key=lambda x: int(x[1]), reverse=True)
+		# keyart = [x[0] for x in keyart][0]
+	# except:
+		# keyart = '0'
+
 	extended_art = {'extended': True, 'poster2': poster2, 'fanart2': fanart2, 'banner2': banner2, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape}
+	# extended_art = {'extended': True, 'poster2': poster2, 'fanart2': fanart2, 'banner2': banner2, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart, 'landscape': landscape, 'keyart': keyart}
 	return extended_art
 
 

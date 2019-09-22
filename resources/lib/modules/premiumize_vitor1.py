@@ -145,8 +145,8 @@ class PremiumizeMe:
 			# log_utils.log('result = %s' % result, log_utils.LOGDEBUG)
 			if 'status' in result:
 				if result.get('status') == 'success':
-					response = result.get('response', False)
-					log_utils.log('response = %s' % response, log_utils.LOGDEBUG)
+					response = result.get('response', 'false')
+					# log_utils.log('response = %s' % response, log_utils.LOGDEBUG)
 
 					if isinstance(response, list):
 						return response[0]
@@ -155,7 +155,7 @@ class PremiumizeMe:
 			traceback.print_exc()
 			pass
 
-		return False
+		return 'false'
 
 
 	def __create_transfer(self, media_id):

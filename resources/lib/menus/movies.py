@@ -18,7 +18,6 @@ from resources.lib.modules import workers
 from resources.lib.modules import views
 # from resources.lib.modules import utils
 from resources.lib.menus import navigator
-# import requests
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -141,9 +140,9 @@ class Movies:
 						raise Exception()
 					if trakt.getActivity() > cache.timeout(self.trakt_list, url, self.trakt_user):
 						raise Exception()
-					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+					self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
 				except:
-					self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
+					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
 
 				# if '/users/me/' in url and '/collection/' in url:
 				# self.list = sorted(self.list, key=lambda k: utils.title_key(k['title']))
@@ -167,7 +166,7 @@ class Movies:
 					self.worker()
 
 			elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
-				self.list = cache.get(self.imdb_list, 3, url)
+				self.list = cache.get(self.imdb_list, 0, url)
 				self.sort()
 				if idx is True: self.worker()
 
@@ -190,6 +189,32 @@ class Movies:
 				control.idle()
 				if self.notifications:
 					control.notification(title = 32001, message = 33049, icon = 'INFO')
+
+
+	# def unfinished(self):
+		# try:
+			# try:
+				# activity = trakt.getWatchedActivity()
+				# if activity > cache.timeout(self.trakt_list, self.traktunfinished_link, self.trakt_user, False):
+					# raise Exception()
+				# self.list = cache.get(self.trakt_list, 720, self.traktunfinished_link , self.trakt_user, False)
+			# except:
+				# self.list = cache.get(self.trakt_list, 0, self.traktunfinished_link , self.trakt_user, False)
+			# self.sort()
+			# if idx is True:
+				# self.worker(level=0)
+				# self.movieDirectory(self.list)
+		# except:
+			# import traceback
+			# traceback.print_exc()
+			# try:
+				# invalid = (self.list is None or len(self.list) == 0)
+			# except:
+				# invalid = True
+			# if invalid:
+				# control.idle()
+					# if self.notifications:
+					# control.notification(title=32326, message=33049, icon='INFO')
 
 
 	def getTMDb(self, url, idx=True):
@@ -540,6 +565,7 @@ class Movies:
 				items = result
 		except:
 			return
+
 		try:
 			q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
 			if int(q['limit']) != len(items):
@@ -553,7 +579,6 @@ class Movies:
 
 		for item in items:
 			try:
-
 				try:
 					title = (item.get('title')).encode('utf-8')
 				except:
@@ -595,6 +620,8 @@ class Movies:
 					mpaa = '0'
 
 				plot = item.get('overview')
+				try: plot = plot.encode('utf-8')
+				except: pass
 
 				tagline = item.get('tagline', '0')
 
@@ -1207,8 +1234,6 @@ class Movies:
 				if 'castandart' in i:
 					item.setCast(i['castandart'])
 
-				# if fanart != '0' and fanart is not None:
-					# item.setProperty('Fanart_Image', fanart)
 				item.setArt(art)
 				item.setProperty('IsPlayable', isPlayable)
 				item.setInfo(type='video', infoLabels=control.metadataClean(meta))
@@ -1234,8 +1259,6 @@ class Movies:
 				item = control.item(label=nextMenu)
 				icon = control.addonNext()
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-				# if addonFanart is not None:
-					# item.setProperty('Fanart_Image', addonFanart)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:
 				pass
@@ -1294,10 +1317,10 @@ class Movies:
 				cm.append(('[COLOR red]Venom Settings[/COLOR]', 'RunPlugin(%s?action=openSettings&query=0.0)' % sysaddon))
 
 				item = control.item(label = name)
-				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'banner': thumb})
+				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': addonFanart, 'banner': thumb})
 
-				if addonFanart is not None:
-					item.setProperty('Fanart_Image', addonFanart)
+				# if addonFanart is not None:
+					# item.setProperty('Fanart_Image', addonFanart)
 
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)

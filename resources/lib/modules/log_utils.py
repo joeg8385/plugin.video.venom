@@ -72,6 +72,33 @@ def log2(msg, level='info'):
 		xbmc.log(msg)
 
 
+def error(message=None, exception=True):
+	try:
+		import sys
+		if exception:
+			type, value, traceback = sys.exc_info()
+			# filename = traceback.tb_frame.f_code.co_filename
+			# linenumber = traceback.tb_lineno
+			# name = traceback.tb_frame.f_code.co_name
+			errortype = type.__name__
+			errormessage = value.message
+			if errormessage == '':
+				raise Exception()
+			if message:
+				message += ' -> '
+			else:
+				message = ''
+			message += str(errortype) + ' -> ' + str(errormessage)
+			# parameters = [filename, linenumber, name]
+
+		else:
+			caller = None
+		# log(msg=message, name = 'ERROR', parameters = parameters, level = xbmc.LOGERROR)
+		log(msg=message, caller = __name__, level = LOGERROR)
+	except:
+		pass
+
+
 def safeStr(obj):
 	try:
 		return str(obj)
