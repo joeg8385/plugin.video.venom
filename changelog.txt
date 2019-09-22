@@ -17,7 +17,6 @@
 [COLOR yellow]--[/COLOR][I] Added a few new colors to various options
     in settings.[/I]
 
-
 [B][COLOR red]Update - v3.1.9 - Sept 11, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Reverted back to Trakt non page lists due
     to issue with api sorting in response.[/I]
