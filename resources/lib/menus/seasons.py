@@ -458,9 +458,12 @@ class Seasons:
 				try: role = client.replaceHTMLCodes(person[3])
 				except: pass
 				try:
-					castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+					try:
+						castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+					except:
+						castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 				except:
-					castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+					castandart = []
 
 			try:
 				label = client.parseDOM(item2, 'SeriesName')[0]

@@ -11,7 +11,7 @@ from resources.lib.modules import control
 from resources.lib.modules import client
 from resources.lib.modules import workers
 from resources.lib.modules import cache
-from resources.lib.modules import metacache, log_utils
+from resources.lib.modules import metacache
 
 
 networks_this_season = [
@@ -244,9 +244,6 @@ class tvshows:
 				items = client.parseDOM(result, 'span', attrs = {'class': 'title'})
 
 				list_count = 25
-				# from urlparse import parse_qsl
-				# url_params = dict(parse_qsl(url))
-				# page = url_params.get('page')
 				page = int(str(url.split('&page=', 1)[1]))
 				next = '%s&page=%s' % (url.split('&page=', 1)[0], page+1)
 
@@ -266,6 +263,7 @@ class tvshows:
 		def items_list(i):
 			try:
 				url = self.tvmaze_info_link % i
+				# log_utils.log('url = %s' % url, __name__, log_utils.LOGDEBUG)
 				# item = client.request(url)
 				item = client.request(url, timeout='20', error=True)
 				item = json.loads(item)
@@ -279,7 +277,7 @@ class tvshows:
 
 				imdb = item.get('externals').get('imdb', '0')
 				if imdb == '' or imdb is None or imdb == 'None':
-					imdb = '0'
+					tvdb = '0'
 
 				tvdb = str(item.get('externals').get('thetvdb', '0'))
 				if tvdb == '' or tvdb is None or tvdb == 'None':
@@ -295,14 +293,17 @@ class tvshows:
 					studio = item.get('webChannel', {})
 				studio = studio.get('name')
 
-				genre = []
-				for i in item['genres']:
-					genre.append(i.title())
-				if genre == []: genre = 'NA'
+				try:
+					genre = item['genres']
+					genre = [i.title() for i in genre]
+					genre = (' / '.join(genre))
+					if genre == '' or genre is None: raise Exception()
+				except:
+					genre = 'NA'
 
 				duration = str(item.get('runtime', '0'))
 
-				rating = str(item.get('rating').get('average', '0'))
+				rating = str(item.get('rating').get('average'))
 
 				plot = item.get('summary')
 				plot = re.sub('<.+?>|</.+?>|\n', '', plot)
@@ -314,29 +315,18 @@ class tvshows:
 				castandart = []
 				for person in item['_embedded']['cast']:
 					try:
-						try:
-							castandart.append({'name': person['person']['name'].encode('utf-8'), 'role': person['character']['name'].encode('utf-8'), 'thumbnail': (person['person']['image']['original'] if person['person']['image']['original'] is not None else '0')})
-						except:
-							castandart.append({'name': person['person']['name'], 'role': person['character']['name'], 'thumbnail': (person['person']['image']['medium'] if person['person']['image']['medium'] is not None else '0')})
+						castandart.append({'name': person['person']['name'].encode('utf-8'), 'role': person['character']['name'].encode('utf-8'), 'thumbnail': (person['person']['image']['original'] if person['person']['image']['original'] is not None else '0')})
 					except:
-						castandart = []
+						castandart.append({'name': person['person']['name'], 'role': person['character']['name'], 'thumbnail': (person['person']['image']['medium'] if person['person']['image']['medium'] is not None else '0')})
 
 				poster = item.get('image').get('original')
 				fanart = '0' ; banner = '0'
-				mpaa = '0' ; votes = '0'
+
 
 ###--Check TVDb for missing info
 				# self.list = metacache.fetch(self.list, self.lang, self.user)
 				# if self.list['metacache'] is True:
 					# raise Exception()
-				if tvdb == '0' and imdb != '0':
-					url = self.tvdb_by_imdb % imdb
-					result = client.request(url)
-					try:
-						tvdb = client.parseDOM(result, 'seriesid')[0]
-					except:
-						tvdb = '0'
-
 				if tvdb == '0' or imdb == '0':
 					url = self.tvdb_by_query % (urllib.quote_plus(title))
 					item2 = client.request(url, timeout='20', error=True)
@@ -417,14 +407,16 @@ class tvshows:
 						item.update(extended_art)
 						meta.update(item)
 
-				item = dict((k,v) for k,v in item.iteritems() if v != '0')
-				self.list.append(item)
+				try:
+					item = dict((k,v) for k,v in item.iteritems() if v != '0')
+					self.list.append(item)
+					self.meta.append(meta)
+					metacache.insert(self.meta)
+				except:
+					import traceback
+					traceback.print_exc()
+					pass
 
-				if 'next' in meta.get('item'):
-					del meta['item']['next']
-
-				self.meta.append(meta)
-				metacache.insert(self.meta)
 			except:
 				pass
 

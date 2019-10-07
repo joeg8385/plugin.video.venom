@@ -629,11 +629,10 @@ class TVshows:
 
 				studio = item.get('network', '0')
 
-				try: genre = item['genres']
-				except: genre = '0'
-				genre = [i.title() for i in genre]
-				if genre == []: genre = '0'
-				genre = ' / '.join(genre)
+				genre = []
+				for i in item['genres']:
+					genre.append(i.title())
+				if genre == []: genre = 'NA'
 
 				duration = str(item.get('runtime'))
 
@@ -1109,9 +1108,12 @@ class TVshows:
 						try: role = client.replaceHTMLCodes(person[3])
 						except: pass
 						try:
-							castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+							try:
+								castandart.append({'name': name.encode('utf-8'), 'role': role.encode('utf-8'), 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+							except:
+								castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 						except:
-							castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
+							castandart = []
 
 			if 'plot' not in self.list[i] and self.list[i]['plot'] == '0':
 				plot = client.parseDOM(item, 'Overview')[0]
@@ -1216,13 +1218,12 @@ class TVshows:
 		queueMenu = control.lang(32065).encode('utf-8')
 		showPlaylistMenu = control.lang(35517).encode('utf-8')
 		clearPlaylistMenu = control.lang(35516).encode('utf-8')
-		nextMenu = control.lang(32053).encode('utf-8')
 		playRandom = control.lang(32535).encode('utf-8')
 		addToLibrary = control.lang(32551).encode('utf-8')
 
 		for i in items:
 			try:
-				imdb, tvdb, year = i['imdb'], i['tvdb'], i['year']
+				imdb, tvdb, year = i.get('imdb', '0'), i.get('tvdb', '0'), i.get('year', '0')
 
 				try: title = i['originaltitle']
 				except: title = i['title']
@@ -1363,17 +1364,33 @@ class TVshows:
 		if next:
 			try:
 				url = items[0]['next']
-				if url == '': raise Exception()
+				if url == '':
+					raise Exception()
 
-				if self.imdb_link in url or self.trakt_link in url:
+				nextMenu = control.lang(32053).encode('utf-8')
+				url_params = dict(urlparse.parse_qsl(url))
+
+				if 'imdb.com' in url:
+					start = int(url_params.get('start'))
+					page = '  [I](%s)[/I]' % str(((start - 1) / self.count) + 1)
+				else:
+					page = url_params.get('page')
+					page = '  [I](%s)[/I]' % page
+
+				nextMenu = '[COLOR skyblue]' + nextMenu + page + '[/COLOR]'
+
+				u = urlparse.urlparse(url).netloc.lower()
+
+				# if self.imdb_link in url or self.trakt_link in url:
+				if u in self.imdb_link or u in self.trakt_link:
 					url = '%s?action=tvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
-				elif self.tmdb_link in url:
+				elif u in self.tmdb_link:
 					url = '%s?action=tmdbTvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
-				elif self.tvmaze_link in url:
+				# elif self.tvmaze_link in url:
+				elif u in self.tvmaze_link:
 					url = '%s?action=tvmazeTvshowPage&url=%s' % (sysaddon, urllib.quote_plus(url))
-
 				item = control.item(label=nextMenu)
 				icon = control.addonNext()
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})

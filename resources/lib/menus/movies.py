@@ -16,8 +16,10 @@ from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
-# from resources.lib.modules import utils
 from resources.lib.menus import navigator
+
+sysaddon = sys.argv[0]
+syshandle = int(sys.argv[1])
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
@@ -46,7 +48,10 @@ class Movies:
 		if self.tmdb_key == '' or self.tmdb_key is None:
 			self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
-		self.user = str(self.imdb_user) + str(self.tmdb_key)
+		self.tmdb_session_id = control.setting('tmdb.session_id')
+
+		# self.user = str(self.imdb_user) + str(self.tmdb_key)
+		self.user = str(self.tmdb_key)
 
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 
@@ -61,8 +66,8 @@ class Movies:
 		self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
 		self.tmdb_nowplaying_link = 'http://api.themoviedb.org/3/movie/now_playing?api_key=%s&language=en-US&region=US&page=1'
 
-		# url for TMDb user lists-needs session_id
-		# https://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1
+		self.tmdb_userlists_link = 'http://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
+		self.tmdb_watchlist_link = 'http://api.themoviedb.org/3/account/{account_id}/watchlist/movies?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
 
 		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
 		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
@@ -489,10 +494,23 @@ class Movies:
 				lists += cache.get(self.trakt_user_list, 0, self.traktlists_link, self.trakt_user)
 
 			for i in range(len(lists)):
-				lists[i].update({'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png'})
+				lists[i].update({'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
 			userlists += lists
 		except:
 			pass
+
+		try:
+			if self.tmdb_session_id == '':
+				raise Exception()
+			self.list = []
+			from resources.lib.indexers import tmdb
+			lists = cache.get(tmdb.Movies().tmdb_userlist, 0, self.tmdb_userlists_link)
+			for i in range(len(lists)):
+				lists[i].update({'image': 'tmdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tmdbmovies'})
+			userlists += lists
+		except:
+			pass
+
 
 		try:
 			if self.imdb_user == '':
@@ -500,7 +518,7 @@ class Movies:
 			self.list = []
 			lists = cache.get(self.imdb_user_list, 0, self.imdblists_link)
 			for i in range(len(lists)):
-				lists[i].update({'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png'})
+				lists[i].update({'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png','action': 'movies' })
 			userlists += lists
 		except:
 			pass
@@ -519,13 +537,12 @@ class Movies:
 				lists += cache.get(self.trakt_user_list, 0, self.traktlikedlists_link, self.trakt_user)
 
 			for i in range(len(lists)):
-				lists[i].update({'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png'})
+				lists[i].update({'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
 			userlists += lists
 		except:
 			pass
 
 		self.list = []
-
 		# Filter the user's own lists that were
 		for i in range(len(userlists)):
 			contains = False
@@ -537,12 +554,16 @@ class Movies:
 			if not contains:
 				self.list.append(userlists[i])
 
-		for i in range(0, len(self.list)):
-			self.list[i].update({'action': 'movies'})
+		# for i in range(0, len(self.list)):
+			# self.list[i].update({'action': 'movies'})
 
 		# imdb Watchlist
 		if self.imdb_user != '':
 			self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.imdbwatchlist2_link, 'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
+
+		# TMDb Watchlist
+		if self.tmdb_session_id != '':
+			self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.tmdb_watchlist_link, 'image': 'tmdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tmdbmovies'})
 
 		# Trakt Watchlist
 		if self.traktCredentials is True:
@@ -612,12 +633,10 @@ class Movies:
 
 				premiered = item.get('released', '0')
 
-				try:
-					genre = item['genres']
-					genre = [i.title() for i in genre]
-					genre = ' / '.join(genre)
-				except:
-					genre = 'NA'
+				genre = []
+				for x in item['genres']:
+					genre.append(x.title())
+				if genre == []: genre = 'NA'
 
 				duration = str(item.get('runtime', '0'))
 
@@ -980,11 +999,10 @@ class Movies:
 
 			premiered = item.get('released', '0')
 
-			genre = item.get('genres', [])
-			genre = [x.title() for x in genre]
-			genre = ' / '.join(genre).strip()
-			if not genre:
-				genre = 'NA'
+			genre = []
+			for x in item['genres']:
+				genre.append(x.title())
+			if genre == []: genre = 'NA'
 
 			duration = str(item.get('runtime', '0'))
 
@@ -1005,9 +1023,12 @@ class Movies:
 			castandart = []
 			for person in tmdb_Item['credits']['cast']:
 				try:
-					castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					try:
+						castandart.append({'name': person['name'].encode('utf-8'), 'role': person['character'].encode('utf-8'), 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					except:
+						castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
 				except:
-					castandart.append({'name': person['name'], 'role': person['character'], 'thumbnail': ((self.tmdb_poster + person.get('profile_path')) if person.get('profile_path') is not None else '0')})
+					castandart = []
 
 			director = writer = '0'
 			for person in tmdb_Item['credits']['crew']:
@@ -1032,7 +1053,7 @@ class Movies:
 
 			item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'premiered': premiered,
 						'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
-						'writer': writer, 'cast': '0', 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': poster3,
+						'writer': writer, 'castandart': castandart, 'plot': plot, 'tagline': tagline, 'poster2': '0', 'poster3': poster3,
 						'banner': '0', 'banner2': '0', 'fanart2': '0', 'fanart3': fanart3, 'clearlogo': '0', 'clearart': '0', 'landscape': '0',
 						'discart': '0', 'metacache': False}
 
@@ -1062,9 +1083,6 @@ class Movies:
 			control.notification(title = 32001, message = 33049, icon = 'INFO')
 			sys.exit()
 
-		sysaddon = sys.argv[0]
-		syshandle = int(sys.argv[1])
-
 		settingFanart = control.setting('fanart')
 
 		addonPoster = control.addonPoster()
@@ -1089,7 +1107,6 @@ class Movies:
 		playlistManagerMenu = control.lang(35522).encode('utf-8')
 		queueMenu = control.lang(32065).encode('utf-8')
 		traktManagerMenu = control.lang(32070).encode('utf-8')
-		nextMenu = control.lang(32053).encode('utf-8')
 		addToLibrary = control.lang(32551).encode('utf-8')
 
 		for i in items:
@@ -1220,10 +1237,23 @@ class Movies:
 				if url == '':
 					raise Exception()
 
-				if self.tmdb_link not in url:
+				nextMenu = control.lang(32053).encode('utf-8')
+				url_params = dict(urlparse.parse_qsl(url))
+
+				if 'imdb.com' in url:
+					start = int(url_params.get('start'))
+					page = '  [I](%s)[/I]' % str(((start - 1) / self.count) + 1)
+				else:
+					page = url_params.get('page')
+					page = '  [I](%s)[/I]' % page
+
+				nextMenu = '[COLOR skyblue]' + nextMenu + page + '[/COLOR]'
+
+				u = urlparse.urlparse(url).netloc.lower()
+				if u not in self.tmdb_link:
 					url = '%s?action=moviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
-				elif self.tmdb_link in url:
+				elif u in self.tmdb_link:
 					url = '%s?action=tmdbmoviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
 
 				item = control.item(label=nextMenu)
@@ -1243,9 +1273,6 @@ class Movies:
 			control.idle()
 			control.notification(title = 32001, message = 33049, icon = 'INFO')
 			sys.exit()
-
-		sysaddon = sys.argv[0]
-		syshandle = int(sys.argv[1])
 
 		addonThumb = control.addonThumb()
 		artPath = control.artPath()
