@@ -1303,7 +1303,7 @@ class Episodes:
 
 		for i in items:
 			try:
-				imdb, tvdb, year, season, episode, premiered = i['imdb'], i['tvdb'], i['year'], i['season'], i['episode'], i['premiered']
+				imdb, tvdb, year, season, episode, premiered = i.get('imdb', '0'), i.get('tvdb', '0'), i['year'], i['season'], i['episode'], i['premiered']
 				if 'label' not in i:
 					i['label'] = i['title']
 

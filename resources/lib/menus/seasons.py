@@ -830,7 +830,7 @@ class Seasons:
 
 		for i in items:
 			try:
-				imdb, tmdb, tvdb, year, season = i['imdb'], i['tmdb'], i['tvdb'], i['year'], i['season']
+				imdb, tmdb, tvdb, year, season = i.get('imdb', '0'), i.get('tmdb', '0'), i.get('tvdb', '0'), i.get('year', '0'), i['season']
 				title = i['tvshowtitle']
 
 				label = '%s %s' % (labelMenu, i['season'])

@@ -99,6 +99,12 @@ class TVshows:
 		if self.tmdb_key == '' or self.tmdb_key is None:
 			self.tmdb_key = '3320855e65a9758297fec4f7c9717698'
 
+		self.tmdb_session_id = control.setting('tmdb.session_id')
+
+		self.tmdb_userlists_link = 'http://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
+		self.tmdb_watchlist_link = 'http://api.themoviedb.org/3/account/{account_id}/watchlist/tv?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
+		self.tmdb_favorites_link = 'https://api.themoviedb.org/3/account/{account_id}/favorite/tv?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id) 
+
 		self.tmdb_link = 'http://api.themoviedb.org'
 		self.tmdb_lang = 'en-US'
 		self.tmdb_popular_link = 'http://api.themoviedb.org/3/tv/popular?api_key=%s&language=en-US&region=US&page=1'
@@ -489,7 +495,6 @@ class TVshows:
 			if self.traktCredentials is False:
 				raise Exception()
 			activity = trakt.getActivity()
-
 			self.list = []
 			lists = []
 
@@ -501,18 +506,7 @@ class TVshows:
 				lists += cache.get(self.trakt_user_list, 0, self.traktlists_link, self.trakt_user)
 
 			for i in range(len(lists)):
-				lists[i].update({'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png'})
-			userlists += lists
-		except:
-			pass
-
-		try:
-			if self.imdb_user == '':
-				raise Exception()
-			self.list = []
-			lists = cache.get(self.imdb_user_list, 0, self.imdblists_link)
-			for i in range(len(lists)):
-				lists[i].update({'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png'})
+				lists[i].update({'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tvshows'})
 			userlists += lists
 		except:
 			pass
@@ -531,13 +525,35 @@ class TVshows:
 				lists += cache.get(self.trakt_user_list, 0, self.traktlikedlists_link, self.trakt_user)
 
 			for i in range(len(lists)):
-				lists[i].update({'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png'})
+				lists[i].update({'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tvshows'})
+			userlists += lists
+		except:
+			pass
+
+		try:
+			if self.imdb_user == '':
+				raise Exception()
+			self.list = []
+			lists = cache.get(self.imdb_user_list, 0, self.imdblists_link)
+			for i in range(len(lists)):
+				lists[i].update({'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tvshows'})
+			userlists += lists
+		except:
+			pass
+
+		try:
+			if self.tmdb_session_id == '':
+				raise Exception()
+			self.list = []
+			from resources.lib.indexers import tmdb
+			lists = cache.get(tmdb.userlists, 0, self.tmdb_userlists_link)
+			for i in range(len(lists)):
+				lists[i].update({'image': 'tmdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tmdbTvshows'})
 			userlists += lists
 		except:
 			pass
 
 		self.list = []
-
 		# Filter the user's own lists that were
 		for i in range(len(userlists)):
 			contains = False
@@ -549,8 +565,16 @@ class TVshows:
 			if not contains:
 				self.list.append(userlists[i])
 
-		for i in range(len(self.list)):
-			self.list[i].update({'action': 'tvshows'})
+		# for i in range(len(self.list)):
+			# self.list[i].update({'action': 'tvshows'})
+
+		# TMDb Favorites
+		if self.tmdb_session_id != '':
+			self.list.insert(0, {'name': control.lang(32026).encode('utf-8'), 'url': self.tmdb_favorites_link, 'image': 'tmdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tmdbTvshows'})
+
+		# TMDb Watchlist
+		if self.tmdb_session_id != '':
+			self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.tmdb_watchlist_link, 'image': 'tmdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tmdbTvshows'})
 
 		# imdb Watchlist
 		if self.imdb_user != '':

@@ -9,9 +9,6 @@
 		<setting id="api.language" type="select" label="32316" values="Dutch|English|German|Polish|Spanish|Swedish|Turkish" default="English" />
 		<setting type="lsep" label="32319" />
 
-		<!-- Temp setting for gad -->
-<!-- 		<setting id="idx.disable" type="bool" label="Disable super_info()" default="false" /> -->
-
 		<setting id="page.item.limit" type="slider" label="32011" default="20" range="10,60" option="int" />
 		<setting id="fanart" type="bool" label="32318" default="true" />
 		<setting id="disable.fanarttv" type="bool" label="32012" default="false" />

@@ -1,3 +1,9 @@
+[B][COLOR red]Update - v3.2.5 - Oct 8, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added TMDb user lists to TVShows.[/I]
+[COLOR yellow]--[/COLOR][I] Added TMDb Favorites to "My Lists".[/I]
+[COLOR yellow]--[/COLOR][I] Fixed mixed media_type issue with
+    new TMDb user lists.[/I]
+
 [B][COLOR red]Update - v3.2.4 - Oct 6, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed issued with some genre page2
     returnning incorect list items.[/I]
@@ -6,7 +12,7 @@
     for movies.  Note this requires a special
     authorization to obtaiin a session_id.
     This new authorization is found in the
-    settings under API keys. [/I]
+    settings under API keys.[/I]
 
 [B][COLOR red]Update - v3.2.3 - Sept 30, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed TMDb occasional title drops

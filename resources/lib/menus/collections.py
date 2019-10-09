@@ -1103,7 +1103,7 @@ class Collections:
 
 		for i in items:
 			try:
-				imdb, tmdb, title, year = i['imdb'], i['tmdb'], i['title'], i['year']
+				imdb, tmdb, title, year = i.get('imdb', '0'), i.get('tmdb', '0'), i['title'], i.get('year', '0')
 				# try:
 					# title = i['originaltitle']
 				# except:

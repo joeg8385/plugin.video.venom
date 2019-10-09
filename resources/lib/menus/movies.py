@@ -68,6 +68,7 @@ class Movies:
 
 		self.tmdb_userlists_link = 'http://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
 		self.tmdb_watchlist_link = 'http://api.themoviedb.org/3/account/{account_id}/watchlist/movies?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
+		self.tmdb_favorites_link = 'https://api.themoviedb.org/3/account/{account_id}/favorite/movies?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id) 
 
 		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
 		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
@@ -146,16 +147,11 @@ class Movies:
 					if '/users/me/' not in url:
 						raise Exception()
 					if trakt.getActivity() > cache.timeout(self.trakt_list, url, self.trakt_user):
+					# if trakt.getWatchedActivity() > cache.timeout(self.trakt_list, url, self.trakt_user):
 						raise Exception()
 					self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
 				except:
 					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
-
-					# if trakt.getWatchedActivity() > cache.timeout(self.trakt_list, url, self.trakt_user):
-						# raise Exception()
-					# self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
-				# except:
-					# self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
 
 				# if '/users/me/' in url and '/collection/' in url:
 				# self.list = sorted(self.list, key=lambda k: utils.title_key(k['title']))
@@ -489,36 +485,12 @@ class Movies:
 			try:
 				if activity > cache.timeout(self.trakt_user_list, self.traktlists_link, self.trakt_user):
 					raise Exception()
-				lists += cache.get(self.trakt_user_list, 3, self.traktlists_link, self.trakt_user)
+				lists += cache.get(self.trakt_user_list, 720, self.traktlists_link, self.trakt_user)
 			except:
 				lists += cache.get(self.trakt_user_list, 0, self.traktlists_link, self.trakt_user)
 
 			for i in range(len(lists)):
 				lists[i].update({'image': 'trakt.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
-			userlists += lists
-		except:
-			pass
-
-		try:
-			if self.tmdb_session_id == '':
-				raise Exception()
-			self.list = []
-			from resources.lib.indexers import tmdb
-			lists = cache.get(tmdb.Movies().tmdb_userlist, 0, self.tmdb_userlists_link)
-			for i in range(len(lists)):
-				lists[i].update({'image': 'tmdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tmdbmovies'})
-			userlists += lists
-		except:
-			pass
-
-
-		try:
-			if self.imdb_user == '':
-				raise Exception()
-			self.list = []
-			lists = cache.get(self.imdb_user_list, 0, self.imdblists_link)
-			for i in range(len(lists)):
-				lists[i].update({'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png','action': 'movies' })
 			userlists += lists
 		except:
 			pass
@@ -542,6 +514,29 @@ class Movies:
 		except:
 			pass
 
+		try:
+			if self.imdb_user == '':
+				raise Exception()
+			self.list = []
+			lists = cache.get(self.imdb_user_list, 0, self.imdblists_link)
+			for i in range(len(lists)):
+				lists[i].update({'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
+			userlists += lists
+		except:
+			pass
+
+		try:
+			if self.tmdb_session_id == '':
+				raise Exception()
+			self.list = []
+			from resources.lib.indexers import tmdb
+			lists = cache.get(tmdb.userlists, 0, self.tmdb_userlists_link)
+			for i in range(len(lists)):
+				lists[i].update({'image': 'tmdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tmdbmovies'})
+			userlists += lists
+		except:
+			pass
+
 		self.list = []
 		# Filter the user's own lists that were
 		for i in range(len(userlists)):
@@ -557,13 +552,17 @@ class Movies:
 		# for i in range(0, len(self.list)):
 			# self.list[i].update({'action': 'movies'})
 
-		# imdb Watchlist
-		if self.imdb_user != '':
-			self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.imdbwatchlist2_link, 'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
+		# TMDb Favorites
+		if self.tmdb_session_id != '':
+			self.list.insert(0, {'name': control.lang(32026).encode('utf-8'), 'url': self.tmdb_favorites_link, 'image': 'tmdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tmdbmovies'})
 
 		# TMDb Watchlist
 		if self.tmdb_session_id != '':
 			self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.tmdb_watchlist_link, 'image': 'tmdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tmdbmovies'})
+
+		# imdb Watchlist
+		if self.imdb_user != '':
+			self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.imdbwatchlist2_link, 'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'movies'})
 
 		# Trakt Watchlist
 		if self.traktCredentials is True:
@@ -1111,7 +1110,7 @@ class Movies:
 
 		for i in items:
 			try:
-				imdb, tmdb, title, year = i['imdb'], i['tmdb'], i['title'], i['year']
+				imdb, tmdb, title, year = i.get('imdb', '0'), i.get('tmdb', '0'), i['title'], i.get('year', '0')
 				# try:
 					# title = i['originaltitle']
 				# except:
