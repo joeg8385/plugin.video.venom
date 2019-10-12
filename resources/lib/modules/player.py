@@ -22,6 +22,8 @@ try:
 except:
 	from pysqlite2 import dbapi2 as database
 
+notificationSound = False if control.setting('notification.sound') == 'false' else True
+
 
 class Player(xbmc.Player):
 	def __init__(self):
@@ -716,6 +718,6 @@ class Bookmarks:
 			label = ('%02d:%02d:%02d' % (hours, minutes, seconds)).encode('utf-8')
 			message = control.lang(32660).encode('utf-8')
 
-			control.notification(title=name, message=message + '(' + label + ')', icon='INFO', sound=False)
+			control.notification(title=name, message=message + '(' + label + ')', icon='INFO', sound=notificationSound)
 		dbcur.connection.commit()
 		dbcon.close()

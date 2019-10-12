@@ -16,12 +16,12 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views
+from resources.lib.modules import views, log_utils
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
-
+notificationSound = False if control.setting('notification.sound') == 'false' else True
 
 class TVshows:
 	def __init__(self, type = 'show', notifications = True):
@@ -67,11 +67,10 @@ class TVshows:
 		self.language_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
 		self.certification_link = 'http://www.imdb.com/search/title?title_type=tv_series,mini_series&release_date=,date[0]&certificates=%s&sort=moviemeter,asc&count=%d&start=1' % ('%s', self.count)
 
+		self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=%s' % (self.imdb_user, self.imdb_sort())
 		self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
-		self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=tvSeries,tvMiniSeries&start=1'
-		self.imdblist2_link = 'http://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=tvSeries,tvMiniSeries&start=1'
-		self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
-		self.imdbwatchlist2_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
+		self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=%s&title_type=tvSeries,tvMiniSeries&start=1' % ('%s', self.imdb_sort())
+		self.imdbratings_link = 'https://www.imdb.com/user/ur%s/ratings?sort=your_rating,desc&mode=detail&start=1' % self.imdb_user # IMDb ratings does not take title_type so filer in imdb_list() function
 
 		self.anime_link = 'https://www.imdb.com/search/keyword?keywords=anime&title_type=tvSeries,miniSeries&sort=moviemeter,asc&count=%d&start=1' % self.count
 
@@ -101,12 +100,12 @@ class TVshows:
 
 		self.tmdb_session_id = control.setting('tmdb.session_id')
 
+		self.tmdb_link = 'http://api.themoviedb.org'
+		# self.tmdb_lang = 'en-US'
 		self.tmdb_userlists_link = 'http://api.themoviedb.org/3/account/{account_id}/lists?api_key=%s&language=en-US&session_id=%s&page=1' % ('%s', self.tmdb_session_id)
 		self.tmdb_watchlist_link = 'http://api.themoviedb.org/3/account/{account_id}/watchlist/tv?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id)
 		self.tmdb_favorites_link = 'https://api.themoviedb.org/3/account/{account_id}/favorite/tv?api_key=%s&session_id=%s&sort_by=created_at.asc&page=1' % ('%s', self.tmdb_session_id) 
 
-		self.tmdb_link = 'http://api.themoviedb.org'
-		self.tmdb_lang = 'en-US'
 		self.tmdb_popular_link = 'http://api.themoviedb.org/3/tv/popular?api_key=%s&language=en-US&region=US&page=1'
 		self.tmdb_toprated_link = 'http://api.themoviedb.org/3/tv/top_rated?api_key=%s&language=en-US&region=US&page=1'
 		self.tmdb_ontheair_link = 'http://api.themoviedb.org/3/tv/on_the_air?api_key=%s&language=en-US&region=US&page=1'
@@ -180,10 +179,11 @@ class TVshows:
 					self.worker()
 
 			elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
-				self.list = cache.get(self.imdb_list, 1, url)
-				self.sort()
+				self.list = cache.get(self.imdb_list, 0, url)
 				if idx is True:
 					self.worker()
+# I switched this to request sorting
+				# self.sort()
 
 			elif u in self.imdb_link:
 				self.list = cache.get(self.imdb_list, 168, url)
@@ -196,7 +196,7 @@ class TVshows:
 			if len(self.list) == 0 and self.search_link in url:
 				control.hide()
 				if self.notifications:
-					control.notification(title=32010, message=33049, icon='INFO')
+					control.notification(title=32010, message=33049, icon='INFO', sound=notificationSound)
 
 			if idx is True:
 				self.tvshowDirectory(self.list)
@@ -209,7 +209,7 @@ class TVshows:
 			if invalid:
 				control.hide()
 				if self.notifications:
-					control.notification(title=32002, message=33049, icon='INFO')
+					control.notification(title=32002, message=33049, icon='INFO', sound=notificationSound)
 
 
 	def getTMDb(self, url, idx=True):
@@ -246,7 +246,7 @@ class TVshows:
 			if invalid:
 				control.idle()
 				if self.notifications:
-					control.notification(title = 32002, message = 33049, icon = 'INFO')
+					control.notification(title = 32002, message = 33049, icon = 'INFO', sound=notificationSound)
 
 
 	def getTVmaze(self, url, idx=True):
@@ -273,7 +273,7 @@ class TVshows:
 			if invalid:
 				control.idle()
 				if self.notifications:
-					control.notification(title = 32002, message = 33049, icon = 'INFO')
+					control.notification(title = 32002, message = 33049, icon = 'INFO', sound=notificationSound)
 
 
 	def sort(self):
@@ -298,7 +298,9 @@ class TVshows:
 					for i in range(len(self.list)):
 						if 'premiered' not in self.list[i]:
 							self.list[i]['premiered'] = ''
-					self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
+							self.list = sorted(self.list, key = lambda k: k['year'], reverse = reverse)
+						else:
+							self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = reverse)
 				elif attribute == 5:
 					for i in range(len(self.list)):
 						if 'added' not in self.list[i]:
@@ -315,6 +317,23 @@ class TVshows:
 			import traceback
 			traceback.print_exc()
 			pass
+
+
+	def imdb_sort(self):
+		sort = int(control.setting('sort.shows.type'))
+		imdb_sort = 'list_order'
+		if sort == 1:
+			imdb_sort = 'alpha'
+		if sort in [2, 3]:
+			imdb_sort = 'user_rating'
+		if sort == 4:
+			imdb_sort = 'release_date'
+		if sort in [5, 6]:
+			imdb_sort = 'date_added'
+
+		imdb_sort_order = ',asc' if int(control.setting('sort.shows.order')) == 0 else ',desc'
+		sort_string = imdb_sort + imdb_sort_order
+		return sort_string
 
 
 	def search(self):
@@ -454,11 +473,12 @@ class TVshows:
 
 	def certifications(self):
 		certificates = [
-			('Child Audience (Y)', 'TV-Y'),
-			('Young Audience (Y7)', 'TV-Y7'),
-			('Parental Guidance (PG)', 'TV-PG'),
-			('Youth Audience (14)', 'TV-13', 'TV-14'),
-			('Mature Audience (MA)', 'TV-MA')
+			('Child Audience (TV-Y)', 'TV-Y'),
+			('Young Audience (TV-Y7)', 'TV-Y7'),
+			('General Audience (TV-G)', 'TV-G'),
+			('Parental Guidance (TV-PG)', 'TV-PG'),
+			('Youth Audience (TV-14)', 'TV-13', 'TV-14'),
+			('Mature Audience (TV-MA)', 'TV-MA')
 		]
 		for i in certificates:
 			self.list.append({'name': str(i[0]), 'url': self.certification_link % self.certificatesFormat(i[1]), 'image': 'certificates.png', 'icon': 'DefaultTVShows.png', 'action': 'tvshows'})
@@ -481,7 +501,7 @@ class TVshows:
 
 		if len(self.list) == 0:
 			control.hide()
-			control.notification(title = 32010, message = 33049, icon = 'INFO')
+			control.notification(title = 32010, message = 33049, icon = 'INFO', sound=notificationSound)
 
 		for i in range(0, len(self.list)):
 			self.list[i].update({'icon': 'DefaultActor.png', 'action': 'tvshows'})
@@ -578,8 +598,11 @@ class TVshows:
 
 		# imdb Watchlist
 		if self.imdb_user != '':
-			imdb_watchlist = self.imdbwatchlist2_link
-			self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': imdb_watchlist, 'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tvshows'})
+			self.list.insert(0, {'name': control.lang(32033).encode('utf-8'), 'url': self.imdbwatchlist_link, 'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tvshows'})
+
+		# imdb My Ratings
+		if self.imdb_user != '':
+			self.list.insert(0, {'name': control.lang(32025).encode('utf-8'), 'url': self.imdbratings_link, 'image': 'imdb.png', 'icon': 'DefaultVideoPlaylists.png', 'action': 'tvshows'})
 
 		# Trakt Watchlist
 		if self.traktCredentials is True:
@@ -725,9 +748,6 @@ class TVshows:
 			if url == self.imdbwatchlist_link:
 				url = cache.get(imdb_watchlist_id, 8640, url)
 				url = self.imdblist_link % url
-			elif url == self.imdbwatchlist2_link:
-				url = cache.get(imdb_watchlist_id, 8640, url)
-				url = self.imdblist2_link % url
 
 			result = client.request(url)
 			result = result.replace('\n', ' ')
@@ -772,7 +792,8 @@ class TVshows:
 				imdb = re.findall('(tt\d*)', imdb)[0]
 				imdb = imdb.encode('utf-8')
 
-				if imdb in dupes: raise Exception()
+				if imdb in dupes:
+					raise Exception()
 				dupes.append(imdb)
 
 				# parseDOM cannot handle elements without a closing tag.
@@ -832,6 +853,9 @@ class TVshows:
 					mpaa = client.parseDOM(item, 'span', attrs = {'class': 'certificate'})[0]
 				except:
 					mpaa = '0'
+
+				if mpaa in ['G', 'PG', 'PG-13', 'R', 'NC-17']:
+					raise Exception()
 				if mpaa == '' or mpaa == 'NOT_RATED':
 					mpaa = '0'
 				mpaa = mpaa.replace('_', '-')
@@ -866,8 +890,8 @@ class TVshows:
 				plot = plot.encode('utf-8')
 
 				list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration,
-							'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0',
-							'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
+									'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0',
+									'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
 			except:
 				pass
 		return list
@@ -914,7 +938,7 @@ class TVshows:
 			result = client.request(url)
 			result = result.decode('iso-8859-1').encode('utf-8')
 			items = client.parseDOM(result, 'li', attrs={'class': 'ipl-zebra-list__item user-list'})
-			# Gaia uses this but seems to break the IMDb user list
+			# Gaia uses this but breaks the IMDb user list
 			# items = client.parseDOM(result, 'div', attrs = {'class': 'list_name'})
 		except:
 			pass
@@ -1192,7 +1216,7 @@ class TVshows:
 				fanart == '0' and item.get('fanart2') == '0'))):
 				# if total <= 40:
 				from resources.lib.indexers.tmdb import TVshows
-				tmdb_art = TVshows().tmdb_art(tmdb)
+				tmdb_art = TVshows().get_art(tmdb)
 				item.update(tmdb_art)
 				if item.get('landscape', '0') == '0':
 					landscape = item.get('fanart3', '0')
@@ -1210,7 +1234,7 @@ class TVshows:
 	def tvshowDirectory(self, items, next=True):
 		if items is None or len(items) == 0:
 			control.idle()
-			control.notification(title = 32002, message = 33049, icon = 'INFO')
+			control.notification(title = 32002, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
 		sysaddon = sys.argv[0]
@@ -1431,7 +1455,7 @@ class TVshows:
 	def addDirectory(self, items, queue=False):
 		if items is None or len(items) == 0: 
 			control.idle()
-			control.notification(title = 32002, message = 33049, icon = 'INFO')
+			control.notification(title = 32002, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
 		sysaddon = sys.argv[0]
@@ -1481,7 +1505,6 @@ class TVshows:
 				item = control.item(label=name)
 				# item = control.item(label=name, offscreen=True)
 				item.setArt({'icon': icon, 'poster': thumb, 'thumb': thumb, 'fanart': control.addonFanart(), 'banner': thumb})
-
 				item.addContextMenuItems(cm)
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 			except:

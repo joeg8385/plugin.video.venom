@@ -20,9 +20,10 @@ from resources.lib.extensions import tools
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
-
+notificationSound = False if control.setting('notification.sound') == 'false' else True
 
 class Episodes:
+
 	def __init__(self, type='show', notifications=True):
 		self.count = int(control.setting('page.item.limit'))
 		self.list = []
@@ -110,7 +111,7 @@ class Episodes:
 		control.busy()
 		playcount.episodes(imdb, tvdb, season, episode, '7')
 		control.hide()
-		control.notification(title=35510, message=35513, icon='INFO', sound=True)
+		control.notification(title=35510, message=35513, icon='INFO', sound=notificationSound)
 
 
 	@classmethod
@@ -118,7 +119,7 @@ class Episodes:
 		control.busy()
 		playcount.episodes(imdb, tvdb, season, episode, '6')
 		control.hide()
-		control.notification(title=35511, message=35513, icon='INFO', sound=True)
+		control.notification(title=35511, message=35513, icon='INFO', sound=notificationSound)
 
 
 	def sort(self, type='shows'):
@@ -181,7 +182,7 @@ class Episodes:
 			if invalid:
 				control.hide()
 				if self.notifications:
-					control.notification(title=32326, message=33049, icon='INFO')
+					control.notification(title=32326, message=33049, icon='INFO', sound=notificationSound)
 
 
 	def unfinished(self):
@@ -205,7 +206,7 @@ class Episodes:
 				invalid = True
 			if invalid:
 				control.idle()
-				control.notification(title=32326, message=33049, icon='INFO')
+				control.notification(title=32326, message=33049, icon='INFO', sound=notificationSound)
 
 
 	def seasonCount(self, items, index):
@@ -1214,7 +1215,7 @@ class Episodes:
 		# TotalTime1 = time.time()
 		if items is None or len(items) == 0:
 			control.idle()
-			control.notification(title=32326, message=33049, icon='INFO')
+			control.notification(title=32326, message=33049, icon='INFO', sound=notificationSound)
 			sys.exit()
 
 		# Retrieve additional metadata if not super info was retireved (eg: Trakt lists, such as Unfinished and History)
@@ -1595,7 +1596,7 @@ class Episodes:
 	def addDirectory(self, items, queue=False):
 		if items is None or len(items) == 0:
 			control.hide()
-			control.notification(title=32326, message=33049, icon='INFO')
+			control.notification(title=32326, message=33049, icon='INFO', sound=notificationSound)
 			sys.exit()
 
 		sysaddon = sys.argv[0]

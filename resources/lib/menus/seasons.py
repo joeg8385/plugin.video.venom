@@ -22,6 +22,7 @@ from resources.lib.menus import tvshows as tvshowsx
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 action = params.get('action')
+notificationSound = False if control.setting('notification.sound') == 'false' else True
 
 
 class Seasons:
@@ -784,7 +785,7 @@ class Seasons:
 	def seasonDirectory(self, items):
 		if items is None or len(items) == 0:
 			control.idle()
-			control.notification(title = 32054, message = 33049, icon = 'INFO')
+			control.notification(title = 32054, message = 33049, icon = 'INFO', sound=notificationSound)
 			sys.exit()
 
 		sysaddon = sys.argv[0]

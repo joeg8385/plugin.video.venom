@@ -97,10 +97,12 @@ class Movies:
 
 		self.lang = control.apiLanguage()['trakt']
 
-		self.tmdb_info_link = 'http://api.themoviedb.org/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates' % ('%s', API_key, self.lang)
+		self.tmdb_info_link = base_link + '/3/movie/%s?api_key=%s&language=%s&append_to_response=credits,release_dates' % ('%s', API_key, self.lang)
 ###                                                                             other "append_to_response" options                             external_ids,alternative_titles,videos,images
 
-		self.tmdb_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', API_key, self.lang)
+		self.tmdb_art_link = base_link + '/3/movie/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', API_key, self.lang)
+
+		self.tmdb_external_ids = base_link + '/3/movie/%s/external_ids?api_key=%s' % ('%s', API_key)
 
 
 	def tmdb_list(self, url):
@@ -394,14 +396,21 @@ class Movies:
 		return self.list
 
 
-	def tmdb_get_details(self, tmdb, imdb):
+	def get_details(self, tmdb, imdb):
 		item = get_request(self.tmdb_info_link % tmdb)
 		if item is None:
 			item = get_request(self.tmdb_info_link % imdb)
 		return item
 
 
-	def tmdb_art(self, tmdb):
+	def get_external_ids(self, tmdb, imdb):
+		items = get_request(self.tmdb_external_ids % tmdb)
+		if item is None:
+			item = get_request(self.tmdb_external_ids % imdb)
+		return item
+
+
+	def get_art(self, tmdb):
 		if (API_key == '') or (tmdb == '0' or tmdb is None):
 			return None
 
@@ -429,7 +438,7 @@ class Movies:
 		return extended_art
 
 
-	def tmdb_credits(self, tmdb):
+	def get_credits(self, tmdb):
 		url = base_link + '/3/movie/%s/credits?api_key=%s' % ('%s', API_key)
 		if (API_key == '') or (tmdb == '0' or tmdb is None):
 			return None
@@ -443,6 +452,19 @@ class Movies:
 		from resources.lib.indexers import fanarttv
 		self.fanarttv = fanarttv.get_movie_art(imdb, tmdb)
 
+		# for r in range(0, total, 40):
+			# threads = []
+			# for i in range(r, r + 40):
+				# if i <= total:
+					# threads.append(workers.Thread(self.super_info, i))
+			# [i.start() for i in threads]
+			# [i.join() for i in threads]
+ 
+			# if self.meta:
+				# metacache.insert(self.meta)
+
+		# self.list = [i for i in self.list if i['imdb'] != '0']
+
 
 class TVshows:
 	def __init__(self):
@@ -451,10 +473,10 @@ class TVshows:
 
 		self.lang = control.apiLanguage()['tvdb']
 
-		self.tmdb_info_link = 'http://api.themoviedb.org/3/tv/%s?api_key=%s&language=%s&append_to_response=credits,content_ratings,external_ids' % ('%s', API_key, self.lang)
+		self.tmdb_info_link = base_link + '/3/tv/%s?api_key=%s&language=%s&append_to_response=credits,content_ratings,external_ids' % ('%s', API_key, self.lang)
 ###                                                                                  other "append_to_response" options                                           alternative_titles,videos,images
 
-		self.tmdb_art_link = 'http://api.themoviedb.org/3/tv/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', API_key, self.lang)
+		self.tmdb_art_link = base_link + '/3/tv/%s/images?api_key=%s&include_image_language=en,%s,null' % ('%s', API_key, self.lang)
 
 
 	def tmdb_list(self, url):
@@ -714,14 +736,14 @@ class TVshows:
 		return self.list
 
 
-	def tmdb_get_details(self, tmdb, imdb):
+	def get_details(self, tmdb, imdb):
 		item = get_request(self.tmdb_info_link % tmdb)
 		if item is None:
 			item = get_request(self.tmdb_info_link % imdb)
 		return item
 
 
-	def tmdb_art(self, tmdb):
+	def get_art(self, tmdb):
 		if (API_key == '') or (tmdb == '0' or tmdb is None):
 			return None
 
@@ -749,7 +771,7 @@ class TVshows:
 		return extended_art
 
 
-	def tmdb_credits(self, tmdb):
+	def get_credits(self, tmdb):
 		url = base_link + '/3/tv/%s/credits?api_key=%s' % ('%s', API_key)
 		if (API_key == '') or (tmdb == '0' or tmdb is None):
 			return None
@@ -762,6 +784,19 @@ class TVshows:
 	def get_fanarttv_art(self, imdb=None, tmdb=None):
 		from resources.lib.indexers import fanarttv
 		self.fanarttv = fanarttv.get_movie_art(imdb, tmdb)
+
+		# for r in range(0, total, 40):
+			# threads = []
+			# for i in range(r, r + 40):
+				# if i <= total:
+					# threads.append(workers.Thread(self.super_info, i))
+			# [i.start() for i in threads]
+			# [i.join() for i in threads]
+ 
+			# if self.meta:
+				# metacache.insert(self.meta)
+
+		# self.list = [i for i in self.list if i['imdb'] != '0']
 
 
 class Auth:
