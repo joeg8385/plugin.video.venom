@@ -15,7 +15,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views, log_utils
+from resources.lib.modules import views
 from resources.lib.menus import navigator
 
 sysaddon = sys.argv[0]
@@ -62,7 +62,6 @@ class Movies:
 		self.hidecinema_date = (datetime.date.today() - datetime.timedelta(days = self.hidecinema_rollback2)).strftime('%Y-%m')
 
 		self.tmdb_link = 'http://api.themoviedb.org'
-		# self.tmdb_lang = 'en-US'
 		self.tmdb_popular_link = 'http://api.themoviedb.org/3/movie/popular?api_key=%s&language=en-US&region=US&page=1'
 		self.tmdb_toprated_link = 'http://api.themoviedb.org/3/movie/top_rated?api_key=%s&page=1'
 		self.tmdb_upcoming_link = 'http://api.themoviedb.org/3/movie/upcoming?api_key=%s&language=en-US&region=US&page=1' 
@@ -107,7 +106,7 @@ class Movies:
 		self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=%s' % (self.imdb_user, self.imdb_sort())
 		self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
 		self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=%s&title_type=movie,short,video,tvShort,tvMovie,tvSpecial&start=1' % ('%s', self.imdb_sort())
-		self.imdbratings_link = 'https://www.imdb.com/user/ur%s/ratings?sort=your_rating,desc&mode=detail&start=1' % self.imdb_user # IMDb ratings does not take title_type so filer is in imdb_list() function
+		self.imdbratings_link = 'https://www.imdb.com/user/ur%s/ratings?sort=your_rating,desc&mode=detail&start=1' % self.imdb_user # IMDb ratings does not take title_type so filter is in imdb_list() function
 
 		self.anime_link = 'https://www.imdb.com/search/keyword?keywords=anime&title_type=movie,tvMovie&sort=moviemeter,asc&count=%d&start=1' % self.count
 
@@ -179,7 +178,8 @@ class Movies:
 					self.worker()
 
 			elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
-				self.list = cache.get(self.imdb_list, 0, url)
+				isRatinglink=True if self.imdbratings_link in url else False
+				self.list = cache.get(self.imdb_list, 0, url, isRatinglink)
 				if idx is True:
 					self.worker()
 # I switched this to request sorting
@@ -218,6 +218,7 @@ class Movies:
 			if u in self.tmdb_link and '/list/' in url:
 				from resources.lib.indexers import tmdb
 				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 168, url)
+				self.sort()
 
 			elif u in self.tmdb_link and not '/list/' in url:
 				from resources.lib.indexers import tmdb
@@ -737,7 +738,7 @@ class Movies:
 		return self.list
 
 
-	def imdb_list(self, url):
+	def imdb_list(self, url, isRatinglink=False):
 		list = []
 		try:
 			for i in re.findall('date\[(\d+)\]', url):
@@ -800,12 +801,21 @@ class Movies:
 					raise Exception() # Some lists contain TV shows.
 
 				try:
+					genre = client.parseDOM(item, 'span', attrs = {'class': 'genre'})[0]
+				except:
+					genre = '0'
+				genre = ' / '.join([i.strip() for i in genre.split(',')])
+				if genre == '': genre = '0'
+				genre = client.replaceHTMLCodes(genre)
+				genre = genre.encode('utf-8')
+
+				try:
 					mpaa = client.parseDOM(item, 'span', attrs = {'class': 'certificate'})[0]
 				except:
 					mpaa = '0'
-
-				if mpaa in ['TV-Y', 'TV-Y7', 'TV-G', 'TV-PG', 'TV-13', 'TV-14', 'TV-MA']:
-					raise Exception()
+				if isRatinglink and 'Short' not in genre:
+					if mpaa in ['TV-Y', 'TV-Y7', 'TV-G', 'TV-PG', 'TV-13', 'TV-14', 'TV-MA']:
+						raise Exception()
 				if mpaa == '' or mpaa == 'NOT_RATED':
 					mpaa = '0'
 				mpaa = mpaa.replace('_', '-')
@@ -831,15 +841,6 @@ class Movies:
 				poster = client.replaceHTMLCodes(poster)
 				poster = poster.encode('utf-8')
 				# log_utils.log('poster = %s' % str(poster), __name__, log_utils.LOGDEBUG)
-
-				try:
-					genre = client.parseDOM(item, 'span', attrs = {'class': 'genre'})[0]
-				except:
-					genre = '0'
-				genre = ' / '.join([i.strip() for i in genre.split(',')])
-				if genre == '': genre = '0'
-				genre = client.replaceHTMLCodes(genre)
-				genre = genre.encode('utf-8')
 
 				try:
 					duration = re.findall('(\d+?) min(?:s|)', item)[-1]
@@ -1049,10 +1050,13 @@ class Movies:
 
 			premiered = item.get('released', '0')
 
-			genre = []
-			for x in item['genres']:
-				genre.append(x.title())
-			if genre == []: genre = 'NA'
+			if 'genre' not in self.list[i] or self.list[i]['genre'] == '0' or self.list[i]['genre'] == 'NA':
+				genre = []
+				for x in item['genres']:
+					genre.append(x.title())
+				if genre == []: genre = 'NA'
+			else:
+				genre = self.list[i]['genre']
 
 			duration = str(item.get('runtime', '0'))
 

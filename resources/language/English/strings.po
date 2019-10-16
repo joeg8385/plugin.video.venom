@@ -331,6 +331,12 @@ msgctxt "#32074"
 msgid "[B]HELP[/B]"
 msgstr ""
 
+
+
+
+
+
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr ""
@@ -392,7 +398,7 @@ msgid "Trakt"
 msgstr ""
 
 msgctxt "#32316"
-msgid "Info Language"
+msgid "api Language"
 msgstr ""
 
 msgctxt "#32317"
@@ -2715,9 +2721,13 @@ msgstr ""
 
 
 
+
+
 msgctxt "#35547"
 msgid "Force"
 msgstr ""
+
+
 
 
 

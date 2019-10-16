@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.2.6" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.2.7" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -36,34 +36,16 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.2.6 - Oct 12, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Added more Navigation options to
-    now cover most all.[/I]
-[COLOR yellow]--[/COLOR][I] Changed IMDb lists from local sort
-    method to server request sorting.
-    This allows "Date Added" for IMDb
-    lists to now work.[/I]
-[COLOR yellow]--[/COLOR][I] Moved "My List" to Navigation settings.[/I]
-[COLOR yellow]--[/COLOR][I] Hard coded "Movie-Collections" sort
-    order to release_date.asc. In the event
-    user changes Movie sort to "Title" or
-    "Date Added" this made more sense to
-    keep a movie collection in order of
-    release date, occurance, in order as 1,
-    2 ,3 etc.[/I]
-[COLOR yellow]--[/COLOR][I] Moved "season count" and "unwatched
-    count" to main "TV Shows" and out of
-    UpNext settings, made no sense being
-    there.[/I]
-[COLOR yellow]--[/COLOR][I] Added setting to turn on notificcation
-    sounds, now off by default for ALL.[/I]
-[COLOR yellow]--[/COLOR][I] Added tvShort to IMDb url for Movie user
-    lists.  This allows short films to be
-    brought in to lists even if TV aired.[/I]
-[COLOR yellow]--[/COLOR][I] Aded IMDb "My Ratings" to "My Lists" for
-    both Movies and TVShows.  Added
-    filtering for both due to IMDb does not
-    handle "title_type" for user Rating lists.[/I]
+[B][COLOR red]Update - v3.2.7 - Oct 16, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Added more api languages in settings.[/I]
+[COLOR yellow]--[/COLOR][I] Added more provider languages in settings.[/I]
+[COLOR yellow]--[/COLOR][I] Changed episode "poster" to ""season.poster" to be
+    more descriptive of the season you are viewing.[/I]
+[COLOR yellow]--[/COLOR][I] Changed TMDb threading to "for" loop thread for 2nd
+    api request and fanart.tv request.  Huge speed bump in menu load times.[/I]
+[COLOR yellow]--[/COLOR][I] Some tweaks to TMDb user list sorting.[/I]
+[COLOR yellow]--[/COLOR][I] TMDb has now fixed user lists from dropping titles due to a lang issue.
+    Thank you Travis!!![/I]
 		</news>
 	</extension>
 </addon>

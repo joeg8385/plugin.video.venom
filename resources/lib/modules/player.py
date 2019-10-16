@@ -68,15 +68,15 @@ class Player(xbmc.Player):
 
 			self.meta = meta
 			self.offset = Bookmarks().get(self.name, self.year)
-			poster, thumb, fanart, banner, clearart, clearlogo, discart, meta = self.getMeta(meta)
+			poster, thumb, season_poster, fanart, banner, clearart, clearlogo, discart, meta = self.getMeta(meta)
 
 			item = control.item(path=url)
 
 			if self.media_type == 'episode':
 				if control.setting('disable.player.art') == 'true':
-					item.setArt({'thumb': thumb, 'tvshow.poster': poster, 'season.poster': poster, 'tvshow.fanart': fanart})
+					item.setArt({'thumb': thumb, 'tvshow.poster': season_poster, 'season.poster': season_poster, 'tvshow.fanart': fanart})
 				else:
-					item.setArt({'tvshow.clearart': clearart, 'tvshow.clearlogo': clearlogo, 'tvshow.discart': discart, 'thumb': thumb, 'tvshow.poster': poster, 'season.poster': poster, 'tvshow.fanart': fanart})
+					item.setArt({'tvshow.clearart': clearart, 'tvshow.clearlogo': clearlogo, 'tvshow.discart': discart, 'thumb': thumb, 'tvshow.poster': season_poster, 'season.poster': season_poster, 'tvshow.fanart': fanart})
 			else:
 				if control.setting('disable.player.art') == 'true':
 					item.setArt({'thumb': thumb, 'poster': poster, 'fanart': fanart})
@@ -109,6 +109,7 @@ class Player(xbmc.Player):
 			traceback.print_exc()
 			return
 
+
 	def play_playlist(self):
 		try:
 			playlist = control.playlist.getPlayListId()
@@ -135,6 +136,8 @@ class Player(xbmc.Player):
 			thumb = meta.get('thumb')
 			thumb = thumb or poster or control.addonThumb()
 
+			season_poster = meta.get('season_poster')
+
 			fanart1 = meta.get('fanart')
 			fanart2 = meta.get('fanart2')
 			fanart3 = meta.get('fanart3')
@@ -148,7 +151,7 @@ class Player(xbmc.Player):
 			if 'mediatype' not in meta:
 				meta.update({'mediatype': 'episode' if 'episode' in meta and meta['episode'] else 'movie'})
 
-			return (poster, thumb, fanart, banner, clearart, clearlogo, discart, meta)
+			return (poster, thumb, season_poster, fanart, banner, clearart, clearlogo, discart, meta)
 		except:
 			import traceback
 			traceback.print_exc()
@@ -183,7 +186,7 @@ class Player(xbmc.Player):
 				self.DBID = meta.get('movieid')
 
 			poster = thumb = meta.get('thumbnail')
-			return (poster, thumb, '', '', '', '', '', meta)
+			return (poster, thumb, '', '', '', '', '', '', meta)
 		except:
 			import traceback
 			traceback.print_exc()
@@ -226,12 +229,12 @@ class Player(xbmc.Player):
 
 			thumb = meta.get('thumbnail')
 
-			return (poster, thumb, '', '', '', '', '', meta)
+			return (poster, thumb, '', '', '', '', '', '', meta)
 		except:
 			import traceback
 			traceback.print_exc()
-			poster, thumb, fanart, banner, clearart, clearlogo, discart, meta = '', '', '', '', '', '', '', {'title': self.name}
-			return (poster, thumb, fanart, banner, clearart, clearlogo, discart, meta)
+			poster, thumb, season_poster, fanart, banner, clearart, clearlogo, discart, meta = '', '', '', '', '', '', '', '', {'title': self.name}
+			return (poster, thumb, season_poster, fanart, banner, clearart, clearlogo, discart, meta)
 
 
 	def getWatchedPercent(self):

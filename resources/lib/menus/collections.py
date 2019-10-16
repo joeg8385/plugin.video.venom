@@ -47,7 +47,6 @@ class Collections:
 		self.tmdb_link = 'https://api.themoviedb.org'
 		self.tmdb_poster = 'http://image.tmdb.org/t/p/w300'
 		self.tmdb_fanart = 'http://image.tmdb.org/t/p/w1280'
-		# self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&sort_by=%s&page=1' % ('%s', self.tmdb_key, self.tmdb_sort())
 		self.tmdb_api_link = 'https://api.themoviedb.org/4/list/%s?api_key=%s&sort_by=release_date.asc&page=1' % ('%s', self.tmdb_key)
 
 		self.imdb_link = 'https://www.imdb.com'
@@ -711,11 +710,13 @@ class Collections:
 				from resources.lib.indexers import tmdb
 				self.list = cache.get(tmdb.Movies().tmdb_collections_list, 168, url)
 				# self.sort()
+				self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = False)
 
 			elif u in self.tmdb_link and not '/list/' in url:
 				from resources.lib.indexers import tmdb
 				self.list = cache.get(tmdb.Movies().tmdb_list, 168, url)
 				# self.sort()
+				self.list = sorted(self.list, key = lambda k: k['premiered'], reverse = False)
 
 			elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
 				self.list = cache.get(self.imdb_list, 168, url)
@@ -739,7 +740,7 @@ class Collections:
 	def sort(self):
 		try:
 			attribute = int(control.setting('sort.movies.type'))
-			reverse = int(control.setting('sort.movies.order')) == 1
+			reverse = (int(control.setting('sort.movies.order')) == 1)
 			if attribute == 0:
 				reverse = False
 			if attribute > 0:

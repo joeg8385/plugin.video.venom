@@ -4,8 +4,8 @@
 	Venom Add-on
 '''
 
-import os, sys, re, json
-import urllib, urlparse
+import os, sys, re, json, zipfile
+import StringIO, urllib, urllib2, urlparse
 import datetime
 
 from resources.lib.modules import trakt
@@ -16,7 +16,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views, log_utils
+from resources.lib.modules import views
 from resources.lib.menus import navigator
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -48,6 +48,8 @@ class TVshows:
 		self.disable_fanarttv = control.setting('disable.fanarttv')
 
 		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', '%s')
+		# self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
 		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_image = 'http://thetvdb.com/banners/'
@@ -70,7 +72,7 @@ class TVshows:
 		self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=%s' % (self.imdb_user, self.imdb_sort())
 		self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
 		self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=%s&title_type=tvSeries,tvMiniSeries&start=1' % ('%s', self.imdb_sort())
-		self.imdbratings_link = 'https://www.imdb.com/user/ur%s/ratings?sort=your_rating,desc&mode=detail&start=1' % self.imdb_user # IMDb ratings does not take title_type so filer in imdb_list() function
+		self.imdbratings_link = 'https://www.imdb.com/user/ur%s/ratings?sort=your_rating,desc&mode=detail&start=1' % self.imdb_user # IMDb ratings does not take title_type so filter in imdb_list() function
 
 		self.anime_link = 'https://www.imdb.com/search/keyword?keywords=anime&title_type=tvSeries,miniSeries&sort=moviemeter,asc&count=%d&start=1' % self.count
 
@@ -179,7 +181,8 @@ class TVshows:
 					self.worker()
 
 			elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
-				self.list = cache.get(self.imdb_list, 0, url)
+				isRatinglink=True if self.imdbratings_link in url else False
+				self.list = cache.get(self.imdb_list, 0, url, isRatinglink)
 				if idx is True:
 					self.worker()
 # I switched this to request sorting
@@ -733,7 +736,7 @@ class TVshows:
 		return list
 
 
-	def imdb_list(self, url):
+	def imdb_list(self, url, isRatinglink=False):
 		list = []
 		items = []
 		dupes = []
@@ -853,9 +856,9 @@ class TVshows:
 					mpaa = client.parseDOM(item, 'span', attrs = {'class': 'certificate'})[0]
 				except:
 					mpaa = '0'
-
-				if mpaa in ['G', 'PG', 'PG-13', 'R', 'NC-17']:
-					raise Exception()
+				if isRatinglink:
+					if mpaa in ['G', 'PG', 'PG-13', 'R', 'NC-17']:
+						raise Exception()
 				if mpaa == '' or mpaa == 'NOT_RATED':
 					mpaa = '0'
 				mpaa = mpaa.replace('_', '-')
@@ -1079,6 +1082,16 @@ class TVshows:
 			url = self.tvdb_info_link % (tvdb, self.lang)
 			item = client.request(url, timeout='10', error = True)
 
+			# url = self.tvdb_info_link % (tvdb, 'en')
+			# data = urllib2.urlopen(url, timeout=30).read()
+			# zip = zipfile.ZipFile(StringIO.StringIO(data))
+			# result = zip.read('en.xml')
+			# artwork = zip.read('banners.xml')
+			# actors = zip.read('actors.xml')
+			# zip.close()
+
+			# item = result.split('<Series>')
+
 			if item is None:
 				raise Exception()
 
@@ -1138,7 +1151,7 @@ class TVshows:
 			else:
 				mpaa = self.list[i]['mpaa']
 
-			if 'castandart' not in self.list[i] or self.list[i]['castandart'] == '0':
+			if 'castandart' not in self.list[i] or self.list[i]['castandart'] == []:
 				url2 = self.tvdb_info_link % (tvdb, 'actors')
 				actors = client.request(url2, timeout='10', error=True)
 				castandart = []
@@ -1162,6 +1175,8 @@ class TVshows:
 								castandart.append({'name': name, 'role': role, 'thumbnail': ((self.tvdb_image + image) if image is not None else '0')})
 						except:
 							castandart = []
+			else:
+				castandart = self.list[i]['castandart']
 
 			if 'plot' not in self.list[i] and self.list[i]['plot'] == '0':
 				plot = client.parseDOM(item, 'Overview')[0]
@@ -1182,6 +1197,7 @@ class TVshows:
 				else: poster = '0'
 			else:
 				poster = self.list[i]['poster']
+			# log_utils.log('poster = %s' % poster, __name__, log_utils.LOGDEBUG)
 
 			banner = client.parseDOM(item, 'banner')[0]
 			if banner and banner != '':

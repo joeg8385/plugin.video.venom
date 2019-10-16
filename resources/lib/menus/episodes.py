@@ -22,6 +22,7 @@ params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv)
 action = params.get('action')
 notificationSound = False if control.setting('notification.sound') == 'false' else True
 
+
 class Episodes:
 
 	def __init__(self, type='show', notifications=True):
@@ -538,6 +539,7 @@ class Episodes:
 				pass
 		if count:
 			self.seasonCountWait()
+
 		itemlist = itemlist[::-1]
 		return itemlist
 
@@ -639,7 +641,7 @@ class Episodes:
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
 				result = zip.read('%s.xml' % lang)
-				# artwork = zip.read('banners.xml')
+				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
 				zip.close()
 
@@ -649,6 +651,10 @@ class Episodes:
 
 				num = [x for x,y in enumerate(item) if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(i['snum']) and re.compile('<EpisodeNumber>(.+?)</EpisodeNumber>').findall(y)[0] == str(i['enum'])][-1]
 				item = [y for x,y in enumerate(item) if x > num][0]
+
+				artwork = artwork.split('<Banner>')
+				artwork = [x for x in artwork if '<Language>en</Language>' in x and '<BannerType>season</BannerType>' in x]
+				artwork = [x for x in artwork if not 'seasonswide' in re.findall('<BannerPath>(.+?)</BannerPath>', x)[0]]
 
 				premiered = client.parseDOM(item, 'FirstAired')[0]
 
@@ -661,6 +667,11 @@ class Episodes:
 					lastplayed = i['lastplayed']
 				except:
 					lastplayed = None
+
+				try:
+					episodeIDS = i['episodeIDS']
+				except:
+					episodeIDS = {}
 
 				status = client.parseDOM(item2, 'Status')[0]
 				if not status:
@@ -707,6 +718,20 @@ class Episodes:
 				if poster and poster != '':
 					poster = self.tvdb_image + poster
 				else: poster = '0'
+
+				season_poster = [x for x in artwork if client.parseDOM(x, 'Season')[0] == season]
+				try:
+					season_poster = client.parseDOM(season_poster[0], 'BannerPath')[0]
+				except:
+					season_poster = ''
+				if season_poster != '':
+					season_poster = self.tvdb_image + season_poster
+				else:
+					season_poster = '0'
+				season_poster = client.replaceHTMLCodes(season_poster)
+				season_poster = season_poster.encode('utf-8')
+				if season_poster == '0':
+					season_poster = poster
 
 				banner = client.parseDOM(item2, 'banner')[0]
 				if banner and banner != '':
@@ -805,8 +830,8 @@ class Episodes:
 								'added': added, 'lastplayed': lastplayed, 'status': status, 'studio': studio, 'genre': genre,
 								'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director,
 								'writer': writer, 'castandart': castandart, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb,
-								'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'snum': i['snum'],
-								'enum': i['enum'], 'unaired': unaired, 'episodeIDS': episodeIDS}
+								'poster': poster, 'season_poster': season_poster,  'banner': banner, 'fanart': fanart, 'thumb': thumb,
+								'snum': i['snum'], 'enum': i['enum'], 'unaired': unaired, 'episodeIDS': episodeIDS}
 
 				values['action'] = 'episodes'
 				if 'airday' in i and i['airday'] is not None and i['airday'] != '':
@@ -850,7 +875,7 @@ class Episodes:
 
 				zip = zipfile.ZipFile(StringIO.StringIO(data))
 				result = zip.read('%s.xml' % lang)
-				# artwork = zip.read('banners.xml')
+				artwork = zip.read('banners.xml')
 				actors = zip.read('actors.xml')
 				zip.close()
 
@@ -859,6 +884,10 @@ class Episodes:
 						re.findall('<EpisodeNumber>%01d</EpisodeNumber>' % int(i['episode']), x), x) for x in result]
 				item = [x[2] for x in item if len(x[0]) > 0 and len(x[1]) > 0][0]
 				item2 = result[0]
+
+				artwork = artwork.split('<Banner>')
+				artwork = [x for x in artwork if '<Language>en</Language>' in x and '<BannerType>season</BannerType>' in x]
+				artwork = [x for x in artwork if not 'seasonswide' in re.findall('<BannerPath>(.+?)</BannerPath>', x)[0]]
 
 				premiered = client.parseDOM(item, 'FirstAired')[0]
 				# if premiered == '' or '-00' in premiered: premiered = '0'
@@ -886,11 +915,15 @@ class Episodes:
 				imdb, tmdb, tvdb = i['imdb'], i['tmdb'], i['tvdb']
 
 # ### episode IDS
-				episodeIDS = {}
-				if control.setting('enable.upnext') == 'true':
-					episodeIDS = trakt.getEpisodeSummary(imdb, season, episode, full=False)
-					episodeIDS = episodeIDS.get('ids', {})
+				# episodeIDS = {}
+				# if control.setting('enable.upnext') == 'true':
+					# episodeIDS = trakt.getEpisodeSummary(imdb, season, episode, full=False)
+					# episodeIDS = episodeIDS.get('ids', {})
 ##------------------
+				try:
+					episodeIDS = i['episodeIDS']
+				except:
+					episodeIDS = {}
 
 				year = str(i.get('year'))
 
@@ -920,6 +953,20 @@ class Episodes:
 				if thumb and thumb != '':
 					thumb = self.tvdb_image + thumb
 				else: thumb = '0'
+
+				season_poster = [x for x in artwork if client.parseDOM(x, 'Season')[0] == season]
+				try:
+					season_poster = client.parseDOM(season_poster[0], 'BannerPath')[0]
+				except:
+					season_poster = ''
+				if season_poster != '':
+					season_poster = self.tvdb_image + season_poster
+				else:
+					season_poster = '0'
+				season_poster = client.replaceHTMLCodes(season_poster)
+				season_poster = season_poster.encode('utf-8')
+				if season_poster == '0':
+					season_poster = poster
 
 				if poster != '0':
 					pass
@@ -1002,8 +1049,8 @@ class Episodes:
 								'year': year, 'tvshowtitle': tvshowtitle, 'tvshowyear': tvshowyear, 'premiered': premiered,
 								'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating,
 								'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'castandart': castandart,
-								'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner,
-								'fanart': fanart, 'thumb': thumb, 'episodeIDS': episodeIDS}
+								'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'season_poster': season_poster,
+								'banner': banner, 'fanart': fanart, 'thumb': thumb, 'episodeIDS': episodeIDS}
 
 				values['action'] = 'episodes'
 				if 'airday' in i and i['airday'] is not None and i['airday'] != '':
@@ -1082,9 +1129,9 @@ class Episodes:
 					raise Exception()
 
 				try:
-					title = (item.get('name', 0)).encode('utf-8')
+					title = (item.get('name')).encode('utf-8')
 				except:
-					title = item.get('name', 0)
+					title = item.get('name')
 
 				season = item['season']
 				if season == '0' or season is None:
@@ -1099,9 +1146,9 @@ class Episodes:
 				year = str(item.get('show').get('premiered', '0'))
 
 				try:
-					tvshowtitle = (item.get('show', {}).get('name', 0)).encode('utf-8')
+					tvshowtitle = (item.get('show', {}).get('name')).encode('utf-8')
 				except:
-					tvshowtitle = item.get('show', {}).get('name', 0)
+					tvshowtitle = item.get('show', {}).get('name')
 
 				try:
 					tvshowyear = item['show']['year']
@@ -1119,6 +1166,25 @@ class Episodes:
 				if tvdb == '' or tvdb is None or tvdb == 'None':
 					tvdb = '0'
 
+				if imdb == '0' or tvdb == '0':
+					trakt_ids = trakt.SearchTVShow(urllib.quote_plus(tvshowtitle), year, full=False)[0]
+					trakt_ids = trakt_ids.get('show', '0')
+
+					if imdb == '0':
+						imdb = trakt_ids.get('ids', {}).get('imdb', '0')
+						if imdb == '' or imdb is None or imdb == 'None':
+							imdb = '0'
+
+					if tmdb == '0':
+						tmdb = str(trakt_ids.get('ids', {}).get('tmdb', 0))
+						if tmdb == '' or tmdb is None or tmdb == 'None':
+							tmdb = '0'
+
+					if tvdb == '0':
+						tvdb = str(trakt_ids.get('ids', {}).get('tvdb', 0))
+						if tvdb == '' or tvdb is None or tvdb == 'None':
+							tvdb = '0'
+
 # ### episode IDS
 				episodeIDS = {}
 				if control.setting('enable.upnext') == 'true':
@@ -1126,21 +1192,20 @@ class Episodes:
 					episodeIDS = episodeIDS.get('ids', {})
 ##------------------
 
-				poster = item.get('show', {}).get('image', {}).get('original', 0)
+				try:
+					poster = item['show']['image']['original']
+				except:
+					poster = '0'
+				if poster is None or poster == '' or poster == 'None':
+					poster = '0'
 
 				try:
-					thumb1 = item['show']['image']['original']
+					thumb = item['image']['original']
 				except:
-					thumb1 = '0'
-				try:
-					thumb2 = item['image']['original']
-				except:
-					thumb2 = '0'
-				if thumb2 is None or thumb2 == '0':
-					thumb = thumb1
-				else:
-					thumb = thumb2
-				if thumb is None or thumb == '': thumb = '0'
+					thumb = '0'
+				if thumb is None or thumb == '' or thumb == 'None':
+					thumb = '0'
+
 
 				premiered = item.get('airdate', '0')
 
@@ -1168,10 +1233,11 @@ class Episodes:
 				except:
 					plot = '0'
 
+
 				values = {'title': title, 'season': season, 'episode': episode, 'year': year, 'tvshowtitle': tvshowtitle,
 							'tvshowyear': tvshowyear, 'premiered': premiered, 'status': status, 'studio': studio,
 							'genre': genre, 'duration': duration, 'rating': rating, 'plot': plot, 'imdb': imdb,
-							'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'thumb': thumb, 'episodeIDS': episodeIDS}
+							'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'season_poster': poster, 'thumb': thumb, 'fanart': thumb, 'episodeIDS': episodeIDS}
 
 				if 'airday' in item and item['airday'] is not None and item['airday'] != '':
 					values['airday'] = item['airday']
@@ -1248,7 +1314,6 @@ class Episodes:
 		addonPoster = control.addonPoster()
 		addonFanart = control.addonFanart()
 		addonBanner = control.addonBanner()
-
 
 		try:
 			multi = [i['tvshowtitle'] for i in items]
@@ -1427,7 +1492,10 @@ class Episodes:
 				poster1 = meta.get('poster')
 				poster2 = meta.get('poster2')
 				poster3 = meta.get('poster3')
+				# poster4 = meta.get('season_poster')
 				poster = poster3 or poster2 or poster1 or addonPoster
+
+				season_poster = meta.get('season_poster') if 'season_poster' in meta else poster
 
 				fanart = '0'
 				if settingFanart:
@@ -1449,7 +1517,7 @@ class Episodes:
 				clearart = meta.get('clearart')
 
 				art = {}
-				art.update({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart, 'icon': icon,
+				art.update({'poster': season_poster, 'tvshow.poster': poster, 'season.poster': season_poster, 'fanart': fanart, 'icon': icon,
 									'thumb': thumb, 'banner': banner, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape})
 
 ####-Context Menu and Overlays-####
