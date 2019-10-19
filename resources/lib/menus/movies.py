@@ -662,7 +662,14 @@ class Movies:
 				except:
 					title = item.get('title')
 
-				year = str(item.get('year'))
+				premiered = item.get('released', '0')
+
+				year = str(item.get('year', '0'))
+				if year == 'None' or year == '0':
+					year = str(premiered)
+					year = re.search(r"(\d{4})", year).group(1)
+
+				# if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
 				try:
 					progress = item['progress']
@@ -676,8 +683,6 @@ class Movies:
 				tmdb = str(item.get('ids', {}).get('tmdb', 0))
 				if tmdb == '' or tmdb is None or tmdb == 'None':
 					tmdb = '0'
-
-				premiered = item.get('released', '0')
 
 				genre = []
 				for x in item['genres']:
@@ -910,7 +915,7 @@ class Movies:
 				plot = client.replaceHTMLCodes(plot)
 				plot = plot.encode('utf-8')
 
-				list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating,
+				list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': '0', 'genre': genre, 'duration': duration, 'rating': rating,
 									'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0', 'tagline': '0', 'plot': plot, 'imdb': imdb,
 									'tmdb': '0', 'tvdb': '0', 'poster': poster, 'fanart': '0', 'next': next})
 			except:
@@ -1030,14 +1035,14 @@ class Movies:
 
 			imdb = self.list[i]['imdb']
 # look into getting rid of this and replace with tmdb.Movies().get_details() to cut down from 2 api calls to 1
-# may be issue with using tmdb_id vs. imdb as some list do not contain tmdb_id
+# maybe issue with using tmdb_id vs. imdb as some list do not contain tmdb_id
 			item = trakt.getMovieSummary(id=imdb)
 
 			title = item.get('title')
 
 			originaltitle = title
 
-			year = str(item.get('year', 0))
+			year = self.list[i]['year'] or str(item.get('year', '0'))
 
 			if imdb == '0' or imdb is None:
 				imdb = item.get('ids', {}).get('imdb', '0')
@@ -1048,7 +1053,8 @@ class Movies:
 			if tmdb == '' or tmdb is None or tmdb == 'None':
 				tmdb = '0'
 
-			premiered = item.get('released', '0')
+			premiered = self.list[i]['premiered'] or item.get('released', '0')
+			# premiered = item.get('released', '0')
 
 			if 'genre' not in self.list[i] or self.list[i]['genre'] == '0' or self.list[i]['genre'] == 'NA':
 				genre = []
@@ -1060,16 +1066,18 @@ class Movies:
 
 			duration = str(item.get('runtime', '0'))
 
-			rating = str(item.get('rating', '0'))
-			votes = str(format(int(item.get('votes', '0')),',d'))
+			rating = self.list[i]['rating'] or str(item.get('rating', '0'))
+			votes = self.list[i]['votes'] or str(format(int(item.get('votes', '0')),',d'))
 
-			mpaa = item.get('certification', '0')
-			if not mpaa:
-				mpaa = '0'
+			mpaa = self.list[i]['mpaa'] or item.get('certification', '0')
 
-			tagline = item.get('tagline', '0')
+			# tagline = self.list[i]['tagline'] or item.get('tagline', '0')
+			tagline = '0'
+			plot2 = item.get('overview', '0')
+			try: plot2 = plot2.encode('utf-8')
+			except: pass
 
-			plot = item.get('overview', '0')
+			plot = self.list[i]['plot'] or plot2
 
 #########################################
 			from resources.lib.indexers.tmdb import Movies

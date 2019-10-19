@@ -357,7 +357,7 @@ elif action == 'calendars':
 
 elif action == 'episodesUnfinished':
 	from resources.lib.menus import episodes
-	episodes.Episodes().unfinished()
+	episodes.Episodes().unfinished(url)
 
 elif action == 'episodesUserlists':
 	from resources.lib.menus import episodes
