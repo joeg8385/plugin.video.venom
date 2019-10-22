@@ -193,7 +193,7 @@ class Episodes:
 				pass
 
 			activity = trakt.getWatchedActivity()
-
+			self.list = []
 			if url == self.traktonDeck_link:
 				try:
 					if activity > cache.timeout(self.trakt_list, url, self.trakt_user, False):
@@ -223,7 +223,8 @@ class Episodes:
 				invalid = True
 			if invalid:
 				control.idle()
-				control.notification(title=32326, message=33049, icon='INFO', sound=notificationSound)
+				if self.notifications:
+					control.notification(title=32326, message=33049, icon='INFO', sound=notificationSound)
 
 
 	def seasonCount(self, items, index):

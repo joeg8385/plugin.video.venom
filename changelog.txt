@@ -1,8 +1,13 @@
-[B][COLOR red]Update - v3.287 - Oct 19, 2019[/COLOR][/B]
+[B][COLOR red]Update - v3.2.9 - Oct 21, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed My TV Shows-Unfinished being empty if no imdb account entered.[/I]
+[COLOR yellow]--[/COLOR][I] Fixed My TV Shows-Trakt On Deck menu missing if no imdb account entered.[/I]
+[COLOR yellow]--[/COLOR][I] Added Trakt On Deck to My Movies.[/I]
+
+[B][COLOR red]Update - v3.2.8 - Oct 19, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed TVShow search results due to trakt api response duplicating
     shows with "None" type years, similar for Movies.[/I]
 [COLOR yellow]--[/COLOR][I] Changed Trakt OnDeck to follow intedended shortened version of
-    "Unfinished" list, per docs.[/I]
+    "Unfinished" list, per api docs.[/I]
 [COLOR yellow]--[/COLOR][I] Added resolution icons for source directory list, note not all skins support
     this and may not be seen.[/I]
 [COLOR yellow]--[/COLOR][I] Changed default sort for TVShows Calendar sorting to "Date Premiered".[/I]

@@ -15,7 +15,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
 from resources.lib.modules import workers
-from resources.lib.modules import views
+from resources.lib.modules import views, log_utils
 from resources.lib.menus import navigator
 
 sysaddon = sys.argv[0]
@@ -125,7 +125,7 @@ class Movies:
 		# self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=%d&page=1' % self.count
 		self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=40&page=1'
 		self.traktunfinished_link = 'http://api.trakt.tv/sync/playback/movies?limit=100'
-		self.onDeck_link = 'http://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
+		self.traktonDeck_link = 'http://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
 
 		self.traktanticipated_link = 'http://api.trakt.tv/movies/anticipated?limit=%d&page=1' % self.count 
 		self.trakttrending_link = 'http://api.trakt.tv/movies/trending?limit=%d&page=1' % self.count
@@ -167,10 +167,10 @@ class Movies:
 				if idx is True:
 					self.worker(level=0)
 
-			elif self.traktunfinished_link in url:
-				self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
-				if idx is True:
-					self.worker(level=0)
+			# elif self.traktunfinished_link in url:
+				# self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
+				# if idx is True:
+					# self.worker(level=0)
 
 			elif u in self.trakt_link:
 				self.list = cache.get(self.trakt_list, 6, url, self.trakt_user)
@@ -243,30 +243,53 @@ class Movies:
 					control.notification(title = 32001, message = 33049, icon = 'INFO', sound=notificationSound)
 
 
-	# def unfinished(self):
-		# try:
-			# try:
-				# activity = trakt.getWatchedActivity()
-				# if activity > cache.timeout(self.trakt_list, self.traktunfinished_link, self.trakt_user, False):
-					# raise Exception()
-				# self.list = cache.get(self.trakt_list, 720, self.traktunfinished_link , self.trakt_user, False)
-			# except:
-				# self.list = cache.get(self.trakt_list, 0, self.traktunfinished_link , self.trakt_user, False)
-			# self.sort()
-			# if idx is True:
-				# self.worker(level=0)
-				# self.movieDirectory(self.list)
-		# except:
-			# import traceback
-			# traceback.print_exc()
-			# try:
-				# invalid = (self.list is None or len(self.list) == 0)
-			# except:
-				# invalid = True
-			# if invalid:
-				# control.idle()
-					# if self.notifications:
-					# control.notification(title=32326, message=33049, icon='INFO', sound=notificationSound)
+	def unfinished(self, url, idx=True):
+		try:
+			try:
+				url = getattr(self, url + '_link')
+			except:
+				pass
+
+			activity = trakt.getWatchedActivity()
+			self.list = []
+			if url == self.traktonDeck_link:
+				try:
+					if activity > cache.timeout(self.trakt_list, url, self.trakt_user):
+						raise Exception()
+					self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
+				except:
+					self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+				if idx is True:
+					self.worker()
+
+			if url == self.traktunfinished_link :
+				try:
+					if activity > cache.timeout(self.trakt_list, self.traktunfinished_link, self.trakt_user):
+						raise Exception()
+					self.list = cache.get(self.trakt_list, 720, self.traktunfinished_link , self.trakt_user)
+				except:
+					self.list = cache.get(self.trakt_list, 0, self.traktunfinished_link , self.trakt_user)
+				if idx is True:
+					self.worker()
+
+			if idx is True:
+			# self.sort(type = 'calendar')
+				self.sort()
+				self.movieDirectory(self.list)
+			# self.movieDirectory(self.list, unfinished=True, next=False)
+
+			return self.list
+		except:
+			import traceback
+			traceback.print_exc()
+			try:
+				invalid = (self.list is None or len(self.list) == 0)
+			except:
+				invalid = True
+			if invalid:
+				control.idle()
+				if self.notifications:
+					control.notification(title=32001, message=33049, icon='INFO', sound=notificationSound)
 
 
 	def newMovies(self):
