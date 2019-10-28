@@ -105,6 +105,8 @@ class Sources:
 		items = control.window.getProperty(self.itemProperty)
 		items = json.loads(items)
 
+		# log_utils.log('items =  %s' % str(items), log_utils.LOGERROR)
+
 		if items is None or len(items) == 0:
 			control.idle()
 			sys.exit()
@@ -255,25 +257,22 @@ class Sources:
 					w.start()
 
 					# offset = 60 * 2 if items[i].get('source') in self.hostcapDict else 0
+					if items[i].get('debrid').lower() == 'real-debrid':
+						no_skip = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == ''
+					if items[i].get('debrid').lower() == 'alldebrid':
+						no_skip = control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == ''
+					if items[i].get('debrid').lower() == 'premiumize.me':
+						no_skip = control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == ''
+					if items[i].get('debrid').lower() == 'linksnappy':
+						no_skip = control.addon('script.module.resolveurl').getSetting('LinksnappyResolver_cached_only') == 'false'
 
-					# if items[i].get('debrid').lower() == 'real-debrid':
-						# no_skip = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == ''
-					# if items[i].get('debrid').lower() == 'alldebrid':
-						# no_skip = control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == ''
-					# if items[i].get('debrid').lower() == 'premiumize.me':
-						# no_skip = control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == ''
-					# if items[i].get('debrid').lower() == 'linksnappy':
-						# no_skip = control.addon('script.module.resolveurl').getSetting('LinksnappyResolver_cached_only') == 'false'
-
-					if items[i].get('source').lower() in self.hostcapDict:
-						offset = 60 * 2
-					elif items[i].get('source').lower() == 'torrent':# and no_skip:
+					if items[i].get('source') in self.hostcapDict: offset = 60 * 2
+					elif items[i].get('source').lower() == 'torrent' and no_skip:
 						offset = float('inf')
 					else:
 						offset = 0
 
 					m = ''
-
 					for x in range(3600):
 						try:
 							if xbmc.abortRequested is True:
@@ -674,10 +673,8 @@ class Sources:
 				import traceback
 				traceback.print_exc()
 				pass
-		try:
-			progressDialog.close()
-		except:
-			pass
+
+		progressDialog.close()
 
 		self.sourcesFilter()
 		return self.sources
@@ -1009,10 +1006,13 @@ class Sources:
 			i.update({'language': self._getPrimaryLang() or 'en'})
 		self.sources = [i for i in self.sources if not i in local]
 
+		# log_utils.log('self.sources = %s' % str(len(self.sources)), __name__, log_utils.LOGDEBUG)
+
 		# filter = []
 		# filter += [i for i in self.sources if i['direct'] is True]
 		# filter += [i for i in self.sources if i['direct'] is False]
 		# self.sources = filter
+
 
 		filter = []
 		for d in debrid.debrid_resolvers:
@@ -1213,6 +1213,7 @@ class Sources:
 					raise Exception()
 
 			self.url = url
+
 			return url
 		except:
 			if info is True:
@@ -1258,15 +1259,7 @@ class Sources:
 					except:
 						progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
-					if items[i].get('source').lower() in self.hostcapDict:
-						offset = 60 * 2
-					elif items[i].get('source').lower() == 'torrent':# and no_skip:
-						offset = float('inf')
-					else:
-						offset = 0
-
 					m = ''
-
 					for x in range(3600):
 						try:
 							if xbmc.abortRequested is True:
@@ -1282,14 +1275,14 @@ class Sources:
 						if k:
 							m += '1'
 							m = m[-1]
-						if (w.is_alive() == False or x > 30 + offset) and not k:
+						if (w.is_alive() is False or x > 30) and not k:
 							break
 
 						k = control.condVisibility('Window.IsActive(yesnoDialog)')
 						if k:
 							m += '1'
 							m = m[-1]
-						if (w.is_alive() == False or x > 30 + offset) and not k:
+						if (w.is_alive() is False or x > 30) and not k:
 							break
 						time.sleep(0.5)
 
@@ -1394,7 +1387,6 @@ class Sources:
 			progressDialog.close()
 		except:
 			pass
-
 		return u
 
 
@@ -1435,19 +1427,16 @@ class Sources:
 		lang = self._getPrimaryLang()
 		if not lang:
 			return title
-
 		if content == 'movie':
 			t = trakt.getMovieTranslation(imdb, lang)
 		else:
 			from resources.lib.modules import tvmaze
 			t = tvmaze.tvMaze().getTVShowTranslation(tvdb, lang)
-
 		return t or title
 
 
 	def getAliasTitles(self, imdb, localtitle, content):
 		lang = self._getPrimaryLang()
-
 		try:
 			t = trakt.getMovieAliases(imdb) if content == 'movie' else trakt.getTVShowAliases(imdb)
 			t = [i for i in t if i.get('country', '').lower() in [lang, '', 'us'] and i.get('title', '').lower() != localtitle.lower()]
@@ -1486,18 +1475,20 @@ class Sources:
 		except:
 			self.hostDict = []
 
-		self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to',
-									'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net', 'multiup.org']
+		self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to',
+									'uploadgig.com', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net',
+									'uploadrocket.net', 'multiup.org']
 
-		self.hostcapDict = ['flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc', 'hugefiles.net', 'kingfiles.net', 'openload.io', 'openload.co',
-									'openload.pw', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life',
-									'streamin.to', 'thevideo.me', 'torba.se', 'vidup.me', 'vidup.tv', 'vshare.eu', 'vshare.io', 'vev.io']
+		self.hostcapDict = ['hugefiles.net', 'kingfiles.net', 'openload.io', 'openload.co',
+									'oload.tv', 'thevideo.me', 'vidup.me', 'streamin.to', 'torba.se',
+									'flashx.tv', 'vshare.eu', 'vshare.io', 'vev.io']
 
-		self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv',
-									'uptobox.com', 'uptostream.com', 'xvidstage.com', 'streamango.com', 'xstreamcdn.com', 'idtbox.com', 'streamvid.co']
+		self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv',
+									'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com',
+									'uptostream.com', 'xvidstage.com', 'streamango.com', 'xstreamcdn.com',
+									'idtbox.com', 'streamvid.co']
 
-		# self.hostblockDict = []
-		self.hostblockDict = ['zippyshare.com', 'youtube.com', 'facebook.com', 'twitch.tv']
+		self.hostblockDict = []
 
 
 	def getPremColor(self, n):
