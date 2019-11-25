@@ -45,7 +45,7 @@ class Episodes:
 			# self.tvdb_key = '1D62F2F90030C444'
 		self.tvdb_key = 'MUQ2MkYyRjkwMDMwQzQ0NA=='
 
-		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.xml.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
 		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_image = 'http://thetvdb.com/banners/'
 		self.tvdb_poster = 'http://thetvdb.com/banners/_cache/'

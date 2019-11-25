@@ -42,7 +42,8 @@ class Seasons:
 		# Test for api response
 		# http://thetvdb.com/api/1D62F2F90030C444/series/121361/all/en.xml.zip
 
-		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.xml.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+		self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
+
 		self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
 		self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
 		self.tvdb_image = 'http://thetvdb.com/banners/'
