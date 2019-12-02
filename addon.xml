@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.venom" version="3.3.3" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
+<addon id="plugin.video.venom" version="3.3.4" name="[COLOR red]Venom[/COLOR]" provider-name="Venom">
 
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
@@ -9,7 +9,7 @@
 		<import addon="plugin.video.youtube" version="6.2.0"/>
 		<import addon="script.module.resolveurl" version="5.0.27"/>
 		<import addon="script.module.openscrapers" />
-		<import addon="script.module.addon.signals" version="0.0.1"/>
+		<import addon="script.module.addon.signals" version="0.0.3"/>
 	</requires>
 
 	<extension point="xbmc.python.pluginsource" library="venom.py">
@@ -36,8 +36,27 @@
 			<screenshot>resources/screenshots/screenshot03a.jpg</screenshot>
 		</assets>
 		<news>
-[B][COLOR red]Update - v3.3.3 - Nov. 24, 2019[/COLOR][/B]
-[COLOR yellow]--[/COLOR][I] Sorry folks missed an entry in last update for TVDb name change[/I]
+[B][COLOR red]Update - v3.3.4 - Dec. 02, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Changed 40 item limit sent to resolveURL to now check all links till
+    resolved link found. This will rid the "No stream available"
+    notification seen after 40 links checked and not resolved[/I]
+[COLOR yellow]--[/COLOR][I] Moved "Shortcuts" to last category in Settings for faster access. Also
+    changed setting query to not land on first item in 
+    category so there is no need to arrow over and
+    down to another category in Settings[/I]
+[COLOR yellow]--[/COLOR][I] Added "Clear All Cache" to all context menu options.[/I]
+COLOR yellow]--[/COLOR][I] Fixed metacache issue due to trakt api having some shows with
+    same tvdb_id but different imdb_id or tmdb_id.[/I]
+COLOR yellow]--[/COLOR][I] Made all trakt lists now respect setting for "Season0" displayed or
+    not displayed.[/I]
+COLOR yellow]--[/COLOR][I] Fixed issue with UpNext "Playback Failed" at start of 2nd item in
+    playlist.[/I]
+COLOR yellow]--[/COLOR][I] Fixed "Survivor bug" writing show to library but this in Venom
+    is due to new profile data retrieved from tvdb for cast
+    and profile pics that yielded 576 cast members for this
+    show that proved to much for sql database write.  I've
+    reduced max cast to 200 and cures it on Win and Shield
+    so please let me know device specific if this still fails.[/I]
 		</news>
 	</extension>
 </addon>
