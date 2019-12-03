@@ -1,4 +1,8 @@
 [B][COLOR red]Update - v3.3.4 - Dec. 02, 2019[/COLOR][/B]
+[COLOR yellow]--[/COLOR][I] Fixed typo effecting all IMDb TV Show lists not loading. Sorry folks
+    was pretty sad seeing it.[/I]
+
+[B][COLOR red]Update - v3.3.4 - Dec. 02, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Changed 40 item limit sent to resolveURL to now check all links till
     resolved link found. This will rid the "No stream available"
     notification seen after 40 links checked and not resolved[/I]
@@ -20,14 +24,11 @@ COLOR yellow]--[/COLOR][I] Fixed "Survivor bug" writing show to library but this
     reduced max cast to 200 and cures it on Win and Shield
     so please let me know device specific if this still fails.[/I]
 
-
 [B][COLOR red]Update - v3.3.3 - Nov. 24, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Sorry folks missed an entry in last update for TVDb name change[/I]
 
-
 [B][COLOR red]Update - v3.3.2 - Nov. 24, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed TVDb for changed xml file names....AGAIN![/I]
-
 
 [B][COLOR red]Update - v3.3.1 - Nov. 18, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed TVDb for new changed xml file names.  Please note TVDb is still not
@@ -47,7 +48,6 @@ COLOR yellow]--[/COLOR][I] Added new setting Category called "Shortcuts".  This 
     and going into Tools. Call up "Venom Settings"
     and go to "Shortcuts" anywhere.[/I]
 
-
 [B][COLOR red]Update - v3.3.0 - Oct 27, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Re-wrote TV Shows-Calendar (TVMaze). Hard coded shows air time
     to display and changed sort to match api response
@@ -64,7 +64,6 @@ COLOR yellow]--[/COLOR][I] Added new setting Category called "Shortcuts".  This 
 [COLOR yellow]--[/COLOR][I] Fixed episode ID ""None" type issue for occasional missing ids in Trakt
     api response during TV Show search when
     Up Next is enabled.[/I]
-
 
 [B][COLOR red]Update - v3.2.9 - Oct 21, 2019[/COLOR][/B]
 [COLOR yellow]--[/COLOR][I] Fixed My TV Shows-Unfinished being empty if no imdb account entered.[/I]

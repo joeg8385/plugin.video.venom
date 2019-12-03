@@ -896,7 +896,7 @@ class TVshows:
 
 				list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration,
 									'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': '0',
-									'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': poster, 'next': next})
+									'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
 			except:
 				pass
 		return list
